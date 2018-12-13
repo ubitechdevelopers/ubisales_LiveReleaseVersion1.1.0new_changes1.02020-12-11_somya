@@ -4,13 +4,12 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_player/video_player.dart';
+/*import 'package:video_player/video_player.dart';*/
 
 class CameraExampleHome extends StatefulWidget {
   @override
-  _CameraExampleHomeState createState() {
-    return _CameraExampleHomeState();
-  }
+  _CameraExampleHomeState createState() => _CameraExampleHomeState();
+
 }
 
 /// Returns a suitable camera icon for [direction].
@@ -33,17 +32,33 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
   CameraController controller;
   String imagePath;
   String videoPath;
-  VideoPlayerController videoController;
+  //VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
-
+  List<CameraDescription> cameras;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
 
+  initPlatformState() async{
+    try {
+      cameras = await availableCameras();
+      setState(() {
+        cameras = cameras;
+      });
+      runApp(CameraApp());
+    } on CameraException catch (e) {
+      logError(e.code, e.description);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Camera example'),
+        title: const Text('Camera New'),
       ),
       body: Column(
         children: <Widget>[
@@ -106,22 +121,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     return Expanded(
       child: Align(
         alignment: Alignment.centerRight,
-        child: videoController == null && imagePath == null
+        child: imagePath == null
             ? null
             : SizedBox(
-          child: (videoController == null)
-              ? Image.file(File(imagePath))
-              : Container(
-            child: Center(
-              child: AspectRatio(
-                  aspectRatio: videoController.value.size != null
-                      ? videoController.value.aspectRatio
-                      : 1.0,
-                  child: VideoPlayer(videoController)),
-            ),
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.pink)),
-          ),
+          child: Image.file(File(imagePath)),
+
           width: 64.0,
           height: 64.0,
         ),
@@ -170,7 +174,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
-    if (cameras.isEmpty) {
+    if (cameras==null) {
       return const Text('No camera found');
     } else {
       for (CameraDescription cameraDescription in cameras) {
@@ -203,7 +207,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = CameraController(cameraDescription, ResolutionPreset.high);
+    controller = CameraController(cameraDescription, ResolutionPreset.low);
 
     // If the controller is updated then update the UI.
     controller.addListener(() {
@@ -229,8 +233,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       if (mounted) {
         setState(() {
           imagePath = filePath;
-          videoController?.dispose();
-          videoController = null;
+
         });
         if (filePath != null) showInSnackBar('Picture saved to $filePath');
       }
@@ -251,7 +254,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     });
   }
 
-  Future<String> startVideoRecording() async {
+    Future<String> startVideoRecording() async {
     if (!controller.value.isInitialized) {
       showInSnackBar('Error: select a camera first.');
       return null;
@@ -293,7 +296,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
   }
 
   Future<void> _startVideoPlayer() async {
-    final VideoPlayerController vcontroller =
+   /* final VideoPlayerController vcontroller =
     VideoPlayerController.file(File(videoPath));
     videoPlayerListener = () {
       if (videoController != null && videoController.value.size != null) {
@@ -312,7 +315,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
         videoController = vcontroller;
       });
     }
-    await vcontroller.play();
+    await vcontroller.play();*/
   }
 
   Future<String> takePicture() async {
@@ -324,7 +327,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     final String dirPath = '${extDir.path}/Pictures/flutter_test';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${timestamp()}.jpg';
-
+    print(filePath);
     if (controller.value.isTakingPicture) {
       // A capture is already pending, do nothing.
       return null;
@@ -354,14 +357,8 @@ class CameraApp extends StatelessWidget {
   }
 }
 
-List<CameraDescription> cameras;
 
-Future<Null> main() async {
-  // Fetch the available cameras before initializing the app.
-  try {
-    cameras = await availableCameras();
-  } on CameraException catch (e) {
-    logError(e.code, e.description);
-  }
+
+main() async {
   runApp(CameraApp());
 }
