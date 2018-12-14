@@ -40,6 +40,10 @@ dependencies:
   splashscreen: ^1.1.0
   share: ^0.5.3
   launch_review: ^1.0.1
+  native_device_orientation: ^0.0.3
+  connectivity: ^0.3.2
+  flutter_native_image:
+    git: https://github.com/btastic/flutter_native_image.git
 
 dev_dependencies:
   flutter_test:

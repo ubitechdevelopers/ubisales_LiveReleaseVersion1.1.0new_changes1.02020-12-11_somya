@@ -258,11 +258,11 @@ class _AppDrawerState extends State<AppDrawer> {
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_on,size: 20.0),SizedBox(width: 5.0),
-                new Text("Track Location", style: new TextStyle(fontSize: 15.0)),
+                new Text("Set Geo Fence", style: new TextStyle(fontSize: 15.0)),
               ],
             ),
             onTap: () {
-              showDialogWidget("To Track Location of Employee, Login to the web panel.", "To Track Location of Employee upgrade to Premium Plan.");
+              showDialogWidget("To set Geo Fence, login to the web admin panel.", "To set Geo Fence upgrade to Premium Plan.");
             },
           ):new Center(),
     /*      reportper ==1?new ListTile(

@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         body:new Builder(
         builder: (BuildContext context) {
           return new SplashScreen(
-            seconds: 3,
+            seconds: 2,
             navigateAfterSeconds: new ShrineApp(),
             title: new Text('',style: TextStyle(fontSize: 32.0),),
             loaderColor: Colors.blueGrey[100],

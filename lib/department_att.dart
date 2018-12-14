@@ -180,7 +180,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.40,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -355,7 +355,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -467,7 +467,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -646,7 +646,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -819,7 +819,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
           ):Container(
             height: MediaQuery.of(context).size.height*0.25,
             child:Center(
-              child: Text('No Data Available'),
+              child: Text('Please select the date'),
             ),
           ),
         ],
@@ -833,56 +833,58 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
         future: getDepartmentsList(1),// with -All- label
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return new Container(
-              //    width: MediaQuery.of(context).size.width*.45,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Department',
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Icon(
-                      Icons.attach_file,
-                      color: Colors.grey,
-                    ), // icon is 48px widget.
+            try {
+              return new Container(
+                //    width: MediaQuery.of(context).size.width*.45,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Department',
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(1.0),
+                      child: Icon(
+                        Icons.attach_file,
+                        color: Colors.grey,
+                      ), // icon is 48px widget.
+                    ),
                   ),
-                ),
 
-                child:  new DropdownButton<String>(
-                  isDense: true,
-                  style: new TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black
-                  ),
-                  value: dept,
-                  onChanged: (String newValue) {
-                    setState(() {
-                    //  showInSnackBar(newValue);
+                  child: new DropdownButton<String>(
+                    isDense: true,
+                    style: new TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.black
+                    ),
+                    value: dept,
+                    onChanged: (String newValue) {
                       setState(() {
-                        dept =newValue;
-                        res=true;
-                        print('state set----');
+                        //  showInSnackBar(newValue);
+                        setState(() {
+                          dept = newValue;
+                          res = true;
+                          print('state set----');
+                        });
                       });
+                    },
+                    items: snapshot.data.map((Map map) {
+                      return new DropdownMenuItem<String>(
+                        value: map["Id"].toString(),
+                        child: new SizedBox(
+                            width: 200.0,
+                            child: new Text(
+                              map["Name"],
+                            )
+                        ),
+                      );
+                    }).toList(),
 
-
-                    });
-                  },
-                  items: snapshot.data.map((Map map) {
-                    return new DropdownMenuItem<String>(
-                      value: map["Id"].toString(),
-                      child:  new SizedBox(
-                          width: 200.0,
-                          child: new Text(
-                            map["Name"],
-                          )
-                      ),
-                    );
-                  }).toList(),
-
+                  ),
                 ),
-              ),
-            );
+              );
+            }catch(e){
+              return Text("Ex: Unable to fetch departments");
+            }
           } else if (snapshot.hasError) {
-            return new Text("${snapshot.error}");
+            return new Text("ER: Unable to fetch departments");
           }
           // return loader();
           return new Center(child: SizedBox(

@@ -602,10 +602,10 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Departmentwise report',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                              child: Text('By Department',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
                           ),
                           Container(
-                              child: Text('Get Attendance Departmentwise',style: TextStyle(fontSize: 15.0,),)
+                              child: Text('Attendance by Department',style: TextStyle(fontSize: 15.0,),)
                           ),
                         ],
                       ),
@@ -644,10 +644,10 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Designationwise report',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                              child: Text('By Designation',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
                           ),
                           Container(
-                              child: Text('Get Attendance Designationwise',style: TextStyle(fontSize: 15.0,),)
+                              child: Text('Attendance by Designation',style: TextStyle(fontSize: 15.0,),)
                           ),
                         ],
                       ),
@@ -687,10 +687,10 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Employeewise report',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                              child: Text('By Employee',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
                           ),
                           Container(
-                              child: Text('Get Attendance for last 30 days',style: TextStyle(fontSize: 15.0,),)
+                              child: Text('Attendance by Employee',style: TextStyle(fontSize: 15.0,),)
                           ),
                         ],
                       ),

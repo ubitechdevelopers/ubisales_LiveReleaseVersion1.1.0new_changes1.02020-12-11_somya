@@ -86,13 +86,13 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
             children: <Widget>[
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.46,
+                width: MediaQuery.of(context).size.width*0.50,
                 child:Text('        Date',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.24,
+                width: MediaQuery.of(context).size.width*0.20,
                 child:Text('Time In',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
@@ -137,7 +137,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 width: MediaQuery
                                                     .of(context)
                                                     .size
-                                                    .width * 0.26,
+                                                    .width * 0.38,
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment
                                                       .start,
@@ -190,7 +190,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                   width: MediaQuery
                                                       .of(context)
                                                       .size
-                                                      .width * 0.34,
+                                                      .width * 0.24,
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment
                                                         .center,
@@ -221,7 +221,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                   width: MediaQuery
                                                       .of(context)
                                                       .size
-                                                      .width * 0.18,
+                                                      .width * 0.20,
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment
                                                         .center,
@@ -288,7 +288,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.55,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -400,7 +400,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.55,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -579,7 +579,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.55,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -808,12 +808,13 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                 ),
               );
             }
-            catch(E){
-              return Text("EXCEPTION occured, please try later");
+            catch(e){
+              return Text("EX: Unable to fetch employees");
 
             }
           } else if (snapshot.hasError) {
-            return new Text("${snapshot.error}");
+            print(snapshot.error);
+            return new Text("ER: Unable to fetch employees");
           }
           // return loader();
           return new Center(child: SizedBox(
