@@ -36,6 +36,7 @@ class _addShift extends State<addShift> {
   String admin_sts="0";
   List<Map> shiftlist=[{"id":"1","name":"Single Date"},{"id":"2","name":"Multi Date"}];
   String shifttype = "1";
+
   bool _isButtonDisabled=false;
   @override
   void initState() {
@@ -423,16 +424,16 @@ class _addShift extends State<addShift> {
                             }else if(diff_b.startsWith('-') && shifttype.toString() == '1'){
                               showInSnackBar('Invalid break time');
                               return null;
-                            }else if((!from.isBefore(from_b))&& (!from.isAtSameMomentAs(from_b))&& shifttype.toString() == '1'){
-                              showInSnackBar('Break time should be between shift hours');
+                            }else if((!from_b.isBefore(from))&& (!from.isAtSameMomentAs(from_b))&& shifttype.toString() == '1'){
+                              showInSnackBar('Break time should be between shift hours2'+shifttype.toString() + from_b.isBefore(from).toString() + from.isAtSameMomentAs(from_b).toString()+" break "+from_b.toString()+" from "+from.toString());
                               return null;
-                            }else if((!to.isAfter(to_b)) && (!to.isAtSameMomentAs(to_b))){
-                              showInSnackBar('Break time should be between shift hours');
+                            }else if((!to_b.isAfter(to)) && (!to.isAtSameMomentAs(to_b))){
+                              showInSnackBar('Break time should be between shift hours1' +shifttype.toString() + from.isBefore(from_b).toString() + from.isAtSameMomentAs(from_b).toString());
                               return null;
                             }else {
                               if (shifttype.toString() == '1') {
                                 if (diff.startsWith('-')) {
-                                  showInSnackBar('Invalid data');
+                                  showInSnackBar('Invalid start time');
                                   return null;
                                 } else {
                                   print('Valid shift for single date');

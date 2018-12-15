@@ -310,7 +310,7 @@ Future<List<Map>> getDesignationsList(int label) async{
   String orgid = prefs.getString('orgdir') ?? '';
   final response = await http.get(globals.path + 'DesignationMaster?orgid=$orgid');
   List data = json.decode(response.body.toString());
-  List<Map> depts = createList(data,0);
+  List<Map> depts = createList(data,label);
   return depts;
 }
 Future<List<Map>> getShiftsList() async{
@@ -794,6 +794,9 @@ Future<int> changeMyPassword(oldPass, newPass) async {
   //  print(oldPass+'--'+newPass);
   final response = await http.get(globals.path +
       'changePassword?uid=$empid&refno=$orgdir&pwd=$oldPass&npwd=$newPass');
+  if(int.parse(response.body)==1){
+    prefs.setString('usrpwd', newPass);
+  }
   return int.parse(response.body);
 }
 
