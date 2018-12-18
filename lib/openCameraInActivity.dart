@@ -382,12 +382,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
     bool issave = false;
     MarkTime mk;
     mk = global.mk1;
+    /*ImageProperties properties = await FlutterNativeImage.getImageProperties(filePath);*/
+     /*File compressedFile = await FlutterNativeImage.compressImage(filePath, percentage: 90);*/
     ImageProperties properties = await FlutterNativeImage.getImageProperties(filePath);
-    File compressedFile = await FlutterNativeImage.compressImage(filePath, targetWidth: 150,
-        targetHeight: (properties.height * 150 / properties.width).round());
-    /*ImageProperties properties = await FlutterNativeImage.getImageProperties(filePath);
-    File compressedFile = await FlutterNativeImage.compressImage(filePath, targetWidth: 200,
-        targetHeight: (properties.height * 200 / properties.width).round());*/
+    File compressedFile = await FlutterNativeImage.compressImage(filePath, targetWidth: 600,
+        targetHeight: (properties.height * 600 / properties.width).round());
     /*File compressedFile = await FlutterNativeImage.compressImage(filePath,
         quality: 50, percentage: 50);
 */
