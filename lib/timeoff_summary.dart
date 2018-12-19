@@ -483,7 +483,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                             checkProcessing = index;
                                           });
                                           confirmWithdrawl(snapshot.data[index].TimeOffId.toString());
-                                        }, 
+                                        },
                                         child: (_isButtonDisabled && checkProcessing==index)?Text("Processing..",style: TextStyle(color: Colors.blue),):Text("Withdraw",style: TextStyle(color: Colors.blue),),
                                       ),
                                       ),

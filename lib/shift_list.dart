@@ -171,7 +171,7 @@ class _ShiftList extends State<ShiftList> {
             ),
 
           ),
-          /*floatingActionButton: new FloatingActionButton(
+          floatingActionButton: new FloatingActionButton(
             mini: false,
             backgroundColor: Colors.blue,
             onPressed: (){
@@ -182,7 +182,7 @@ class _ShiftList extends State<ShiftList> {
             },
             tooltip: 'Add Shift',
             child: new Icon(Icons.add),
-          ),*/
+          ),
         );
 
   }
