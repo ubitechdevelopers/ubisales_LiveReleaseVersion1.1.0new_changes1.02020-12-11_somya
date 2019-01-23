@@ -344,6 +344,133 @@ class _Reports extends State<Reports> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    Icon(Icons.perm_contact_calendar,size: 40.0,),
+                    SizedBox(width: 15.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('By Department',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                          ),
+                          Container(
+                              child: Text('Attendance by Department',style: TextStyle(fontSize: 15.0,),)
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
+                  ],
+                ),
+              ),
+              color: Colors.deepPurple[200],
+              elevation: 4.0,
+              splashColor: Colors.deepPurpleAccent,
+              textColor: Colors.white,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check departmentwise attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Department_att()),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 6.0),
+            new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.perm_contact_calendar,size: 40.0,),
+                    SizedBox(width: 15.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('By Designation',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                          ),
+                          Container(
+                              child: Text('Attendance by Designation',style: TextStyle(fontSize: 15.0,),)
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
+                  ],
+                ),
+              ),
+              color: Colors.cyan,
+              elevation: 4.0,
+              splashColor: Colors.cyanAccent,
+              textColor: Colors.white,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check designationwise attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Designation_att()),
+                  );
+                }
+              },
+            ),
+
+            SizedBox(height: 6.0),
+            new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.perm_contact_calendar,size: 40.0,),
+                    SizedBox(width: 15.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('By Employee',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                          ),
+                          Container(
+                              child: Text('Attendance by Employee',style: TextStyle(fontSize: 15.0,),)
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
+                  ],
+                ),
+              ),
+              color: Colors.lightGreen,
+              elevation: 4.0,
+              splashColor: Colors.lightGreenAccent,
+              textColor: Colors.white,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check Employeewise attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EmployeeWise_att()),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 6.0),
+            new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
                     Icon(Icons.location_on,size: 40.0,),
                     SizedBox(width: 15.0,),
                     Expanded(
@@ -587,133 +714,7 @@ class _Reports extends State<Reports> {
               },
             ),
 
-            SizedBox(height: 6.0),
-            new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(Icons.perm_contact_calendar,size: 40.0,),
-                    SizedBox(width: 15.0,),
-                    Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('By Department',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
-                          ),
-                          Container(
-                              child: Text('Attendance by Department',style: TextStyle(fontSize: 15.0,),)
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
-                  ],
-                ),
-              ),
-              color: Colors.deepPurple[200],
-              elevation: 4.0,
-              splashColor: Colors.deepPurpleAccent,
-              textColor: Colors.white,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check departmentwise attendance records.");
-                }else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Department_att()),
-                  );
-                }
-              },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(Icons.perm_contact_calendar,size: 40.0,),
-                    SizedBox(width: 15.0,),
-                    Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('By Designation',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
-                          ),
-                          Container(
-                              child: Text('Attendance by Designation',style: TextStyle(fontSize: 15.0,),)
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
-                  ],
-                ),
-              ),
-              color: Colors.cyan,
-              elevation: 4.0,
-              splashColor: Colors.cyanAccent,
-              textColor: Colors.white,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check designationwise attendance records.");
-                }else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Designation_att()),
-                  );
-                }
-              },
-            ),
 
-            SizedBox(height: 6.0),
-            new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(Icons.perm_contact_calendar,size: 40.0,),
-                    SizedBox(width: 15.0,),
-                    Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('By Employee',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
-                          ),
-                          Container(
-                              child: Text('Attendance by Employee',style: TextStyle(fontSize: 15.0,),)
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
-                  ],
-                ),
-              ),
-              color: Colors.lightGreen,
-              elevation: 4.0,
-              splashColor: Colors.lightGreenAccent,
-              textColor: Colors.white,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check Employeewise attendance records.");
-                }else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EmployeeWise_att()),
-                  );
-                }
-              },
-            ),
 
 
           ]),

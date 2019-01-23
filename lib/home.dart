@@ -30,8 +30,8 @@ import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
 import 'services/services.dart';
-import 'openCameraInActivity.dart';
-import 'package:camera/camera.dart';
+/*import 'openCameraInActivity.dart';
+import 'package:camera/camera.dart';*/
 import 'package:connectivity/connectivity.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -134,6 +134,10 @@ class _HomePageState extends State<HomePage> {
           streamlocationaddr = lat + ", " + long;
         }
       }
+      if(streamlocationaddr == ''){
+        sl.startStreaming(5);
+        startTimer();
+      }
       //print("home addr" + streamlocationaddr);
       //print(lat + ", " + long);
 
@@ -153,7 +157,7 @@ class _HomePageState extends State<HomePage> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
 
-    await availableCameras();
+    /*await availableCameras();*/
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
@@ -324,7 +328,8 @@ class _HomePageState extends State<HomePage> {
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+         (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+          //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
       );
@@ -354,21 +359,23 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(width: 20.0,),
                     Icon(
                       Icons.all_inclusive,
                       color: Colors.teal,
                     ),
                     Text(
-                      "Fetching location, please wait...",
+                      " Fetching location, please wait..",
                       style: new TextStyle(fontSize: 20.0, color: Colors.teal),
                     )
                   ]),
               SizedBox(height: 15.0),
               Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(width: 20.0,),
                     Text(
                       "Note: ",
                       style: new TextStyle(
@@ -378,15 +385,31 @@ class _HomePageState extends State<HomePage> {
                       textAlign: TextAlign.right,
                     ),
                     Text(
-                      "Please ensure GPS is ON and refresh the page.",
+                      " If Location not being fetched automatically?",
                       style: new TextStyle(fontSize: 12.0, color: Colors.black),
                       textAlign: TextAlign.left,
-                    )
+                    ),
+                   /* new InkWell(
+                      child: new Text(
+                        "Fetch Location now",
+                        style: new TextStyle(
+                            color: Colors.teal,
+                            decoration: TextDecoration.underline),
+                      ),
+                      onTap: () {
+                        sl.startStreaming(5);
+                        startTimer();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    )*/
                   ]),
-              SizedBox(height: 5.0),
+
               FlatButton(
                 child: new Text(
-                  "Refresh location",
+                  "Fetch Location now",
                   style: new TextStyle(
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
@@ -525,7 +548,7 @@ class _HomePageState extends State<HomePage> {
                                 image:_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
                                //image: AssetImage('assets/avatar.png')
                               ))),
-                 /*     new Positioned(
+                  /*new Positioned(
                     left: MediaQuery.of(context).size.width*.14,
                     top: MediaQuery.of(context).size.height*.11,
                     child: new RawMaterialButton(
@@ -996,14 +1019,45 @@ class _HomePageState extends State<HomePage> {
 
     MarkTime mk = new MarkTime(
         empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
-    mk1 = mk;
+   /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-        Navigator.push(
+       /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
-      );
+      );*/
+      SaveImage saveImage = new SaveImage();
+      bool issave = false;
+      setState(() {
+        act1 = "";
+      });
+      issave = await saveImage.saveTimeInOutImagePicker(mk);
+      ////print(issave);
+      if (issave) {
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Attendance marked successfully!"),
+        )
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );
+        setState(() {
+          act1 = act;
+        });
+      } else {
+        showDialog(context: context, child:
+        new AlertDialog(
+          title: new Text("!"),
+          content: new Text("Problem while marking attendance, try again."),
+        )
+        );
+        setState(() {
+          act1 = act;
+        });
+      }
     }else{
       showDialog(context: context, child:
       new AlertDialog(

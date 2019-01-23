@@ -838,7 +838,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                 //    width: MediaQuery.of(context).size.width*.45,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Department',
+                    labelText: 'Select Department',
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Icon(

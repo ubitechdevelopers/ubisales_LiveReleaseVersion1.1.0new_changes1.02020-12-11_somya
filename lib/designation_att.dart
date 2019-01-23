@@ -55,7 +55,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
         children: <Widget>[
           SizedBox(height:3.0),
           new Container(
-            child: Center(child:Text("Department Wise Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
           ),
           Container(
             child: DateTimePickerFormField(
@@ -838,7 +838,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                 //    width: MediaQuery.of(context).size.width*.45,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Designation',
+                    labelText: 'Select Designation',
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Icon(

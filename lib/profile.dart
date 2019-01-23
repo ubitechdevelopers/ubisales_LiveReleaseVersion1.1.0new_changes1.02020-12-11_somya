@@ -99,13 +99,13 @@ class _ProfilePageState extends State<ProfilePage> {
         });
         //print("2-"+_checkLoaded.toString());
         act1=act;
-        department = profileMap["dept"];
-        shift = profileMap["shift"];
-        desination = profileMap["desg"];
-        shifttiming = profileMap["shifttiming"];
-        _phone = new TextEditingController(text: profileMap["PersonalNo"]);
-        _city = new TextEditingController(text: profileMap["PersonalNo"]);
-        _country = profileMap["CurrentCountry"];
+        department = profileMap["dept"]??'';
+        shift = profileMap["shift"]??'';
+        desination = profileMap["desg"]??'';
+        shifttiming = profileMap["shifttiming"]??'';
+        _phone = new TextEditingController(text: profileMap["PersonalNo"]??'');
+        _city = new TextEditingController(text: profileMap["PersonalNo"]??'');
+        _country = profileMap["CurrentCountry"]??'';
       });
     }
   }
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
-        content: Text(value,textAlign: TextAlign.center,));
+    content: Text(value,textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 

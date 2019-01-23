@@ -188,9 +188,9 @@ class _VisitList extends State<VisitList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  SizedBox(width: 8.0,),
+                  SizedBox(width: 1.0,),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.22,
+                    width: MediaQuery.of(context).size.width * 0.15,
                     child: Text(
                       'Name',
                       style: TextStyle(color: Colors.orange),
@@ -198,7 +198,7 @@ class _VisitList extends State<VisitList> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.44,
+                    width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Client',
                       style: TextStyle(color: Colors.orange),
@@ -206,13 +206,13 @@ class _VisitList extends State<VisitList> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.12,
+                    width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('In',
                         style: TextStyle(color: Colors.orange),
                         textAlign: TextAlign.left),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.12,
+                    width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
                         style: TextStyle(color: Colors.orange),
                         textAlign: TextAlign.left),
@@ -264,7 +264,7 @@ class _VisitList extends State<VisitList> {
                           children: <Widget>[
                             SizedBox(width: 8.0,),
                             new Container(
-                                width: MediaQuery.of(context).size.width * 0.22,
+                                width: MediaQuery.of(context).size.width * 0.20,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -273,7 +273,7 @@ class _VisitList extends State<VisitList> {
                                   ],
                                 )),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.44,
+                              width: MediaQuery.of(context).size.width * 0.37,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,30 +296,66 @@ class _VisitList extends State<VisitList> {
 
 
                             ),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.12,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(snapshot.data[index].pi_time.toString(),style: TextStyle(fontWeight:FontWeight.bold),),
+                            Container(
+                                width: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width * 0.18,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center,
+                                  children: <Widget>[
+                                    Text(snapshot.data[index].pi_time
+                                        .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Container(
+                                      width: 62.0,
+                                      height: 62.0,
+                                      child: Container(
+                                          decoration: new BoxDecoration(
+                                              shape: BoxShape
+                                                  .circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: new NetworkImage(
+                                                      snapshot
+                                                          .data[index]
+                                                          .pi_img)
+                                              )
+                                          )),),
 
-                                  SizedBox(height: 2.0,),
+                                  ],
+                                )
 
-                                ],
-                              )
                             ),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.12,
-                              child: new Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(snapshot.data[index].po_time.toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                            Container(
+                                width: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width * 0.22,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center,
+                                  children: <Widget>[
+                                    Text(snapshot.data[index].po_time
+                                        .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Container(
+                                      width: 62.0,
+                                      height: 62.0,
+                                      child: Container(
+                                          decoration: new BoxDecoration(
+                                              shape: BoxShape
+                                                  .circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: new NetworkImage(
+                                                      snapshot
+                                                          .data[index]
+                                                          .po_img)
+                                              )
+                                          )),),
 
-                                ],
-                    ),
-
+                                  ],
+                                )
 
                             ),
                           ],

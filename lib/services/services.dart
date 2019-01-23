@@ -32,7 +32,7 @@ punch(comments, client_name, empid, location_addr1, lid, act, orgdir, latit,
   print("\nlongi: " + longi);*/
 }
 Future checkNow() async {
-  final res = await http.get(globals.path+'getAppVersion?platform=Android');
+  final res = await http.get(globals.path+'getAppVersion?platform=Android1');
   return ((json.decode(res.body.toString()))[0]['version']).toString();
 }
 Future<String> PunchSkip(lid) async {
@@ -155,11 +155,12 @@ Future<List<Punch>> getSummaryPunch() async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
-  //print('getSummaryPunch called');
- final response =
- await http.get(globals.path + 'getPunchInfo?uid=$empid&orgid=$orgdir');
+  print('getSummaryPunch called');
+  final response =
+  await http.get(globals.path + 'getPunchInfo?uid=$empid&orgid=$orgdir');
 
   List responseJson = json.decode(response.body.toString());
+  print("get summary punch"+responseJson.toString());
   List<Punch> userList = createUserList(responseJson);
   return userList;
 }
@@ -167,6 +168,7 @@ Future<List<Punch>> getSummaryPunch() async {
 List<Punch> createUserList(List data) {
   List<Punch> list = new List();
   for (int i = data.length-1; i >=0; i--) {
+    String id = data[i]["Id"];
     String client = data[i]["client"];
     String pi_time = data[i]["time_in"]=="00:00:00"?'-':data[i]["time_in"].toString().substring(0,5);
     String pi_loc = data[i]["loc_in"];
@@ -178,8 +180,15 @@ List<Punch> createUserList(List data) {
     String latit_out = data[i]["latit_in"];
     String longi_out = data[i]["longi_out"];
     String desc = data[i]["desc"];
+    String pi_img=data[i]["checkin_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkin_img"].toString();
+    String po_img=data[i]["checkout_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkout_img"].toString();
     //print(data[i]["loc_out"]);
     Punch punches = new Punch(
+        Id:id,
         Emp:emp,
         client: client,
         pi_time: pi_time,
@@ -190,7 +199,9 @@ List<Punch> createUserList(List data) {
         pi_longi:longi_in,
         po_latit:latit_out,
         po_longi:longi_out,
-        desc:desc.length>40?desc.substring(0,40)+'...':desc
+        desc:desc.length>40?desc.substring(0,40)+'...':desc,
+        pi_img: pi_img,
+        po_img: po_img
     );
     list.add(punches);
   }
@@ -198,6 +209,7 @@ List<Punch> createUserList(List data) {
 }
 
 class Punch {
+  String Id;
   String Emp;
   String client;
   String pi_time;
@@ -209,8 +221,10 @@ class Punch {
   String po_longi;
   String po_latit;
   String desc;
+  String pi_img;
+  String po_img;
 
-  Punch({this.Emp,this.client,this.pi_time,this.pi_loc,this.po_time,this.po_loc,this.pi_latit,this.pi_longi,this.po_latit,this.po_longi,this.desc});
+  Punch({this.Id,this.Emp,this.client,this.pi_time,this.pi_loc,this.po_time,this.po_loc,this.pi_latit,this.pi_longi,this.po_latit,this.po_longi,this.desc,this.pi_img,this.po_img});
 }
 
 ////////////////////////////////////////////////-----
@@ -291,6 +305,7 @@ Future<List<Map>> getDepartmentsList(int label) async{
   List<Map> depts = createList(data,label);
   return depts;
 }
+
 List<Map> createList(List data,int label) {
   List<Map> list = new List();
   if(label==1) // with -All- label
@@ -305,6 +320,7 @@ List<Map> createList(List data,int label) {
   }
   return list;
 }
+
 Future<List<Map>> getDesignationsList(int label) async{
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';

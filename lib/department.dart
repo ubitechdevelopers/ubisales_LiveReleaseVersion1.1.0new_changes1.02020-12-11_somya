@@ -311,10 +311,10 @@ class _Department extends State<Department> {
                   });
                   addDept(dept.text, _sts).
                   then((res) {
-                    if(res=='0') {
+                    if(int.parse(res)==0) {
                       showInSnackBar('Unable to add department');
                     }
-                    else if(res=='-1')
+                    else if(int.parse(res)==-1)
                       showInSnackBar('Department already exists');
                     else {
                       Navigator.of(context, rootNavigator: true).pop('dialog');

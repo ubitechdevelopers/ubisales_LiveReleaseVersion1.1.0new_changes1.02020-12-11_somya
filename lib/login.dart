@@ -74,18 +74,36 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   /*SizedBox(height: 10.0),*/
-                  GestureDetector(
-                    onTap: () {
-                      scan().then((onValue){
-                        print("******************** QR value **************************");
-                        print(onValue);
-                        markAttByQR(onValue,context);
-                      });
-                    },
-                    child:  Image.asset(
-                      'assets/qr.png', height: 45.0, width: 45.0, alignment: Alignment.bottomRight,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if(loader)
+                            return null;
+
+                          setState(() {
+                            loader = true;
+                          });
+                          scan().then((onValue){
+                            print("******************** QR value **************************");
+                            print(onValue);
+                            if(onValue!='error') {
+                              markAttByQR(onValue, context);
+                            }else {
+                              setState(() {
+                                loader = false;
+                              });
+                            }
+                          });
+                        },
+                        child:  Image.asset(
+                          'assets/qr.png', height: 45.0, width: 45.0,
+                        ),
+                      ),
+                    ],
                   ),
+
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Username',

@@ -249,7 +249,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
         child: SafeArea(
           child: Column( children: <Widget>[
             SizedBox(height: 20.0),
-            Text('Request Time Off',
+            Text('Mark Time Off',
                 style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
             new Divider(color: Colors.black54,height: 1.5,),
           new Expanded(child: ListView(

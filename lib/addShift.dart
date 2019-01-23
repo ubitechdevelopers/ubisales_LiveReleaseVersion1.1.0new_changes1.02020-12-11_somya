@@ -414,23 +414,43 @@ class _addShift extends State<addShift> {
                             DateTime to_b=new DateTime(2001,01,01,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
                             var diff = to.difference(from).toString();
                             var diff_b = to_b.difference(from_b).toString();
+                            var diff_b1 = to_b.difference(from_b);
+                            //DateTime twelve=new DateTime(2001,01,01,-12,00,00,00);
                            // print("start status: "+from.isBefore(from_b).toString());
                           //  print("end status: "+to.isAfter(to_b).toString());
                           //  print("eqn"+DateTime.parse(diff).difference(DateTime.parse(diff_b)).toString());
-
+                            print(diff_b1.inHours.toString());
                             if(to.isAtSameMomentAs(from)){
                               showInSnackBar("Shift's start and end time can't be same");
                               return null;
                             }else if(diff_b.startsWith('-') && shifttype.toString() == '1'){
                               showInSnackBar('Invalid break time');
                               return null;
-                            }else if((!from_b.isBefore(from))&& (!from.isAtSameMomentAs(from_b))&& shifttype.toString() == '1'){
-                              showInSnackBar('Break time should be between shift hours2'+shifttype.toString() + from_b.isBefore(from).toString() + from.isAtSameMomentAs(from_b).toString()+" break "+from_b.toString()+" from "+from.toString());
+                            }else if(diff_b.startsWith('-') && shifttype.toString() == '2' && diff_b1.inHours>-12){
+                              print(diff_b);
+                              print(from_b);
+                              print(to_b);
+                              showInSnackBar('Invalid break time');
                               return null;
-                            }else if((!to_b.isAfter(to)) && (!to.isAtSameMomentAs(to_b))){
+                            }
+                            else if((!from.isBefore(from_b))&& (from.isAtSameMomentAs(from_b))&& shifttype.toString() == '1'){
+                              showInSnackBar('Break time should be between shift hours1');
+                              return null;
+                            }else if((!to.isAfter(to_b))&& (to.isAtSameMomentAs(to_b))&& shifttype.toString() == '1'){
+                              showInSnackBar('Break time should be between shift hours2');
+                              return null;
+                            }
+                            else if((!from.isBefore(from_b))&& (from.isAtSameMomentAs(from_b))&& shifttype.toString() == '2'){
+                              showInSnackBar('Break time should be between shift hours3');
+                              return null;
+                            }else if((!to_b.isAfter(to))&& (to.isAtSameMomentAs(to_b)) && shifttype.toString() == '2' && diff_b1.inHours>-12){
+                              showInSnackBar('Break time should be between shift hours4');
+                              return null;
+                            }
+                           /* else if((!to_b.isAfter(to)) && (!to.isAtSameMomentAs(to_b))){
                               showInSnackBar('Break time should be between shift hours1' +shifttype.toString() + from.isBefore(from_b).toString() + from.isAtSameMomentAs(from_b).toString());
                               return null;
-                            }else {
+                            }*/else {
                               if (shifttype.toString() == '1') {
                                 if (diff.startsWith('-')) {
                                   showInSnackBar('Invalid start time');

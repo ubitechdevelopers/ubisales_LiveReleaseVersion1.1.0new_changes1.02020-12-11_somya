@@ -202,7 +202,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   sstatus!=''?Text(sstatus,style: new TextStyle(fontSize: 10.0,color: Colors.white)):Center(),
                 ],
               ),
-                  buystatus=="0"?new Column(
+                  (buystatus=="0" && reportper==1)?new Column(
                       children:<Widget>[
                         ButtonTheme(
                     minWidth: 60.0,

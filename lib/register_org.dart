@@ -8,6 +8,7 @@ import 'askregister.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'home.dart';
 import 'package:Shrine/model/user.dart';
+import 'services/services.dart';
 
 void main() => runApp(new MyApp());
 
@@ -279,13 +280,25 @@ class _MyHomePageState extends State<MyHomePage> {
                             ));
                             FocusScope.of(context).requestFocus(__cname);
                           }
-                          else if(_email.text=='') {
+                          /*else if(_email.text=='') {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
                               content: new Text("Please enter valid email"),
                             ));
                             FocusScope.of(context).requestFocus(__email);
+                          }*/
+                          else if(!(validateEmail(_email.text))) {
+                            //print((validateEmail(_email.text)).toString());
+
+                            showDialog(context: context, child:
+                            new AlertDialog(
+                              title: new Text("Alert"),
+                              content: new Text("Please enter valid email"),
+                            ));
+                            FocusScope.of(context).requestFocus(__email);
+                            return null;
+
                           }
                           else if(_pass.text.length<6) {
                             showDialog(context: context, child:
