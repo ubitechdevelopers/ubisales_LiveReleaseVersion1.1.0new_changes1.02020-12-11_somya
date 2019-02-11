@@ -23,9 +23,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/services.dart';
 class CheckUpdate extends StatefulWidget {
   @override
+
   _CheckUpdate createState() => _CheckUpdate();
 }
 class _CheckUpdate extends State<CheckUpdate> {
+  String mand_update='0';
   final _formKey = GlobalKey<FormState>();
   int response;
   loader() {
@@ -41,6 +43,16 @@ class _CheckUpdate extends State<CheckUpdate> {
     );
   }
   void initState() {
+  //  print('55555555555555555555555555555555555555');
+    checkMandUpdate().then((res){
+      setState(() {
+   //     print('************************'+res.toString()+'***********************************');
+        mand_update=res;
+      });
+
+    });
+
+
     super.initState();
     getShared();
     }
@@ -72,7 +84,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                       child:  Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          FlatButton(
+                          mand_update=='0'?FlatButton(
                               shape: Border.all(color: Colors.black54),
                               child:Text('Later',style:TextStyle(color: Colors.black54)),
                             onPressed: (){
@@ -87,7 +99,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                               MaterialPageRoute(builder: (context) => LoginPage()),
                               );
                             },
-                          ),
+                          ):SizedBox(width: 150.0,),
                           RaisedButton(
                               color: Colors.orangeAccent,
                               child: Text('Update now',style: TextStyle(color: Colors.white),),

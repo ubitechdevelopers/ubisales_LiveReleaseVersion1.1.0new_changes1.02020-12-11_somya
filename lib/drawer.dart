@@ -254,7 +254,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ):new Center(),
-          reportper ==1?new ListTile(
+          reportper ==1&&geoFence==1?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_on,size: 20.0),SizedBox(width: 5.0),

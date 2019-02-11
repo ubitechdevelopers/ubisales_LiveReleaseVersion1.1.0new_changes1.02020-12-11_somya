@@ -32,8 +32,16 @@ punch(comments, client_name, empid, location_addr1, lid, act, orgdir, latit,
   print("\nlongi: " + longi);*/
 }
 Future checkNow() async {
+print('*--*-*-*-*-*-*-*-*-*-');
   final res = await http.get(globals.path+'getAppVersion?platform=Android1');
   return ((json.decode(res.body.toString()))[0]['version']).toString();
+}
+Future checkMandUpdate() async {
+  final res = await http.get(globals.path+'checkMandUpdate?platform=Android');
+  print(globals.path+'checkMandUpdate?platform=Android');
+ // print('*****************************'+((json.decode(res.body.toString()))[0]['is_update']).toString()+'*****************************');
+  return ((json.decode(res.body))[0]['is_update']).toString();
+
 }
 Future<String> PunchSkip(lid) async {
  // print('push skip called');
@@ -1367,5 +1375,149 @@ Future<List> getAttentancees() async {
 
 MarkAttendance(data){
   print('bulk attendance mark successfully');
-  print(data);
+  //print(data);
+
 }
+
+
+// ///////////////////////////////////////////////////////////////////
+////////////////////////////Bulk Attendance////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+class grpattemp {
+  String Name;
+  String Department;
+  String Designation;
+  String Status;
+  String Id;
+  String img;
+  String attsts;
+  String timein;
+  String timeout;
+  String todate;
+  String shift;
+  String shifttype;
+  int csts;
+
+  grpattemp(
+      {this.Name,
+        this.Department,
+        this.Designation,
+        this.Status,
+        this.csts,
+        this.img,
+        this.attsts,
+        this.timein,
+        this.timeout,
+        this.todate,
+        this.shift,
+        this.shifttype,
+        this.Id});
+}
+
+Future<List<grpattemp>> getDeptEmp() async {
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+  //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=13');
+  final response =
+  await http.get(globals.path + 'getDeptEmp?orgid=$orgid');
+
+  //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=15');
+  List responseJson = json.decode(response.body.toString());
+  print(responseJson);
+  List<grpattemp> deptList = createDeptempList(responseJson);
+  print(responseJson);
+  return deptList;
+}
+
+List<grpattemp> createDeptempList(List data) {
+  List<grpattemp> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String name = data[i]["name"];
+    // String status=data[i]["archive"]=='1'?'Active':'Inactive';
+    String id = data[i]["id"];
+    int csts = data[i]["csts"];
+    String img = data[i]["img"];
+    // String timein=data[i]["timein"];
+    String timein=data[i]["timein"];
+    String timeout = data[i]["timeout"];//(hour: data[i]["timeout"].split(":")[0], minute: data[i]["timeout"].split(":")[1]);
+    print(timein+' and '+timeout);
+    String attsts = '1';
+    String todate = data[i]["todate"];
+    String shift = data[i]["shift"];
+    String shifttype = data[i]["shifttype"];
+    grpattemp dpt =
+    new grpattemp(Name: name, csts: csts, img: img, attsts: attsts, timein: timein, timeout: timeout, todate: todate, shift: shift, shifttype: shifttype, Id: id);
+    list.add(dpt);
+  }
+  return list;
+}
+
+addBulkAtt(List <grpattemp> data) async {
+  var dio = new Dio();
+  String location = globals.globalstreamlocationaddr;
+  Map<String, double> _currentLocation = globals.list[globals.list.length-1];
+  String lat = _currentLocation["latitude"].toString();
+  String long = _currentLocation["longitude"].toString();
+  print("global Address: "+ location);
+  print("global lat" + lat);
+  print("global long" + long);
+  List<Map> list = new List();
+  //print(data);
+  //print(list);
+  for (int i = 0; i < data.length; i++) {
+    Map per = {
+      "Id":data[i].Id.toString(),
+      "Name":data[i].Name.toString(),
+      "timein":data[i].timein,
+      "timeout":data[i].timeout,
+      "attsts":data[i].attsts.toString(),
+      "todate":data[i].todate.toString(),
+      "shift":data[i].shift.toString(),
+    };
+    list.add(per);
+  }
+  var jsonlist;
+  jsonlist = json.encode(list);
+  print(jsonlist);
+  //print('RECIEVED STATUS: '+status.toString());
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+//  print('addEmp function called, parameters :');
+  print(globals.path+'CreateBulkAtt?uid=$empid&org_id=$orgdir&attlist=$jsonlist');
+  try {
+    FormData formData = new FormData.from({
+      "attlist": jsonlist,
+      "org_id": orgdir,
+      "uid": empid,
+      "location": location,
+      "lat": lat,
+      "long": long,
+    });
+    Response response = await dio.post(
+        globals.path+"CreateBulkAtt/",data: formData
+    );//, options: new Options(contentType:ContentType.parse("application/json"))
+    //print(response.data.toString());
+    //Map permissionMap = json.decode(response.data.toString());
+    if (response.statusCode == 200) {
+      //print("successfully");
+      return "success";
+    }else{
+      //print("failed");
+      return "failed";
+    }
+  }catch(e){
+    //print("connection error");
+    return "connection error";
+    //print(e.toString());
+  }
+  final response = await http.get(globals.path +
+      'CreateBulkAtt?uid=$empid&org_id=$orgdir&attlist=$jsonlist');
+  var res = json.decode(response.body);
+  print("--------> Adding Bulk Attendance" + res.toString());
+  return res['sts'];
+}
+///////////////////////////////////////////////////////////
+////////////////////////////group attendance ends///////////////////////////////
+///////////////////////////////////////////////////////////

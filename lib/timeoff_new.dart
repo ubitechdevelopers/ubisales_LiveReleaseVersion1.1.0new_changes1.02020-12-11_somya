@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 import 'package:simple_permissions/simple_permissions.dart';
@@ -10,16 +11,12 @@ import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/model/timeinout.dart';
 import 'attendance_summary.dart';
-import 'punchlocation.dart';
 import 'drawer.dart';
 import 'timeoff_summary.dart';
 import 'package:Shrine/services/services.dart';
-import 'globals.dart';
+import 'leave.dart';
 import 'package:Shrine/services/newservices.dart';
-import 'leave_summary.dart';
-import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:location/location.dart';
+import 'home.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'globals.dart';
@@ -27,22 +24,19 @@ import 'punchlocation_summary.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
-import 'timeoff_new.dart';
 import 'services/services.dart';
-import 'bulkatt.dart';
-/*import 'openCameraInActivity.dart';
-import 'package:camera/camera.dart';*/
 import 'package:connectivity/connectivity.dart';
 
 // This app is a stateful, it tracks the user's current choice.
-class HomePage extends StatefulWidget {
+class TimeOff_New extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _TimeOff_New createState() => _TimeOff_New();
 }
 
-class _HomePageState extends State<HomePage> {
+class _TimeOff_New extends State<TimeOff_New> {
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _clientname = TextEditingController();
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
@@ -69,6 +63,7 @@ class _HomePageState extends State<HomePage> {
   String fname = "",
       lname = "",
       empid = "",
+      cid = "",
       email = "",
       status = "",
       orgid = "",
@@ -81,6 +76,7 @@ class _HomePageState extends State<HomePage> {
       latit = "",
       longi = "";
   String aid = "";
+  String client='0';
   String shiftId = "";
   List<Widget> widgets;
 
@@ -218,21 +214,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    (mail_varified=='0' && alertdialogcount==0 && admin_sts=='1')?Future.delayed(Duration.zero, () => _showAlert(context)):"";
-
     return (response == 0 || userpwd!=newpwd || Is_Delete!=0) ? new AskRegisterationPage() : getmainhomewidget();
-
-    /* return MaterialApp(
-      home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
-    );*/
   }
 
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(
-      value,
-      textAlign: TextAlign.center,
-    ));
+          value,
+          textAlign: TextAlign.center,
+        ));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
@@ -249,14 +239,10 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             automaticallyImplyLeading: false,
-              backgroundColor: Colors.teal,
-           // backgroundColor: Color.fromARGB(255,63,163,128),
+            backgroundColor: Colors.teal,
+            // backgroundColor: Color.fromARGB(255,63,163,128),
           ),
-          //bottomSheet: getQuickLinksWidget(),
-          persistentFooterButtons: <Widget>[
-            quickLinkList1(),
 
-          ],
 
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
@@ -270,14 +256,20 @@ class _HomePageState extends State<HomePage> {
               } else if (newIndex == 0) {
                 (admin_sts == '1')
                     ? Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Reports()),
-                      )
+                  context,
+                  MaterialPageRoute(builder: (context) => Reports()),
+                )
                     : Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()),
-                      );
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
 
+                return;
+              }else if (newIndex == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
                 return;
               }
 
@@ -288,24 +280,20 @@ class _HomePageState extends State<HomePage> {
             items: [
               (admin_sts == '1')
                   ? BottomNavigationBarItem(
-                      icon: new Icon(
-                        Icons.library_books,
-                      ),
-                      title: new Text('Reports'),
-                    )
-                  : BottomNavigationBarItem(
-                      icon: new Icon(
-                        Icons.person,
-                      ),
-                      title: new Text('Profile'),
-                    ),
-              BottomNavigationBarItem(
                 icon: new Icon(
-                  Icons.home,
-                  color: Colors.orangeAccent,
+                  Icons.library_books,
                 ),
-                title: new Text('Home',
-                    style: TextStyle(color: Colors.orangeAccent)),
+                title: new Text('Reports'),
+              )
+                  : BottomNavigationBarItem(
+                icon: new Icon(
+                  Icons.person,
+                ),
+                title: new Text('Profile'),
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.home,color: Colors.black54,),
+                title: new Text('Home',style:TextStyle(color: Colors.black54,)),
               ),
               BottomNavigationBarItem(
                   icon: Icon(
@@ -328,7 +316,7 @@ class _HomePageState extends State<HomePage> {
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-         (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+          (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -337,21 +325,12 @@ class _HomePageState extends State<HomePage> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-        (Route<dynamic> route) => false,
-      );
-    }
-
-   /* if(userpwd!=newpwd){
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
             (Route<dynamic> route) => false,
       );
-    }*/
+    }
   }
 
   refreshPageWidgit() {
-
     if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
       return new Container(
         child: Center(
@@ -389,22 +368,7 @@ class _HomePageState extends State<HomePage> {
                       style: new TextStyle(fontSize: 12.0, color: Colors.black),
                       textAlign: TextAlign.left,
                     ),
-                   /* new InkWell(
-                      child: new Text(
-                        "Fetch Location now",
-                        style: new TextStyle(
-                            color: Colors.teal,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-                        sl.startStreaming(5);
-                        startTimer();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      },
-                    )*/
+
                   ]),
 
               FlatButton(
@@ -430,17 +394,17 @@ class _HomePageState extends State<HomePage> {
       return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-        Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
-            textAlign: TextAlign.center,
-            style: new TextStyle(fontSize: 14.0, color: Colors.red)),
-        RaisedButton(
-          child: Text('Open Settings'),
-          onPressed: () {
-            SimplePermissions.openSettings();
-          },
-        ),
-      ]);
+            Text(
+                'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+                textAlign: TextAlign.center,
+                style: new TextStyle(fontSize: 14.0, color: Colors.red)),
+            RaisedButton(
+              child: Text('Open Settings'),
+              onPressed: () {
+                SimplePermissions.openSettings();
+              },
+            ),
+          ]);
     }
   }
 
@@ -489,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.teal,
                     ),
                     Text(
-                      " Poor network connection.",
+                      "Poor network connection.",
                       style: new TextStyle(fontSize: 20.0, color: Colors.teal),
                     ),
                   ]),
@@ -531,47 +495,12 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: MediaQuery.of(context).size.height * .06),
-                  new GestureDetector(
-                    onTap: () {
-                      // profile navigation
-                      /* Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));*/
-                    },
-                    child: new Stack(children: <Widget>[
-                      Container(
-                          //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                          width: MediaQuery.of(context).size.height * .18,
-                          height: MediaQuery.of(context).size.height * .18,
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image:_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
-                               //image: AssetImage('assets/avatar.png')
-                              ))),
-                  /*new Positioned(
-                    left: MediaQuery.of(context).size.width*.14,
-                    top: MediaQuery.of(context).size.height*.11,
-                    child: new RawMaterialButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-                      },
-                      child: new Icon(
-                        Icons.edit,
-                        size: 18.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 0.5,
-                      fillColor: Colors.teal,
-                      padding: const EdgeInsets.all(1.0),
-                    ),
-                  ),*/
-                    ]),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
                   //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
                   // SizedBox(height: 5.0),
-                  Text("Hi " + fname, style: new TextStyle(fontSize: 16.0)),
-
+                  //   getClients_DD(),
+                  Text('You are on time from 08:00',style: TextStyle(fontSize: 22.0),),
+                  Text('Please click below button to mark your time off stop',style: TextStyle(color: Colors.black54),),
+                  //  SizedBox(height: 35.0),
                   SizedBox(height: MediaQuery.of(context).size.height * .01),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
                   (act1 == '') ? loader() : getMarkAttendanceWidgit(),
@@ -585,362 +514,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   getMarkAttendanceWidgit() {
-    if (act1 == "Imposed") {
-      return getAlreadyMarkedWidgit();
-    } else {
-      return Container(
-        // height: MediaQuery.of(context).size.height*0.5,
-        //foregroundDecoration: BoxDecoration(color:Colors.green ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              /* Text('Mark Attendance',
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal)),
-            SizedBox(height: 10.0),*/
-              getwidget(location_addr1),
-              //    SizedBox(height: MediaQuery.of(context).size.height*.1),
-              /*      Container(
-            //foregroundDecoration: BoxDecoration(color:Colors.green ),
-            margin: EdgeInsets.only(bottom:MediaQuery.of(context).size.height*0),
-            //padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.02,bottom:MediaQuery.of(context).size.height*0.02),
-              height: MediaQuery.of(context).size.height*.10,
-              color: Colors.teal.withOpacity(0.8),
-              child: Column(
-                  children:[
-                    SizedBox(height: 10.0,),
-                    getQuickLinksWidget()
-                  ]),
-            ),
-*/
-            ]),
-      );
-    }
-  }
-
-  Widget quickLinkList1() {
     return Container(
-      color: Colors.teal.withOpacity(0.8),
-
-      width: MediaQuery.of(context).size.width * 0.95,
-      // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
-      child: getBulkAttnWid(),
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 35.0),
+            getwidget(location_addr1),
+          ]),
     );
+
   }
- Widget getBulkAttnWid() {
-   List <Widget> widList = List<Widget>();
-
-   if (bulkAttn.toString() == '1' && admin_sts == '1') {
-     widList.add(Container(
-       padding: EdgeInsets.only(top: 10.0),
-       constraints: BoxConstraints(
-         maxHeight: 78.0,
-         minHeight: 20.0,
-       ),
-       child: new GestureDetector(
-           onTap: () {
-             Navigator.push(
-               context,
-               MaterialPageRoute(builder: (context) => Bulkatt()),
-             );
-           },
-           child: Column(
-             children: [
-               Icon(
-                 Icons.group,
-                 size: 30.0,
-                 color: Colors.white,
-               ),
-
-               Text('Group \n Attendnace',
-                   textAlign: TextAlign.center,
-                   style:
-                   new TextStyle(fontSize: 15.0, color: Colors.white)),
-             ],
-           )),
-     ));
-   }
-   widList.add(Container(
-     padding: EdgeInsets.only(top: 10.0),
-     constraints: BoxConstraints(
-       maxHeight: 60.0,
-       minHeight: 20.0,
-     ),
-     child: new GestureDetector(
-         onTap: () {
-           Navigator.push(
-             context,
-             MaterialPageRoute(builder: (context) => MyApp()),
-           );
-         },
-         child: Column(
-           children: [
-             Icon(
-               Icons.calendar_today,
-               size: 30.0,
-               color: Colors.white,
-             ),
-             Text('Log',
-                 textAlign: TextAlign.center,
-                 style:
-                 new TextStyle(fontSize: 15.0, color: Colors.white)),
-           ],
-         )),
-   ));
-   if(visitpunch.toString()=='1') {
-   widList.add(Container(
-     padding: EdgeInsets.only(top: 10.0),
-     constraints: BoxConstraints(
-       maxHeight: 60.0,
-       minHeight: 20.0,
-     ),
-     child: new GestureDetector(
-         onTap: () {
-           /*showInSnackBar("Under development.");*/
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-                 builder: (context) => PunchLocationSummary()),
-           );
-         },
-         child: Row(
-             children: [
-               SizedBox(width: MediaQuery
-                   .of(context)
-                   .size
-                   .width * .08),
-               Column(
-                 children: [
-                   Icon(
-                     Icons.add_location,
-                     size: 30.0,
-                     color: Colors.white,
-                   ),
-                   Text('Visits',
-                       textAlign: TextAlign.center,
-                       style:
-                       new TextStyle(fontSize: 15.0, color: Colors.white)),
-                 ],
-               )
-             ])),
-   ));
- }
-
-   if(timeOff.toString()=='1') {
-     widList.add(Container(
-       padding: EdgeInsets.only(top: 10.0),
-       constraints: BoxConstraints(
-         maxHeight: 60.0,
-         minHeight: 20.0,
-       ),
-       child: new GestureDetector(
-           onTap: () {
-             //  //print('----->>>>>'+getOrgPerm(1).toString());
-             getOrgPerm(1).then((res) {
-               {
-                 //   //print('----->>>>>'+res.toString());
-                 if (res) {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                         builder: (context) => TimeoffSummary()),
-                   );
-                 } else
-                   showInSnackBar('Please buy this feature');
-               }
-             });
-           },
-           child: Column(
-             children: [
-               Icon(
-                 Icons.access_alarm,
-                 size: 30.0,
-                 color: Colors.white,
-               ),
-               Text('Time Off',
-                   textAlign: TextAlign.center,
-                   style:
-                   new TextStyle(fontSize: 15.0, color: Colors.white)),
-             ],
-           )),
-     ));
-   }
-
-   /* widList.add();
-    widList.add();*/
-    return (Row(children: widList,mainAxisAlignment: MainAxisAlignment.spaceEvenly,));
- }
-  List<GestureDetector> quickLinkList() {
-    List<GestureDetector> list = new List<GestureDetector>();
-    // //print("permission list-->>>>>>"+data.toString());
-    list.add(new GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MyApp()),
-          );
-        },
-        child: Column(
-          children: [
-            Icon(
-              Icons.calendar_today,
-              size: 30.0,
-              color: Colors.white,
-            ),
-            Text('Attendance',
-                textAlign: TextAlign.center,
-                style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-          ],
-        )));
-
-    if (punchlocation_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            /*showInSnackBar("Under development.");*/
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PunchLocation()),
-            );
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.add_location,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Visits',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
-
-    if (timeoff_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            //  //print('----->>>>>'+getOrgPerm(1).toString());
-            getOrgPerm(1).then((res) {
-              {
-                //   //print('----->>>>>'+res.toString());
-                if (res) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TimeoffSummary()),
-                  );
-                } else
-                  showInSnackBar('Please buy this feature');
-              }
-            });
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.access_alarm,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Time Off',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
-
-    if (leave_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            getOrgPerm(1).then((res) {
-              {
-                //   //print('----->>>>>'+res.toString());
-                if (res) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LeaveSummary()),
-                  );
-                } else
-                  showInSnackBar('Please buy this feature');
-              }
-            });
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.exit_to_app,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Leave',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
-    return list;
-  }
-
-  getQuickLinksWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: quickLinkList(),
-    );
-  }
-
-  getAlreadyMarkedWidgit() {
-    return Column(children: <Widget>[
-      SizedBox(
-        height: 27.0,
-      ),
-      Container(
-        decoration: new ShapeDecoration(
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(13.0)),
-            color: Colors.teal),
-        child: Text(
-          '\nToday\'s attendance has been marked. Thank You!',
-          textAlign: TextAlign.center,
-          style: new TextStyle(color: Colors.white, fontSize: 15.0),
-        ),
-        width: 220.0,
-        height: 70.0,
-      ),
-      /*SizedBox(height: MediaQuery.of(context).size.height*.25),
-          Container(
-            height: MediaQuery.of(context).size.height*.10,
-            color: Colors.teal.withOpacity(0.8),
-            child: Column(
-                children:[
-                  SizedBox(height: 10.0,),
-                  getQuickLinksWidget()
-                ]
-            ),
-          )*/
-    ]);
-  }
-
   getwidget(String addrloc) {
     if (addrloc != "PermissionStatus.deniedNeverAsk") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
           height: 45.0,
-          child: getTimeInOutButton(),
+          child: getVisitInButton(),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
         Container(
             color: Colors.teal.withOpacity(0.1),
             height: MediaQuery.of(context).size.height * .15,
             child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
                 child: new Text('You are at: ' + streamlocationaddr,
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
                   launchMap(lat, long);
-                  /* Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );*/
+
                 },
               ),
               new Center(
@@ -987,29 +591,19 @@ class _HomePageState extends State<HomePage> {
     return Container(width: 0.0, height: 0.0);
   }
 
-  getTimeInOutButton() {
-    if (act1 == 'TimeIn') {
-      return RaisedButton(
-        child: Text('TIME IN',
-            style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-        color: Colors.orangeAccent,
-        onPressed: () {
-          // //print("Time out button pressed");
-          saveImage();
-          //Navigator.pushNamed(context, '/home');
-        },
-      );
-    } else if (act1 == 'TimeOut') {
-      return RaisedButton(
-        child: Text('TIME OUT',
-            style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-        color: Colors.orangeAccent,
-        onPressed: () {
-          // //print("Time out button pressed");
-          saveImage();
-        },
-      );
-    }
+  getVisitInButton() {
+    return RaisedButton(
+      child: Text('START TIME OFF',
+          style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+      color: Colors.orangeAccent,
+      onPressed: () {
+        if(_clientname.text=='') {
+          showInSnackBar('Please insert client name first');
+          return false;
+        }else
+          saveVisitImage();
+      },
+    );
   }
 
   Text getText(String addrloc) {
@@ -1025,16 +619,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  saveImage() async {
+  saveVisitImage() async {
     sl.startStreaming(5);
-
-    MarkTime mk = new MarkTime(
-        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
-   /* mk1 = mk;*/
+    client = _clientname.text;
+    MarkVisit mk = new MarkVisit(
+        empid,client, streamlocationaddr, orgdir, lat, long);
+    /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-       /* Navigator.push(
+      /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
@@ -1043,17 +637,17 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveTimeInOutImagePicker(mk);
+      issave = await saveImage.saveVisit(mk);
       ////print(issave);
       if (issave) {
         showDialog(context: context, child:
         new AlertDialog(
-          content: new Text("Attendance marked successfully!"),
+          content: new Text("Visit punched successfully!"),
         )
         );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyApp()),
+          MaterialPageRoute(builder: (context) => PunchLocationSummary()),
         );
         setState(() {
           act1 = act;
@@ -1061,8 +655,8 @@ class _HomePageState extends State<HomePage> {
       } else {
         showDialog(context: context, child:
         new AlertDialog(
-          title: new Text("!"),
-          content: new Text("Problem while marking attendance, try again."),
+          title: new Text("Warning!"),
+          content: new Text("Problem while punching visit, try again."),
         )
         );
         setState(() {
@@ -1079,7 +673,7 @@ class _HomePageState extends State<HomePage> {
     }
 
 
-  /*SaveImage saveImage = new SaveImage();
+    /*SaveImage saveImage = new SaveImage();
     bool issave = false;
     setState(() {
       act1 = "";
@@ -1127,54 +721,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showAlert(BuildContext context) {
-    globalalertcount = 1;
-    setState(() {
-      alertdialogcount = 1;
-    });
-    showDialog(
+////////////////////////////////////////////////////////////
+  Widget getClients_DD() {
 
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Verify Email"),
-          content: Container(
-              height: MediaQuery.of(context).size.height*0.22,
-              child:Column(
-              children:<Widget>[
-              Container(width:MediaQuery.of(context).size.width*0.6, child:Text("Your organization's Email is not verified. Please verify now.")),
+    return Center(
+      child: Form(
+        child: TextFormField(
+          controller: _clientname,
 
-              new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children:<Widget>[
-                    ButtonBar(
-                      children: <Widget>[
-                        FlatButton(
-                          child: Text('Later'),
-                          shape: Border.all(color: Colors.black54),
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          },
-                        ),
-                        new RaisedButton(
-                          child: new Text(
-                            "Verify",
-                            style: new TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          color: Colors.orangeAccent,
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                            resendVarification();
-                          },
-                        ),
-                      ],
-                    ),
-             ])
-          ]
-          ))
-        )
+          keyboardType: TextInputType.text,
+
+          decoration: InputDecoration(
+              labelText: 'Client Name',
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(0.0),
+                child: Icon(
+                  Icons.supervised_user_circle,
+                  color: Colors.grey,
+                ), // icon is 48px widget.
+              )
+          ),
+
+        ),
+      ),
     );
-  }
 
+  }
+////////////////////////////////////////////////////////////
 }

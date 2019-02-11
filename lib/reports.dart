@@ -18,7 +18,7 @@ import 'profile.dart';
 import 'department_att.dart';
 import 'designation_att.dart';
 import 'Employeewise_att.dart';
-
+import  'globals.dart';
 
 
 class Reports extends StatefulWidget {
@@ -464,7 +464,8 @@ class _Reports extends State<Reports> {
                 }
               },
             ),
-            SizedBox(height: 6.0),
+            visitpunch==1?SizedBox(height: 6.0):Center(),
+            visitpunch==1?
             new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
@@ -505,8 +506,9 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
+            ):Center(),
+            timeOff==1?SizedBox(height: 6.0):Center(),
+            timeOff==1?
             new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
@@ -547,7 +549,7 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
+            ):Center(),
             SizedBox(height: 6.0),
             new RaisedButton(
               child: Container(
@@ -575,9 +577,9 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.lightGreen,
+              color: Colors.deepOrangeAccent,
               elevation: 4.0,
-              splashColor: Colors.lightGreenAccent,
+              splashColor: Colors.amber,
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){

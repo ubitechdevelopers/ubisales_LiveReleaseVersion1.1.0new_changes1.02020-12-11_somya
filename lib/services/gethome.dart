@@ -18,6 +18,7 @@ class Home{
         "uid": empid,
         "refno": orgid,
       });
+    //  print( globals.path+"getInfo");
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
       Response response = await dio.post(
           globals.path+"getInfo",
@@ -33,7 +34,15 @@ class Home{
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
         int Is_Delete = int.parse(timeinoutMap['Is_Delete']);
+        globals.bulkAttn=int.parse(timeinoutMap['Addon_BulkAttn']);
+        globals.geoFence=int.parse(timeinoutMap['Addon_GeoFence']);
+        globals.tracking=int.parse(timeinoutMap['Addon_Tracking']);
+        globals.payroll=int.parse(timeinoutMap['Addon_Payroll']);
+        globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
+        globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         print("---------->"+Is_Delete.toString());
+
+
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
        // print(timeinoutMap['pwd']);
         prefs.setString('aid', aid);
@@ -47,10 +56,12 @@ class Home{
         //print(timeinoutMap['act']);
         return timeinoutMap['act'];
       } else {
+      //  print('8888');
         return "Poor network connection";
       }
     }catch(e){
-      //print(e.toString());
+     // print('9999');
+   //   print(e.toString());
       return "Poor network connection";
     }
   }
