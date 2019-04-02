@@ -14,6 +14,7 @@ import 'profile.dart';
 import 'settings.dart';
 import 'globals.dart';
 import 'package:Shrine/services/saveimage.dart';
+import 'Image_view.dart';
 
 //import 'package:intl/intl.dart';
 
@@ -454,7 +455,7 @@ print('visit out called for visit id:'+visit_id);
                                           Container(
                                             width: 62.0,
                                             height: 62.0,
-                                            child: Container(
+                                            child:InkWell(child: Container(
                                                 decoration: new BoxDecoration(
                                                     shape: BoxShape
                                                         .circle,
@@ -465,7 +466,13 @@ print('visit out called for visit id:'+visit_id);
                                                                 .data[index]
                                                                 .pi_img)
                                                     )
-                                                )),),
+                                                )),
+                                              onTap: (){
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: org_name)),
+                                                );
+                                              },),),
 
                                         ],
                                       )
@@ -485,6 +492,7 @@ print('visit out called for visit id:'+visit_id);
                                           Container(
                                             width: 62.0,
                                             height: 62.0,
+                                            child:InkWell(
                                             child: Container(
                                                 decoration: new BoxDecoration(
                                                     shape: BoxShape
@@ -496,7 +504,14 @@ print('visit out called for visit id:'+visit_id);
                                                                 .data[index]
                                                                 .po_img)
                                                     )
-                                                )),),
+                                                )),
+                                              onTap: (){
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].po_img,org_name: org_name)),
+                                                );
+                                              },
+                                            ),),
 
                                         ],
                                       )

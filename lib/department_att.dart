@@ -8,16 +8,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
+import 'Image_view.dart';
+
 // This app is a stateful, it tracks the user's current choice.
 class Department_att extends StatefulWidget {
   @override
   _Department_att createState() => _Department_att();
 }
-TextEditingController today;
+TextEditingController today;String _orgName;
 class _Department_att extends State<Department_att> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _orgName;
+
   String dept='0';
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
@@ -267,6 +269,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -278,7 +281,15 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                                             .data[index]
                                                                             .EntryImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                                      ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -298,6 +309,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -309,7 +321,15 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                                             .data[index]
                                                                             .ExitImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )

@@ -270,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
               (admin_sts == '1')
                   ? BottomNavigationBarItem(
                 icon: new Icon(
-                  Icons.library_books,color: Colors.orangeAccent,
+                  Icons.library_books,color: Colors.black54,
                 ),
                 title: new Text('Reports'),
               )

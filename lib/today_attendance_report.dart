@@ -6,16 +6,17 @@ import 'package:Shrine/services/services.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
+import 'Image_view.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TodayAttendance extends StatefulWidget {
   @override
   _TodayAttendance createState() => _TodayAttendance();
 }
-
+String _orgName;
 class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _orgName;
+
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -224,6 +225,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                 Container(
                                                   width: 62.0,
                                                   height: 62.0,
+                                                  child:InkWell(
                                                   child: Container(
                                                       decoration: new BoxDecoration(
                                                           shape: BoxShape
@@ -235,7 +237,14 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                                       .data[index]
                                                                       .EntryImage)
                                                           )
-                                                      )),),
+                                                      )),
+                                                    onTap: (){
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                      );
+                                                    },
+                                                  ),),
 
                                               ],
                                             )
@@ -255,6 +264,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                 Container(
                                                   width: 62.0,
                                                   height: 62.0,
+                                                  child:InkWell(
                                                   child: Container(
                                                       decoration: new BoxDecoration(
                                                           shape: BoxShape
@@ -266,7 +276,15 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                                       .data[index]
                                                                       .ExitImage)
                                                           )
-                                                      )),),
+                                                      )),
+                                                    onTap: (){
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                      );
+                                                    },
+                                    ),
+                                    ),
 
                                               ],
                                             )

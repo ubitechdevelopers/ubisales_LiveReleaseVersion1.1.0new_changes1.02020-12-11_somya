@@ -81,7 +81,7 @@ class SaveImage{
 
       File imagei = null;
       imageCache.clear();
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 200.0,maxHeight: 200.0);
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 250.0,maxHeight: 250.0);
       if(imagei!=null) {
         /*
       final tempDir = await getTemporaryDirectory();
@@ -198,7 +198,7 @@ class SaveImage{
       File imagei = null;
       imageCache.clear();
 
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 200.0,maxHeight: 200.0);
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 250.0,maxHeight: 250.0);
 
       if(imagei!=null) {
         /*
@@ -277,52 +277,100 @@ class SaveImage{
     try{
       File imagei = null;
       imageCache.clear();
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 200.0,maxHeight: 200.0);
-      if(imagei!=null) {
-        //// sending this base64image string +to rest api
-        Dio dio = new Dio();
-        String location = globals.globalstreamlocationaddr;
-        Map<String, double> _currentLocation = globals.list[globals.list.length-1];
-        String lat = _currentLocation["latitude"].toString();
-        String long = _currentLocation["longitude"].toString();
-        /*print('-------------------------------');
+      if(globals.visitImage==1) {
+        imagei = await ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+        if (imagei != null ) {
+          //// sending this base64image string +to rest api
+          Dio dio = new Dio();
+          String location = globals.globalstreamlocationaddr;
+          Map<String, double> _currentLocation = globals.list[globals.list
+              .length - 1];
+          String lat = _currentLocation["latitude"].toString();
+          String long = _currentLocation["longitude"].toString();
+          /*print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
         return false;*/
-        FormData formData = new FormData.from({
-          "uid": mk.uid,
-          "location": location,
-          "cid": mk.cid,
-          "refid": mk.refid,
-          "latit": lat,
-          "longi": long,
-          "file": new UploadFileInfo(imagei, "image.png"),
-        });
-        print("5");
-        Response<String> response1;
-        try { print('------------');
-        response1 = await dio.post(
-            globals.path + "saveVisit", data: formData);
-        print("----->save visit image --->"+response1.toString());
-        }catch(e){
-          print('------------');
-          print(e.toString());
-          print('------------');
-        }
-        imagei.deleteSync();
-        imageCache.clear();
-        /*getTempImageDirectory();*/
-        Map MarkAttMap = json.decode(response1.data);
-        print('------------1');
-        print(MarkAttMap["res"].toString());
-        print('------------2');
-        if (MarkAttMap["res"].toString() == '1')
-          return true;
-        else
+          FormData formData = new FormData.from({
+            "uid": mk.uid,
+            "location": location,
+            "cid": mk.cid,
+            "refid": mk.refid,
+            "latit": lat,
+            "longi": long,
+            "file": new UploadFileInfo(imagei, "image.png"),
+          });
+          print("5*");
+          Response<String> response1;
+          try {
+            print('------------**');
+            response1 = await dio.post(
+                globals.path + "saveVisit", data: formData);
+            print("----->save visit image* --->" + response1.toString());
+          } catch (e) {
+            print('------------*');
+            print(e.toString());
+            print('------------*');
+          }
+               imagei.deleteSync();
+               imageCache.clear();
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print('------------1*');
+          print(MarkAttMap["res"].toString());
+          print('------------2*');
+          if (MarkAttMap["res"].toString() == '1')
+            return true;
+          else
+            return false;
+        } else {
+          print("6*");
           return false;
-      }else{
-        print("6");
-        return false;
+        }
+      }else{ // if image is optional at the time of marking visit
+
+          Dio dio = new Dio();
+          String location = globals.globalstreamlocationaddr;
+          Map<String, double> _currentLocation = globals.list[globals.list
+              .length - 1];
+          String lat = _currentLocation["latitude"].toString();
+          String long = _currentLocation["longitude"].toString();
+          /*print('-------------------------------');
+        print(mk.uid+" "+mk.cid);
+        print('-------------------------------');
+        return false;*/
+          FormData formData = new FormData.from({
+            "uid": mk.uid,
+            "location": location,
+            "cid": mk.cid,
+            "refid": mk.refid,
+            "latit": lat,
+            "longi": long,
+            //   "file": new UploadFileInfo(imagei, "image.png"),@@@@@@@@@@@@@
+          });
+          print("5");
+          Response<String> response1;
+          try {
+            print('------------');
+            response1 = await dio.post(
+                globals.path + "saveVisit", data: formData);
+            print("----->save visit image --->" + response1.toString());
+          } catch (e) {
+            print('------------');
+            print(e.toString());
+            print('------------');
+          }
+
+          Map MarkAttMap = json.decode(response1.data);
+          print('------------1');
+          print(MarkAttMap["res"].toString());
+          print('------------2');
+          if (MarkAttMap["res"].toString() == '1')
+            return true;
+          else
+            return false;
+
       }
     } catch (e) {
       print('7');
@@ -336,52 +384,93 @@ class SaveImage{
     try{
       File imagei = null;
       imageCache.clear();
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 200.0,maxHeight: 200.0);
-      if(imagei!=null) {
-        //// sending this base64image string +to rest api
-        Dio dio = new Dio();
-        String location = globals.globalstreamlocationaddr;
-        Map<String, double> _currentLocation = globals.list[globals.list.length-1];
-        String lat = _currentLocation["latitude"].toString();
-        String long = _currentLocation["longitude"].toString();
-        /*print('-------------------------------');
+      if(globals.visitImage==1) {
+        imagei = await ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+        if (imagei != null) {
+          //// sending this base64image string +to rest api
+          Dio dio = new Dio();
+          String location = globals.globalstreamlocationaddr;
+          Map<String, double> _currentLocation = globals.list[globals.list
+              .length - 1];
+          String lat = _currentLocation["latitude"].toString();
+          String long = _currentLocation["longitude"].toString();
+          /*print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
         return false;*/
-        FormData formData = new FormData.from({
-          "empid":empid,
-          "visit_id":visit_id,
-          "addr":addr,
-          "latit":latit,
-          "longi":longi,
-          "remark":remark,
-          "refid":refid,
-          "file": new UploadFileInfo(imagei, "image.png"),
-        });
-        print("5");
-        Response<String> response1;
-        try { print('------------visit out----11');
-        response1 = await dio.post(
-            globals.path + "saveVisitOut", data: formData);
-        }catch(e){
-          print('------------visit out--1');
-          print(e.toString());
-          print('------------visit out--2');
-        }
-        imagei.deleteSync();
-        imageCache.clear();
-        /*getTempImageDirectory();*/
-        Map MarkAttMap = json.decode(response1.data);
-        print('visit out------------1');
-        print(MarkAttMap["res"].toString());
-        print('visit out------------2');
-        if (MarkAttMap["res"].toString() == '1')
-          return true;
-        else
+          FormData formData = new FormData.from({
+            "empid": empid,
+            "visit_id": visit_id,
+            "addr": addr,
+            "latit": latit,
+            "longi": longi,
+            "remark": remark,
+            "refid": refid,
+            "file": new UploadFileInfo(imagei, "image.png"),
+          });
+          print("5");
+          Response<String> response1;
+          try {
+            print('------------visit out----11');
+            response1 = await dio.post(
+                globals.path + "saveVisitOut", data: formData);
+          } catch (e) {
+            print('------------visit out--1');
+            print(e.toString());
+            print('------------visit out--2');
+          }
+          imagei.deleteSync();
+          imageCache.clear();
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print('visit out------------1');
+          print(MarkAttMap["res"].toString());
+          print('visit out------------2');
+          if (MarkAttMap["res"].toString() == '1')
+            return true;
+          else
+            return false;
+        } else {
+          print("6");
           return false;
-      }else{
-        print("6");
-        return false;
+        }
+      }else { // if image is notmandatory while marking punchout
+          Dio dio = new Dio();
+          String location = globals.globalstreamlocationaddr;
+          Map<String, double> _currentLocation = globals.list[globals.list
+              .length - 1];
+          String lat = _currentLocation["latitude"].toString();
+          String long = _currentLocation["longitude"].toString();
+          FormData formData = new FormData.from({
+            "empid": empid,
+            "visit_id": visit_id,
+            "addr": addr,
+            "latit": latit,
+            "longi": longi,
+            "remark": remark,
+            "refid": refid
+          });
+          print("5");
+          Response<String> response1;
+          try {
+            print('------------visit out----11');
+            response1 = await dio.post(
+                globals.path + "saveVisitOut", data: formData);
+          } catch (e) {
+            print('------------visit out--1');
+            print(e.toString());
+            print('------------visit out--2');
+          }
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print('visit out------------1');
+          print(MarkAttMap["res"].toString());
+          print('visit out------------2');
+          if (MarkAttMap["res"].toString() == '1')
+            return true;
+          else
+            return false;
       }
     } catch (e) {
       print('7');

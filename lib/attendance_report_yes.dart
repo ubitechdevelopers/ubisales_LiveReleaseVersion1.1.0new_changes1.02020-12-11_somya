@@ -6,16 +6,17 @@ import 'package:Shrine/services/services.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
+import 'Image_view.dart';
 // This app is a stateful, it tracks the user's current choice.
 class YesAttendance extends StatefulWidget {
   @override
   _YesAttendance createState() => _YesAttendance();
 }
-
+String _orgName;
 class _YesAttendance extends State<YesAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _orgName;
+
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -223,7 +224,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
-                                                        child: Container(
+                                                        child:InkWell(
+                                                          child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
                                                                     .circle,
@@ -234,7 +236,15 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                                             .data[index]
                                                                             .EntryImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )
@@ -254,6 +264,7 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -265,7 +276,15 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                                             .data[index]
                                                                             .ExitImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )

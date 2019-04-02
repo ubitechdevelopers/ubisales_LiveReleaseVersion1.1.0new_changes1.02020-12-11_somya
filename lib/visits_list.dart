@@ -10,6 +10,7 @@ import 'home.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
+import 'Image_view.dart';
 
 class VisitList extends StatefulWidget {
   @override
@@ -17,12 +18,12 @@ class VisitList extends StatefulWidget {
 }
 
 TextEditingController today;
-
+String _orgName;
 //FocusNode f_dept ;
 class _VisitList extends State<VisitList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-  String _orgName;
+
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');
@@ -310,6 +311,7 @@ class _VisitList extends State<VisitList> {
                                     Container(
                                       width: 62.0,
                                       height: 62.0,
+                                      child:InkWell(
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               shape: BoxShape
@@ -321,7 +323,15 @@ class _VisitList extends State<VisitList> {
                                                           .data[index]
                                                           .pi_img)
                                               )
-                                          )),),
+                                          )),
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: _orgName)),
+                                          );
+                                        },
+                                      ),
+                                      ),
 
                                   ],
                                 )
@@ -341,6 +351,7 @@ class _VisitList extends State<VisitList> {
                                     Container(
                                       width: 62.0,
                                       height: 62.0,
+                                      child:InkWell(
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               shape: BoxShape
@@ -352,7 +363,15 @@ class _VisitList extends State<VisitList> {
                                                           .data[index]
                                                           .po_img)
                                               )
-                                          )),),
+                                          )),
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].po_img,org_name: _orgName)),
+                                          );
+                                        },
+                                      ),
+                                      ),
 
                                   ],
                                 )

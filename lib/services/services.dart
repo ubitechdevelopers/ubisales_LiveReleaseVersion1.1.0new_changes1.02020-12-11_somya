@@ -12,6 +12,7 @@ import 'package:Shrine/model/model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Shrine/globals.dart';
 import 'package:validate/validate.dart';
+import 'dart:io';
 
 
 
@@ -1521,3 +1522,24 @@ addBulkAtt(List <grpattemp> data) async {
 ///////////////////////////////////////////////////////////
 ////////////////////////////group attendance ends///////////////////////////////
 ///////////////////////////////////////////////////////////
+
+
+
+////////////check net
+Future<void> checkNet () async{
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      print('connected');
+     setState(){
+       varCheckNet=1;
+     }
+    }
+  } on SocketException catch (_) {
+    print('not connected');
+    setState(){
+      varCheckNet=0;
+    }
+  }
+}
+////////////check net/

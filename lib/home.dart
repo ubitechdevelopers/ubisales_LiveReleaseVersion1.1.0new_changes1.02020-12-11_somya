@@ -30,6 +30,7 @@ import 'reports.dart';
 import 'timeoff_new.dart';
 import 'services/services.dart';
 import 'bulkatt.dart';
+import 'dart:io';
 /*import 'openCameraInActivity.dart';
 import 'package:camera/camera.dart';*/
 import 'package:connectivity/connectivity.dart';
@@ -41,6 +42,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
@@ -87,12 +89,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    super.initState();
 
+    super.initState();
+    checkNet();
     initPlatformState();
     setLocationAddress();
     startTimer();
-
+    if(varCheckNet==0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Reports()),
+      );
+      print(
+          '====================internet checked...Not connected=====================');
+    }
   }
 
 
@@ -633,7 +643,7 @@ class _HomePageState extends State<HomePage> {
      widList.add(Container(
        padding: EdgeInsets.only(top: 10.0),
        constraints: BoxConstraints(
-         maxHeight: 78.0,
+         maxHeight: 60.0,
          minHeight: 20.0,
        ),
        child: new GestureDetector(
@@ -650,8 +660,7 @@ class _HomePageState extends State<HomePage> {
                  size: 30.0,
                  color: Colors.white,
                ),
-
-               Text('Group \n Attendnace',
+               Text('Group',
                    textAlign: TextAlign.center,
                    style:
                    new TextStyle(fontSize: 15.0, color: Colors.white)),
@@ -686,6 +695,7 @@ class _HomePageState extends State<HomePage> {
            ],
          )),
    ));
+
    if(visitpunch.toString()=='1') {
    widList.add(Container(
      padding: EdgeInsets.only(top: 10.0),

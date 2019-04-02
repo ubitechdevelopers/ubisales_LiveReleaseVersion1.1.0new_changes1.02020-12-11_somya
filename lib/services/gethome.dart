@@ -40,7 +40,8 @@ class Home{
         globals.payroll=int.parse(timeinoutMap['Addon_Payroll']);
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
-        print("---------->"+Is_Delete.toString());
+        globals.visitImage=int.parse(timeinoutMap['visitImage']);
+        print("----visitImage------>"+globals.visitImage.toString());
 
 
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
