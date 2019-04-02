@@ -89,20 +89,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-
     super.initState();
     checkNet();
     initPlatformState();
     setLocationAddress();
     startTimer();
-    if(varCheckNet==0) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Reports()),
-      );
-      print(
-          '====================internet checked...Not connected=====================');
-    }
   }
 
 
@@ -228,6 +219,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     (mail_varified=='0' && alertdialogcount==0 && admin_sts=='1')?Future.delayed(Duration.zero, () => _showAlert(context)):"";
 
     return (response == 0 || userpwd!=newpwd || Is_Delete!=0) ? new AskRegisterationPage() : getmainhomewidget();
@@ -247,6 +240,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getmainhomewidget() {
+
     return new WillPopScope(
         onWillPop: () async => true,
         child: new Scaffold(

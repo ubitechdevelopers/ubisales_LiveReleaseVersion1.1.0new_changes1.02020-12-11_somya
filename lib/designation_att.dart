@@ -280,6 +280,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                                             .data[index]
                                                                             .EntryImage)
                                                                 )
+
                                                             )),
                                                           onTap: (){
                                                             Navigator.push(
@@ -573,6 +574,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -584,7 +586,15 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                                             .data[index]
                                                                             .EntryImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )
@@ -604,6 +614,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -615,7 +626,15 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                                             .data[index]
                                                                             .ExitImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )
@@ -752,6 +771,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -763,7 +783,15 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                                             .data[index]
                                                                             .EntryImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )
@@ -783,6 +811,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                       Container(
                                                         width: 62.0,
                                                         height: 62.0,
+                                                        child:InkWell(
                                                         child: Container(
                                                             decoration: new BoxDecoration(
                                                                 shape: BoxShape
@@ -794,7 +823,15 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                                             .data[index]
                                                                             .ExitImage)
                                                                 )
-                                                            )),),
+                                                            )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                            );
+                                                          },
+                                    ),
+                                    ),
 
                                                     ],
                                                   )
