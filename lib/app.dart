@@ -48,7 +48,6 @@ class _ShrineAppState extends State<ShrineApp> {
   void initState() {
     super.initState();
     getShared();
-
     checkNow().then((res){
       setState(() {
         new_ver=res;

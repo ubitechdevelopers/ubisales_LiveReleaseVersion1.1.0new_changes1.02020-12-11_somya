@@ -197,10 +197,8 @@ class _SelfRegister extends State<SelfRegister> {
                             ));
                             FocusScope.of(context).requestFocus(__name);
                             return null;
-                          } else if(_email.text!=''){
-                            if(!(validateEmail(_email.text))) {
+                          } else if(_email.text!='' && !(validateEmail(_email.text))){
                               //print((validateEmail(_email.text)).toString());
-
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
@@ -208,7 +206,7 @@ class _SelfRegister extends State<SelfRegister> {
                               ));
                               FocusScope.of(context).requestFocus(__email);
                               return null;
-                            }
+
                           }else if(_pass.text.length<6) {
                             showDialog(context: context, child:
                             new AlertDialog(
@@ -230,6 +228,7 @@ class _SelfRegister extends State<SelfRegister> {
                               _isButtonDisabled=true;
 
                             });
+
                             registerEmp(_name.text,_email.text,_pass.text,_phone.text).then((res) {
 
 

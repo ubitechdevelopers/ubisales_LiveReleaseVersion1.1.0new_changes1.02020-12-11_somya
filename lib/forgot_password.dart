@@ -163,21 +163,35 @@ class _ForgotPassword extends State<ForgotPassword> {
                               setState(() {
                                 _isButtonDisabled=true;
                               });
-                              resetMyPassword(_username.text).then((res){
+                              resetMyPassword(_username.text).then((res) async{
+                                final prefs = await SharedPreferences.getInstance();
+                                prefs.setString('username', _username.text);
+
                                 if(res==1) {
+
                                   username = _username.text;
                                   _username.text='';
                                   showInSnackBar(
                                       "Request submitted successfully");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginPage()),
+                                  );
                                   setState(() {
                                     login=true;
                                     succ=true;
                                     err=false;
                                     _isButtonDisabled=false;
                                   });
+                                  showDialog(context: context, child:
+                                  new AlertDialog(
+                                    title: new Text("Alert"),
+                                    content: new Text("Please check your mail for the Password reset link."),
+                                  ));
+
                                 }
                                 else {
-                                  showInSnackBar("Email Not Found.");
+                                  showInSnackBar("Email/Phone Not Found.");
                                   setState(() {
                                     login=false;
                                     succ=false;

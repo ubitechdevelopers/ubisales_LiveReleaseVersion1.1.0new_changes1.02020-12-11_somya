@@ -826,6 +826,8 @@ Future<int> changeMyPassword(oldPass, newPass) async {
 }
 
 Future<int> resetMyPassword(username) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('username',username);
   print('Forgot password rew sbmit'+ username);
   final response = await http.get(globals.path +
       'resetPasswordLink?una=$username');

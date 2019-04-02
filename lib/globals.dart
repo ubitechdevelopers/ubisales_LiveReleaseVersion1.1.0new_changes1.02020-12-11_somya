@@ -9,7 +9,6 @@ import 'model/timeinout.dart';
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 MarkTime mk1;
-
 List<Map<String, double>> list = new List();
 String globalstreamlocationaddr="";
 bool stopstreamingstatus = false;
