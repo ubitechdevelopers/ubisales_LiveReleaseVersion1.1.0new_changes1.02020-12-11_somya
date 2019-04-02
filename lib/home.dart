@@ -31,7 +31,7 @@ import 'timeoff_new.dart';
 import 'services/services.dart';
 import 'bulkatt.dart';
 import 'package:flutter/scheduler.dart';
-import 'dart:io';
+import 'no_net.dart';
 /*import 'openCameraInActivity.dart';
 import 'package:camera/camera.dart';*/
 import 'package:connectivity/connectivity.dart';
@@ -91,12 +91,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-   /* if(varCheckNet==0){
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Settings()),
-      );
-    }*/
+    checknetonpage(context);
     initPlatformState();
     setLocationAddress();
     startTimer();

@@ -23,14 +23,17 @@ import 'dart:io';
 import 'dart:async';
 import 'settings.dart';
 import 'reports.dart';
+import 'profile.dart';
+import 'package:flutter/scheduler.dart';
+
 
 // This app is a stateful, it tracks the user's current choice.
-class ProfilePage extends StatefulWidget {
+class NoNet extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _NoNetState createState() => _NoNetState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _NoNetState extends State<NoNet> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage = new NetworkImage(
       "http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
@@ -114,13 +117,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return (response==0) ? new LoginPage() : getmainhomewidget();
   }
-
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(value,textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
-
 
   getmainhomewidget(){
     return new Scaffold(
@@ -133,10 +134,14 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.pop(context);}),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NoNet()),
+          );
+        }),
         backgroundColor: Colors.teal,
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (newIndex) {
           if(newIndex==1){
@@ -164,7 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
             return;
           }
-          setState((){_currentIndex = newIndex;});
+          //setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
         items: [
@@ -190,9 +195,9 @@ class _ProfilePageState extends State<ProfilePage> {
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
           )
         ],
-      ),
+      ),*/
 
-      endDrawer: new AppDrawer(),
+      //endDrawer: new AppDrawer(),
       body:mainbodyWidget(),
     );
 
@@ -212,12 +217,38 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   mainbodyWidget(){
-    return SafeArea(
-    child: Text('No internet connection'),
-  );
+    return Center(
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new Text('No Internet Connection'),
+          FlatButton(
+            child: new Text(
+              "Refresh Page",
+              style: new TextStyle(
+                  color: Colors.teal, decoration: TextDecoration.underline),
+            ),
+            onPressed: () {
+              checknetonpage();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  checknetonpage(){
+    checkNet().then((value) {
+      if(value==1) {
+        print(
+            '====================internet checked...Not connected=====================');
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          Navigator.pop(context);
+        });
+      }
+    });
   }
 
- 
 }
 
 

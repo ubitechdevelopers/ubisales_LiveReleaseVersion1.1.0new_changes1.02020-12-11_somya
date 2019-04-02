@@ -13,6 +13,7 @@ import 'globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'payment.dart';
 import 'reports.dart';
+import 'services/services.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -30,6 +31,7 @@ class _Settings extends State<Settings> {
   @override
   void initState() {
     super.initState();
+    checknetonpage(context);
     getOrgName();
   }
 

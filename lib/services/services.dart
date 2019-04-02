@@ -13,7 +13,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:Shrine/globals.dart';
 import 'package:validate/validate.dart';
 import 'dart:io';
-
+import 'package:flutter/scheduler.dart';
+import 'package:Shrine/no_net.dart';
 
 
 class Services {}
@@ -1527,21 +1528,36 @@ addBulkAtt(List <grpattemp> data) async {
 
 
 
+
 ////////////check net
-Future<void> checkNet () async{
+Future<int> checkNet () async{
   try {
     final result = await InternetAddress.lookup('google.com');
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       print('connected');
-     setState(){
-       varCheckNet=1;
-     }
+      varCheckNet=1;
+    }else{
+      varCheckNet=0;
     }
   } on SocketException catch (_) {
     print('not connected');
-    setState(){
-      varCheckNet=0;
-    }
+    varCheckNet=0;
   }
+  return varCheckNet;
 }
 ////////////check net/
+
+checknetonpage(context){
+  checkNet().then((value) {
+    if(value==0) {
+      print(
+          '====================internet checked...Not connected=====================');
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NoNet()),
+        );
+      });
+    }
+  });
+}

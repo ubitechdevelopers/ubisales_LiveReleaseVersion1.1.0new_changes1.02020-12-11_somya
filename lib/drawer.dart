@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'payment.dart';
 import 'profile.dart';
 import 'userGuide.dart';
+import 'services/services.dart';
 
 
 class AppDrawer extends StatefulWidget {
@@ -42,6 +43,7 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   void initState() {
     super.initState();
+    checknetonpage(context);
     initPlatformState();
   }
   String admin_sts='0';

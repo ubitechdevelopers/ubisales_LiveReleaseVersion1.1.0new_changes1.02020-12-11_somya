@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:Shrine/app.dart';
 import 'package:Shrine/services/newservices.dart';
+import 'services/services.dart';
 void main(){
 
   runApp(
@@ -32,6 +33,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   void initState() {
+    checknetonpage(context);
     StreamLocation sl = new StreamLocation();
     sl.startStreaming(10);
   }

@@ -58,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    checknetonpage(context);
     initPlatformState();
   }
   // Platform messages are asynchronous, so we initialize in an async method.

@@ -19,6 +19,9 @@ import 'department_att.dart';
 import 'designation_att.dart';
 import 'Employeewise_att.dart';
 import  'globals.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/scheduler.dart';
+import 'no_net.dart';
 
 
 class Reports extends StatefulWidget {
@@ -37,7 +40,10 @@ class _Reports extends State<Reports> {
   @override
   void initState() {
     super.initState();
+    checknetonpage(context);
+
     getOrgName();
+
   }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
@@ -59,97 +65,97 @@ class _Reports extends State<Reports> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
   getmainhomewidget(){
-  //  print('99999999999999' + _orgName.toString());
+    //  print('99999999999999' + _orgName.toString());
     return new Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-                /*  Image.asset(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
-              ],
+          ],
+        ),
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+          Navigator.pop(context);}),
+        backgroundColor: Colors.teal,
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (newIndex) {
+          if(newIndex==2){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+            return;
+          } if (newIndex == 0) {
+            (admin_sts == '1')
+                ? Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Reports()),
+            )
+                : Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
+            return;
+          }
+          if(newIndex==1){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+            return;
+          }
+          setState((){_currentIndex = newIndex;});
+
+        }, // this will be set when a new tab is tapped
+        items: [
+          (admin_sts == '1')
+              ? BottomNavigationBarItem(
+            icon: new Icon(
+                Icons.library_books,color: Colors.orangeAccent
             ),
-            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-              Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
-          ),
-
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (newIndex) {
-              if(newIndex==2){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Settings()),
-                );
-                return;
-              } if (newIndex == 0) {
-                (admin_sts == '1')
-                    ? Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Reports()),
-                )
-                    : Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-                return;
-              }
-              if(newIndex==1){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
-                return;
-              }
-              setState((){_currentIndex = newIndex;});
-
-            }, // this will be set when a new tab is tapped
-            items: [
-              (admin_sts == '1')
-                  ? BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.library_books,color: Colors.orangeAccent
-                ),
-                title: new Text('Reports',style: TextStyle(color: Colors.orangeAccent),),
-              )
-                  : BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.person,color: Colors.orangeAccent
-                ),
-                title: new Text('Profile',style: TextStyle(color: Colors.orangeAccent),),
-              ),
-              BottomNavigationBarItem(
-                icon: new Icon(Icons.home,color: Colors.black54,),
-                title: new Text('Home',style: TextStyle(color: Colors.black54),),
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  title: Text('Settings')
-              )
-            ],
-          ),
-
-          endDrawer: new AppDrawer(),
-          body:
-          Container(
-            padding: EdgeInsets.only(left: 2.0,right: 2.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 8.0),
-                Text('Reports',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal,),),
-                SizedBox(height: 5.0),
-                new Expanded(
-                  child: getReportsWidget(),
-                )
-              ],
+            title: new Text('Reports',style: TextStyle(color: Colors.orangeAccent),),
+          )
+              : BottomNavigationBarItem(
+            icon: new Icon(
+                Icons.person,color: Colors.orangeAccent
             ),
-
+            title: new Text('Profile',style: TextStyle(color: Colors.orangeAccent),),
           ),
-        );
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home,color: Colors.black54,),
+            title: new Text('Home',style: TextStyle(color: Colors.black54),),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings')
+          )
+        ],
+      ),
+
+      endDrawer: new AppDrawer(),
+      body:
+      Container(
+        padding: EdgeInsets.only(left: 2.0,right: 2.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 8.0),
+            Text('Reports',
+              style: new TextStyle(fontSize: 22.0, color: Colors.teal,),),
+            SizedBox(height: 5.0),
+            new Expanded(
+              child: getReportsWidget(),
+            )
+          ],
+        ),
+
+      ),
+    );
 
   }
   loader(){
@@ -175,38 +181,38 @@ class _Reports extends State<Reports> {
 
   showDialogWidget(String loginstr){
 
-      return showDialog(context: context, builder:(context) {
+    return showDialog(context: context, builder:(context) {
 
-        return new AlertDialog(
-          title: new Text(
-            loginstr,
-            style: TextStyle(fontSize: 15.0),),
-          content: ButtonBar(
-            children: <Widget>[
-              FlatButton(
-                child: Text('Later',style: TextStyle(fontSize: 13.0)),
-                shape: Border.all(),
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
-                },
-              ),
-              RaisedButton(
-                child: Text(
-                  'Pay Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
-                color: Colors.orangeAccent,
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PaymentPage()),
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      }
+      return new AlertDialog(
+        title: new Text(
+          loginstr,
+          style: TextStyle(fontSize: 15.0),),
+        content: ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: Text('Later',style: TextStyle(fontSize: 13.0)),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Pay Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaymentPage()),
+                );
+              },
+            ),
+          ],
+        ),
       );
+    }
+    );
 
   }
 
@@ -328,7 +334,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check Early Leavers records.");
+                  showDialogWidget("Upgrade to Premium plan to check Early Leavers records.");
                 }else {
                   Navigator.push(
                     context,
@@ -498,7 +504,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check Visited Locations records.");
+                  showDialogWidget("Upgrade to Premium plan to check Visited Locations records.");
                 }else {
                   Navigator.push(
                     context,
@@ -541,7 +547,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check Employee's Timeoff records.");
+                  showDialogWidget("Upgrade to Premium plan to check Employee's Timeoff records.");
                 }else {
                   Navigator.push(
                     context,
@@ -583,7 +589,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
+                  showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
                 }else {
                   Navigator.push(
                     context,
@@ -664,7 +670,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check last 7 days attendance records.");
+                  showDialogWidget("Upgrade to Premium plan to check last 7 days attendance records.");
                 }else {
                   Navigator.push(
                     context,
@@ -706,7 +712,7 @@ class _Reports extends State<Reports> {
               textColor: Colors.white,
               onPressed: () {
                 if(trialstatus=="2"){
-                showDialogWidget("Upgrade to Premium plan to check last 30 days attendance records.");
+                  showDialogWidget("Upgrade to Premium plan to check last 30 days attendance records.");
                 }else {
                   Navigator.push(
                     context,
