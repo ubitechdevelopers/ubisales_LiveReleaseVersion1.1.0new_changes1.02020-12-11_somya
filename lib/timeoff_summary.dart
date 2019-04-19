@@ -196,9 +196,23 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         content: Text(value, textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+  Future<bool> sendToHome() async{
+    /*Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );*/
+    print("-------> back button pressed");
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
 
   getmainhomewidget() {
-    return Scaffold(
+    return new WillPopScope(
+        onWillPop: ()=> sendToHome(),
+    child: Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Row(
@@ -287,6 +301,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         tooltip: 'Mark TimeOff',
         child: new Icon(Icons.add),
       ),
+    ),
     );
   }
 

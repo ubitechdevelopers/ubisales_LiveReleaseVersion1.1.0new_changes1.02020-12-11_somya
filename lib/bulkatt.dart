@@ -114,8 +114,24 @@ class _Bulkatt extends State<Bulkatt> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
+  Future<bool> sendToHome() async{
+    /*Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );*/
+    print("-------> back button pressed");
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
+
+
   getmainhomewidget() {
-    return Scaffold(
+    return new WillPopScope(
+      onWillPop: ()=> sendToHome(),
+      child: Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Row(
@@ -325,15 +341,31 @@ class _Bulkatt extends State<Bulkatt> {
                           DateTime to;
                           for(var i = 0; i < _saved.length; i++){
                             if(_saved[i].shifttype=='1'){
-                              var arr = _saved[i].timein.split(':');
-                              from = new DateTime(2001, 01, 01,
-                                  int.parse(arr[0]), int.parse(arr[1]), 00, 00);
-                              var arr1 = _saved[i].timeout.split(':');
-                              to = new DateTime(2001, 01, 01,
-                                  int.parse(arr1[0]), int.parse(arr1[1]), 00, 00);
-                              if(!from.isBefore(to)){
-                                showInSnackBar(_saved[i].Name+"'s timein is greater than timeout...");
-                                return null;
+                              print(_saved[i].timeout);
+                              if(_saved[i].timeout!='0:0') {
+                                var arr = _saved[i].timein.split(':');
+                                from = new DateTime(
+                                    2001,
+                                    01,
+                                    01,
+                                    int.parse(arr[0]),
+                                    int.parse(arr[1]),
+                                    00,
+                                    00);
+                                var arr1 = _saved[i].timeout.split(':');
+                                to = new DateTime(
+                                    2001,
+                                    01,
+                                    01,
+                                    int.parse(arr1[0]),
+                                    int.parse(arr1[1]),
+                                    00,
+                                    00);
+                                if (!from.isBefore(to)) {
+                                  showInSnackBar(_saved[i].Name +
+                                      "'s timein is greater than timeout...");
+                                  return null;
+                                }
                               }
                             }
                           }
@@ -386,6 +418,7 @@ class _Bulkatt extends State<Bulkatt> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -464,7 +497,7 @@ class _Bulkatt extends State<Bulkatt> {
                                   ),
                                   onChanged: (t) => setState(() => emplist[index].timein = t.hour.toString()+':'+t.minute.toString()),
                                   validator: (time) {
-                                    if (time == null) {
+                                    if (time == null && emplist[index].csts==1) {
                                       return 'Please enter TimeIn';
                                     }
                                   },
@@ -485,7 +518,7 @@ class _Bulkatt extends State<Bulkatt> {
                                   ),
                                   onChanged: (t) => setState(() => emplist[index].timeout = t.hour.toString()+':'+t.minute.toString()),
                                   validator: (time) {
-                                    if (time == null) {
+                                    if (time == null && emplist[index].csts==1) {
                                       return 'Please enter TimeOut';
                                     }
                                   },

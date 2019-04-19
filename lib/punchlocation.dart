@@ -469,7 +469,7 @@ class _PunchLocation extends State<PunchLocation> {
                   startTimer();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => PunchLocation()),
                   );
                 },
               ),
@@ -563,7 +563,7 @@ class _PunchLocation extends State<PunchLocation> {
                         sl.startStreaming(5);
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => PunchLocation()),
                         );
                       },
                     )

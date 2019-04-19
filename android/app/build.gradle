@@ -40,8 +40,8 @@ android {
         applicationId "org.ubitech.attendance"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 30008
-        versionName "3.0.8"
+        versionCode 40000
+        versionName "4.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
