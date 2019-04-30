@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
+import 'package:flutter/scheduler.dart';
 // This app is a stateful, it tracks the user's current choice.
 class EmployeeWise_att extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ String _orgName;
 class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  String countP='-',countA='-',countL='-',countE='-';
   String emp='0';
 //  var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
@@ -68,16 +69,16 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present',
+                  text: 'Present\n ('+countP+')',
                 ),
                 new Tab(
-                  text: 'Absent',
+                  text: 'Absent\n ('+countA+')',
                 ),
                 new Tab(
-                  text: 'Late \nComing',
+                  text: 'Late \n ('+countL+')',
                 ),
                 new Tab(
-                  text: 'Early \nLeaving',
+                  text: 'Early \n ('+countE+')',
                 ),
               ],
             ),
@@ -123,6 +124,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('present',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countP=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -316,6 +320,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('absent',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countA=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -428,6 +435,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('latecomings',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countL=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -625,6 +635,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('earlyleavings',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countE=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -848,6 +861,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         setState(() {
                           emp = newValue;
                           res = true;
+
                         });
                     },
                     items: snapshot.data.map((Map map) {

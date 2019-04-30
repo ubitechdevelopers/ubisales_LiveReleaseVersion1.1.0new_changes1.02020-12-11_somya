@@ -24,6 +24,7 @@ import 'askregister.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -88,6 +89,8 @@ class _LoginPageState extends State<LoginPage> {
                           scan().then((onValue){
                             print("******************** QR value **************************");
                             print(onValue);
+                            print("******************** QR value **************************");
+                            return false;
                             if(onValue!='error') {
                               markAttByQR(onValue, context);
                             }else {

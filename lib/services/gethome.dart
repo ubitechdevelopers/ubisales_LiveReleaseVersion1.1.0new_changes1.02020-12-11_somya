@@ -41,6 +41,8 @@ class Home{
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
+        globals.attImage=int.parse(timeinoutMap['attImage']);
+        globals.areaId=int.parse(timeinoutMap['areaId']);
         print("----visitImage------>"+globals.visitImage.toString());
 
 

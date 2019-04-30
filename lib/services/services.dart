@@ -373,7 +373,7 @@ Future<List<Map>> getEmployeesList(int label) async{
   final response = await http.get(globals.path + 'getEmployeesList?orgid=$orgid');
   List data = json.decode(response.body.toString());
   List<Map> depts = createEMpListDD(data,label);
-  print(depts);
+ // print(depts);
   return depts;
 }
 List<Map> createEMpListDD(List data,int label) {
@@ -653,6 +653,7 @@ Future<List<Emp>> getEmployee() async {
 //  print('fun end here1');
   List responseJson = json.decode(response.body.toString());
   // print('fun end here2');
+  print(responseJson);
   List<Emp> empList = createEmpList(responseJson);
   // print('fun end here3');
 //  print(empList);
@@ -660,22 +661,32 @@ Future<List<Emp>> getEmployee() async {
 }
 
 List<Emp> createEmpList(List data) {
-  // print('Create list called');
   List<Emp> list = new List();
   for (int i = 0; i < data.length; i++) {
     String name = data[i]["name"];
-    String dept = data[i]["Department"];
-    String desg = data[i]["Designation"];
+    String dept = data[i]["Department"].length>20?data[i]["Department"].substring(0,15)+'..':data[i]["Department"];
+    String desg = data[i]["Designation"].length>20?data[i]["Designation"].substring(0,15)+'..':data[i]["Designation"];
+    String shift = data[i]["Shift"];
     String status = data[i]["archive"] == '1' ? 'Active' : 'Inactive';
     String id = data[i]["Id"];
-    //  print(name+'**'+dept+'**'+desg);
+    String Email= data[i]["Email"];
+    String Mobile= data[i]["Mobile"];
+    String Admin= data[i]["Admin"] == '1' ? 'Mobile Admin' : 'User';
+    String Profile= data[i]["Profile"];
+
     Emp emp = new Emp(
         Name: name,
         Department: dept,
         Designation: desg,
+        Shift: shift,
         Status: status,
+        Email:Email,
+        Mobile:Mobile,
+        Admin:Admin,
+        Profile:Profile,
         Id: id);
     list.add(emp);
+
   }
   return list;
 }
@@ -684,10 +695,16 @@ class Emp {
   String Name;
   String Department;
   String Designation;
+  String Shift;
   String Status;
+  String Email;
+  String Mobile;
+  String Admin;
+  String Profile;
   String Id;
 
-  Emp({this.Name, this.Department, this.Designation, this.Status, this.Id});
+ // Emp({this.Name, this.Department, this.Designation, this.Status, this.Id});
+  Emp({this.Name, this.Department, this.Designation, this.Shift,this.Status, this.Id,this.Email,this.Mobile,this.Admin,this.Profile});
 }
 
 Future<int> addEmployee(
@@ -852,7 +869,8 @@ Future<List<Attn>> getTodaysAttn(listType) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
   final response = await http.get(
-      globals.path + 'getAttendances_new?refno=$orgdir&datafor=$listType');
+      globals.path + 'getAttendances_n'
+          'ew?refno=$orgdir&datafor=$listType');
   final res = json.decode(response.body);
  // print(res);
   List responseJson;
@@ -1560,4 +1578,26 @@ checknetonpage(context){
       });
     }
   });
+}
+
+Future<String> getAreaStatus () async{
+  print('getAreaStatus 1');
+  Map<String, double> _currentLocation = globals.list[globals.list.length-1];
+  String lat = _currentLocation["latitude"].toString();
+  String long = _currentLocation["longitude"].toString();
+  print('getAreaStatus 1');
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  print('SERVICE CALLED: '+globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
+  String status='0';
+  if(empid!=null && empid!='' && empid!=0) {
+    final response =
+    await http.get(
+        globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
+    status = json.decode(response.body.toString());
+  }
+  print('-------status----------->');
+  print(status);
+  print('<-------status-----------');
+  return status;
 }

@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
+import 'package:flutter/scheduler.dart';
+
 // This app is a stateful, it tracks the user's current choice.
 class Designation_att extends StatefulWidget {
   @override
@@ -18,7 +20,7 @@ TextEditingController today;String _orgName;
 class _Designation_att extends State<Designation_att> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  String countP='-',countA='-',countL='-',countE='-';
   String desg='0';
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
@@ -75,8 +77,13 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               ),
               onChanged: (date) {
                 setState(() {
-                  if (date != null && date.toString()!='')
+                  if (date != null && date.toString()!='') {
                     res = true; //showInSnackBar(date.toString());
+                    countP='(-)';
+                    countA='(-)';
+                    countE='(-)';
+                    countL='(-)';
+                  }
                   else
                     res = false;
                 });
@@ -135,16 +142,16 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present',
+                  text: 'Present\n ('+countP+')',
                 ),
                 new Tab(
-                  text: 'Absent',
+                  text: 'Absent\n ('+countA+')',
                 ),
                 new Tab(
-                  text: 'Late \nComers',
+                  text: 'Late \n ('+countL+')',
                 ),
                 new Tab(
-                  text: 'Early \nLeavers',
+                  text: 'Early \n ('+countE+')',
                 ),
               ],
             ),
@@ -189,6 +196,9 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('present',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countP=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -383,6 +393,9 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('absent',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countA=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -495,6 +508,9 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('latecomings',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                              countL=snapshot.data.length.toString();
+                            }));
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -691,6 +707,9 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                       child: new FutureBuilder<List<Attn>>(
                         future: getCDateAttnDesgWise('earlyleavings',today.text,desg),
                         builder: (context, snapshot) {
+                          SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            countE=snapshot.data.length.toString();
+                          }));
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
@@ -918,6 +937,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                           desg = newValue;
                           res = true;
                           print('state set----');
+                          countP='-';
+                          countA='-';
+                          countE='-';
+                          countL='-';
                         });
                       });
                     },

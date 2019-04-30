@@ -8,6 +8,8 @@ import 'home.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'Image_view.dart';
 
 class EmployeeList extends StatefulWidget {
   @override
@@ -22,6 +24,15 @@ class _EmployeeList extends State<EmployeeList> {
   String _sts1 = 'Active';
   String admin_sts='0';
   String _orgName;
+
+  _launchURL(url) async {
+  //  const url = 'https://flutter.io';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -128,39 +139,11 @@ class _EmployeeList extends State<EmployeeList> {
               children: <Widget>[
                 SizedBox(height: 8.0),
                 Center(
-                  child: Text('Employees',
+                  child: Text('Employee Directory',
                     style: new TextStyle(fontSize: 22.0, color: Colors.orangeAccent,),),
                 ),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
-                Container(
-                 padding: EdgeInsets.only(bottom:10.0,top: 10.0),
-                  width: MediaQuery.of(context).size.width*.9,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.30,
-                        child: Text('Employees', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Department', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Designation', style: TextStyle( color: Colors.orange),textAlign: TextAlign.left),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.16,
-                        child: Text('Status', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left),
-                      ),
-
-                    ],
-                  ),
-                ),
-                Divider(height: 0.2,),
                 new Expanded(
                   child: getDeptWidget(),
                 ),
@@ -209,6 +192,129 @@ class _EmployeeList extends State<EmployeeList> {
                 itemBuilder: (BuildContext context, int index) {
                   return  new Column(
                       children: <Widget>[
+                        Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+
+                              InkWell(
+                          child:
+                              new Container(
+                                margin: EdgeInsets.only(left: 5.0),
+                                  width: 70.0,
+                                  height: 70.0,
+                               child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/imgloader.gif',
+                                  image: snapshot.data[index].Profile.toString(),
+                                  fit: BoxFit.fill,
+                                  placeholderScale: 55.0,
+
+                                ),
+                                /*  decoration: new BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: new DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: NetworkImage(snapshot.data[index].Profile.toString()),//_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                      )
+                                  )*/),
+
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].Profile,org_name: _orgName)),
+                              );
+                            },
+                          ),
+                              SizedBox(width: 10.0,),
+
+                             Column(
+                               crossAxisAlignment: CrossAxisAlignment.start,
+                               children: <Widget>[
+                                 Row(
+                                   children: <Widget>[
+                                     Container(
+                                       width: MediaQuery.of(context).size.width*0.55,
+                                       child: new Text(snapshot.data[index].Name.toString(),style: TextStyle(color: Colors.teal,fontSize: 18.0,fontWeight: FontWeight.w500),),
+                                     ),
+
+
+                                     new InkWell(
+                                       onTap:(){
+                                         _launchURL('tel:'+snapshot.data[index].Mobile.toString());
+                                       },
+                                       child:Icon(Icons.call,color:Colors.blue,),),
+
+                                     SizedBox(width: 10.0,),
+                                     new InkWell(
+                                       onTap:(){
+                                         print('SMS tapped');
+                                         _launchURL('sms:'+snapshot.data[index].Mobile.toString());
+                                       },
+                                       child:Icon(Icons.sms,color:Colors.blue,),),
+                                /*     snapshot.data[index].Email.toString()!=''&& snapshot.data[index].Email.toString()!=null?
+                                     new InkWell(
+                                       onTap:(){
+                                         print('SMS tapped');
+                                         _launchURL('Email:'+snapshot.data[index].Email.toString());
+                                       },
+                                       child:Icon(Icons.mail,color:Colors.blue,),)
+                                         :Center(),*/
+                                   ],
+                                 ),
+                                   Text(snapshot.data[index].Designation.toString()+'('+snapshot.data[index].Department.toString()+')'),
+                                   Text(snapshot.data[index].Mobile.toString()),
+                                 snapshot.data[index].Email.toString()!=''&& snapshot.data[index].Email.toString()!=null?Text(snapshot.data[index].Email.toString()):Center(),
+                                 RichText(
+                                   textAlign: TextAlign.left,
+                                   softWrap: true,
+                                   text: TextSpan(children: <TextSpan>
+                                   [
+                                     TextSpan(text:"Shift: ",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                                     TextSpan(text:snapshot.data[index].Shift.toString(),style: TextStyle(color: Colors.black)),
+                                   ]
+                                   ),
+                                 ),
+                                 RichText(
+                                   textAlign: TextAlign.left,
+                                   softWrap: true,
+                                   text: TextSpan(children: <TextSpan>
+                                   [
+                                     TextSpan(text:"Permissions: ",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                                     snapshot.data[index].Admin.toString()=='Mobile Admin'?
+                                     TextSpan(text:snapshot.data[index].Admin.toString(),style: TextStyle(color: Colors.green)):
+                                     TextSpan(text:snapshot.data[index].Admin.toString(),style: TextStyle(color: Colors.black)),
+                                   ]
+                                   ),
+                                 ),
+                             /*    RichText(
+                                   textAlign: TextAlign.left,
+                                   softWrap: true,
+                                   text: TextSpan(children: <TextSpan>
+                                   [
+                                     TextSpan(text:"Status: ",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                                     snapshot.data[index].Status.toString()=='Inactive'?
+                                     TextSpan(text:snapshot.data[index].Status.toString(),style: TextStyle(color: Colors.red)):
+                                     TextSpan(text:snapshot.data[index].Status.toString(),style: TextStyle(color: Colors.black)),
+
+                                   ]
+                                   ),
+                                 ),
+*/
+
+                               ],
+                             ),
+
+
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                      ]
+                  );
+                }
+            );
+          }/*
+
                         new FlatButton(
                           child : new Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,11 +343,7 @@ class _EmployeeList extends State<EmployeeList> {
                             //    editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
                           },),
                         Divider(color: Colors.blueGrey.withOpacity(0.25),height: 0.2,),
-                      ]
-                  );
-                }
-            );
-          }
+                        */
           return loader();
         }
     );

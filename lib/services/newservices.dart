@@ -16,6 +16,7 @@ import 'package:Shrine/globals.dart';
 import 'services.dart';
 
 
+
 class RequestTimeOffService{
 
   var dio = new Dio();
@@ -468,6 +469,7 @@ class StreamLocation{
   void startStreaming(int listlength) async{
     int counter = 0;
     stopstreamingstatus = false;
+
     _locationSubscription =
         _location.onLocationChanged().listen((Map<String,double> result) {
             _currentLocation = result;

@@ -7,6 +7,7 @@ import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
+
 // This app is a stateful, it tracks the user's current choice.
 class TodayAttendance extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ String _orgName;
 class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  String countP='-',countA='-',countL='-',countE='-';
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -28,13 +29,26 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
     setState(() {
       _orgName= prefs.getString('org_name') ?? '';
     });
+
+    getChartDataToday().then((onValue){
+      print('get chart data summary called successfully......');
+      setState(() {
+        countP=onValue[0]['present'];
+        countA=onValue[0]['absent'];
+        countL=onValue[0]['late'];
+        countE=onValue[0]['early'];
+      });
+    });
+
   }
   @override
   void initState() {
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
+
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -86,22 +100,24 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
           ),
           Divider(),
           new Container(
+
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
+
               indicator: BoxDecoration(color: Colors.orangeAccent,),
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present',
+                  text: 'Present ',//('+countP+')',
                 ),
                 new Tab(
-                  text: 'Absent',
+                  text: 'Absent',// ('+countA+')',
                 ),
                 new Tab(
-                  text: 'Late \nComers',
+                  text: 'Late \nComers',// ('+countL+')',
                 ),
                 new Tab(
-                  text: 'Early \nLeavers',
+                  text: 'Early \nLeavers',// ('+countE+')',
                 ),
               ],
             ),
@@ -399,6 +415,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                 child:Text("No one is absent today"),
                               );
                             }
+
                           }
                           else if (snapshot.hasError) {
                              return new Text("Unable to connect server");

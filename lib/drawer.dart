@@ -278,7 +278,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To Generate Payroll, Login to the web panel.", "To Generate Payroll upgrade to Premium Plan.");
             },
           ):new Center(),*/
-          reportper ==1?new ListTile(
+          reportper == 1?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.camera,size: 20.0),SizedBox(width: 5.0),
@@ -362,7 +362,7 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             onTap: () {
               final RenderBox box = context.findRenderObject();
-              Share.share("Hi! I have had a great experience with ubiAttendance App!  I highly recommend it to monitor Attendance & Location of  your employees. Download via the following link\n"+store,
+              Share.share("Check out ubiAttendance App. I use it to track attendance and visits of my employees. Get it for free at \n"+store,
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
                   box.size);

@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';
+import 'Image_view.dart';
 //import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class Bulkatt extends StatefulWidget {
@@ -244,7 +245,7 @@ class _Bulkatt extends State<Bulkatt> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.25,
                     child: Text(
-                      'Student',
+                      'Name',
                       style: TextStyle(
                           color: Colors.orangeAccent,
                           fontWeight: FontWeight.bold,
@@ -458,7 +459,8 @@ class _Bulkatt extends State<Bulkatt> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Container(
+                            InkWell(
+                              child:Container(
                                 width: 62.0,
                                 height: 62.0,
                                 child: Container(
@@ -468,6 +470,13 @@ class _Bulkatt extends State<Bulkatt> {
                                             fit: BoxFit.fill,
                                             image: new NetworkImage(
                                                 emplist[index].img)))),
+                              ),
+                              onTap: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
+                                );
+                              },
                               ),
                               Text(
                                 emplist[index].Name.toString(),

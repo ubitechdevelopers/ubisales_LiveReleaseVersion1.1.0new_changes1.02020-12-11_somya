@@ -22,11 +22,11 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'login.dart';
 import 'ask_registeration.dart';
 import 'self_register_emp.dart';
+import 'register_org.dart';
 class AskRegisterationPage extends StatefulWidget {
   @override
   _AskRegisterationPageState createState() => _AskRegisterationPageState();
 }
-
 class _AskRegisterationPageState extends State<AskRegisterationPage> {
   String barcode = "";
   final _formKey = GlobalKey<FormState>();
@@ -95,11 +95,14 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                                 child: Text('Not registered? Sign Up',style: new TextStyle(color: Colors.orangeAccent,fontSize: 15.0),),
                                 color: Colors.white,
                                 onPressed: () {
-                                 Navigator.push(
+                                  Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => MyApp()),
+                                  );
+                                /* Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => AskRegisteration()),
                                    // MaterialPageRoute(builder: (context) => MyApp()),
-                                  );
+                                  );*/
                                 },
                               ),
                             ),

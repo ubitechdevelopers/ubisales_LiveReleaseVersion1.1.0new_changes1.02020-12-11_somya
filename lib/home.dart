@@ -22,18 +22,17 @@ import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
-import 'globals.dart';
 import 'punchlocation_summary.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
-import 'timeoff_new.dart';
 import 'services/services.dart';
 import 'bulkatt.dart';
-import 'package:flutter/scheduler.dart';
-import 'no_net.dart';
-/*import 'openCameraInActivity.dart';
-import 'package:camera/camera.dart';*/
+import 'package:Shrine/globals.dart' as globals;
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
+import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -83,9 +82,13 @@ class _HomePageState extends State<HomePage> {
       profile,
       latit = "",
       longi = "";
+  bool issave = false;
+
+  String areaStatus='0';
   String aid = "";
   String shiftId = "";
   List<Widget> widgets;
+
 
 
   @override
@@ -127,6 +130,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   setLocationAddress() async {
+    getAreaStatus().then((res){
+      setState(() {
+        areaStatus=res.toString();
+      });
+    }).catchError((onError){
+      print('Exception occured in clling function.......');
+      print(onError);
+
+    });
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
       if (list != null && list.length > 0) {
@@ -707,12 +719,7 @@ class _HomePageState extends State<HomePage> {
                  builder: (context) => PunchLocationSummary()),
            );
          },
-         child: Row(
-             children: [
-               SizedBox(width: MediaQuery
-                   .of(context)
-                   .size
-                   .width * .08),
+         child:
                Column(
                  children: [
                    Icon(
@@ -726,7 +733,7 @@ class _HomePageState extends State<HomePage> {
                        new TextStyle(fontSize: 15.0, color: Colors.white)),
                  ],
                )
-             ])),
+            ),
    ));
  }
 
@@ -956,7 +963,7 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(width: 5.0,),
                     new InkWell(
                       child: new Text(
-                        "Refresh location",
+                        "Refresh location", // main  widget
                         style: new TextStyle(
                             color: Colors.teal,
                             decoration: TextDecoration.underline),
@@ -973,6 +980,23 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
+                  SizedBox(height: 5.0,),
+              areaId!=0 && geoFence==1? areaStatus=='0'?Container(
+                    padding: EdgeInsets.only(left: 10.0,right: 10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                    //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                    ),
+                    child:Text('Outside fenced area',style: TextStyle(fontSize: 20.0,color: Colors.white),),
+                  ):
+              Container(
+                padding: EdgeInsets.only(left: 10.0,right: 10.0),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                ),
+                child:Text('Within fenced area',style: TextStyle(fontSize: 20.0,color: Colors.white),),
+              ):Center(),
             ])),
       ]);
     } else {
@@ -1044,36 +1068,44 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
       SaveImage saveImage = new SaveImage();
-      bool issave = false;
+
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveTimeInOutImagePicker(mk);
-      ////print(issave);
-      if (issave) {
-        showDialog(context: context, child:
-        new AlertDialog(
-          content: new Text("Attendance marked successfully!"),
-        )
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-        );
-        setState(() {
-          act1 = act;
-        });
-      } else {
-        showDialog(context: context, child:
-        new AlertDialog(
-          title: new Text("!"),
-          content: new Text("Problem while marking attendance, try again."),
-        )
-        );
-        setState(() {
-          act1 = act;
-        });
-      }
+
+         saveTimeInOutImagePicker_new(mk).then((res){/*
+           print("res: "+res.toString());
+           print("issave: "+issave.toString());
+           if (issave==true || res==true) {
+             showDialog(context: context, child:
+             new AlertDialog(
+               content: new Text("Attendance marked successfully!"),
+             )
+             );
+             Navigator.push(
+               context,
+               MaterialPageRoute(builder: (context) => MyApp()),
+             );
+             setState(() {
+               act1 = act;
+             });
+           } else {
+             showDialog(context: context, child:
+             new AlertDialog(
+               title: new Text("Warning!"),
+               content: new Text("Problem while marking attendance, try again."),
+             )
+             );
+             setState(() {
+               act1 = act;
+             });
+           }*/
+         });
+
+
+
+
+
     }else{
       showDialog(context: context, child:
       new AlertDialog(
@@ -1182,4 +1214,272 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+
+  //////////////////////////////////////////////////////////////////
+  Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
+    String base64Image;
+    String base64Image1;
+    print('saveTimeInOutImagePicker_new CALLED');
+    String location = globalstreamlocationaddr;
+    Map<String, double> _currentLocation =
+    globals.list[list.length - 1];
+    String lat = _currentLocation["latitude"].toString();
+    String long = _currentLocation["longitude"].toString();
+
+    try {
+      ///////////////////////////
+      StreamLocation sl = new StreamLocation();
+      sl.startStreaming(5);
+      Location _location = new Location();
+
+      ////////////////////////////////suumitted block
+      File imagei = null;
+      imageCache.clear();
+      if (globals.attImage == 1) {
+        ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+            .then((imagei) {
+          if (imagei != null) {
+            _location.getLocation().then((res) {
+              if (res['latitude'] != '') {
+                var addresses = '';
+                Geocoder.local
+                    .findAddressesFromCoordinates(
+                    Coordinates(res['latitude'], res['longitude']))
+                    .then((add) {
+                  print(
+                      'Location taekn--------------------------------------------------');
+                  print(res['latitude'].toString() +
+                      ' ' +
+                      res['longitude'].toString());
+                  var first = add.first;
+                  print("${first.addressLine}");
+                  print(
+                      'Location taekn--------------------------------------------------');
+                  lat = res['latitude'].toString();
+                  long = res['longitude'].toString();
+
+                  //// sending this base64image string +to rest api
+                  Dio dio = new Dio();
+
+                  print("saveImage?uid=" +
+                      mk.uid +
+                      "&location=" +
+                      location +
+                      "&aid=" +
+                      mk.aid +
+                      "&act=" +
+                      mk.act +
+                      "&shiftid=" +
+                      mk.shiftid +
+                      "&refid=" +
+                      mk.refid +
+                      "&latit=" +
+                      lat +
+                      "&longi=" +
+                      long);
+                  FormData formData = new FormData.from({
+                    "uid": mk.uid,
+                    "location": location,
+                    "aid": mk.aid,
+                    "act": mk.act,
+                    "shiftid": mk.shiftid,
+                    "refid": mk.refid,
+                    "latit": lat,
+                    "longi": long,
+                    "file": new UploadFileInfo(imagei, "image.png"),
+                  });
+                  print("5");
+                  dio
+                      .post(globals.path + "saveImage", data: formData)
+                      .then((response1) {
+
+                    print('response1: '+response1.toString());
+                    imagei.deleteSync();
+                    imageCache.clear();
+                    /*getTempImageDirectory();*/
+                    Map MarkAttMap = json.decode(response1.data);
+                    print('MarkAttMap["status"]: '+MarkAttMap["status"].toString());
+                    if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
+                      print("res: "+res.toString());
+                      print("issave: "+issave.toString());
+                 //     if (issave==true || res==true) {
+
+
+                        showDialog(context: context, child:
+                        new AlertDialog(
+                          content: new Text("Attendance marked successfully !"),
+                        )
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );
+                        setState(() {
+                          act1 = act;
+                        });
+                      } else {
+                        showDialog(context: context, child:
+                        new AlertDialog(
+                          title: new Text("Warning!"),
+                          content: new Text("Problem while marking attendance, try again."),
+                        )
+                        );
+                        setState(() {
+                          act1 = act;
+                        });
+                      }
+                     /* setState(() {
+                        issave=true;
+                        print('new issave'+issave.toString());
+                      });*/
+
+                  }).catchError((err) {
+                    print('Exception in setting data in saveImage' +
+                        err.toString());
+                    return true;
+                  });
+                });
+              }
+            });
+            //*****
+          } else {
+            ///////////////////////////// camera closed by pressing back button
+
+          showDialog(context: context, child:
+          new AlertDialog(
+          title: new Text("Warning!"),
+          content: new Text("Camera closed improperly"),
+          )
+          );
+          setState(() {
+          act1 = act;
+          });
+
+            ///////////////////////////// camera closed by pressing back button/
+            print("6");
+            return false;
+          }
+        }).catchError((err) {
+          print('Exception Occured in getting FILE' + err.toString());
+          return true;
+        });
+      }else{ // block for marking attendance without taking the picture
+            _location.getLocation().then((res) {
+              if (res['latitude'] != '') {
+                var addresses = '';
+                Geocoder.local
+                    .findAddressesFromCoordinates(
+                    Coordinates(res['latitude'], res['longitude']))
+                    .then((add) {
+                  print(
+                      'Location taekn 2--------------------------------------------------');
+                  print(res['latitude'].toString() +
+                      ' ' +
+                      res['longitude'].toString());
+                  var first = add.first;
+                  print("${first.addressLine}");
+                  print(
+                      'Location taekn 2--------------------------------------------------');
+                  lat = res['latitude'].toString();
+                  long = res['longitude'].toString();
+
+                  //// sending this base64image string +to rest api
+                  Dio dio = new Dio();
+
+                  print("--saveImage?uid=" +
+                      mk.uid +
+                      "&location=" +
+                      location +
+                      "&aid=" +
+                      mk.aid +
+                      "&act=" +
+                      mk.act +
+                      "&shiftid=" +
+                      mk.shiftid +
+                      "&refid=" +
+                      mk.refid +
+                      "&latit=" +
+                      lat +
+                      "&longi=" +
+                      long);
+                  FormData formData = new FormData.from({
+                    "uid": mk.uid,
+                    "location": location,
+                    "aid": mk.aid,
+                    "act": mk.act,
+                    "shiftid": mk.shiftid,
+                    "refid": mk.refid,
+                    "latit": lat,
+                    "longi": long,
+                 //   "file": new UploadFileInfo(imagei, "image.png"),
+                  });
+                  print("5");
+                  dio
+                      .post(globals.path + "saveImage", data: formData)
+                      .then((response1) {
+
+                    print('response2: '+response1.toString());
+               //     imagei.deleteSync();
+                //    imageCache.clear();
+                    /*getTempImageDirectory();*/
+                    Map MarkAttMap = json.decode(response1.data);
+                    print('MarkAttMap["status"]: '+MarkAttMap["status"].toString());
+                    if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
+                      print("res: "+res.toString());
+                      print("issave: "+issave.toString());
+                      //     if (issave==true || res==true) {
+
+
+                      showDialog(context: context, child:
+                      new AlertDialog(
+                        content: new Text("Attendance marked successfully !"),
+                      )
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyApp()),
+                      );
+                      setState(() {
+                        act1 = act;
+                      });
+                    } else {
+                      showDialog(context: context, child:
+                      new AlertDialog(
+                        title: new Text("Warning!"),
+                        content: new Text("Problem while marking attendance, try again."),
+                      )
+                      );
+                      setState(() {
+                        act1 = act;
+                      });
+                    }
+                    /* setState(() {
+                        issave=true;
+                        print('new issave'+issave.toString());
+                      });*/
+
+                  }).catchError((err) {
+                    print('Exception in setting data in saveImage' +
+                        err.toString());
+                    return true;
+                  });
+                });
+              }
+            });
+            //*****
+
+
+
+      }
+      ////////////////////////////////suumitted block/
+      ///////////////////////////
+
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+//////////////////////////////////////////////////////////////////
 }
