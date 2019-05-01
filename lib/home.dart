@@ -1356,6 +1356,7 @@ class _HomePageState extends State<HomePage> {
           setState(() {
           act1 = act;
           });
+          
 
             ///////////////////////////// camera closed by pressing back button/
             print("6");
