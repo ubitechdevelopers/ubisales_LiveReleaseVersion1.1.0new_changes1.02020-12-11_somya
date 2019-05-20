@@ -996,7 +996,6 @@ Future<List<Attn>> getCDateAttnDeptWise(listType, date,dept) async {
   List<Attn> userList = createTodayEmpList(responseJson);
   return userList;
 }
-
 //******************Cdate Attn DepartmentWise//
 //******************Cdate Attn DesignationWise
 Future<List<Attn>> getCDateAttnDesgWise(listType, date,desg) async {
@@ -1581,11 +1580,11 @@ checknetonpage(context){
 }
 
 Future<String> getAreaStatus () async{
-  print('getAreaStatus 1');
+  //print('getAreaStatus 1');
   Map<String, double> _currentLocation = globals.list[globals.list.length-1];
   String lat = _currentLocation["latitude"].toString();
   String long = _currentLocation["longitude"].toString();
-  print('getAreaStatus 1');
+  //print('getAreaStatus 1');
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
   print('SERVICE CALLED: '+globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
@@ -1596,8 +1595,8 @@ Future<String> getAreaStatus () async{
         globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
     status = json.decode(response.body.toString());
   }
-  print('-------status----------->');
-  print(status);
-  print('<-------status-----------');
+  //print('-------status----------->');
+  //print(status);
+ // print('<-------status-----------');
   return status;
 }

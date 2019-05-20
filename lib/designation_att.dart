@@ -142,16 +142,16 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present\n ('+countP+')',
+                  text: 'Present', //\n ('+countP+')
                 ),
                 new Tab(
-                  text: 'Absent\n ('+countA+')',
+                  text: 'Absent', //\n ('+countA+')
                 ),
                 new Tab(
-                  text: 'Late \n ('+countL+')',
+                  text: 'Late ', //\n ('+countL+')
                 ),
                 new Tab(
-                  text: 'Early \n ('+countE+')',
+                  text: 'Early ', //\n ('+countE+')
                 ),
               ],
             ),
@@ -196,9 +196,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('present',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /*SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countP=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countP=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -206,6 +207,18 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                children: <Widget>[
+                                                  SizedBox(height: 25.0,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 5.0),
+                                                    child: Text("Total Present: ${countP}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  ),
+                                                ]
+                                            ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -393,18 +406,33 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('absent',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                           /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countA=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countA=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
-                                    return new Row(
+                                    return new Column(
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                       children: <Widget>[
+                                        (index == 0)?
+                                          Row(
+                                              children: <Widget>[
+                                                SizedBox(height: 25.0,),
+                                                Container(
+                                                  padding: EdgeInsets.only(left: 5.0),
+                                                  child: Text("Total Absent: ${countA}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                ),
+                                              ]
+                                          ):new Center(),
+                                        (index == 0)?
+                                          Divider(color: Colors.black26,):new Center(),
+                                        Row(
+                                        children: <Widget>[
                                         SizedBox(height: 40.0,),
                                         Container(
                                           width: MediaQuery
@@ -453,6 +481,8 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                               ],
                                             )
 
+                                        ),
+                                        ],
                                         ),
                                       ],
 
@@ -508,9 +538,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                         future: getCDateAttnDesgWise('latecomings',today.text,desg),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                          /*  SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countL=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countL=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -518,6 +549,18 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                children: <Widget>[
+                                                  SizedBox(height: 25.0,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 5.0),
+                                                    child: Text("Total Late Comers: ${countL}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  ),
+                                                ]
+                                            ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -687,7 +730,6 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                       //////////////////////////////////////////////////////////////////////---------------------------------
                     ),
                   ),
-
                 ),
                 /////////TAB 3 ENDS
 
@@ -707,9 +749,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                       child: new FutureBuilder<List<Attn>>(
                         future: getCDateAttnDesgWise('earlyleavings',today.text,desg),
                         builder: (context, snapshot) {
-                          SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                         /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                             countE=snapshot.data.length.toString();
-                          }));
+                          }));*/
+                          countE=snapshot.data.length.toString();
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
@@ -718,6 +761,18 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                children: <Widget>[
+                                                  SizedBox(height: 25.0,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 5.0),
+                                                    child: Text("Total Early Leavers: ${countE}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  ),
+                                                ]
+                                            ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,

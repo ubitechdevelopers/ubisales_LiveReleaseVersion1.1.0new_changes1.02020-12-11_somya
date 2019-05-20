@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 import 'package:simple_permissions/simple_permissions.dart';
@@ -41,7 +42,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+  AppLifecycleState state;
 
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -66,6 +68,7 @@ class _HomePageState extends State<HomePage> {
   int alertdialogcount = 0;
   Timer timer;
   Timer timer1;
+  Timer timerrefresh;
   int response;
   final Widget removedChild = Center();
   String fname = "",
@@ -83,32 +86,61 @@ class _HomePageState extends State<HomePage> {
       latit = "",
       longi = "";
   bool issave = false;
-
   String areaStatus='0';
   String aid = "";
   String shiftId = "";
   List<Widget> widgets;
-
-
+  bool refreshsts=false;
 
   @override
   void initState() {
+    print('aintitstate');
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
     initPlatformState();
     setLocationAddress();
     startTimer();
   }
 
-
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
     timer.cancel();
   }
+
+  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+    setState(() {
+      state = appLifecycleState;
+      if(state==AppLifecycleState.resumed){
+        print('WidgetsBindingObserver called');
+        timerrefresh.cancel();
+        if(refreshsts) {
+          //timerrefresh.cancel();
+          refreshsts=false;
+          print('WidgetsBindingObserver called refreshsts false');
+          initPlatformState();
+          setLocationAddress();
+          startTimer();
+        }
+      }else if(state==AppLifecycleState.paused){
+        print('AppLifecycleState.paused');
+        const tenSec = const Duration(seconds: 60);
+        timerrefresh = new Timer.periodic(tenSec, (Timer t) {
+          print('refreshsts true');
+          refreshsts=true;
+          timerrefresh.cancel();
+        });
+
+      }
+    });
+  }
+
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
+    print('called timer');
     timer = new Timer.periodic(fiveSec, (Timer t) {
       //print("timmer is running");
       count++;
@@ -117,6 +149,9 @@ class _HomePageState extends State<HomePage> {
       if (stopstreamingstatus) {
         t.cancel();
         //print("timer canceled");
+      }
+      if(count==5){
+        t.cancel();
       }
     });
   }
@@ -130,7 +165,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   setLocationAddress() async {
+    print('called');
     getAreaStatus().then((res){
+      print('called again');
       setState(() {
         areaStatus=res.toString();
       });
@@ -141,6 +178,7 @@ class _HomePageState extends State<HomePage> {
     });
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
+      print('loc: '+streamlocationaddr);
       if (list != null && list.length > 0) {
         lat = list[list.length - 1]['latitude'].toString();
         long = list[list.length - 1]["longitude"].toString();
@@ -149,6 +187,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
       if(streamlocationaddr == ''){
+        print('again');
         sl.startStreaming(5);
         startTimer();
       }
@@ -1226,7 +1265,6 @@ class _HomePageState extends State<HomePage> {
     globals.list[list.length - 1];
     String lat = _currentLocation["latitude"].toString();
     String long = _currentLocation["longitude"].toString();
-
     try {
       ///////////////////////////
       StreamLocation sl = new StreamLocation();
@@ -1306,7 +1344,6 @@ class _HomePageState extends State<HomePage> {
                       print("issave: "+issave.toString());
                  //     if (issave==true || res==true) {
 
-
                         showDialog(context: context, child:
                         new AlertDialog(
                           content: new Text("Attendance marked successfully !"),
@@ -1341,6 +1378,13 @@ class _HomePageState extends State<HomePage> {
                     return true;
                   });
                 });
+              }else{
+                showDialog(context: context, child:
+                new AlertDialog(
+                  title: new Text("Warning!"),
+                  content: new Text("Location not fetched..."),
+                )
+                );
               }
             });
             //*****
@@ -1467,6 +1511,13 @@ class _HomePageState extends State<HomePage> {
                     return true;
                   });
                 });
+              }else{
+                showDialog(context: context, child:
+                new AlertDialog(
+                  title: new Text("Warning!"),
+                  content: new Text("Location not fetched..."),
+                )
+                );
               }
             });
             //*****

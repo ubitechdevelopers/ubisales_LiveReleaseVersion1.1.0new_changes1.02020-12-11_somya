@@ -25,7 +25,7 @@ class Login{
         "password": user.userPassword,
         "device": "Android"
       });
-
+print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPassword+"&device=Android");
      // Response response1 = await dio.post("https://sandbox.ubiattendance.com/index.php/services/checkLogin",data: formData);
      // Response response1 = await dio.post("https://ubiattendance.ubihrm.com/index.php/services/checkLogin",data: formData);
       Response response1 = await dio.post(globals.path+"checkLogin", data: formData);
@@ -113,9 +113,10 @@ class Login{
           var user = new Employee.fromJson(employeeMap);
           print(user.fname + " " + user.lname);
           print(user.org_perm);
+          prefs.setString('empid', user.empid);
           Home ho = new Home();
           StreamLocation sl = new StreamLocation();
-          sl.startStreaming(1);
+          sl.startStreaming(5);
           Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
           print(timeinout);
           var marktimeinout = MarkTime(timeinout["uid"].toString(), timeinout["location"], timeinout["aid"].toString(), timeinout["act"], timeinout["shiftId"], timeinout["refid"].toString(), timeinout["latit"].toString(), timeinout["longi"].toString());

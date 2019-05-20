@@ -18,7 +18,7 @@ class Home{
         "uid": empid,
         "refno": orgid,
       });
-    //  print( globals.path+"getInfo");
+      print( globals.path+"getInfo?uid=$empid&refno=$orgid");
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
       Response response = await dio.post(
           globals.path+"getInfo",
@@ -29,6 +29,7 @@ class Home{
       if (response.statusCode == 200) {
         Map timeinoutMap = json.decode(response.data);
         String aid = timeinoutMap['aid'].toString();
+        print('aid'+aid);
         String sstatus = timeinoutMap['sstatus'].toString();
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
@@ -72,7 +73,6 @@ class Home{
   managePermission(String empid, String orgid, String designation) async{
 //print("This is called manage permissions-------------------->");
     /*Comment permission module below as per discussion with badi ma'am @ 5 nov- Abhinav*/
-
    /* try {
       final prefs = await SharedPreferences.getInstance();
       FormData formData = new FormData.from({

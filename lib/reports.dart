@@ -153,10 +153,8 @@ class _Reports extends State<Reports> {
             )
           ],
         ),
-
       ),
     );
-
   }
   loader(){
     return new Container(
@@ -180,7 +178,6 @@ class _Reports extends State<Reports> {
   }
 
   showDialogWidget(String loginstr){
-
     return showDialog(context: context, builder:(context) {
 
       return new AlertDialog(
@@ -213,7 +210,6 @@ class _Reports extends State<Reports> {
       );
     }
     );
-
   }
 
   getReportsWidget(){
@@ -248,10 +244,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.orange[300],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.orangeAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -286,10 +282,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.green[400],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.greenAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Late Comer's records.");
@@ -328,10 +324,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.lightBlue[300],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.lightBlueAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Early Leavers records.");
@@ -370,10 +366,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.deepPurple[200],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.deepPurpleAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check departmentwise attendance records.");
@@ -412,10 +408,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.cyan,
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.cyanAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check designationwise attendance records.");
@@ -455,10 +451,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.lightGreen,
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.lightGreenAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Employeewise attendance records.");
@@ -498,10 +494,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.deepPurple[200],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.lightBlueAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Visited Locations records.");
@@ -541,10 +537,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.cyan,
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.cyanAccent,
-              textColor: Colors.white,
+              splashColor:splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Employee's Timeoff records.");
@@ -583,10 +579,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.deepOrangeAccent,
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.amber,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
@@ -626,10 +622,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.pink[200],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.tealAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -664,10 +660,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.amber,
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.amberAccent,
-              textColor: Colors.white,
+              splashColor:splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check last 7 days attendance records.");
@@ -706,10 +702,10 @@ class _Reports extends State<Reports> {
                   ],
                 ),
               ),
-              color: Colors.teal[300],
+              color: color,
               elevation: 4.0,
-              splashColor: Colors.tealAccent,
-              textColor: Colors.white,
+              splashColor: splashcolor,
+              textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check last 30 days attendance records.");

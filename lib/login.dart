@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                             print("******************** QR value **************************");
                             print(onValue);
                             print("******************** QR value **************************");
-                            return false;
+                            //return false;
                             if(onValue!='error') {
                               markAttByQR(onValue, context);
                             }else {
@@ -230,6 +230,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       loader = true;
     });
+    print('ab');
     var islogin = await dologin.markAttByQR(qr);
     print(islogin);
     if(islogin=="success"){
@@ -257,9 +258,9 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loader = false;
       });
-      /*Scaffold.of(context)
+      Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text("Attendance is already marked")));*/
+          SnackBar(content: Text("Problem while marking attendance")));
     }
   }
 

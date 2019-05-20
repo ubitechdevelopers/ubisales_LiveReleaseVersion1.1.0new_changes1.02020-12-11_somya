@@ -58,7 +58,7 @@ class _AddEmployee extends State<AddEmployee> {
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
-    _pass.text='12345678';
+    _pass.text='123456';
     if(response==1) {
       Home ho = new Home();
       setState(() {
@@ -221,7 +221,7 @@ class _AddEmployee extends State<AddEmployee> {
   }
 
   mainbodyWidget(){
-    _pass.text='12345678';
+    _pass.text='123456';
     if(pageload==true)
        loader();
 

@@ -469,7 +469,6 @@ class StreamLocation{
   void startStreaming(int listlength) async{
     int counter = 0;
     stopstreamingstatus = false;
-
     _locationSubscription =
         _location.onLocationChanged().listen((Map<String,double> result) {
             _currentLocation = result;
@@ -507,7 +506,6 @@ class StreamLocation{
       if (_currentLocation != null) {
         globalstreamlocationaddr = "${_currentLocation["latitude"]},${_currentLocation["longitude"]}";
       }
-
     }
   }
 

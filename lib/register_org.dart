@@ -142,6 +142,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     focusNode: __email,
                     keyboardType: TextInputType.emailAddress,
                   ),
+                  new TextFormField(
+                    /*    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter Phone';
+                      }
+                    },*/
+                    decoration: const InputDecoration(
+                      icon: const Icon(Icons.phone),
+                      hintText: 'Phone',
+                      labelText: 'Phone',
+                    ),
+                    controller: _phone,
+                    focusNode: __phone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                    ],
+                  ),
                   new Row(
                     children: <Widget>[
                       new Expanded(
@@ -197,24 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }).toList(),
                     ),
                   ),
-                  new TextFormField(
-                    /*    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter Phone';
-                      }
-                    },*/
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.phone),
-                      hintText: 'Phone',
-                      labelText: 'Phone',
-                    ),
-                    controller: _phone,
-                    focusNode: __phone,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      WhitelistingTextInputFormatter.digitsOnly,
-                    ],
-                  ),
+
 
                   new TextFormField(
                     decoration: const InputDecoration(

@@ -44,6 +44,13 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
  //   today = new TextEditingController();
    // today.text = formatter.format(DateTime.now());
   }
+  void _updateText() {
+    setState(() {
+      // update the text
+      countP = countP;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -69,16 +76,16 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present\n ('+countP+')',
+                  text: 'Present',//('+countP+')
                 ),
                 new Tab(
-                  text: 'Absent\n ('+countA+')',
+                  text: 'Absent ', //('+countA+')
                 ),
                 new Tab(
-                  text: 'Late \n ('+countL+')',
+                  text: 'Late ', //('+countL+')
                 ),
                 new Tab(
-                  text: 'Early \n ('+countE+')',
+                  text: 'Early ', //('+countE+')
                 ),
               ],
             ),
@@ -106,6 +113,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
             ],
           ),
           new Divider(height: 1.0,),
+
           res==true?new Container(
             height: MediaQuery.of(context).size.height*1,
             child: new TabBarView(
@@ -121,24 +129,41 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getEmpHistoryOf30('present',emp),
+                          future: getEmpHistoryOf30('present',emp),
+
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /*SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countP=snapshot.data.length.toString();
-                            }));
+                              print("--------This is present employee ${countP}");
+                            }));*/
+                           countP=snapshot.data.length.toString();
+                         //  print("hello to app ->${countP}");
                             if(snapshot.data.length>0) {
-                              return new ListView.builder(
+                              return  ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                  children: <Widget>[
+                                                    SizedBox(height: 25.0,),
+                                                    Container(
+                                                      padding: EdgeInsets.only(left: 11.0),
+                                                      child: Text("Total Present: ${countP}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                    ),
+                                                   ]
+                                               ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
                                             children: <Widget>[
                                               SizedBox(height: 40.0,),
+
                                               Container(
                                                 width: MediaQuery
                                                     .of(context)
@@ -225,13 +250,14 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                       ),
+                                                    ),
 
                                                     ],
                                                   )
 
                                               ),
+
                                               Container(
                                                   width: MediaQuery
                                                       .of(context)
@@ -265,8 +291,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                     ),
+                                                   ),
 
                                                     ],
                                                   )
@@ -277,8 +303,12 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                           ),
                                           Divider(color: Colors.black26,),
                                         ]);}
+
                               );
-                            }else{
+
+                            }
+
+                            else{
                               return new Container(
                                   height: MediaQuery.of(context).size.height*0.30,
                                   child:Center(
@@ -290,7 +320,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                     ),
                                   )
                               );
+
                             }
+
                           }
                           else if (snapshot.hasError) {
                             return new Text("Unable to connect server");
@@ -305,9 +337,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                     ),
                   ),
                 ),
+
                 //////////////TABB 2 Start
                 new Container(
-
                   height: MediaQuery.of(context).size.height*0.30,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
@@ -320,24 +352,39 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('absent',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                           /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countA=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countA=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
-                                    return new Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
-                                      children: <Widget>[
+                                    return new Column(
+                                       children: <Widget>[
+                                         (index == 0)?
+                                           Row(
+                                               children: <Widget>[
+                                                 SizedBox(height: 25.0,),
+                                                 Container(
+                                                   padding: EdgeInsets.only(left: 5.0),
+                                                   child: Text("Total Absent: ${countA}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                 ),
+                                               ]
+                                           ):new Center(),
+                                         (index == 0)?
+                                           Divider(color: Colors.black26,):new Center(),
+                                       Row(
+                                           mainAxisAlignment: MainAxisAlignment
+                                               .spaceAround,
+                                       children: <Widget>[
                                         SizedBox(height: 40.0,),
                                         Container(
                                           width: MediaQuery
                                               .of(context)
                                               .size
-                                              .width * 0.18,
+                                              .width * 0.30,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start,
@@ -379,11 +426,13 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                     .toString()),
                                               ],
                                             )
+                                            ),
+                                           ]
+                                         )
+                                          ]
+                                        );
 
-                                        ),
-                                      ],
 
-                                    );
                                   }
                               );
                             }else{
@@ -422,7 +471,6 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                 /////////////TAB 3 STARTS
 
                 new Container(
-
                   height: MediaQuery.of(context).size.height*0.30,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
@@ -435,9 +483,10 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('latecomings',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /*SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countL=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countL=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -445,6 +494,18 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                children: <Widget>[
+                                                  SizedBox(height: 25.0,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 5.0),
+                                                    child: Text("Total Late Coming: ${countL}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  ),
+                                                ]
+                                            ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -536,8 +597,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                     ),
 
                                                     ],
                                                   )
@@ -576,8 +637,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                      ),
+                                                     ),
 
                                                     ],
                                                   )
@@ -589,7 +650,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                           Divider(color: Colors.black26,),
                                         ]);}
                               );
-                            }else{
+                            }
+
+                            else{
                               return new Container(
                                   height: MediaQuery.of(context).size.height*0.30,
                                   child:Center(
@@ -635,9 +698,10 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         future: getEmpHistoryOf30('earlyleavings',emp),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                           /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countE=snapshot.data.length.toString();
-                            }));
+                            }));*/
+                            countE=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
@@ -645,6 +709,18 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0)?
+                                            Row(
+                                                children: <Widget>[
+                                                  SizedBox(height: 25.0,),
+                                                  Container(
+                                                    padding: EdgeInsets.only(left: 11.0),
+                                                    child: Text("Total Early Leaving: ${countE}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  ),
+                                                ]
+                                            ):new Center(),
+                                          (index == 0)?
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -736,8 +812,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                    ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -826,7 +902,9 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
           ),
         ],
       ),
+
     );
+
   }
 
   Widget getEmployee_DD() {
@@ -863,6 +941,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                           res = true;
 
                         });
+
+
                     },
                     items: snapshot.data.map((Map map) {
                       return new DropdownMenuItem<String>(

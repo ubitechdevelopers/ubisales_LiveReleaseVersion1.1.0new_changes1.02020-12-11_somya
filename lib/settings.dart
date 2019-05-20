@@ -34,7 +34,6 @@ class _Settings extends State<Settings> {
     checknetonpage(context);
     getOrgName();
   }
-
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -78,7 +77,6 @@ class _Settings extends State<Settings> {
                   context,
                   MaterialPageRoute(builder: (context) => PaymentPage()),
                 );
-
               },
             ),
           ],
@@ -92,10 +90,10 @@ class _Settings extends State<Settings> {
           title: new Text(
             loginstr,
             style: TextStyle(fontSize: 15.0),),
-          content: ButtonBar(
+          actions:[ButtonBar(
             children: <Widget>[
               FlatButton(
-                child: Text('Later',style: TextStyle(fontSize: 13.0)),
+                child: Text('Later',style: TextStyle(fontSize: 13.0,color: Colors.black,),),
                 shape: Border.all(),
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop();
@@ -111,7 +109,7 @@ class _Settings extends State<Settings> {
                 },
               ),
             ],
-          ),
+          ),]
         );
       }
       );
@@ -257,10 +255,11 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.orange[300],
+
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.orangeAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           Navigator.push(
             context,
@@ -303,10 +302,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.green[300],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.greenAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           Navigator.push(
             context,
@@ -348,10 +347,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.lightBlue[300],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.lightBlueAccent,
-        textColor: Colors.white,
+        splashColor:splashcolor,
+        textColor: textcolor,
         onPressed: () {
           Navigator.push(
             context,
@@ -390,10 +389,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.amber[300],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.amberAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           Navigator.push(
             context,
@@ -432,10 +431,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.redAccent[100],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.amberAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           showDialogWidget("To configure the Holidays, login to the web admin panel.");
           // Perform some action
@@ -471,10 +470,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.deepPurpleAccent[100],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.amberAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           showDialogWidget("To configure Geo Fence, login to the web admin panel");
           // Perform some action
@@ -510,10 +509,10 @@ class _Settings extends State<Settings> {
             ],
           ),
         ),
-        color: Colors.lightGreen[300],
+        color: color,
         elevation: 4.0,
-        splashColor: Colors.lightGreenAccent,
-        textColor: Colors.white,
+        splashColor: splashcolor,
+        textColor: textcolor,
         onPressed: () {
           Navigator.push(
             context,
@@ -551,10 +550,10 @@ class _Settings extends State<Settings> {
           ],
         ),
       ),
-      color: Colors.teal[300],
+      color: color,
       elevation: 4.0,
-      splashColor: Colors.tealAccent,
-      textColor: Colors.white,
+      splashColor: splashcolor,
+      textColor: textcolor,
       onPressed: () {
         Navigator.push(
           context,
@@ -591,10 +590,10 @@ class _Settings extends State<Settings> {
           ],
         ),
       ),
-      color: Colors.pink[200],
+      color: color,
       elevation: 4.0,
-      splashColor: Colors.pink,
-      textColor: Colors.white,
+      splashColor: splashcolor,
+      textColor: textcolor,
       onPressed: () {
         Navigator.push(
           context,
