@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     setState(() {
       state = appLifecycleState;
       if(state==AppLifecycleState.resumed){
-        print('WidgetsBindingObserver called');
+        //print('WidgetsBindingObserver called');
         timerrefresh.cancel();
         if(refreshsts) {
           //timerrefresh.cancel();
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           startTimer();
         }
       }else if(state==AppLifecycleState.paused){
-        print('AppLifecycleState.paused');
+       // print('AppLifecycleState.paused');
         const tenSec = const Duration(seconds: 60);
         timerrefresh = new Timer.periodic(tenSec, (Timer t) {
           print('refreshsts true');
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
-    print('called timer');
+   // print('called timer');
     timer = new Timer.periodic(fiveSec, (Timer t) {
       //print("timmer is running");
       count++;
@@ -150,9 +150,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         t.cancel();
         //print("timer canceled");
       }
-      if(count==5){
+    /*  if(count==5){
         t.cancel();
-      }
+      }*/
     });
   }
 
@@ -160,21 +160,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     const fiveSec = const Duration(seconds: 1);
     int count = 0;
     timer1 = new Timer.periodic(fiveSec, (Timer t) {
-      print("timmer is running");
+      print("timer is running");
     });
   }
 
   setLocationAddress() async {
-    print('called');
+    //print('called');
     getAreaStatus().then((res){
-      print('called again');
+     // print('called again');
       setState(() {
         areaStatus=res.toString();
       });
     }).catchError((onError){
       print('Exception occured in clling function.......');
       print(onError);
-
     });
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;

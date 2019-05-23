@@ -9,6 +9,7 @@ import 'timeoff_list.dart';
 import 'cust_date_report.dart';
 import 'attendance_report_yes.dart';
 import 'last_seven_days.dart';
+import 'departmentwise_att.dart';
 import 'thismonth.dart';
 import 'visits_list.dart';
 import 'home.dart';
@@ -376,7 +377,7 @@ class _Reports extends State<Reports> {
                 }else {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Department_att()),
+                    MaterialPageRoute(builder: (context) => Departmentwise_att()),
                   );
                 }
               },

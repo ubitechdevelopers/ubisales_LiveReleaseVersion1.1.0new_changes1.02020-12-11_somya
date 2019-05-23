@@ -15,6 +15,13 @@ import 'package:validate/validate.dart';
 import 'dart:io';
 import 'package:flutter/scheduler.dart';
 import 'package:Shrine/no_net.dart';
+import 'package:simple_permissions/simple_permissions.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:csv/csv.dart';
+import 'dart:math' show cos, sqrt, asin;
+
+
+
 
 
 class Services {}
@@ -889,6 +896,7 @@ List<Attn> createTodayEmpList(List data) {
   // print('Create list called/*******************');
   List<Attn> list = new List();
   for (int i = 0; i < data.length; i++) {
+    String Id = data[i]['id'].toString();
     String Name = data[i]["name"].toString();
     String TimeIn = data[i]["TimeIn"].toString();
     String TimeOut = data[i]["TimeOut"].toString() == '00:00'
@@ -906,24 +914,34 @@ List<Attn> createTodayEmpList(List data) {
     String LatitOut = data[i]["latit_out"].toString();
     String LongiIn = data[i]["longi_in"].toString();
     String LongiOut = data[i]["longi_out"].toString();
+    String Total = data[i]["total"].toString();
+    String Present = data[i]["present"].toString();
+    String Absent = data[i]["absent"].toString();
+
     Attn tos = new Attn(
-        Name: Name,
-        TimeIn: TimeIn,
-        TimeOut: TimeOut,
-        EntryImage: EntryImage,
-        ExitImage: ExitImage,
-        CheckInLoc: CheckInLoc,
-        CheckOutLoc: CheckOutLoc,
-        LatitIn: LatitIn,
-        LatitOut: LatitOut,
-        LongiIn: LongiIn,
-        LongiOut: LongiOut);
+      Id:Id,
+      Name: Name,
+      TimeIn: TimeIn,
+      TimeOut: TimeOut,
+      EntryImage: EntryImage,
+      ExitImage: ExitImage,
+      CheckInLoc: CheckInLoc,
+      CheckOutLoc: CheckOutLoc,
+      LatitIn: LatitIn,
+      LatitOut: LatitOut,
+      LongiIn: LongiIn,
+      LongiOut: LongiOut,
+      Total: Total,
+      Present: Present,
+      Absent: Absent,
+    );
     list.add(tos);
   }
   return list;
 }
 
 class Attn {
+  String Id;
   String Name;
   String TimeIn;
   String TimeOut;
@@ -935,19 +953,28 @@ class Attn {
   String LatitOut;
   String LongiIn;
   String LongiOut;
+  String Total;
+  String Present;
+  String Absent;
 
   Attn(
-      {this.Name,
-      this.TimeIn,
-      this.TimeOut,
-      this.EntryImage,
-      this.ExitImage,
-      this.CheckInLoc,
-      this.CheckOutLoc,
-      this.LatitIn,
-      this.LatitOut,
-      this.LongiIn,
-      this.LongiOut});
+      {
+        this.Id,
+        this.Name,
+        this.TimeIn,
+        this.TimeOut,
+        this.EntryImage,
+        this.ExitImage,
+        this.CheckInLoc,
+        this.CheckOutLoc,
+        this.LatitIn,
+        this.LatitOut,
+        this.LongiIn,
+        this.LongiOut,
+        this.Total,
+        this.Present,
+        this.Absent,
+      });
 }
 
 //******************Cdate Attn List Data
@@ -996,6 +1023,25 @@ Future<List<Attn>> getCDateAttnDeptWise(listType, date,dept) async {
   List<Attn> userList = createTodayEmpList(responseJson);
   return userList;
 }
+
+
+Future<List<Attn>> getEmpdataDepartmentWise(date) async {
+
+  final prefs = await SharedPreferences.getInstance();
+  String orgdir = prefs.getString('orgdir') ?? '';
+//print( globals.path + 'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
+  final response = await http.get(
+      globals.path + 'getEmpdataDepartmentWise?refno=$orgdir&date=$date');
+  // print('================='+dept+'===================');
+  final res = json.decode(response.body);
+  // print('*************response**************');
+  print(res);
+  List responseJson;
+  responseJson = res['departments'];
+  List<Attn> userList = createTodayEmpList(responseJson);
+  return userList;
+}
+
 //******************Cdate Attn DepartmentWise//
 //******************Cdate Attn DesignationWise
 Future<List<Attn>> getCDateAttnDesgWise(listType, date,desg) async {
@@ -1580,23 +1626,104 @@ checknetonpage(context){
 }
 
 Future<String> getAreaStatus () async{
+
   //print('getAreaStatus 1');
   Map<String, double> _currentLocation = globals.list[globals.list.length-1];
-  String lat = _currentLocation["latitude"].toString();
-  String long = _currentLocation["longitude"].toString();
-  //print('getAreaStatus 1');
+  double lat = _currentLocation["latitude"];
+  double long = _currentLocation["longitude"];
+  double assign_lat = globals.assign_lat;
+  double assign_long = globals.assign_long;
+  double assign_radius = globals.assign_radius;
+
+  /*print("${assign_long}");
+  print("${assign_lat}");
+  print("${assign_radius}");*/
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
-  print('SERVICE CALLED: '+globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
+  //print('SERVICE CALLED: '+globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
   String status='0';
-  if(empid!=null && empid!='' && empid!=0) {
+  /*if(empid!=null && empid!='' && empid!=0) {
     final response =
     await http.get(
         globals.path + 'getAreaStatus?lat=$lat&long=$long&empid=$empid');
     status = json.decode(response.body.toString());
-  }
+  }*/
   //print('-------status----------->');
   //print(status);
- // print('<-------status-----------');
+  // print('<-------status-----------');
+  if(empid!=null && empid!='' && empid!=0){
+
+    double calculateDistance(lat1, lon1, lat2, lon2){
+      var p = 0.017453292519943295;
+      var c = cos;
+      var a = 0.5 - c((lat2 - lat1) * p)/2 +
+          c(lat1 * p) * c(lat2 * p) *
+              (1 - c((lon2 - lon1) * p))/2;
+      return 12742 * asin(sqrt(a));
+    }
+    double totalDistance  = calculateDistance(lat, long,assign_lat, assign_long);
+    status = (assign_radius>=totalDistance)?'1':'0';
+
+   // print("sohan ${status}");
+  }
   return status;
+
+
+}
+
+getCsv(associateList,fname,name) async {
+
+  //create an element rows of type list of list. All the above data set are stored in associate list
+//Let associate be a model class with attributes name,gender and age and associateList be a list of associate model class.
+
+
+  List<List<dynamic>> rows = List<List<dynamic>>();
+  List<dynamic> row1 = List();
+  row1.add('Name');
+  if(name!='absent') {
+    row1.add('TimeIn');
+    row1.add('CheckInLoc');
+    row1.add('TimeOut');
+    row1.add('CheckOutLoc');
+  }
+  rows.add(row1);
+  for (int i = 0; i <associateList.length;i++) {
+
+//row refer to each column of a row in csv file and rows refer to each row in a file
+    List<dynamic> row = List();
+    row.add(associateList[i].Name);
+    if(name!='absent') {
+      row.add(associateList[i].TimeIn);
+      row.add(associateList[i].CheckInLoc);
+      row.add(associateList[i].TimeOut);
+      row.add(associateList[i].CheckOutLoc);
+    }
+    rows.add(row);
+  }
+
+
+  //PermissionStatus res = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
+//print(res);
+  final res  = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
+  bool checkPermission=await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+  if(res.toString()=="PermissionStatus.authorized") {
+
+//store file in documents folder
+
+    String dir = (await getExternalStorageDirectory()).absolute.path;
+    String file = "$dir/ubiattendance_files/";
+    await new Directory('$file').create(recursive: true);
+    print(" FILE " + file);
+    File f = new File(file+fname+".csv");
+
+// convert rows to String and write as csv file
+
+    String csv = const ListToCsvConverter().convert(rows);
+    //print(csv);
+    f.writeAsString(csv);
+    return file+fname+".csv";
+    //OpenFile.open(file+"Department.csv");
+    //File(file+"Department.csv").readAsString();
+    //  return f;
+  }
 }
