@@ -55,7 +55,14 @@ class _Bulkatt extends State<Bulkatt> {
   final _from = TextEditingController();
   final _to = TextEditingController();
   final timeFormat = DateFormat("H:mm");
- // TimeOfDay time;
+  // TimeOfDay time;
+  String newValue;
+  bool _enabletimeout;
+  bool _enabletimein;
+  bool _updatetimeout;
+  String colorti;
+  String colorto;
+  bool loaderr=false;
 
   @override
   void initState() {
@@ -73,7 +80,7 @@ class _Bulkatt extends State<Bulkatt> {
     admin_sts = prefs.getString('sstatus') ?? '';
     orgid = prefs.getString('orgid') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
-    getDeptEmp().then((EmpList) {
+    getDeptEmp('Today').then((EmpList) {
       setState(() {
         emplist = EmpList;
       });
@@ -109,9 +116,9 @@ class _Bulkatt extends State<Bulkatt> {
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(
-      value,
-      textAlign: TextAlign.center,
-    ));
+          value,
+          textAlign: TextAlign.center,
+        ));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
@@ -133,157 +140,195 @@ class _Bulkatt extends State<Bulkatt> {
     return new WillPopScope(
       onWillPop: ()=> sendToHome(),
       child: Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
 
-            new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+              new Text(org_name, style: new TextStyle(fontSize: 20.0)),
 
-          ],
-        ),
-        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },),
-        backgroundColor: Colors.teal,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (newIndex) {
-          if (newIndex == 1) {
+            ],
+          ),
+          leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
             );
-            return;
-          } else if (newIndex == 0) {
+          },),
+          backgroundColor: Colors.teal,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (newIndex) {
+            if (newIndex == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+              return;
+            } else if (newIndex == 0) {
+              (admin_sts == '1')
+                  ? Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Reports()),
+              )
+                  : Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+              return;
+            }
+            if (newIndex == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Settings()),
+              );
+              return;
+            }
+            setState(() {
+              _currentIndex = newIndex;
+            });
+          }, // this will be set when a new tab is tapped
+          items: [
             (admin_sts == '1')
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Reports()),
-                  )
-                : Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()),
-                  );
-            return;
-          }
-          if (newIndex == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-          setState(() {
-            _currentIndex = newIndex;
-          });
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-                  icon: new Icon(
-                    Icons.library_books,
-                  ),
-                  title: new Text('Reports'),
-                )
-              : BottomNavigationBarItem(
-                  icon: new Icon(
-                    Icons.person,
-                  ),
-                  title: new Text('Profile'),
-                ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.settings,
-                color: Colors.black54,
+                ? BottomNavigationBarItem(
+              icon: new Icon(
+                Icons.library_books,
               ),
-              title: Text(
-                'Settings',
-                style: TextStyle(color: Colors.black54),
-              ))
-        ],
-      ),
-      endDrawer: new AppDrawer(),
-      body: Container(
-        padding: EdgeInsets.only(left: 2.0, right: 2.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 8.0),
-            Center(
-              child: Text(
-                'Group Attendance',
-                style: new TextStyle(
-                  fontSize: 22.0,
+              title: new Text('Reports'),
+            )
+                : BottomNavigationBarItem(
+              icon: new Icon(
+                Icons.person,
+              ),
+              title: new Text('Profile'),
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.home),
+              title: new Text('Home'),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.settings,
                   color: Colors.black54,
                 ),
+                title: Text(
+                  'Settings',
+                  style: TextStyle(color: Colors.black54),
+                ))
+          ],
+        ),
+        endDrawer: new AppDrawer(),
+        body: Container(
+          padding: EdgeInsets.only(left: 2.0, right: 2.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 8.0),
+              Center(
+                child: Text(
+                  'Group Attendance',
+                  style: new TextStyle(
+                    fontSize: 22.0,
+                    color: Colors.black54,
+                  ),
+                ),
+
               ),
+              /*  new Container(
+          //    width: MediaQuery.of(context).size.width*.45,
+          padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Select',
+            // icon is 48px widget.
+          ), child: DropdownButton<String>(
+            isDense: true,
+            hint: Text('Today'),
+            onChanged: (String changedValue) {
+              newValue=changedValue;
+              setState(() {
+                loaderr=true;
+              });
+
+              getDeptEmp(changedValue).then((EmpList) {
+
+                setState(() {
+                 emplist = EmpList;
+                 loaderr=false;
+                });
+              });
+
+            },value: newValue,
+              items: <String>['Today ', 'Yesterday'].map((String value) {
+                return new DropdownMenuItem<String>(
+                  value: value,
+                  child: new Text(value),
+                );
+              }).toList(),
+
             ),
-            Divider(
-              height: 10.0,
-            ),
-            SizedBox(height: 2.0),
-            Container(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: Text(
-                      'Name',
-                      style: TextStyle(
-                          color: Colors.orangeAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0),
+
+          ), ),*/
+              Divider(
+                height: 10.0,
+              ),
+              SizedBox(height: 2.0),
+              Container(
+                padding: EdgeInsets.only(left: 5.0, right: 5.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 40.0,
                     ),
-                  ),
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: Text(
-                        'Time In -\nTime Out',
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.20,
+                      child: Text(
+                        'Name',
                         style: TextStyle(
                             color: Colors.orangeAccent,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
-                  ),
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: Text(
-                      'Status',
-                      style: TextStyle(
-                          color: Colors.orangeAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0),
                     ),
-                  ),
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: new FlatButton(
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Time In',
+                        style: TextStyle(
+                            color: Colors.orangeAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40.0,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      padding: EdgeInsets.only(left:25),
+                      child: Text(
+                        'Time Out',
+                        style: TextStyle(
+                            color: Colors.orangeAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40.0,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      padding: EdgeInsets.only(left:10),
+                      child: new FlatButton(
                         child: new Icon(
                           checkall == 1
                               ? Icons.check_box
@@ -292,227 +337,267 @@ class _Bulkatt extends State<Bulkatt> {
                         ),
                         onPressed: () =>
                             checkbulkall(),
-                        ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(),
-            SizedBox(height: 5.0),
-            new Expanded(
-              child: getBulkEmpWidget(),
-            ),
-            new Container(
-              child: ButtonBar(
-                alignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  FlatButton(
-                    shape: Border.all(color: Colors.black54),
-                    child: Text('CANCEL'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePage()),
-                      );
-                    },
-                  ),
-                  RaisedButton(
-                    child: _isButtonDisabled
-                        ? Text(
-                      'Processing..',
-                      style: TextStyle(color: Colors.white),
-                    )
-                        : Text(
-                      'SAVE',
-                      style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                    color: Colors.orangeAccent,
-                    onPressed: (){
-                      if (_formKey.currentState.validate()){
-                        if (_isButtonDisabled) return null;
-                        if(_saved.length==0) {
-                          showInSnackBar(
-                              'Please Select atleast one record...');
-                          return null;
-                        }
-                        else{
-                          DateTime from;
-                          DateTime to;
-                          for(var i = 0; i < _saved.length; i++){
-                            if(_saved[i].shifttype=='1'){
-                              print(_saved[i].timeout);
-                              if(_saved[i].timeout!='0:0') {
-                                var arr = _saved[i].timein.split(':');
-                                from = new DateTime(
-                                    2001,
-                                    01,
-                                    01,
-                                    int.parse(arr[0]),
-                                    int.parse(arr[1]),
-                                    00,
-                                    00);
-                                var arr1 = _saved[i].timeout.split(':');
-                                to = new DateTime(
-                                    2001,
-                                    01,
-                                    01,
-                                    int.parse(arr1[0]),
-                                    int.parse(arr1[1]),
-                                    00,
-                                    00);
-                                if (!from.isBefore(to)) {
-                                  showInSnackBar(_saved[i].Name +
-                                      "'s timein is greater than timeout...");
-                                  return null;
+                  ],
+                ),
+              ),
+              Divider(),
+              SizedBox(height: 5.0),
+              new Expanded(
+                child:loaderr==false?getBulkEmpWidget():loader(),
+              ),
+              new Container(
+                child: ButtonBar(
+                  alignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    FlatButton(
+                      shape: Border.all(color: Colors.black54),
+                      child: Text('CANCEL'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage()),
+                        );
+                      },
+                    ),
+                    RaisedButton(
+                      child: _isButtonDisabled
+                          ? Text(
+                        'Processing..',
+                        style: TextStyle(color: Colors.white),
+                      )
+                          : Text(
+                        'SAVE',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.orangeAccent,
+                      onPressed: (){
+                        if (_formKey.currentState.validate()){
+                          if (_isButtonDisabled) return null;
+                          if(_saved.length==0) {
+                            showInSnackBar(
+                                'Please Select atleast one record...');
+                            return null;
+                          }
+                          else{
+                            DateTime from;
+                            DateTime to;
+                            for(var i = 0; i < _saved.length; i++){
+                              print( _saved[i].Name);
+                              print( _saved[i].Attid);
+                              if(_saved[i].shifttype=='1'){
+                                print(_saved[i].timeout);
+                                if(_saved[i].timeout!='0:0' && _saved[i].timeout!='00:00:00') {
+                                  var arr = _saved[i].timein.split(':');
+                                  from = new DateTime(
+                                      2001,
+                                      01,
+                                      01,
+                                      int.parse(arr[0]),
+                                      int.parse(arr[1]),
+                                      00,
+                                      00);
+                                  var arr1 = _saved[i].timeout.split(':');
+                                  to = new DateTime(
+                                      2001,
+                                      01,
+                                      01,
+                                      int.parse(arr1[0]),
+                                      int.parse(arr1[1]),
+                                      00,
+                                      00);
+                                  if (!from.isBefore(to)) {
+                                    showInSnackBar(_saved[i].Name +
+                                        "'s timein is greater than timeout...");
+                                    return null;
+                                  }
                                 }
                               }
                             }
                           }
-                        }
 
-                        setState(() {
-                          _isButtonDisabled = true;
-                        });
-                    //    print(_saved);
-                      //  return false;
-                        addBulkAtt(_saved)
-                            .then((res) {
-                          //showInSnackBar(res.toString());
-                          //   showInSnackBar('Employee registered Successfully');
-                          if (res == "success") {
-                            showDialog(context: context, child:
-                            new AlertDialog(
-                              content: new Text("Attendance added successfully!"),
-                            )
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()),
-                            );
-                          }
-                          else
-                            showDialog(context: context, child:
-                            new AlertDialog(
-                              content: new Text("Unable to add attendance!"),
-                            )
-                            );
                           setState(() {
-                            _isButtonDisabled = false;
+                            _isButtonDisabled = true;
                           });
-                          // TimeOfDay.fromDateTime(10000);
-                        }).catchError((exp) {
-                          showInSnackBar('Unable to call service');
-                          print(exp.toString());
-                          setState(() {
-                            _isButtonDisabled = false;
+                          //    print(_saved);
+                          //  return false;
+                          addBulkAtt(_saved)
+                              .then((res) {
+                            //showInSnackBar(res.toString());
+                            //   showInSnackBar('Employee registered Successfully');
+                            if (res == "success") {
+                              showDialog(context: context, child:
+                              new AlertDialog(
+                                content: new Text("Attendance added successfully!"),
+                              )
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()),
+                              );
+                            }
+                            else
+                              showDialog(context: context, child:
+                              new AlertDialog(
+                                content: new Text("Unable to add attendance!"),
+                              )
+                              );
+                            setState(() {
+                              _isButtonDisabled = false;
+                            });
+                            // TimeOfDay.fromDateTime(10000);
+                          }).catchError((exp) {
+                            showInSnackBar('Unable to call service');
+                            print(exp.toString());
+                            setState(() {
+                              _isButtonDisabled = false;
+                            });
                           });
-                        });
-                    };
-                    },
-                  )
-                ],
+                        };
+                      },
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 
   getBulkEmpWidget() {
+
     if (emplist != null) {
       return new Container(
-          height: MediaQuery.of(context).size.height * 0.60,
-          child: Form(
-            key:_formKey,
-            child: new ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: emplist.length,
-            //  padding: EdgeInsets.only(left: 5.0,right: 5.0),
-            itemBuilder: (BuildContext context, int index) {
-              final int alreadySaved = emplist[index].csts;
-              List til=emplist[index].timein.split(":");
-              //if(!til[0]){til[0]=0;};
-             // TimeOfDay ti = TimeOfDay(hour: int.fromEnvironment(til[0]), minute: int.fromEnvironment(til[1]));
+        height: MediaQuery.of(context).size.height * 0.60,
+        child: Form(
+          key:_formKey,
+          child: new ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: emplist.length,
+              //  padding: EdgeInsets.only(left: 5.0,right: 5.0),
+              itemBuilder: (BuildContext context, int index) {
+                final int alreadySaved = emplist[index].csts;
+                List til=emplist[index].timein.split(":");
+                //if(!til[0]){til[0]=0;};
+                // TimeOfDay ti = TimeOfDay(hour: int.fromEnvironment(til[0]), minute: int.fromEnvironment(til[1]));
 
-             /* print(emplist[index].timein);
+                /* print(emplist[index].timein);
                print(int.parse(til[0]));
                print(til[1]);*/
-              TimeOfDay ti = TimeOfDay(hour: int.parse(emplist[index].timein.split(":")[0]), minute: int.parse(emplist[index].timein.split(":")[1]));
-               //print(ti);
-               TimeOfDay tout = TimeOfDay(hour: int.parse(emplist[index].timeout.split(":")[0]), minute: int.parse(emplist[index].timeout.split(":")[1]));
-               //print(tout);
-              //  print(_saved.elementAt(index).Name);
-              return new Column(children: <Widget>[
-                new FlatButton(
-                  child: new Row(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                            InkWell(
-                              child:Container(
-                                width: 62.0,
-                                height: 62.0,
-                                child: Container(
-                                    decoration: new BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: new DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: new NetworkImage(
-                                                emplist[index].img)))),
-                              ),
-                              onTap: (){
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
-                                );
-                              },
-                              ),
-                              Text(
-                                emplist[index].Name.toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )),
-                      SizedBox(
-                        height: 50.0,
-                      ),
-                      new Container(
-                          width: MediaQuery.of(context).size.width * 0.25,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                child: TimePickerFormField(
-                                  format: timeFormat,
-                                  initialValue: ti,
-                                  //controller: _from,
-                                  decoration: InputDecoration(
-                                   // labelText: 'Time In',
-                                   /* prefixIcon: Padding(
+
+
+
+                TimeOfDay ti = TimeOfDay(hour: int.parse(emplist[index].timein.split(":")[0]), minute: int.parse(emplist[index].timein.split(":")[1]));
+                //print(ti);
+                TimeOfDay tout = TimeOfDay(hour: int.parse(emplist[index].timeout.split(":")[0]), minute: int.parse(emplist[index].timeout.split(":")[1]));
+
+                if(emplist[index].timein=='00:00:00'){
+                  _enabletimein=true;
+                  ti=null;
+                }
+                else{
+                  _enabletimein=false;
+
+                }
+                if(emplist[index].timeout=='00:00:00'){
+                  _enabletimeout=true;
+
+
+                }
+
+
+                else{
+                  _enabletimeout=false;
+
+                }
+
+
+                print(tout);
+                //  print(_saved.elementAt(index).Name);
+                return new Column(children: <Widget>[
+                  new FlatButton(
+                    child: new Row(
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                InkWell(
+                                  child:Container(
+                                    width: 62.0,
+                                    height: 62.0,
+                                    child: Container(
+                                        decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: new DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: new NetworkImage(
+                                                    emplist[index].img)))),
+                                  ),
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
+                                    );
+                                  },
+                                ),
+                                Text(
+                                  emplist[index].Name.toString(),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )),
+                        SizedBox(
+                          height: 50.0,
+                        ),
+                        new   Expanded(child:Container(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+
+                                  child: TimePickerFormField(
+                                    format: timeFormat,
+                                    initialValue: ti,
+                                    enabled:_enabletimein,
+                                    //controller: _from,
+                                    decoration: InputDecoration(
+                                      // labelText: 'Time In',
+                                      /* prefixIcon: Padding(
                                       padding: EdgeInsets.all(0.0),
                                       child: Text('Time In'), // icon is 48px widget.
                                     ),*/
-                                  ),
-                                  onChanged: (t) => setState(() => emplist[index].timein = t.hour.toString()+':'+t.minute.toString()),
-                                  validator: (time) {
-                                    if (time == null && emplist[index].csts==1) {
-                                      return 'Please enter TimeIn';
+                                    ),
+                                    onChanged: (t) => setState(() {
+                                      emplist[index].timein = t.hour.toString()+':'+t.minute.toString();
+
+                                      if (emplist[index].csts != 1) {
+                                        _saved.add(emplist[index]);
+                                        emplist[index].csts = 1;
+
+                                      }
+
                                     }
-                                  },
+                                    ),
+                                    validator: (time) {
+                                      if (time == null && emplist[index].csts==1) {
+                                        return 'Please enter TimeIn';
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 10.0),
+                                /*  SizedBox(width: 10.0),
                               Container(
                                 child: TimePickerFormField(
                                   format: timeFormat,
@@ -532,74 +617,115 @@ class _Bulkatt extends State<Bulkatt> {
                                     }
                                   },
                                 ),
-                              ),
-                              //new Text(emplist[index].Name.toString()),
-                              //new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
-                              // new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
-                            ],
-                          )),
-                      SizedBox(
-                        height: 50.0,
-                        width:15.0
-                      ),
-                      new Container(
-                        width: MediaQuery.of(context).size.width * 0.10,
-                        child: getStatus_DD(emplist[index]),
-                      ),
-                      SizedBox(
-                        height: 50.0,
-                      ),
-                      new Container(
-                        width: MediaQuery.of(context).size.width * 0.10,
-                        child: new FlatButton(
-                          child: new Icon(
-                            alreadySaved == 1
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color:
-                                alreadySaved == 1 ? Colors.orangeAccent : null,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              if (alreadySaved == 1) {
-                                _saved.remove(emplist[index]);
-                                emplist[index].csts = 0;
-                                //print(emplist[index].timein);
-                              } else {
-                                _saved.add(emplist[index]);
-                                emplist[index].csts = 1;
-                               // print(emplist[index].timein);
-                              }
-                            });
-                            //return null;
-                            // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
-                          },
+                              ),*/
+                                //new Text(emplist[index].Name.toString()),
+                                //new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
+                                // new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
+                              ],
+                            ))),
+                        SizedBox(
+                            height: 50.0,
+                            width:15.0
                         ),
-                      ),
-                      SizedBox(
-                        height: 50.0,
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
-                  },
-                ),
+                        new Expanded(child: Container(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: Container(
 
-                Divider(
-                  color: Colors.blueGrey.withOpacity(0.25),
-                  height: 20,
-                ),
-              ]
-              );
-            }
-            ),
-            ),
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: TimePickerFormField(
+                              format: timeFormat,
+                              // initialValue: tout,
+                              enabled:_enabletimeout,
+
+
+                              //controller: _to,
+                              decoration: InputDecoration(
+
+                                // labelText: 'Time Out',
+                                /*prefixIcon: Padding(
+                                      padding: EdgeInsets.all(0.0),
+                                      child: Text('Time Out'), // icon is 48px widget.
+                                    ),*/
+                              ),
+                              onChanged: (t) => setState(() {
+                                emplist[index].timeout = t.hour.toString()+':'+t.minute.toString();
+                                if (emplist[index].csts != 1) {
+                                  _saved.add(emplist[index]);
+                                  emplist[index].csts = 1;
+
+                                }
+                              }),
+                              validator: (time) {
+                                //    print("dddddddd");
+                                // print(emplist[index].Attid);
+                                if ( time == null && emplist[index].csts==1 && emplist[index].Attid!='0'){
+                                  return "Enter Time out";
+                                }
+                                else if (time == null && emplist[index].csts==1) {
+                                  emplist[index].timeout ='00:00:00';
+                                }
+                              },
+                            ),
+                          ),
+                          //child: getStatus_DD(emplist[index]),
+                        ),
+                        ),
+                        SizedBox(
+                          height: 50.0,
+                        ),
+                        new Container(
+                          width: MediaQuery.of(context).size.width * 0.10,
+                          child: new FlatButton(
+                            child: new Icon(
+                              alreadySaved == 1
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                              color:
+                              alreadySaved == 1 ? Colors.orangeAccent : null,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (emplist[index].csts == 1) {
+                                  _saved.remove(emplist[index]);
+                                  emplist[index].csts = 0;
+                                  print(emplist[index].Name+'Remove');
+                                  print(_saved);
+                                } else {
+                                  _saved.add(emplist[index]);
+                                  emplist[index].csts = 1;
+                                  print(emplist[index].Name);
+                                }
+                              });
+                              //return null;
+                              // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 50.0,
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
+                    },
+                  ),
+
+                  Divider(
+                    color: Colors.blueGrey.withOpacity(0.25),
+                    height: 20,
+                  ),
+                ]
+                );
+              }
+          ),
+        ),
       );
     } else {
-      return new Container(
+      return loader();
+      /* return new Container(
         child: new Text('No data Found...'),
-      );
+      );*/
     }
   }
 
@@ -630,15 +756,15 @@ class _Bulkatt extends State<Bulkatt> {
       child: InputDecorator(
         decoration: InputDecoration(
 
-            //labelText: 'Status',
-            /*prefixIcon: Padding(
+          //labelText: 'Status',
+          /*prefixIcon: Padding(
             padding: EdgeInsets.all(1.0),
             child: Icon(
               Icons.attach_file,
               color: Colors.grey,
             ), // icon is 48px widget.
           ),*/
-            ),
+        ),
         child: new DropdownButton<String>(
           isDense: true,
           style: new TextStyle(fontSize: 15.0, color: Colors.black),
@@ -652,10 +778,10 @@ class _Bulkatt extends State<Bulkatt> {
             return new DropdownMenuItem<String>(
               value: map["Id"].toString(),
               child: new SizedBox(
-                  //width: 200.0,
+                //width: 200.0,
                   child: new Text(
-                map["Name"],
-              )),
+                    map["Name"],
+                  )),
             );
           }).toList(),
         ),

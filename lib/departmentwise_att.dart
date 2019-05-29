@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
 import 'department_att.dart';
+import 'generatepdf.dart';
 import 'Image_view.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -20,7 +21,6 @@ class Departmentwise_att extends StatefulWidget {
 
 TextEditingController today;
 String _orgName;
-
 class _Departmentwise_att extends State<Departmentwise_att>
     with SingleTickerProviderStateMixin {
   TabController _controller;
@@ -30,9 +30,10 @@ class _Departmentwise_att extends State<Departmentwise_att>
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
   List<Map<String, String>> chartData;
-
+bool filests=false;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
+        duration: const Duration(minutes: 5),
         content: Text(
       value,
       textAlign: TextAlign.center,
@@ -65,159 +66,219 @@ class _Departmentwise_att extends State<Departmentwise_att>
         backgroundColor: Colors.teal,
       ),
       endDrawer: new AppDrawer(),
-      body: new ListView(
-        physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          SizedBox(height: 3.0),
-          new Container(
-            child: Center(
-              child: Text(
-                "Department Wise Attendance",
-                style: TextStyle(
-                  fontSize: 22.0,
-                  color: Colors.black54,
-                ),
+      body: getMainWidget(),
+    );
+  }
+
+  getMainWidget(){
+    return (filests==true)?loader():new ListView(
+      physics: NeverScrollableScrollPhysics(),
+      children: <Widget>[
+        SizedBox(height: 3.0),
+        new Container(
+          child: Center(
+            child: Text(
+              "Department Wise Attendance",
+              style: TextStyle(
+                fontSize: 22.0,
+                color: Colors.black54,
               ),
             ),
           ),
-          Container(
-            child: DateTimePickerFormField(
-              dateOnly: true,
-              format: formatter,
-              controller: today,
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: Icon(
-                    Icons.date_range,
-                    color: Colors.grey,
-                  ), // icon is 48px widget.
+        ),
+        Container(
+          child: DateTimePickerFormField(
+            dateOnly: true,
+            format: formatter,
+            controller: today,
+            decoration: InputDecoration(
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(0.0),
+                child: Icon(
+                  Icons.date_range,
+                  color: Colors.grey,
                 ), // icon is 48px widget.
-                labelText: 'Select Date',
-              ),
-              onChanged: (date) {
-                setState(() {
-                  if (date != null && date.toString() != '') {
-                    res = true; //showInSnackBar(date.toString());
-                    countP = '-';
-                    countA = '-';
-                    countE = '-';
-                    countL = '-';
-                  } else
-                    res = false;
-                });
-              },
-              validator: (date) {
-                if (date == null) {
-                  return 'Please select date';
-                }
-              },
+              ), // icon is 48px widget.
+              labelText: 'Select Date',
             ),
+            onChanged: (date) {
+              setState(() {
+                if (date != null && date.toString() != '') {
+                  res = true; //showInSnackBar(date.toString());
+                  countP = '-';
+                  countA = '-';
+                  countE = '-';
+                  countL = '-';
+                } else
+                  res = false;
+              });
+            },
+            validator: (date) {
+              if (date == null) {
+                return 'Please select date';
+              }
+            },
           ),
-          new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        ),
+        new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 50.0,
+          children: <Widget>[
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.44,
+              child: Text(
+                ' Departments',
+                style: TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.44,
-                child: Text(
-                  ' Departments',
-                  style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0),
-                ),
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.12,
+              child: Text(
+                'Total',
+                style: TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
               ),
-              SizedBox(
-                height: 50.0,
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.18,
+              child: Text(
+                'Present',
+                style: TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.12,
-                child: Text(
-                  'Total',
-                  style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0),
-                ),
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.18,
+              child: Text(
+                'Absent',
+                style: TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
               ),
-              SizedBox(
-                height: 50.0,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.18,
-                child: Text(
-                  'Present',
-                  style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0),
-                ),
-              ),
-              SizedBox(
-                height: 50.0,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.18,
-                child: Text(
-                  'Absent',
-                  style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0),
-                ),
-              ),
-            ],
-          ),
-          Divider(
-            color: Colors.black,
-          ),
-          new Container(
-            height: MediaQuery.of(context).size.height * 0.60,
-            //   shape: Border.all(color: Colors.deepOrange),
-            child: new ListTile(
-              title: Container(
-                height: MediaQuery.of(context).size.height * 0.60,
-                //width: MediaQuery.of(context).size.width*.99,
-                color: Colors.white,
-                //////////////////////////////////////////////////////////////////////---------------------------------
-                child: new FutureBuilder<List<Attn>>(
-                  future: getEmpdataDepartmentWise(today.text),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+            ),
+          ],
+        ),
+        Divider(
+          color: Colors.black,
+        ),
+        (res==false)?Center():new Container(
+          height: MediaQuery.of(context).size.height * 0.60,
+          //   shape: Border.all(color: Colors.deepOrange),
+          child: new ListTile(
+            title: Container(
+              height: MediaQuery.of(context).size.height * 0.60,
+              //width: MediaQuery.of(context).size.width*.99,
+              color: Colors.white,
+              //////////////////////////////////////////////////////////////////////---------------------------------
+              child: new FutureBuilder<List<Attn>>(
+                future: getEmpdataDepartmentWise(today.text),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countA=snapshot.data.length.toString();
                             }));*/
-                      countA = snapshot.data.length.toString();
-                      if (snapshot.data.length > 0) {
-                        return new ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return new Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
+                    countA = snapshot.data.length.toString();
+                    if (snapshot.data.length > 0) {
+                      return new ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return new Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                (index == 0)?
+                                Row(
+                                    children: <Widget>[
+                                      SizedBox(height: 25.0,),
+                                      Container(
+                                        padding: EdgeInsets.only(left: 5.0),
+                                        child: Text("Total Department: ${countA}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                      ),
 
-                                  Row(
-                                      children: <Widget>[
-                                    SizedBox(
-                                      height: 50.0,
-                                    ),
-                               Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.42,
-                                      child: Column(
+                                      Container(
+                                        padding: EdgeInsets.only(left: 5.0),
+                                        child: InkWell(
+                                          child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
 
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        children: <Widget>[
-                                    /*  RaisedButton(
+                                          onTap: () {
+                                            setState(() {
+                                                filests=true;
+                                              });
+                                            getCsv(snapshot.data,'Department_Report_'+today.text,'dept').then((res) {
+                                              setState(() {
+                                                filests=false;
+                                              });
+                                              // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
+                                              dialogwidget("CSV has been saved in internal storage in ubiattendance_files/Department_Report_"+today.text+".csv");
+                                              /*showDialog(context: context, child:
+                                              new AlertDialog(
+                                                content: new Text("CSV has been saved in file storage in ubiattendance_files/Department_Report_"+today.text+".csv"),
+                                              )
+                                              );*/
+                                            });
+                                          },
+                                        ),
+                                      ),
+
+                                      Container(
+                                        padding: EdgeInsets.only(left: 5.0),
+                                        child: InkWell(
+                                          child: Text('PDF',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
+                                          onTap: () {
+                                            setState(() {
+                                              filests=true;
+                                            });
+                                            CreateDeptpdf(snapshot.data,'Department Summary Report',snapshot.data.length.toString(),'Department_Report_'+today.text,'dept').then((res) {
+                                              setState(() {
+                                                filests=false;
+                                              });
+                                              dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                             // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ]
+                                ):new Center(),
+                                (index == 0)?
+                                Divider(color: Colors.black26,):new Center(),
+                                Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 50.0,
+                                      ),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.42,
+                                        child: Column(
+
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            /*  RaisedButton(
 
                                         textColor: Colors.white,
                                         //color: Colors.blue,
@@ -231,30 +292,24 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                           ),
                                           ),*/
 
-                                          InkWell(
-                                            child: Text(snapshot.data[index].Name.toString(),
-                                                style: TextStyle(color:Colors.teal)
+                                            InkWell(
+                                              child: Text(snapshot.data[index].Name.toString(),
+                                                  style: TextStyle(decoration: TextDecoration.underline,color:Colors.teal,)
+                                              ),
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Department_att(departid: snapshot.data[index].Id.toString(),date: today.text, dname: snapshot.data[index].Name.toString(),total: snapshot.data[index].Total.toString())),
+                                                );
+                                              },
                                             ),
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => Department_att(departid: snapshot.data[index].Id.toString(),date: today.text, dname: snapshot.data[index].Name.toString(),total: snapshot.data[index].Total.toString())),
-                                              );
-                                            },
-                                          ),
-                                        /*  new RaisedButton(
+                                            /*  new RaisedButton(
                                             padding:  EdgeInsets.only(left: 0.0,),
-
                                             child:  Text(snapshot.data[index].Name.toString(),),
-
-
-
-
                                             color: Colors.white,
                                             elevation: 0.0, // remove
                                             textColor: Colors.teal,
                                             splashColor: Colors.green[200],
-
                                             onPressed: () {
                                               Navigator.push(
                                                 context,
@@ -263,90 +318,108 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                             },
                                           ),*/
 
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                               /* onPressed: () {
+                                      /* onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => Department_att()),
                                     );
                                   },*/
-                                 //   ),
-                                    Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.12,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(snapshot.data[index].Total
-                                                .toString()),
-                                          ],
-                                        )),
+                                      //   ),
+                                      Container(
+                                          width:
+                                          MediaQuery.of(context).size.width *
+                                              0.12,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(snapshot.data[index].Total
+                                                  .toString()),
+                                            ],
+                                          )),
 
-                                    Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.18,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(snapshot.data[index].Present
-                                                .toString()),
-                                          ],
-                                        )),
+                                      Container(
+                                          width:
+                                          MediaQuery.of(context).size.width *
+                                              0.18,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(snapshot.data[index].Present
+                                                  .toString()),
+                                            ],
+                                          )),
 
-                                        Container(
-                                            width:
-                                            MediaQuery.of(context).size.width *
-                                                0.18,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].Absent
-                                                    .toString()),
-                                              ],
-                                            )),
-                                  ]),
-                                ],
-                              );
-                            });
-                      } else {
-                        return new Container(
-                            height: MediaQuery.of(context).size.height * 0.30,
-                            child: Center(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 1,
-                                color: Colors.teal.withOpacity(0.1),
-                                padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                                child: Text(
-                                  "No one is absent on this date ",
-                                  style: TextStyle(fontSize: 18.0),
-                                  textAlign: TextAlign.center,
-                                ),
+                                      Container(
+                                          width:
+                                          MediaQuery.of(context).size.width *
+                                              0.18,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(snapshot.data[index].Absent
+                                                  .toString()),
+                                            ],
+                                          )),
+                                    ]),
+                              ],
+                            );
+                          });
+                    } else {
+                      return new Container(
+                          height: MediaQuery.of(context).size.height * 0.30,
+                          child: Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 1,
+                              color: Colors.teal.withOpacity(0.1),
+                              padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
+                              child: Text(
+                                "No one is absent on this date ",
+                                style: TextStyle(fontSize: 18.0),
+                                textAlign: TextAlign.center,
                               ),
-                            )
-                        );
-                      }
-                    } else if (snapshot.hasError) {
-                      return new Text("Unable to connect server");
-                      // return new Text("${snapshot.error}");
+                            ),
+                          )
+                      );
                     }
+                  } else if (snapshot.hasError) {
+                    return new Text("Unable to connect server");
+                    // return new Text("${snapshot.error}");
+                  }
 
-                    // By default, show a loading spinner
-                    return new Center(child: CircularProgressIndicator());
-                  },
-                ),
-                //////////////////////////////////////////////////////////////////////---------------------------------
+                  // By default, show a loading spinner
+                  return new Center(child: CircularProgressIndicator());
+                },
               ),
+              //////////////////////////////////////////////////////////////////////---------------------------------
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  loader() {
+    return new Container(
+      child: Center(
+        child: SizedBox(
+          child: CircularProgressIndicator(strokeWidth: 2.2,),
+          height: 20.0,
+          width: 20.0,
+        ),
       ),
+    );
+  }
+  dialogwidget(msg) {
+    showDialog(context: context, child:
+    new AlertDialog(
+      content: new Text(msg),
+    )
     );
   }
 }

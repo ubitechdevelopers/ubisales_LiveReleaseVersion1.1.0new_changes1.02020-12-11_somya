@@ -45,8 +45,8 @@ class Home{
         globals.attImage=int.parse(timeinoutMap['attImage']);
         globals.areaId=int.parse(timeinoutMap['areaId']);
 
-        globals.assign_lat=  (timeinoutMap['assign_lat']);
-        globals.assign_long=    (timeinoutMap['assign_long']);
+        globals.assign_lat=  (timeinoutMap['assign_lat']).toDouble();
+        globals.assign_long=    (timeinoutMap['assign_long']).toDouble();
         globals.assign_radius=  (timeinoutMap['assign_radius']).toDouble();
         print("----visitImage------>"+globals.visitImage.toString());
 

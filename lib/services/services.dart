@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/punchlocation.dart';
 import 'package:Shrine/timeoff_summary.dart';
@@ -19,9 +20,6 @@ import 'package:simple_permissions/simple_permissions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'dart:math' show cos, sqrt, asin;
-
-
-
 
 
 class Services {}
@@ -1461,10 +1459,14 @@ class grpattemp {
   String attsts;
   String timein;
   String timeout;
+  String rtimein;
+  String rtimeout;
   String todate;
   String shift;
   String shifttype;
   int csts;
+  String Attid;
+  String data_date;
 
   grpattemp(
       {this.Name,
@@ -1476,21 +1478,44 @@ class grpattemp {
         this.attsts,
         this.timein,
         this.timeout,
+        this.rtimein,
+        this.rtimeout,
         this.todate,
         this.shift,
         this.shifttype,
-        this.Id});
+        this.Id,this.Attid,this.data_date,});
 }
 
-Future<List<grpattemp>> getDeptEmp() async {
+Future<List<grpattemp>> getDeptEmp(value) async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
+  print(value);
+
+  String formattedDate;
+  if(value=="Today"){
+    var now = new DateTime.now();
+    print(now);
+    var formatter = new DateFormat('yyyy-MM-dd');
+    formattedDate = formatter.format(now);
+    print(formattedDate);
+    print("bbbbbb");
+  }
+
+  if(value=="Yesterday"){
+    var today = new DateTime.now();
+    DateTime onedayago = today.subtract(new Duration(days: 1));
+    var formatter = new DateFormat('yyyy-MM-dd');
+    formattedDate = formatter.format(onedayago);
+    print(formattedDate);
+
+  }
   //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=13');
   final response =
-  await http.get(globals.path + 'getDeptEmp?orgid=$orgid');
+  await http.get(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
 
-  //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=15');
+  print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
   List responseJson = json.decode(response.body.toString());
+  print("))))))))))");
   print(responseJson);
   List<grpattemp> deptList = createDeptempList(responseJson);
   print(responseJson);
@@ -1508,13 +1533,28 @@ List<grpattemp> createDeptempList(List data) {
     // String timein=data[i]["timein"];
     String timein=data[i]["timein"];
     String timeout = data[i]["timeout"];//(hour: data[i]["timeout"].split(":")[0], minute: data[i]["timeout"].split(":")[1]);
-    print(timein+' and '+timeout);
+    //print(timein+' and '+timeout);
     String attsts = '1';
     String todate = data[i]["todate"];
     String shift = data[i]["shift"];
     String shifttype = data[i]["shifttype"];
+    String rtimein = data[i]["rtimein"];
+    String rtimeout = data[i]["rtimeout"];
+    String attid = data[i]["Attid"];
+    String data_date = data[i]["data_date"];
+    //String timein='';
+    //String timeout ='';
+    if(data[i]["rtimein"]!=''){
+      timein =data[i]["rtimein"];
+
+    }
+    if(data[i]["rtimeout"]!=''){
+      timeout=data[i]["rtimeout"];
+
+    }
+
     grpattemp dpt =
-    new grpattemp(Name: name, csts: csts, img: img, attsts: attsts, timein: timein, timeout: timeout, todate: todate, shift: shift, shifttype: shifttype, Id: id);
+    new grpattemp(Name: name, csts: csts, img: img, attsts: attsts, timein: timein, timeout: timeout, todate: todate, shift: shift, shifttype: shifttype, Id: id,Attid:attid,data_date:data_date);
     list.add(dpt);
   }
   return list;
@@ -1529,10 +1569,13 @@ addBulkAtt(List <grpattemp> data) async {
   print("global Address: "+ location);
   print("global lat" + lat);
   print("global long" + long);
+  print("_updatetimeoutt"  );
+  // print(_updatetimeout);
   List<Map> list = new List();
-  //print(data);
+  print(data);
   //print(list);
   for (int i = 0; i < data.length; i++) {
+    String Attid= data[i].Attid.toString();
     Map per = {
       "Id":data[i].Id.toString(),
       "Name":data[i].Name.toString(),
@@ -1541,6 +1584,8 @@ addBulkAtt(List <grpattemp> data) async {
       "attsts":data[i].attsts.toString(),
       "todate":data[i].todate.toString(),
       "shift":data[i].shift.toString(),
+      "Attid":data[i].Attid.toString(),
+      "data_date":data[i].data_date.toString(),
     };
     list.add(per);
   }
@@ -1561,6 +1606,7 @@ addBulkAtt(List <grpattemp> data) async {
       "location": location,
       "lat": lat,
       "long": long,
+
     });
     Response response = await dio.post(
         globals.path+"CreateBulkAtt/",data: formData
@@ -1626,7 +1672,6 @@ checknetonpage(context){
 }
 
 Future<String> getAreaStatus () async{
-
   //print('getAreaStatus 1');
   Map<String, double> _currentLocation = globals.list[globals.list.length-1];
   double lat = _currentLocation["latitude"];
@@ -1663,7 +1708,6 @@ Future<String> getAreaStatus () async{
     }
     double totalDistance  = calculateDistance(lat, long,assign_lat, assign_long);
     status = (assign_radius>=totalDistance)?'1':'0';
-
    // print("sohan ${status}");
   }
   return status;
@@ -1676,40 +1720,53 @@ getCsv(associateList,fname,name) async {
   //create an element rows of type list of list. All the above data set are stored in associate list
 //Let associate be a model class with attributes name,gender and age and associateList be a list of associate model class.
 
-
   List<List<dynamic>> rows = List<List<dynamic>>();
   List<dynamic> row1 = List();
-  row1.add('Name');
-  if(name!='absent') {
-    row1.add('TimeIn');
-    row1.add('CheckInLoc');
-    row1.add('TimeOut');
-    row1.add('CheckOutLoc');
-  }
-  rows.add(row1);
-  for (int i = 0; i <associateList.length;i++) {
 
+  if(name=='dept'){
+    row1.add('Department');
+    row1.add('Total');
+    row1.add('Present');
+    row1.add('Absent');
+    rows.add(row1);
+    for (int i = 0; i < associateList.length; i++) {
 //row refer to each column of a row in csv file and rows refer to each row in a file
-    List<dynamic> row = List();
-    row.add(associateList[i].Name);
-    if(name!='absent') {
-      row.add(associateList[i].TimeIn);
-      row.add(associateList[i].CheckInLoc);
-      row.add(associateList[i].TimeOut);
-      row.add(associateList[i].CheckOutLoc);
+      List<dynamic> row = List();
+      row.add(associateList[i].Name);
+        row.add(associateList[i].Total);
+        row.add(associateList[i].Present);
+        row.add(associateList[i].Absent);
+      rows.add(row);
     }
-    rows.add(row);
+  }else {
+    row1.add('Name');
+    if (name != 'absent') {
+      row1.add('TimeIn');
+      row1.add('TimeIn Location');
+      row1.add('TimeOut');
+      row1.add('TimeOut Location');
+    }
+    rows.add(row1);
+    for (int i = 0; i < associateList.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+      List<dynamic> row = List();
+      row.add(associateList[i].Name);
+      if (name != 'absent') {
+        row.add(associateList[i].TimeIn);
+        row.add(associateList[i].CheckInLoc);
+        row.add(associateList[i].TimeOut);
+        row.add(associateList[i].CheckOutLoc);
+      }
+      rows.add(row);
+    }
   }
-
 
   //PermissionStatus res = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
-//print(res);
   final res  = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
   bool checkPermission=await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
   if(res.toString()=="PermissionStatus.authorized") {
 
 //store file in documents folder
-
     String dir = (await getExternalStorageDirectory()).absolute.path;
     String file = "$dir/ubiattendance_files/";
     await new Directory('$file').create(recursive: true);
@@ -1717,13 +1774,8 @@ getCsv(associateList,fname,name) async {
     File f = new File(file+fname+".csv");
 
 // convert rows to String and write as csv file
-
     String csv = const ListToCsvConverter().convert(rows);
-    //print(csv);
     f.writeAsString(csv);
     return file+fname+".csv";
-    //OpenFile.open(file+"Department.csv");
-    //File(file+"Department.csv").readAsString();
-    //  return f;
   }
 }

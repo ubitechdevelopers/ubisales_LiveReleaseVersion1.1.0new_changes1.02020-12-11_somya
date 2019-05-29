@@ -14,25 +14,43 @@ CreateDeptpdf(pdata, HeaderText, Total, pdfName, name) async {
   final Document pdf = Document(deflate: zlib.encode);
   List<List<String>> list = new List<List<String>>();
   List<String> a2 = new List<String>();
-  a2.add('Name');
-  if(name!='absent') {
-    a2.add('TimeIn');
-    a2.add('TimeOut');
-    a2.add('TimeIn Location');
-    a2.add('TimeOut Location');
-  }
-  list.add(a2);
-  for (var i = 0; i < pdata.length; i++) {
-    List<String> a1 = new List<String>();
-    a1.add(pdata[i].Name.toString());
-    if(name!='absent') {
-      a1.add(pdata[i].TimeIn.toString());
-      a1.add(pdata[i].TimeOut.toString());
-      a1.add(pdata[i].CheckInLoc.toString());
-      a1.add(pdata[i].CheckOutLoc.toString());
+
+  if(name=='dept'){
+    a2.add('Department');
+    a2.add('Total');
+    a2.add('Present');
+    a2.add('Absent');
+    list.add(a2);
+    for (var i = 0; i < pdata.length; i++) {
+      List<String> a1 = new List<String>();
+        a1.add(pdata[i].Name.toString());
+        a1.add(pdata[i].Total.toString());
+        a1.add(pdata[i].Present.toString());
+        a1.add(pdata[i].Absent.toString());
+      list.add(a1);
     }
-    list.add(a1);
+  }else {
+    a2.add('Name');
+    if (name != 'absent') {
+      a2.add('TimeIn');
+      a2.add('TimeIn Location');
+      a2.add('TimeOut');
+      a2.add('TimeOut Location');
+    }
+    list.add(a2);
+    for (var i = 0; i < pdata.length; i++) {
+      List<String> a1 = new List<String>();
+      a1.add(pdata[i].Name.toString());
+      if (name != 'absent') {
+        a1.add(pdata[i].TimeIn.toString());
+        a1.add(pdata[i].CheckInLoc.toString());
+        a1.add(pdata[i].TimeOut.toString());
+        a1.add(pdata[i].CheckOutLoc.toString());
+      }
+      list.add(a1);
+    }
   }
+
   pdf.addPage(MultiPage(
       pageFormat:
           PdfPageFormat.letter.copyWith(marginBottom: 1.5 * PdfPageFormat.cm),

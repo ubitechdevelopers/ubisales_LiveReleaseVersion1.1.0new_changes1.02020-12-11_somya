@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 // This app is a stateful, it tracks the user's current choice.
 class Department_att extends StatefulWidget {
   @override
-
   final String departid;
   final String date;
   final String dname;
@@ -33,7 +32,6 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
   var formatter1 = new DateFormat('ddMMMyyyy');
   bool res = true;
   String tdate;
-
 //print(date);
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
@@ -54,7 +52,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
-    tdate = formatter1.format(DateTime.now());
+    tdate = widget.date;
     print(tdate);
   }
   @override
@@ -242,10 +240,15 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                     child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
 
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
+
                                                       getCsv(snapshot.data,widget.dname+'_Dept_Present_Emp_$tdate','present').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_Present_Emp_$tdate.csv');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('CSV has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_Present_Emp_$tdate.csv');
                                                       });
                                                     },
                                                   ),
@@ -256,10 +259,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                   child: InkWell(
                                                     child: Text('PDF',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
                                                       CreateDeptpdf(snapshot.data,'Present Employees',snapshot.data.length.toString(),widget.dname+'_Dept_Present_Emp_$tdate','present').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_Present_Emp_$tdate.pdf');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_Present_Emp_$tdate.pdf');
                                                       });
                                                     },
                                                   ),
@@ -480,10 +487,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                   child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
 
                                                   onTap: () {
-                                                    filests=true;
+                                                    setState(() {
+                                                      filests=true;
+                                                    });
                                                     getCsv(snapshot.data,widget.dname+'_Dept_Absent_Emp_$tdate','absent').then((res) {
-                                                      filests=false;
-                                                      showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_Absent_Emp_$tdate.csv');
+                                                      setState(() {
+                                                        filests=false;
+                                                      });
+                                                      dialogwidget('CSV has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_Absent_Emp_$tdate.csv');
                                                     });
                                                   },
                                                 ),
@@ -494,10 +505,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                 child: InkWell(
                                                   child: Text('PDF',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
                                                   onTap: () {
-                                                    filests=true;
+                                                    setState(() {
+                                                      filests=true;
+                                                    });
                                                     CreateDeptpdf(snapshot.data,'Absent Employees',snapshot.data.length.toString(),widget.dname+'_Dept_Absent_Emp_$tdate','absent').then((res) {
-                                                      filests=false;
-                                                      showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_Absent_Emp_$tdate.pdf');
+                                                      setState(() {
+                                                        filests=false;
+                                                      });
+                                                      dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_Absent_Emp_$tdate.pdf');
                                                     });
                                                   },
                                                 ),
@@ -630,7 +645,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                 SizedBox(height: 25.0,),
                                                 Container(
                                                   padding: EdgeInsets.only(left: 5.0),
-                                                  child: Text("Total Late Comers: ${countL} Out of ${widget.total} ",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  child: Text("Total Late: ${countL} Out of ${widget.total} ",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                 ),
                                                 Container(
                                                   padding: EdgeInsets.only(left: 5.0),
@@ -638,10 +653,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                     child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
 
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
                                                       getCsv(snapshot.data,widget.dname+'_Dept_lateComers_Emp_$tdate','late').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_lateComers_Emp_$tdate.csv');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('CSV has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_lateComers_Emp_$tdate.csv');
                                                       });
                                                     },
                                                   ),
@@ -652,10 +671,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                   child: InkWell(
                                                     child: Text('PDF',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
                                                       CreateDeptpdf(snapshot.data,'Late Comers Employees',snapshot.data.length.toString(),widget.dname+'_Dept_lateComers_Emp_$tdate','late').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_lateComers_Emp_$tdate.pdf');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_lateComers_Emp_$tdate.pdf');
                                                       });
                                                     },
                                                   ),
@@ -871,7 +894,7 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                 SizedBox(height: 25.0,),
                                                 Container(
                                                   padding: EdgeInsets.only(left: 5.0),
-                                                  child: Text("Total Early Leavers: ${ countE} Out of ${widget.total}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                  child: Text("Total Early: ${ countE} Out of ${widget.total}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                 ),
                                                 Container(
                                                   padding: EdgeInsets.only(left: 5.0),
@@ -879,10 +902,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                     child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
 
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
                                                       getCsv(snapshot.data,widget.dname+'_Dept_EarlyLeavers_Emp_$tdate','early').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_EarlyLeavers_Emp_$tdate.csv');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('CSV has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_EarlyLeavers_Emp_$tdate.csv');
                                                       });
                                                     },
                                                   ),
@@ -893,10 +920,14 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
                                                   child: InkWell(
                                                     child: Text('PDF',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
                                                     onTap: () {
-                                                      filests=true;
+                                                      setState(() {
+                                                        filests=true;
+                                                      });
                                                       CreateDeptpdf(snapshot.data,'Early Leavers Employees',snapshot.data.length.toString(),widget.dname+'_Dept_EarlyLeavers_Emp_$tdate','early').then((res) {
-                                                        filests=false;
-                                                        showInSnackBar('Your file has been saved in ubiattendance_files/'+widget.dname+'_Dept_EarlyLeavers_Emp_$tdate.pdf');
+                                                        setState(() {
+                                                          filests=false;
+                                                        });
+                                                        dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+widget.dname+'_Dept_EarlyLeavers_Emp_$tdate.pdf');
                                                       });
                                                     },
                                                   ),
@@ -1164,13 +1195,19 @@ class _Department_att extends State<Department_att> with SingleTickerProviderSta
   loader() {
     return new Container(
       child: Center(
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Image.asset('assets/spinner.gif', height: 30.0, width: 30.0),
-            ]),
+        child: SizedBox(
+          child: CircularProgressIndicator(strokeWidth: 2.2,),
+          height: 20.0,
+          width: 20.0,
+        ),
       ),
     );
   }
-
+  dialogwidget(msg) {
+    showDialog(context: context, child:
+    new AlertDialog(
+      content: new Text(msg),
+    )
+    );
+  }
 }

@@ -752,8 +752,9 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                          /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                             countE=snapshot.data.length.toString();
                           }));*/
-                          countE=snapshot.data.length.toString();
+
                           if (snapshot.hasData) {
+                            countE=snapshot.data.length.toString();
                             if(snapshot.data.length>0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,

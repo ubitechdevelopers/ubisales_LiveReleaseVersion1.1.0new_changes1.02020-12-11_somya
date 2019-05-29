@@ -44,7 +44,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   AppLifecycleState state;
-
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
@@ -291,7 +290,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   getmainhomewidget() {
-
     return new WillPopScope(
         onWillPop: () async => true,
         child: new Scaffold(
