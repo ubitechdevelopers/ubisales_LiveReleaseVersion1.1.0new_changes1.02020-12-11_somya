@@ -42,8 +42,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
-  AppLifecycleState state;
+class _HomePageState extends State<HomePage>{
+  //AppLifecycleState state;
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   int alertdialogcount = 0;
   Timer timer;
   Timer timer1;
-  Timer timerrefresh;
+ // Timer timerrefresh;
   int response;
   final Widget removedChild = Center();
   String fname = "",
@@ -95,21 +95,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   void initState() {
     print('aintitstate');
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+   // WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
     initPlatformState();
     setLocationAddress();
     startTimer();
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-    timer.cancel();
-  }
-
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+ /* void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
     setState(() {
       state = appLifecycleState;
       if(state==AppLifecycleState.resumed){
@@ -117,6 +110,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         timerrefresh.cancel();
         if(refreshsts) {
           //timerrefresh.cancel();
+          if(timerrefresh.isActive){
+            timerrefresh.cancel();
+          }
           refreshsts=false;
           print('WidgetsBindingObserver called refreshsts false');
           initPlatformState();
@@ -125,16 +121,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
       }else if(state==AppLifecycleState.paused){
        // print('AppLifecycleState.paused');
-        const tenSec = const Duration(seconds: 60);
+        const tenSec = const Duration(seconds: 180);
         timerrefresh = new Timer.periodic(tenSec, (Timer t) {
           print('refreshsts true');
           refreshsts=true;
           timerrefresh.cancel();
         });
-
       }
     });
-  }
+  }*/
 
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
@@ -175,6 +170,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       print(onError);
     });
     setState(() {
+      if(!mounted){
+        return;
+      }
       streamlocationaddr = globalstreamlocationaddr;
       print('loc: '+streamlocationaddr);
       if (list != null && list.length > 0) {
@@ -1090,7 +1088,86 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
+
+
   saveImage() async {
+    sl.startStreaming(5);
+
+    MarkTime mk = new MarkTime(
+        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
+    /* mk1 = mk;*/
+
+    var connectivityResult = await (new Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+      /* Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CameraExampleHome()),
+      );*/
+      SaveImage saveImage = new SaveImage();
+      bool issave = false;
+      setState(() {
+        act1 = "";
+      });
+      issave = await saveImage.saveTimeInOutImagePicker(mk);
+      ////print(issave);
+      if (issave) {
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Attendance marked successfully!"),
+        )
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );
+        setState(() {
+          act1 = act;
+        });
+      } else {
+        showDialog(context: context, child:
+        new AlertDialog(
+          title: new Text("!"),
+          content: new Text("Problem while marking attendance, try again."),
+        )
+        );
+        setState(() {
+          act1 = act;
+        });
+      }
+    }else{
+      showDialog(context: context, child:
+      new AlertDialog(
+
+        content: new Text("Internet connection not found!."),
+      )
+      );
+    }
+
+
+    /*SaveImage saveImage = new SaveImage();
+    bool issave = false;
+    setState(() {
+      act1 = "";
+    });
+    issave = await saveImage.saveTimeInOut(mk);
+    ////print(issave);
+    if (issave) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyApp()),
+      );
+      setState(() {
+        act1 = act;
+      });
+    } else {
+      setState(() {
+        act1 = act;
+      });
+    }*/
+  }
+
+  saveImage_old() async {
     sl.startStreaming(5);
 
     MarkTime mk = new MarkTime(
@@ -1382,7 +1459,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   content: new Text("Location not fetched..."),
                 )
                 );
+
               }
+
             });
             //*****
           } else {
@@ -1403,6 +1482,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             print("6");
             return false;
           }
+          return true;
         }).catchError((err) {
           print('Exception Occured in getting FILE' + err.toString());
           return true;
@@ -1530,5 +1610,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       return false;
     }
   }
+
+  @override
+  void dispose() {
+   // WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+    timer.cancel();
+   /* if(timerrefresh.isActive){
+      timerrefresh.cancel();
+    }*/
+  }
+
 //////////////////////////////////////////////////////////////////
 }

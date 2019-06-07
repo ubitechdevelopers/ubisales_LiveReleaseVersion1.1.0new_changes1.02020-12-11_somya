@@ -236,29 +236,31 @@ class _Bulkatt extends State<Bulkatt> {
                 ),
 
               ),
-              /*  new Container(
-          //    width: MediaQuery.of(context).size.width*.45,
-          padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              labelText: 'Select',
-            // icon is 48px widget.
-          ), child: DropdownButton<String>(
-            isDense: true,
-            hint: Text('Today'),
-            onChanged: (String changedValue) {
-              newValue=changedValue;
-              setState(() {
-                loaderr=true;
-              });
+    new Container(
+    // width: MediaQuery.of(context).size.width*.45,
+    padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
+   child: InputDecorator(
+   decoration: InputDecoration(
+   labelText: 'Select',
+   // icon is 48px widget.
+   ),
+     child: DropdownButton<String>(
+     isDense: true,
+     hint: Text('Today'),
+     onChanged: (String changedValue) {
+    newValue=changedValue;
+    setState(() {
+    loaderr=true;
+    });
 
-              getDeptEmp(changedValue).then((EmpList) {
+                getDeptEmp(changedValue).then((EmpList) {
 
-                setState(() {
+                 setState(() {
                  emplist = EmpList;
                  loaderr=false;
+                 });
+
                 });
-              });
 
             },value: newValue,
               items: <String>['Today ', 'Yesterday'].map((String value) {
@@ -270,7 +272,7 @@ class _Bulkatt extends State<Bulkatt> {
 
             ),
 
-          ), ),*/
+          ), ),
               Divider(
                 height: 10.0,
               ),
@@ -506,14 +508,10 @@ class _Bulkatt extends State<Bulkatt> {
                   _enabletimein=false;
 
                 }
-                if(emplist[index].timeout=='00:00:00'){
+                if(emplist[index].timeout=='00:00:00' || emplist[index].device=='Auto Time Out'){
                   _enabletimeout=true;
-
-
                 }
-
-
-                else{
+              else{
                   _enabletimeout=false;
 
                 }
@@ -764,6 +762,7 @@ class _Bulkatt extends State<Bulkatt> {
               color: Colors.grey,
             ), // icon is 48px widget.
           ),*/
+
         ),
         child: new DropdownButton<String>(
           isDense: true,

@@ -16,6 +16,7 @@ import 'payment.dart';
 import 'profile.dart';
 import 'userGuide.dart';
 import 'services/services.dart';
+import 'flexi_time.dart';
 
 
 class AppDrawer extends StatefulWidget {
@@ -253,6 +254,22 @@ class _AppDrawerState extends State<AppDrawer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Reports()),
+              );
+            },
+          ):new Center(),
+
+          flexi_permission ==1 ?
+          new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.av_timer,size: 20.0),SizedBox(width: 5.0),
+                new Text("Flexi Time ", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Flexitime()),
               );
             },
           ):new Center(),

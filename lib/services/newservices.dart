@@ -50,7 +50,6 @@ class RequestTimeOffService{
       }else{
         return "No Connection";
       }
-
     }catch(e){
       //print(e.toString());
       return "No Connection";

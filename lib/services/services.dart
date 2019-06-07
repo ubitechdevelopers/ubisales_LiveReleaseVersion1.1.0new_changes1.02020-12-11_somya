@@ -1445,6 +1445,7 @@ MarkAttendance(data){
 }
 
 
+
 // ///////////////////////////////////////////////////////////////////
 ////////////////////////////Bulk Attendance////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -1467,6 +1468,7 @@ class grpattemp {
   int csts;
   String Attid;
   String data_date;
+  String device;
 
   grpattemp(
       {this.Name,
@@ -1483,7 +1485,7 @@ class grpattemp {
         this.todate,
         this.shift,
         this.shifttype,
-        this.Id,this.Attid,this.data_date,});
+        this.Id,this.Attid,this.data_date,this.device});
 }
 
 Future<List<grpattemp>> getDeptEmp(value) async {
@@ -1516,9 +1518,9 @@ Future<List<grpattemp>> getDeptEmp(value) async {
   print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
   List responseJson = json.decode(response.body.toString());
   print("))))))))))");
-  print(responseJson);
+  // print(responseJson);
   List<grpattemp> deptList = createDeptempList(responseJson);
-  print(responseJson);
+  // print(responseJson);
   return deptList;
 }
 
@@ -1542,19 +1544,22 @@ List<grpattemp> createDeptempList(List data) {
     String rtimeout = data[i]["rtimeout"];
     String attid = data[i]["Attid"];
     String data_date = data[i]["data_date"];
+    String device = data[i]["device"];
     //String timein='';
     //String timeout ='';
-    if(data[i]["rtimein"]!=''){
+    if(data[i]["rtimein"]!='')
+    {
       timein =data[i]["rtimein"];
-
     }
     if(data[i]["rtimeout"]!=''){
       timeout=data[i]["rtimeout"];
 
     }
-
+    print("......");
+    print(timein);
+    print(timeout);
     grpattemp dpt =
-    new grpattemp(Name: name, csts: csts, img: img, attsts: attsts, timein: timein, timeout: timeout, todate: todate, shift: shift, shifttype: shifttype, Id: id,Attid:attid,data_date:data_date);
+    new grpattemp(Name: name, csts: csts, img: img, attsts: attsts, timein: timein, timeout: timeout, todate: todate, shift: shift, shifttype: shifttype, Id: id,Attid:attid,data_date:data_date,device:device);
     list.add(dpt);
   }
   return list;
@@ -1634,8 +1639,6 @@ addBulkAtt(List <grpattemp> data) async {
 ///////////////////////////////////////////////////////////
 ////////////////////////////group attendance ends///////////////////////////////
 ///////////////////////////////////////////////////////////
-
-
 
 
 ////////////check net
@@ -1779,3 +1782,124 @@ getCsv(associateList,fname,name) async {
     return file+fname+".csv";
   }
 }
+
+
+///Flexi Attendance start///
+
+
+class FlexiAtt {
+  String Id;
+  String Emp;
+  String client;
+  String pi_time;
+  String pi_loc;
+  String po_time;
+  String po_loc;
+  String timeindate;
+  String timeoutdate;
+  String pi_longi;
+  String pi_latit;
+  String po_longi;
+  String po_latit;
+  String desc;
+  String pi_img;
+  String po_img;
+
+  FlexiAtt({this.Id,this.Emp,this.client,this.pi_time,this.pi_loc,this.po_time,this.po_loc,this.timeindate,this.timeoutdate,this.pi_latit,this.pi_longi,this.po_latit,this.po_longi,this.desc,this.pi_img,this.po_img});
+}
+
+Future<List<FlexiAtt>> getFlexiDataList(date) async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+
+
+  print(globals.path + 'getFlexiInfo?uid=$empid&orgid=$orgdir&date=$date');
+  final response = await http.get(globals.path + 'getFlexiInfo?uid=$empid&orgid=$orgdir&date=$date');
+  List responseJson = json.decode(response.body.toString());
+  List<FlexiAtt> userList = createUserListFlexi(responseJson);
+  print('getSummaryPunch called--1');
+  print(userList);
+  print('getSummaryPunch called--2');
+  return userList;
+}
+
+List<FlexiAtt> createUserListFlexi(List data) {
+  List<FlexiAtt> list = new List();
+  for (int i = data.length-1; i >=0; i--) {
+    String id = data[i]["Id"];
+    String client = data[i]["client"];
+    String pi_time = data[i]["time_in"]=="00:00:00"?'-':data[i]["time_in"].toString().substring(0,5);
+    String pi_loc = data[i]["loc_in"];
+    String po_time = data[i]["time_out"]=="00:00:00"?'-':data[i]["time_out"].toString().substring(0,5);
+    String po_loc = data[i]["loc_out"];
+    String timeindate = data[i]["date"];
+    String timeoutdate = data[i]["timeout_date"];
+    String emp = data[i]["emp"];
+    String latit_in = data[i]["latit"];
+    String longi_in = data[i]["longi"];
+    String latit_out = data[i]["latit_in"];
+    String longi_out = data[i]["longi_out"];
+    String desc = data[i]["desc"];
+    String pi_img=data[i]["checkin_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkin_img"].toString();
+    String po_img=data[i]["checkout_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkout_img"].toString();
+    print(data[i]["id"]);
+
+
+    FlexiAtt flexi = new FlexiAtt(
+        Id:id,
+        Emp:emp,
+        client: client,
+        pi_time: pi_time,
+        pi_loc: pi_loc.length>40?pi_loc.substring(0,40)+'...':pi_loc,
+        po_time: po_time=='00:00'?'-':po_time,
+        po_loc: po_loc.length>40?po_loc.substring(0,40)+'...':po_loc,
+        timeindate:timeindate,
+        timeoutdate:timeoutdate,
+        pi_latit:latit_in,
+        pi_longi:longi_in,
+        po_latit:latit_out,
+        po_longi:longi_out,
+        desc:desc.length>40?desc.substring(0,40)+'...':desc,
+        pi_img: pi_img,
+        po_img: po_img
+    );
+    list.add(flexi);
+  }
+  return list;
+}
+class Flexi{
+  String fid;
+  String sts;
+
+
+  Flexi({this.fid,this.sts});
+}
+Future checkTimeinflexi() async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+  print('*--*-*-*-*-*-*-*-*-*-');
+  final res = await http.get(globals.path+'getAttendanceesFlexi?empid=$empid');
+  print("99999");
+  print(res.body.toString());
+  // return res.body.toString();
+  List<Flexi> list = new List();
+
+  String fid=((json.decode(res.body.toString()))['id']).toString();
+  String sts=((json.decode(res.body.toString()))['sts']).toString();
+  Flexi flexi = new Flexi(fid:fid, sts:sts);
+  list.add(flexi);
+  print("kkkkkk");
+  print(list);
+//return ((json.decode(res.body.toString()))['sts']).toString();
+  return list;
+
+
+}
+
+///flexi attendance end////

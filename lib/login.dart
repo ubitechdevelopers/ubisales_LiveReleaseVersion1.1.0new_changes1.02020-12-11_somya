@@ -254,6 +254,13 @@ class _LoginPageState extends State<LoginPage> {
       Scaffold.of(context)
           .showSnackBar(
           SnackBar(content: Text("Attendance is already marked")));
+    }else if(islogin=="nolocation"){
+      setState(() {
+        loader = false;
+      });
+      Scaffold.of(context)
+          .showSnackBar(
+          SnackBar(content: Text("Location not fetched...")));
     }else{
       setState(() {
         loader = false;

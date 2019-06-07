@@ -269,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter company name"),
+                              content: new Text("Please enter Company's name"),
                             ));
                             FocusScope.of(context).requestFocus(__name);
                           }
@@ -277,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter contact person name"),
+                              content: new Text("Please enter Contact Person's name"),
                             ));
                             FocusScope.of(context).requestFocus(__cname);
                           }
@@ -295,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter valid email"),
+                              content: new Text("Please enter valid Email"),
                             ));
                             FocusScope.of(context).requestFocus(__email);
                             return null;
@@ -305,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter valid password \n (password must contains at least 6 character)"),
+                              content: new Text("Please enter a valid Password of at least 6 characters"),
                             ));
                             FocusScope.of(context).requestFocus(__pass);
                           }
@@ -313,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter valid phone"),
+                              content: new Text("Please enter valid Phone No."),
                             ));
                             FocusScope.of(context).requestFocus(__phone);
                           }
@@ -321,7 +321,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             showDialog(context: context, child:
                             new AlertDialog(
                               title: new Text("Alert"),
-                              content: new Text("Please enter valid phone"),
+                              content: new Text("Please enter valid Phone No."),
                             ));
                             FocusScope.of(context).requestFocus(__phone);
                           }
@@ -353,7 +353,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   new AlertDialog(
                                     title: new Text("ubiAttendance"),
                                     content: new Text("Hi " + res['f_name'] +
-                                        " \n Your company has been registered successfully."),
+                                        ", Your company is registered successfully."),
                                     actions: <Widget>[
                                       new RaisedButton(
                                         color: Colors.green,
@@ -373,7 +373,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   new AlertDialog(
                                     title: new Text("ubiAttendance"),
                                     content: new Text(
-                                        "Email id is already registered"),
+                                        "Email is already registered"),
                                   ));
                                 } else if (res['sts'] == 'false2' ||
                                     res['sts'] == 'false4') {
@@ -381,14 +381,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                   new AlertDialog(
                                     title: new Text("ubiAttendance"),
                                     content: new Text(
-                                        "Phone id is already registered"),
+                                        "Phone No. is already registered"),
                                   ));
                                 } else {
                                   showDialog(context: context, child:
                                   new AlertDialog(
                                     title: new Text("ubiAttendance"),
                                     content: new Text(
-                                        "Oops!! Company not registered \n Try later"),
+                                        "Oops!! Poor network connection. Company could not be registered."),
                                   ));
                                 }
                                 setState(() {
@@ -420,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Error"),
-                                content: new Text("Too slow internet"),
+                                content: new Text("Poor network connection."),
                               )
                               );
                             });

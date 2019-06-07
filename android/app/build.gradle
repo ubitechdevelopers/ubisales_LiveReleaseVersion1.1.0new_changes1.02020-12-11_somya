@@ -33,6 +33,7 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
     }
 
     defaultConfig {
@@ -40,8 +41,8 @@ android {
         applicationId "org.ubitech.attendance"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 40001
-        versionName "4.0.3"
+        versionCode 40004
+        versionName "4.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,6 +59,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
 }
 
 flutter {

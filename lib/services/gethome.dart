@@ -18,7 +18,7 @@ class Home{
         "uid": empid,
         "refno": orgid,
       });
-      print( globals.path+"getInfo?uid=$empid&refno=$orgid");
+      print(globals.path+"getInfo?uid=$empid&refno=$orgid");
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
       Response response = await dio.post(
           globals.path+"getInfo",
@@ -41,6 +41,7 @@ class Home{
         globals.payroll=int.parse(timeinoutMap['Addon_Payroll']);
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
+        globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
         globals.attImage=int.parse(timeinoutMap['attImage']);
         globals.areaId=int.parse(timeinoutMap['areaId']);

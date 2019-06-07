@@ -119,16 +119,29 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           sl.startStreaming(5);
           Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
           print(timeinout);
-          var marktimeinout = MarkTime(timeinout["uid"].toString(), timeinout["location"], timeinout["aid"].toString(), timeinout["act"], timeinout["shiftId"], timeinout["refid"].toString(), timeinout["latit"].toString(), timeinout["longi"].toString());
-          if(timeinout["act"]!="Imposed") {
-            SaveImage mark = new SaveImage();
-            bool res = await mark.saveTimeInOutQR(marktimeinout);
-            if (res)
-              return "success";
-            else
-              return "poor network";
-          }else{
-            return "imposed";
+          if(timeinout["latit"]==0.0 && timeinout["longi"]==0.0){
+            print("Location not fetched...");
+            return "nolocation";
+          }else {
+            var marktimeinout = MarkTime(
+                timeinout["uid"].toString(),
+                timeinout["location"],
+                timeinout["aid"].toString(),
+                timeinout["act"],
+                timeinout["shiftId"],
+                timeinout["refid"].toString(),
+                timeinout["latit"].toString(),
+                timeinout["longi"].toString());
+            if (timeinout["act"] != "Imposed") {
+              SaveImage mark = new SaveImage();
+              bool res = await mark.saveTimeInOutQR(marktimeinout);
+              if (res)
+                return "success";
+              else
+                return "poor network";
+            } else {
+              return "imposed";
+            }
           }
         } else {
           return "failure";
