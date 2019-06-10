@@ -30,7 +30,6 @@ int visitImage = 0;
 int attImage = 0;
 int varCheckNet=0;
 int areaId=0;
-
 var assign_lat = 0.0;
 var assign_long = 0.0;
 var assign_radius = 0.0;

@@ -257,6 +257,8 @@ class _Bulkatt extends State<Bulkatt> {
 
                  setState(() {
                  emplist = EmpList;
+                 _saved.clear();
+                 checkall = 0;
                  loaderr=false;
                  });
 
