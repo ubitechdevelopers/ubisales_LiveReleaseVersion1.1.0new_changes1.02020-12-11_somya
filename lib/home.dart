@@ -170,9 +170,9 @@ class _HomePageState extends State<HomePage>{
       print(onError);
     });
     setState(() {
-      if(!mounted){
+      /*if(!mounted){
         return;
-      }
+      }*/
       streamlocationaddr = globalstreamlocationaddr;
       print('loc: '+streamlocationaddr);
       if (list != null && list.length > 0) {
@@ -207,7 +207,7 @@ class _HomePageState extends State<HomePage>{
   initPlatformState() async {
 
     /*await availableCameras();*/
-    final prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
@@ -223,6 +223,7 @@ class _HomePageState extends State<HomePage>{
       // //print(act);
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
+      prefs = await SharedPreferences.getInstance();
       setState(() {
         Is_Delete = prefs.getInt('Is_Delete') ?? 0;
         newpwd = prefs.getString('newpwd') ?? "";
@@ -232,6 +233,7 @@ class _HomePageState extends State<HomePage>{
         admin_sts = prefs.getString('sstatus').toString() ?? '0';
         mail_varified = prefs.getString('mail_varified').toString() ?? '0';
         alertdialogcount = globalalertcount;
+        print('aid again');
         response = prefs.getInt('response') ?? 0;
         fname = prefs.getString('fname') ?? '';
         lname = prefs.getString('lname') ?? '';
@@ -243,6 +245,7 @@ class _HomePageState extends State<HomePage>{
         org_name = prefs.getString('org_name') ?? '';
         desination = prefs.getString('desination') ?? '';
         profile = prefs.getString('profile') ?? '';
+
         profileimage = new NetworkImage(profile);
         // //print("1-"+profile);
         profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
@@ -255,11 +258,13 @@ class _HomePageState extends State<HomePage>{
         // //print("2-"+_checkLoaded.toString());
         latit = prefs.getString('latit') ?? '';
         longi = prefs.getString('longi') ?? '';
-        aid = prefs.getString('aid') ?? "";
         shiftId = prefs.getString('shiftId') ?? "";
+        aid = prefs.getString('aid') ?? "";
+        print('aid again'+aid);
+        print('act again'+aid);
         ////print("this is set state "+location_addr1);
         act1 = act;
-        // //print(act1);
+        print(act1);
         streamlocationaddr = globalstreamlocationaddr;
       });
     }
@@ -1092,7 +1097,7 @@ class _HomePageState extends State<HomePage>{
 
   saveImage() async {
     sl.startStreaming(5);
-
+print('aidId'+aid);
     MarkTime mk = new MarkTime(
         empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
     /* mk1 = mk;*/

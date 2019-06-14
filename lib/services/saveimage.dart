@@ -89,18 +89,14 @@ class SaveImage {
     }
   }
 
-
-
   Future<bool> saveTimeInOutImagePicker(MarkTime mk) async {
     try{
-
       File imagei = null;
       imageCache.clear();
       if (globals.attImage == 1) {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
         if (imagei != null) {
-
           StreamLocation sl = new StreamLocation();
           sl.startStreaming(5);
           /*

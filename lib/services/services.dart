@@ -1901,5 +1901,70 @@ Future checkTimeinflexi() async {
 
 
 }
+Future<List<FlexiAtt>> getFlexiDataListReport(date,emp) async {
+
+  final  prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+
+
+  print(globals.path + 'getFlexiInfoReport?seid=$emp&uid=$empid&orgid=$orgdir&date=$date');
+  final response = await http.get(globals.path + 'getFlexiInfoReport?seid=$emp&uid=$empid&orgid=$orgdir&date=$date');
+  List responseJson = json.decode(response.body.toString());
+  List<FlexiAtt> userList = createUserListFlexi(responseJson);
+  print('getSummaryPunch called--1');
+  print(userList);
+  print('getSummaryPunch called--2');
+  return userList;
+}
+
+List<FlexiAtt> createListFlexiReport(List data) {
+  List<FlexiAtt> list = new List();
+  for (int i = data.length-1; i >=0; i--) {
+    String id = data[i]["Id"];
+    String client = data[i]["client"];
+    String pi_time = data[i]["time_in"]=="00:00:00"?'-':data[i]["time_in"].toString().substring(0,5);
+    String pi_loc = data[i]["loc_in"];
+    String po_time = data[i]["time_out"]=="00:00:00"?'-':data[i]["time_out"].toString().substring(0,5);
+    String po_loc = data[i]["loc_out"];
+    String timeindate = data[i]["date"];
+    String timeoutdate = data[i]["timeout_date"];
+    String emp = data[i]["emp"];
+    String latit_in = data[i]["latit"];
+    String longi_in = data[i]["longi"];
+    String latit_out = data[i]["latit_in"];
+    String longi_out = data[i]["longi_out"];
+    String desc = data[i]["desc"];
+    String pi_img=data[i]["checkin_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkin_img"].toString();
+    String po_img=data[i]["checkout_img"].toString() == ''
+        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        : data[i]["checkout_img"].toString();
+    print(data[i]["id"]);
+
+
+    FlexiAtt flexi = new FlexiAtt(
+        Id:id,
+        Emp:emp,
+        client: client,
+        pi_time: pi_time,
+        pi_loc: pi_loc.length>40?pi_loc.substring(0,40)+'...':pi_loc,
+        po_time: po_time=='00:00'?'-':po_time,
+        po_loc: po_loc.length>40?po_loc.substring(0,40)+'...':po_loc,
+        timeindate:timeindate,
+        timeoutdate:timeoutdate,
+        pi_latit:latit_in,
+        pi_longi:longi_in,
+        po_latit:latit_out,
+        po_longi:longi_out,
+        desc:desc.length>40?desc.substring(0,40)+'...':desc,
+        pi_img: pi_img,
+        po_img: po_img
+    );
+    list.add(flexi);
+  }
+  return list;
+}
 
 ///flexi attendance end////

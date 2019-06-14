@@ -12,6 +12,7 @@ import 'department_att.dart';
 import 'generatepdf.dart';
 import 'Image_view.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:open_file/open_file.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class Departmentwise_att extends StatefulWidget {
@@ -215,13 +216,12 @@ bool filests=false;
                                         padding: EdgeInsets.only(left: 5.0),
                                         child: Text("Total Department: ${countA}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                       ),
-
                                       Container(
                                         padding: EdgeInsets.only(left: 5.0),
                                         child: InkWell(
                                           child: Text('CSV',style: TextStyle(decoration: TextDecoration.underline,color: Colors.blueAccent),),
-
                                           onTap: () {
+                                            //openFile(filepath);
                                             setState(() {
                                                 filests=true;
                                               });
@@ -240,7 +240,6 @@ bool filests=false;
                                           },
                                         ),
                                       ),
-
                                       Container(
                                         padding: EdgeInsets.only(left: 5.0),
                                         child: InkWell(
@@ -252,6 +251,7 @@ bool filests=false;
                                             CreateDeptpdf(snapshot.data,'Department Summary Report',snapshot.data.length.toString(),'Department_Report_'+today.text,'dept').then((res) {
                                               setState(() {
                                                 filests=false;
+                                               // OpenFile.open("/sdcard/example.txt");
                                               });
                                               dialogwidget('PDF has been saved in internal storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
                                              // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
@@ -415,6 +415,7 @@ bool filests=false;
       ),
     );
   }
+
   dialogwidget(msg) {
     showDialog(context: context, child:
     new AlertDialog(
@@ -422,4 +423,17 @@ bool filests=false;
     )
     );
   }
+
+  String _openResult = 'Unknown';
+  Future<void> openFile(filepath) async {
+    //final filePath = '/storage/emulated/0/ubiattendance_files/Department_Report_13-Jun-2019.pdf';
+    final message = await OpenFile.open(filepath);
+    setState(() {
+      print(_openResult);
+      _openResult = message;
+      print(_openResult);
+    });
+
+  }
+
 }

@@ -17,7 +17,6 @@ class Login{
 
     try {
       final prefs = await SharedPreferences.getInstance();
-
       print(user.userName + "----");
       print(user.userPassword + "----");
       FormData formData = new FormData.from({

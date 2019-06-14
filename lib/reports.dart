@@ -23,6 +23,7 @@ import  'globals.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'no_net.dart';
+import 'flexi_report.dart';
 
 
 class Reports extends StatefulWidget {
@@ -467,6 +468,51 @@ class _Reports extends State<Reports> {
                 }
               },
             ),
+
+
+            flexi_permission ==1 ? SizedBox(height: 6.0):Center(),
+            flexi_permission ==1 ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.av_timer,size: 40.0,),
+                    SizedBox(width: 15.0,),
+                    Expanded(
+// widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Flexi Time',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                          ),
+                          Container(
+                              child: Text('Unplanned Shift Attendance',style: TextStyle(fontSize: 15.0,),)
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
+                  ],
+                ),
+              ),
+              color: color,
+              elevation: 4.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check Flexi Time attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FlexiReport()),
+                  );
+                }
+              },
+            ):Center(),
+
             visitpunch==1?SizedBox(height: 6.0):Center(),
             visitpunch==1?
             new RaisedButton(

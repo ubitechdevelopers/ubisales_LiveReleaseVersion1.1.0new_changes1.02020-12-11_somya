@@ -13,7 +13,13 @@ class Home{
 
   checkTimeIn(String empid, String orgid) async{
     try {
+
       final prefs = await SharedPreferences.getInstance();
+     /* prefs.getKeys();
+      prefs.remove('aid');*/
+      /*prefs.remove("aid");
+      prefs.commit();*/
+      //print(prefs.getString('aid'));
       FormData formData = new FormData.from({
         "uid": empid,
         "refno": orgid,
@@ -62,7 +68,8 @@ class Home{
         prefs.setString('shiftId', timeinoutMap['shiftId']);
         prefs.setString('leavetypeid', timeinoutMap['leavetypeid']);
         prefs.setInt('Is_Delete', Is_Delete);
-        //print(timeinoutMap['act']);
+        print('lastact'+prefs.getString('aid'));
+
         return timeinoutMap['act'];
       } else {
       //  print('8888');
