@@ -4,7 +4,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
@@ -18,7 +19,6 @@ import 'package:Shrine/services/services.dart';
 import 'globals.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'leave_summary.dart';
-import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'dart:async';
@@ -42,10 +42,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>{
-  //AppLifecycleState state;
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+  AppLifecycleState state;
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage>{
   int _currentIndex = 1;
   String userpwd = "new";
   String newpwd = "new";
-  int Is_Delete=0;
+  int Is_Delete = 0;
   bool _visible = true;
   String location_addr = "";
   String location_addr1 = "";
@@ -67,7 +68,8 @@ class _HomePageState extends State<HomePage>{
   int alertdialogcount = 0;
   Timer timer;
   Timer timer1;
- // Timer timerrefresh;
+
+  Timer timerrefresh;
   int response;
   final Widget removedChild = Center();
   String fname = "",
@@ -85,29 +87,31 @@ class _HomePageState extends State<HomePage>{
       latit = "",
       longi = "";
   bool issave = false;
-  String areaStatus='0';
+  String areaStatus = '0';
   String aid = "";
   String shiftId = "";
   List<Widget> widgets;
-  bool refreshsts=false;
+  bool refreshsts = false;
 
   @override
   void initState() {
     print('aintitstate');
     super.initState();
-   // WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
     initPlatformState();
     setLocationAddress();
     startTimer();
   }
 
- /* void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
     setState(() {
       state = appLifecycleState;
       if(state==AppLifecycleState.resumed){
         //print('WidgetsBindingObserver called');
-        timerrefresh.cancel();
+        if(timerrefresh.isActive){
+          timerrefresh.cancel();
+        }
         if(refreshsts) {
           //timerrefresh.cancel();
           if(timerrefresh.isActive){
@@ -129,12 +133,12 @@ class _HomePageState extends State<HomePage>{
         });
       }
     });
-  }*/
+  }
 
   startTimer() {
-    const fiveSec = const Duration(seconds: 5);
+    const fiveSec = const Duration(seconds: 2);
     int count = 0;
-   // print('called timer');
+    // print('called timer');
     timer = new Timer.periodic(fiveSec, (Timer t) {
       //print("timmer is running");
       count++;
@@ -144,7 +148,7 @@ class _HomePageState extends State<HomePage>{
         t.cancel();
         //print("timer canceled");
       }
-    /*  if(count==5){
+      /*  if(count==5){
         t.cancel();
       }*/
     });
@@ -160,38 +164,39 @@ class _HomePageState extends State<HomePage>{
 
   setLocationAddress() async {
     //print('called');
-    getAreaStatus().then((res){
-     // print('called again');
-      setState(() {
-        areaStatus=res.toString();
-      });
-    }).catchError((onError){
+    getAreaStatus().then((res) {
+      // print('called again');
+      if (mounted) {
+        setState(() {
+          areaStatus = res.toString();
+        });
+      }
+    }).catchError((onError) {
       print('Exception occured in clling function.......');
       print(onError);
     });
-    setState(() {
-      /*if(!mounted){
-        return;
-      }*/
-      streamlocationaddr = globalstreamlocationaddr;
-      print('loc: '+streamlocationaddr);
-      if (list != null && list.length > 0) {
-        lat = list[list.length - 1]['latitude'].toString();
-        long = list[list.length - 1]["longitude"].toString();
-        if (streamlocationaddr == '') {
-          streamlocationaddr = lat + ", " + long;
+    if (mounted) {
+      setState(() {
+        streamlocationaddr = globalstreamlocationaddr;
+        print('loc: ' + streamlocationaddr);
+        if (list != null && list.length > 0) {
+          lat = list[list.length - 1].latitude.toString();
+          long = list[list.length - 1].longitude.toString();
+          if (streamlocationaddr == '') {
+            streamlocationaddr = lat + ", " + long;
+          }
         }
-      }
-      if(streamlocationaddr == ''){
-        print('again');
-        sl.startStreaming(5);
-        startTimer();
-      }
-      //print("home addr" + streamlocationaddr);
-      //print(lat + ", " + long);
+        if (streamlocationaddr == '') {
+          print('again');
+          sl.startStreaming(5);
+          startTimer();
+        }
+        //print("home addr" + streamlocationaddr);
+        //print(lat + ", " + long);
 
-      //print(stopstreamingstatus.toString());
-    });
+        //print(stopstreamingstatus.toString());
+      });
+    }
   }
 
   launchMap(String lat, String long) async {
@@ -205,14 +210,12 @@ class _HomePageState extends State<HomePage>{
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-
     /*await availableCameras();*/
     SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
-
 
     if (response == 1) {
       Loc lock = new Loc();
@@ -224,59 +227,63 @@ class _HomePageState extends State<HomePage>{
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       prefs = await SharedPreferences.getInstance();
-      setState(() {
-        Is_Delete = prefs.getInt('Is_Delete') ?? 0;
-        newpwd = prefs.getString('newpwd') ?? "";
-        userpwd = prefs.getString('usrpwd') ?? "";
-        print("New pwd"+newpwd+"  User ped"+userpwd);
-        location_addr1 = location_addr;
-        admin_sts = prefs.getString('sstatus').toString() ?? '0';
-        mail_varified = prefs.getString('mail_varified').toString() ?? '0';
-        alertdialogcount = globalalertcount;
-        print('aid again');
-        response = prefs.getInt('response') ?? 0;
-        fname = prefs.getString('fname') ?? '';
-        lname = prefs.getString('lname') ?? '';
-        empid = prefs.getString('empid') ?? '';
-        email = prefs.getString('email') ?? '';
-        status = prefs.getString('status') ?? '';
-        orgid = prefs.getString('orgid') ?? '';
-        orgdir = prefs.getString('orgdir') ?? '';
-        org_name = prefs.getString('org_name') ?? '';
-        desination = prefs.getString('desination') ?? '';
-        profile = prefs.getString('profile') ?? '';
+      if (mounted) {
+        setState(() {
+          Is_Delete = prefs.getInt('Is_Delete') ?? 0;
+          newpwd = prefs.getString('newpwd') ?? "";
+          userpwd = prefs.getString('usrpwd') ?? "";
+          print("New pwd" + newpwd + "  User ped" + userpwd);
+          location_addr1 = location_addr;
+          admin_sts = prefs.getString('sstatus').toString() ?? '0';
+          mail_varified = prefs.getString('mail_varified').toString() ?? '0';
+          alertdialogcount = globalalertcount;
+          print('aid again');
+          response = prefs.getInt('response') ?? 0;
+          fname = prefs.getString('fname') ?? '';
+          lname = prefs.getString('lname') ?? '';
+          empid = prefs.getString('empid') ?? '';
+          email = prefs.getString('email') ?? '';
+          status = prefs.getString('status') ?? '';
+          orgid = prefs.getString('orgid') ?? '';
+          orgdir = prefs.getString('orgdir') ?? '';
+          org_name = prefs.getString('org_name') ?? '';
+          desination = prefs.getString('desination') ?? '';
+          profile = prefs.getString('profile') ?? '';
 
-        profileimage = new NetworkImage(profile);
-        // //print("1-"+profile);
-        profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
-          if (mounted) {
-            setState(() {
-              _checkLoaded = false;
-            });
-          }
+          profileimage = new NetworkImage(profile);
+          // //print("1-"+profile);
+          profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+            if (mounted) {
+              setState(() {
+                _checkLoaded = false;
+              });
+            }
+          });
+          // //print("2-"+_checkLoaded.toString());
+          latit = prefs.getString('latit') ?? '';
+          longi = prefs.getString('longi') ?? '';
+          shiftId = prefs.getString('shiftId') ?? "";
+          aid = prefs.getString('aid') ?? "";
+          print('aid again' + aid);
+          print('act again' + aid);
+          ////print("this is set state "+location_addr1);
+          act1 = act;
+          print(act1);
+          streamlocationaddr = globalstreamlocationaddr;
         });
-        // //print("2-"+_checkLoaded.toString());
-        latit = prefs.getString('latit') ?? '';
-        longi = prefs.getString('longi') ?? '';
-        shiftId = prefs.getString('shiftId') ?? "";
-        aid = prefs.getString('aid') ?? "";
-        print('aid again'+aid);
-        print('act again'+aid);
-        ////print("this is set state "+location_addr1);
-        act1 = act;
-        print(act1);
-        streamlocationaddr = globalstreamlocationaddr;
-      });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    (mail_varified == '0' && alertdialogcount == 0 && admin_sts == '1')
+        ? Future.delayed(Duration.zero, () => _showAlert(context))
+        : "";
 
-
-    (mail_varified=='0' && alertdialogcount==0 && admin_sts=='1')?Future.delayed(Duration.zero, () => _showAlert(context)):"";
-
-    return (response == 0 || userpwd!=newpwd || Is_Delete!=0) ? new AskRegisterationPage() : getmainhomewidget();
+    return (response == 0 || userpwd != newpwd || Is_Delete != 0)
+        ? new AskRegisterationPage()
+        : getmainhomewidget();
 
     /* return MaterialApp(
       home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
@@ -305,13 +312,12 @@ class _HomePageState extends State<HomePage>{
               ],
             ),
             automaticallyImplyLeading: false,
-              backgroundColor: Colors.teal,
-           // backgroundColor: Color.fromARGB(255,63,163,128),
+            backgroundColor: Colors.teal,
+            // backgroundColor: Color.fromARGB(255,63,163,128),
           ),
           //bottomSheet: getQuickLinksWidget(),
           persistentFooterButtons: <Widget>[
             quickLinkList1(),
-
           ],
 
           bottomNavigationBar: BottomNavigationBar(
@@ -337,9 +343,11 @@ class _HomePageState extends State<HomePage>{
                 return;
               }
 
-              setState(() {
-                _currentIndex = newIndex;
-              });
+              if (mounted) {
+                setState(() {
+                  _currentIndex = newIndex;
+                });
+              }
             }, // this will be set when a new tab is tapped
             items: [
               (admin_sts == '1')
@@ -377,14 +385,13 @@ class _HomePageState extends State<HomePage>{
   }
 
   checkalreadylogin() {
-
     ////print("---->"+response.toString());
     if (response == 1) {
       return new IndexedStack(
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-         (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+          (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -397,7 +404,7 @@ class _HomePageState extends State<HomePage>{
       );
     }
 
-   /* if(userpwd!=newpwd){
+    /* if(userpwd!=newpwd){
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => AskRegisterationPage()),
@@ -407,7 +414,6 @@ class _HomePageState extends State<HomePage>{
   }
 
   refreshPageWidgit() {
-
     if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
       return new Container(
         child: Center(
@@ -417,7 +423,9 @@ class _HomePageState extends State<HomePage>{
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: 20.0,),
+                    SizedBox(
+                      width: 20.0,
+                    ),
                     Icon(
                       Icons.all_inclusive,
                       color: Colors.teal,
@@ -431,7 +439,9 @@ class _HomePageState extends State<HomePage>{
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(width: 20.0,),
+                    SizedBox(
+                      width: 20.0,
+                    ),
                     Text(
                       "Note: ",
                       style: new TextStyle(
@@ -445,7 +455,7 @@ class _HomePageState extends State<HomePage>{
                       style: new TextStyle(fontSize: 12.0, color: Colors.black),
                       textAlign: TextAlign.left,
                     ),
-                   /* new InkWell(
+                    /* new InkWell(
                       child: new Text(
                         "Fetch Location now",
                         style: new TextStyle(
@@ -462,7 +472,6 @@ class _HomePageState extends State<HomePage>{
                       },
                     )*/
                   ]),
-
               FlatButton(
                 child: new Text(
                   "Fetch Location now",
@@ -483,9 +492,7 @@ class _HomePageState extends State<HomePage>{
         ),
       );
     } else {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
             'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
             textAlign: TextAlign.center,
@@ -493,7 +500,7 @@ class _HomePageState extends State<HomePage>{
         RaisedButton(
           child: Text('Open Settings'),
           onPressed: () {
-            SimplePermissions.openSettings();
+            PermissionHandler().openAppSettings();
           },
         ),
       ]);
@@ -601,10 +608,12 @@ class _HomePageState extends State<HomePage>{
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image:_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
-                               //image: AssetImage('assets/avatar.png')
+                                image: _checkLoaded
+                                    ? AssetImage('assets/avatar.png')
+                                    : profileimage,
+                                //image: AssetImage('assets/avatar.png')
                               ))),
-                  /*new Positioned(
+                      /*new Positioned(
                     left: MediaQuery.of(context).size.width*.14,
                     top: MediaQuery.of(context).size.height*.11,
                     child: new RawMaterialButton(
@@ -682,144 +691,141 @@ class _HomePageState extends State<HomePage>{
       child: getBulkAttnWid(),
     );
   }
- Widget getBulkAttnWid() {
-   List <Widget> widList = List<Widget>();
 
-   if (bulkAttn.toString() == '1' && admin_sts == '1') {
-     widList.add(Container(
-       padding: EdgeInsets.only(top: 10.0),
-       constraints: BoxConstraints(
-         maxHeight: 60.0,
-         minHeight: 20.0,
-       ),
-       child: new GestureDetector(
-           onTap: () {
-             Navigator.push(
-               context,
-               MaterialPageRoute(builder: (context) => Bulkatt()),
-             );
-           },
-           child: Column(
-             children: [
-               Icon(
-                 Icons.group,
-                 size: 30.0,
-                 color: Colors.white,
-               ),
-               Text('Group',
-                   textAlign: TextAlign.center,
-                   style:
-                   new TextStyle(fontSize: 15.0, color: Colors.white)),
-             ],
-           )),
-     ));
-   }
-   widList.add(Container(
-     padding: EdgeInsets.only(top: 10.0),
-     constraints: BoxConstraints(
-       maxHeight: 60.0,
-       minHeight: 20.0,
-     ),
-     child: new GestureDetector(
-         onTap: () {
-           Navigator.push(
-             context,
-             MaterialPageRoute(builder: (context) => MyApp()),
-           );
-         },
-         child: Column(
-           children: [
-             Icon(
-               Icons.calendar_today,
-               size: 30.0,
-               color: Colors.white,
-             ),
-             Text('Log',
-                 textAlign: TextAlign.center,
-                 style:
-                 new TextStyle(fontSize: 15.0, color: Colors.white)),
-           ],
-         )),
-   ));
+  Widget getBulkAttnWid() {
+    List<Widget> widList = List<Widget>();
 
-   if(visitpunch.toString()=='1') {
-   widList.add(Container(
-     padding: EdgeInsets.only(top: 10.0),
-     constraints: BoxConstraints(
-       maxHeight: 60.0,
-       minHeight: 20.0,
-     ),
-     child: new GestureDetector(
-         onTap: () {
-           /*showInSnackBar("Under development.");*/
-           Navigator.push(
-             context,
-             MaterialPageRoute(
-                 builder: (context) => PunchLocationSummary()),
-           );
-         },
-         child:
-               Column(
-                 children: [
-                   Icon(
-                     Icons.add_location,
-                     size: 30.0,
-                     color: Colors.white,
-                   ),
-                   Text('Visits',
-                       textAlign: TextAlign.center,
-                       style:
-                       new TextStyle(fontSize: 15.0, color: Colors.white)),
-                 ],
-               )
-            ),
-   ));
- }
+    if (bulkAttn.toString() == '1' && admin_sts == '1') {
+      widList.add(Container(
+        padding: EdgeInsets.only(top: 10.0),
+        constraints: BoxConstraints(
+          maxHeight: 60.0,
+          minHeight: 20.0,
+        ),
+        child: new GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Bulkatt()),
+              );
+            },
+            child: Column(
+              children: [
+                Icon(
+                  Icons.group,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+                Text('Group',
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+              ],
+            )),
+      ));
+    }
+    widList.add(Container(
+      padding: EdgeInsets.only(top: 10.0),
+      constraints: BoxConstraints(
+        maxHeight: 60.0,
+        minHeight: 20.0,
+      ),
+      child: new GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyApp()),
+            );
+          },
+          child: Column(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                size: 30.0,
+                color: Colors.white,
+              ),
+              Text('Log',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+            ],
+          )),
+    ));
 
-   if(timeOff.toString()=='1') {
-     widList.add(Container(
-       padding: EdgeInsets.only(top: 10.0),
-       constraints: BoxConstraints(
-         maxHeight: 60.0,
-         minHeight: 20.0,
-       ),
-       child: new GestureDetector(
-           onTap: () {
-             //  //print('----->>>>>'+getOrgPerm(1).toString());
-             getOrgPerm(1).then((res) {
-               {
-                 //   //print('----->>>>>'+res.toString());
-                 if (res) {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                         builder: (context) => TimeoffSummary()),
-                   );
-                 } else
-                   showInSnackBar('Please buy this feature');
-               }
-             });
-           },
-           child: Column(
-             children: [
-               Icon(
-                 Icons.access_alarm,
-                 size: 30.0,
-                 color: Colors.white,
-               ),
-               Text('Time Off',
-                   textAlign: TextAlign.center,
-                   style:
-                   new TextStyle(fontSize: 15.0, color: Colors.white)),
-             ],
-           )),
-     ));
-   }
+    if (visitpunch.toString() == '1') {
+      widList.add(Container(
+        padding: EdgeInsets.only(top: 10.0),
+        constraints: BoxConstraints(
+          maxHeight: 60.0,
+          minHeight: 20.0,
+        ),
+        child: new GestureDetector(
+            onTap: () {
+              /*showInSnackBar("Under development.");*/
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+              );
+            },
+            child: Column(
+              children: [
+                Icon(
+                  Icons.add_location,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+                Text('Visits',
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+              ],
+            )),
+      ));
+    }
 
-   /* widList.add();
+    if (timeOff.toString() == '1') {
+      widList.add(Container(
+        padding: EdgeInsets.only(top: 10.0),
+        constraints: BoxConstraints(
+          maxHeight: 60.0,
+          minHeight: 20.0,
+        ),
+        child: new GestureDetector(
+            onTap: () {
+              //  //print('----->>>>>'+getOrgPerm(1).toString());
+              getOrgPerm(1).then((res) {
+                {
+                  //   //print('----->>>>>'+res.toString());
+                  if (res) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TimeoffSummary()),
+                    );
+                  } else
+                    showInSnackBar('Please buy this feature');
+                }
+              });
+            },
+            child: Column(
+              children: [
+                Icon(
+                  Icons.access_alarm,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+                Text('Time Off',
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+              ],
+            )),
+      ));
+    }
+
+    /* widList.add();
     widList.add();*/
-    return (Row(children: widList,mainAxisAlignment: MainAxisAlignment.spaceEvenly,));
- }
+    return (Row(
+      children: widList,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    ));
+  }
+
   List<GestureDetector> quickLinkList() {
     List<GestureDetector> list = new List<GestureDetector>();
     // //print("permission list-->>>>>>"+data.toString());
@@ -998,8 +1004,13 @@ class _HomePageState extends State<HomePage>{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Text('Location not correct? ',style: TextStyle(color: Colors.teal),),
-                    SizedBox(width: 5.0,),
+                    new Text(
+                      'Location not correct? ',
+                      style: TextStyle(color: Colors.teal),
+                    ),
+                    SizedBox(
+                      width: 5.0,
+                    ),
                     new InkWell(
                       child: new Text(
                         "Refresh location", // main  widget
@@ -1019,23 +1030,36 @@ class _HomePageState extends State<HomePage>{
                   ],
                 ),
               ),
-                  SizedBox(height: 5.0,),
-              areaId!=0 && geoFence==1? areaStatus=='0'?Container(
-                    padding: EdgeInsets.only(left: 10.0,right: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                    //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                    ),
-                    child:Text('Outside fenced area',style: TextStyle(fontSize: 20.0,color: Colors.white),),
-                  ):
-              Container(
-                padding: EdgeInsets.only(left: 10.0,right: 10.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                ),
-                child:Text('Within fenced area',style: TextStyle(fontSize: 20.0,color: Colors.white),),
-              ):Center(),
+              SizedBox(
+                height: 5.0,
+              ),
+              areaId != 0 && geoFence == 1
+                  ? areaStatus == '0'
+                      ? Container(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                          ),
+                          child: Text(
+                            'Outside fenced area',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                          ),
+                          child: Text(
+                            'Within fenced area',
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        )
+                  : Center(),
             ])),
       ]);
     } else {
@@ -1047,7 +1071,7 @@ class _HomePageState extends State<HomePage>{
         RaisedButton(
           child: Text('Open Settings'),
           onPressed: () {
-            SimplePermissions.openSettings();
+            PermissionHandler().openAppSettings();
           },
         ),
       ]);
@@ -1093,61 +1117,64 @@ class _HomePageState extends State<HomePage>{
     }
   }
 
-
-
   saveImage() async {
     sl.startStreaming(5);
-print('aidId'+aid);
+    print('aidId' + aid);
     MarkTime mk = new MarkTime(
         empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
       /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
       SaveImage saveImage = new SaveImage();
       bool issave = false;
-      setState(() {
-        act1 = "";
-      });
+      if (mounted) {
+        setState(() {
+          act1 = "";
+        });
+      }
       issave = await saveImage.saveTimeInOutImagePicker(mk);
       ////print(issave);
       if (issave) {
-        showDialog(context: context, child:
-        new AlertDialog(
-          content: new Text("Attendance marked successfully!"),
-        )
-        );
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              content: new Text("Attendance marked successfully!"),
+            ));
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MyApp()),
         );
-        setState(() {
-          act1 = act;
-        });
+        if (mounted) {
+          setState(() {
+            act1 = act;
+          });
+        }
       } else {
-        showDialog(context: context, child:
-        new AlertDialog(
-          title: new Text("!"),
-          content: new Text("Problem while marking attendance, try again."),
-        )
-        );
-        setState(() {
-          act1 = act;
-        });
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              title: new Text("!"),
+              content: new Text("Problem while marking attendance, try again."),
+            ));
+        if (mounted) {
+          setState(() {
+            act1 = act;
+          });
+        }
       }
-    }else{
-      showDialog(context: context, child:
-      new AlertDialog(
-
-        content: new Text("Internet connection not found!."),
-      )
-      );
+    } else {
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text("Internet connection not found!."),
+          ));
     }
-
 
     /*SaveImage saveImage = new SaveImage();
     bool issave = false;
@@ -1177,21 +1204,23 @@ print('aidId'+aid);
 
     MarkTime mk = new MarkTime(
         empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
-   /* mk1 = mk;*/
+    /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-       /* Navigator.push(
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      /* Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
       SaveImage saveImage = new SaveImage();
+      if (mounted)
+        setState(() {
+          act1 = "";
+        });
 
-      setState(() {
-        act1 = "";
-      });
-
-         saveTimeInOutImagePicker_new(mk).then((res){/*
+      saveTimeInOutImagePicker_new(mk).then((res) {
+        /*
            print("res: "+res.toString());
            print("issave: "+issave.toString());
            if (issave==true || res==true) {
@@ -1218,23 +1247,16 @@ print('aidId'+aid);
                act1 = act;
              });
            }*/
-         });
-
-
-
-
-
-    }else{
-      showDialog(context: context, child:
-      new AlertDialog(
-
-        content: new Text("Internet connection not found!."),
-      )
-      );
+      });
+    } else {
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text("Internet connection not found!."),
+          ));
     }
 
-
-  /*SaveImage saveImage = new SaveImage();
+    /*SaveImage saveImage = new SaveImage();
     bool issave = false;
     setState(() {
       act1 = "";
@@ -1266,84 +1288,78 @@ print('aidId'+aid);
 
   }*/
 
-  resendVarification() async{
-    NewServices ns= new NewServices();
+  resendVarification() async {
+    NewServices ns = new NewServices();
     bool res = await ns.resendVerificationMail(orgid);
-    if(res){
+    if (res) {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-              content: Row( children:<Widget>[
-                Text("Verification link has been sent to \nyour organization's registered Email."),
-              ]
-              )
-          )
-      );
+                  content: Row(children: <Widget>[
+                Text(
+                    "Verification link has been sent to \nyour organization's registered Email."),
+              ])));
     }
   }
 
   void _showAlert(BuildContext context) {
     globalalertcount = 1;
-    setState(() {
-      alertdialogcount = 1;
-    });
+    if (mounted)
+      setState(() {
+        alertdialogcount = 1;
+      });
     showDialog(
-
         context: context,
         builder: (context) => AlertDialog(
-          title: Text("Verify Email"),
-          content: Container(
-              height: MediaQuery.of(context).size.height*0.22,
-              child:Column(
-              children:<Widget>[
-              Container(width:MediaQuery.of(context).size.width*0.6, child:Text("Your organization's Email is not verified. Please verify now.")),
-
-              new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children:<Widget>[
-                    ButtonBar(
+            title: Text("Verify Email"),
+            content: Container(
+                height: MediaQuery.of(context).size.height * 0.22,
+                child: Column(children: <Widget>[
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                          "Your organization's Email is not verified. Please verify now.")),
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        FlatButton(
-                          child: Text('Later'),
-                          shape: Border.all(color: Colors.black54),
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                          },
-                        ),
-                        new RaisedButton(
-                          child: new Text(
-                            "Verify",
-                            style: new TextStyle(
-                              color: Colors.white,
+                        ButtonBar(
+                          children: <Widget>[
+                            FlatButton(
+                              child: Text('Later'),
+                              shape: Border.all(color: Colors.black54),
+                              onPressed: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              },
                             ),
-                          ),
-                          color: Colors.orangeAccent,
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                            resendVarification();
-                          },
+                            new RaisedButton(
+                              child: new Text(
+                                "Verify",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              color: Colors.orangeAccent,
+                              onPressed: () {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                resendVarification();
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-             ])
-          ]
-          ))
-        )
-    );
+                      ])
+                ]))));
   }
-
-
-
   //////////////////////////////////////////////////////////////////
   Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
     String base64Image;
     String base64Image1;
     print('saveTimeInOutImagePicker_new CALLED');
     String location = globalstreamlocationaddr;
-    Map<String, double> _currentLocation =
-    globals.list[list.length - 1];
-    String lat = _currentLocation["latitude"].toString();
-    String long = _currentLocation["longitude"].toString();
+    LocationData _currentLocation = globals.list[list.length - 1];
+    String lat = _currentLocation.latitude.toString();
+    String long = _currentLocation.longitude.toString();
     try {
       ///////////////////////////
       StreamLocation sl = new StreamLocation();
@@ -1355,27 +1371,26 @@ print('aidId'+aid);
       imageCache.clear();
       if (globals.attImage == 1) {
         ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+                source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
             .then((imagei) {
           if (imagei != null) {
             _location.getLocation().then((res) {
-              if (res['latitude'] != '') {
+              if (res.latitude != '') {
                 var addresses = '';
                 Geocoder.local
                     .findAddressesFromCoordinates(
-                    Coordinates(res['latitude'], res['longitude']))
+                        Coordinates(res.latitude, res.longitude))
                     .then((add) {
                   print(
                       'Location taekn--------------------------------------------------');
-                  print(res['latitude'].toString() +
-                      ' ' +
-                      res['longitude'].toString());
+                  print(
+                      res.latitude.toString() + ' ' + res.longitude.toString());
                   var first = add.first;
                   print("${first.addressLine}");
                   print(
                       'Location taekn--------------------------------------------------');
-                  lat = res['latitude'].toString();
-                  long = res['longitude'].toString();
+                  lat = res.latitude.toString();
+                  long = res.longitude.toString();
 
                   //// sending this base64image string +to rest api
                   Dio dio = new Dio();
@@ -1411,77 +1426,79 @@ print('aidId'+aid);
                   dio
                       .post(globals.path + "saveImage", data: formData)
                       .then((response1) {
-
-                    print('response1: '+response1.toString());
+                    print('response1: ' + response1.toString());
                     imagei.deleteSync();
                     imageCache.clear();
                     /*getTempImageDirectory();*/
                     Map MarkAttMap = json.decode(response1.data);
-                    print('MarkAttMap["status"]: '+MarkAttMap["status"].toString());
-                    if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
-                      print("res: "+res.toString());
-                      print("issave: "+issave.toString());
-                 //     if (issave==true || res==true) {
+                    print('MarkAttMap["status"]: ' +
+                        MarkAttMap["status"].toString());
+                    if (MarkAttMap["status"] == 1 ||
+                        MarkAttMap["status"] == 2) {
+                      print("res: " + res.toString());
+                      print("issave: " + issave.toString());
+                      //     if (issave==true || res==true) {
 
-                        showDialog(context: context, child:
-                        new AlertDialog(
-                          content: new Text("Attendance marked successfully !"),
-                        )
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyApp()),
-                        );
+                      showDialog(
+                          context: context,
+                          child: new AlertDialog(
+                            content:
+                                new Text("Attendance marked successfully !"),
+                          ));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyApp()),
+                      );
+                      if (mounted)
                         setState(() {
                           act1 = act;
                         });
-                      } else {
-                        showDialog(context: context, child:
-                        new AlertDialog(
-                          title: new Text("Warning!"),
-                          content: new Text("Problem while marking attendance, try again."),
-                        )
-                        );
+                    } else {
+                      showDialog(
+                          context: context,
+                          child: new AlertDialog(
+                            title: new Text("Warning!"),
+                            content: new Text(
+                                "Problem while marking attendance, try again."),
+                          ));
+                      if (mounted)
                         setState(() {
                           act1 = act;
                         });
-                      }
-                     /* setState(() {
+                    }
+                    /* setState(() {
                         issave=true;
                         print('new issave'+issave.toString());
                       });*/
-
                   }).catchError((err) {
                     print('Exception in setting data in saveImage' +
                         err.toString());
                     return true;
                   });
                 });
-              }else{
-                showDialog(context: context, child:
-                new AlertDialog(
-                  title: new Text("Warning!"),
-                  content: new Text("Location not fetched..."),
-                )
-                );
-
+              } else {
+                showDialog(
+                    context: context,
+                    child: new AlertDialog(
+                      title: new Text("Warning!"),
+                      content: new Text("Location not fetched..."),
+                    ));
               }
-
             });
             //*****
           } else {
             ///////////////////////////// camera closed by pressing back button
 
-          showDialog(context: context, child:
-          new AlertDialog(
-          title: new Text("Warning!"),
-          content: new Text("Camera closed improperly"),
-          )
-          );
-          setState(() {
-          act1 = act;
-          });
-
+            showDialog(
+                context: context,
+                child: new AlertDialog(
+                  title: new Text("Warning!"),
+                  content: new Text("Camera closed improperly"),
+                ));
+            if (mounted)
+              setState(() {
+                act1 = act;
+              });
 
             ///////////////////////////// camera closed by pressing back button/
             print("6");
@@ -1492,124 +1509,121 @@ print('aidId'+aid);
           print('Exception Occured in getting FILE' + err.toString());
           return true;
         });
-      }else{ // block for marking attendance without taking the picture
-            _location.getLocation().then((res) {
-              if (res['latitude'] != '') {
-                var addresses = '';
-                Geocoder.local
-                    .findAddressesFromCoordinates(
-                    Coordinates(res['latitude'], res['longitude']))
-                    .then((add) {
-                  print(
-                      'Location taekn 2--------------------------------------------------');
-                  print(res['latitude'].toString() +
-                      ' ' +
-                      res['longitude'].toString());
-                  var first = add.first;
-                  print("${first.addressLine}");
-                  print(
-                      'Location taekn 2--------------------------------------------------');
-                  lat = res['latitude'].toString();
-                  long = res['longitude'].toString();
+      } else {
+        // block for marking attendance without taking the picture
+        _location.getLocation().then((res) {
+          if (res.latitude != '') {
+            var addresses = '';
+            Geocoder.local
+                .findAddressesFromCoordinates(
+                    Coordinates(res.latitude, res.longitude))
+                .then((add) {
+              print(
+                  'Location taekn 2--------------------------------------------------');
+              print(res.latitude.toString() + ' ' + res.longitude.toString());
+              var first = add.first;
+              print("${first.addressLine}");
+              print(
+                  'Location taekn 2--------------------------------------------------');
+              lat = res.latitude.toString();
+              long = res.longitude.toString();
 
-                  //// sending this base64image string +to rest api
-                  Dio dio = new Dio();
+              //// sending this base64image string +to rest api
+              Dio dio = new Dio();
 
-                  print("--saveImage?uid=" +
-                      mk.uid +
-                      "&location=" +
-                      location +
-                      "&aid=" +
-                      mk.aid +
-                      "&act=" +
-                      mk.act +
-                      "&shiftid=" +
-                      mk.shiftid +
-                      "&refid=" +
-                      mk.refid +
-                      "&latit=" +
-                      lat +
-                      "&longi=" +
-                      long);
-                  FormData formData = new FormData.from({
-                    "uid": mk.uid,
-                    "location": location,
-                    "aid": mk.aid,
-                    "act": mk.act,
-                    "shiftid": mk.shiftid,
-                    "refid": mk.refid,
-                    "latit": lat,
-                    "longi": long,
-                 //   "file": new UploadFileInfo(imagei, "image.png"),
-                  });
-                  print("5");
-                  dio
-                      .post(globals.path + "saveImage", data: formData)
-                      .then((response1) {
-
-                    print('response2: '+response1.toString());
-               //     imagei.deleteSync();
+              print("--saveImage?uid=" +
+                  mk.uid +
+                  "&location=" +
+                  location +
+                  "&aid=" +
+                  mk.aid +
+                  "&act=" +
+                  mk.act +
+                  "&shiftid=" +
+                  mk.shiftid +
+                  "&refid=" +
+                  mk.refid +
+                  "&latit=" +
+                  lat +
+                  "&longi=" +
+                  long);
+              FormData formData = new FormData.from({
+                "uid": mk.uid,
+                "location": location,
+                "aid": mk.aid,
+                "act": mk.act,
+                "shiftid": mk.shiftid,
+                "refid": mk.refid,
+                "latit": lat,
+                "longi": long,
+                //   "file": new UploadFileInfo(imagei, "image.png"),
+              });
+              print("5");
+              dio
+                  .post(globals.path + "saveImage", data: formData)
+                  .then((response1) {
+                print('response2: ' + response1.toString());
+                //     imagei.deleteSync();
                 //    imageCache.clear();
-                    /*getTempImageDirectory();*/
-                    Map MarkAttMap = json.decode(response1.data);
-                    print('MarkAttMap["status"]: '+MarkAttMap["status"].toString());
-                    if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
-                      print("res: "+res.toString());
-                      print("issave: "+issave.toString());
-                      //     if (issave==true || res==true) {
+                /*getTempImageDirectory();*/
+                Map MarkAttMap = json.decode(response1.data);
+                print(
+                    'MarkAttMap["status"]: ' + MarkAttMap["status"].toString());
+                if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
+                  print("res: " + res.toString());
+                  print("issave: " + issave.toString());
+                  //     if (issave==true || res==true) {
 
-
-                      showDialog(context: context, child:
-                      new AlertDialog(
+                  showDialog(
+                      context: context,
+                      child: new AlertDialog(
                         content: new Text("Attendance marked successfully !"),
-                      )
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MyApp()),
-                      );
-                      setState(() {
-                        act1 = act;
-                      });
-                    } else {
-                      showDialog(context: context, child:
-                      new AlertDialog(
+                      ));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyApp()),
+                  );
+                  if (mounted)
+                    setState(() {
+                      act1 = act;
+                    });
+                } else {
+                  showDialog(
+                      context: context,
+                      child: new AlertDialog(
                         title: new Text("Warning!"),
-                        content: new Text("Problem while marking attendance, try again."),
-                      )
-                      );
-                      setState(() {
-                        act1 = act;
-                      });
-                    }
-                    /* setState(() {
+                        content: new Text(
+                            "Problem while marking attendance, try again."),
+                      ));
+                  if (mounted)
+                    setState(() {
+                      act1 = act;
+                    });
+                }
+                /* setState(() {
                         issave=true;
                         print('new issave'+issave.toString());
                       });*/
-
-                  }).catchError((err) {
-                    print('Exception in setting data in saveImage' +
-                        err.toString());
-                    return true;
-                  });
-                });
-              }else{
-                showDialog(context: context, child:
-                new AlertDialog(
+              }).catchError((err) {
+                print(
+                    'Exception in setting data in saveImage' + err.toString());
+                return true;
+              });
+            });
+          } else {
+            showDialog(
+                context: context,
+                child: new AlertDialog(
                   title: new Text("Warning!"),
                   content: new Text("Location not fetched..."),
-                )
-                );
-              }
-            });
-            //*****
-
-
+                ));
+          }
+        });
+        //*****
 
       }
       ////////////////////////////////suumitted block/
       ///////////////////////////
-
     } catch (e) {
       print(e.toString());
       return false;
@@ -1618,13 +1632,12 @@ print('aidId'+aid);
 
   @override
   void dispose() {
-   // WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
     timer.cancel();
-   /* if(timerrefresh.isActive){
+     if(timerrefresh.isActive){
       timerrefresh.cancel();
-    }*/
+    }
   }
-
 //////////////////////////////////////////////////////////////////
 }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/addShift.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'home.dart';
@@ -23,7 +21,6 @@ String _orgName;
 class _FlexiList extends State<FlexiList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');

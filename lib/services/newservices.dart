@@ -1,21 +1,16 @@
 
 import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/model/model.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
-import 'dart:async';
 import 'package:Shrine/globals.dart';
 import 'services.dart';
-
-
 
 class RequestTimeOffService{
 
@@ -459,8 +454,8 @@ class NewServices{
 }
 
 class StreamLocation{
-  Map<String, double> _currentLocation;
-  StreamSubscription<Map<String, double>> _locationSubscription;
+  LocationData _currentLocation;
+  StreamSubscription<LocationData> _locationSubscription;
   Location _location = new Location();
   String streamlocationaddr="";
   String lat="";
@@ -469,7 +464,7 @@ class StreamLocation{
     int counter = 0;
     stopstreamingstatus = false;
     _locationSubscription =
-        _location.onLocationChanged().listen((Map<String,double> result) {
+        _location.onLocationChanged().listen((LocationData result) {
             _currentLocation = result;
             list.add(result);
             getAddress(list[list.length-1]);
@@ -487,14 +482,14 @@ class StreamLocation{
         });
   }
 
-  getAddress( Map<String, double> _currentLocation) async{
+  getAddress( LocationData _currentLocation) async{
     try {
       ////print(_currentLocation);
       //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
       if (_currentLocation != null) {
         var addresses = await Geocoder.local.findAddressesFromCoordinates(
             Coordinates(
-                _currentLocation['latitude'], _currentLocation['longitude']));
+                _currentLocation.latitude, _currentLocation.longitude));
         var first = addresses.first;
         //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
         streamlocationaddr = "${first.addressLine}";
@@ -503,7 +498,7 @@ class StreamLocation{
     }catch(e){
       //print(e.toString());
       if (_currentLocation != null) {
-        globalstreamlocationaddr = "${_currentLocation["latitude"]},${_currentLocation["longitude"]}";
+        globalstreamlocationaddr = "${_currentLocation.latitude},${_currentLocation.longitude}";
       }
     }
   }

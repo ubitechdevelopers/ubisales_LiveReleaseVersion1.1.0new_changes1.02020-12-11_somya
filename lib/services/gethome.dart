@@ -1,12 +1,7 @@
-import 'package:Shrine/model/user.dart';
 import 'package:dio/dio.dart';
-import 'package:Shrine/model/employee.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/globals.dart' as globals;
-import 'fetch_location.dart';
-import 'package:Shrine/model/timeinout.dart';
-
 
 class Home{
   var dio = new Dio();
@@ -161,8 +156,8 @@ class Home{
         String lat="",long="";
         String streamlocationaddr = "";
         if(globals.list!=null && globals.list.length>0) {
-          lat = globals.list[globals.list.length - 1]['latitude'].toString();
-          long = globals.list[globals.list.length - 1]["longitude"].toString();
+          lat = globals.list[globals.list.length - 1].latitude.toString();
+          long = globals.list[globals.list.length - 1].longitude.toString();
           streamlocationaddr = globals.globalstreamlocationaddr;
           timeinoutMap.putIfAbsent('latit', ()=> lat );
           timeinoutMap.putIfAbsent('longi', ()=> long );

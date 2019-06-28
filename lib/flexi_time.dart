@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
@@ -27,6 +27,8 @@ import 'reports.dart';
 import 'flexi_list.dart';
 import 'services/services.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 // This app is a stateful, it tracks the user's current choice.
 class Flexitime extends StatefulWidget {
@@ -130,8 +132,8 @@ class _Flexitime extends State<Flexitime> {
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
       if (list != null && list.length > 0) {
-        lat = list[list.length - 1]['latitude'].toString();
-        long = list[list.length - 1]["longitude"].toString();
+        lat = list[list.length - 1].latitude.toString();
+        long = list[list.length - 1].longitude.toString();
         if (streamlocationaddr == '') {
           streamlocationaddr = lat + ", " + long;
         }
@@ -430,7 +432,7 @@ class _Flexitime extends State<Flexitime> {
             RaisedButton(
               child: Text('Open Settings'),
               onPressed: () {
-                SimplePermissions.openSettings();
+                PermissionHandler().openAppSettings();
               },
             ),
           ]);
@@ -664,8 +666,7 @@ class _Flexitime extends State<Flexitime> {
         RaisedButton(
           child: Text('Open Settings'),
           onPressed: () {
-            SimplePermissions.openSettings();
-          },
+            PermissionHandler().openAppSettings();          },
         ),
       ]);
     }

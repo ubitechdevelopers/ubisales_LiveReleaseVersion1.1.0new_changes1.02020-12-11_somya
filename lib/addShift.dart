@@ -14,8 +14,6 @@ import 'shift_list.dart';
 import 'reports.dart';
 import 'profile.dart';
 
-
-
 class addShift extends StatefulWidget {
   @override
   _addShift createState() => _addShift();

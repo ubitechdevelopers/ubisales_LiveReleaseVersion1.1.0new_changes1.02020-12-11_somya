@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'package:Shrine/services/gethome.dart';

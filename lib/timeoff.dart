@@ -4,14 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'punchlocation.dart';
 import 'drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';

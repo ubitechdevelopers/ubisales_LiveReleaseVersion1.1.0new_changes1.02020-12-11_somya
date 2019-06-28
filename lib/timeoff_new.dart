@@ -4,7 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
@@ -124,8 +125,8 @@ class _TimeOff_New extends State<TimeOff_New> {
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
       if (list != null && list.length > 0) {
-        lat = list[list.length - 1]['latitude'].toString();
-        long = list[list.length - 1]["longitude"].toString();
+        lat = list[list.length - 1].latitude.toString();
+        long = list[list.length - 1].longitude.toString();
         if (streamlocationaddr == '') {
           streamlocationaddr = lat + ", " + long;
         }
@@ -401,7 +402,7 @@ class _TimeOff_New extends State<TimeOff_New> {
             RaisedButton(
               child: Text('Open Settings'),
               onPressed: () {
-                SimplePermissions.openSettings();
+                PermissionHandler().openAppSettings();
               },
             ),
           ]);
@@ -583,7 +584,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         RaisedButton(
           child: Text('Open Settings'),
           onPressed: () {
-            SimplePermissions.openSettings();
+            PermissionHandler().openAppSettings();
           },
         ),
       ]);

@@ -13,22 +13,15 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
-
 import 'home.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart';
-import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'dart:async';
 import 'check_update.dart';
 import 'package:Shrine/services/services.dart';
 
-
 class ShrineApp extends StatefulWidget {
-
   @override
   _ShrineAppState createState() => _ShrineAppState();
 }
@@ -84,5 +77,3 @@ class _ShrineAppState extends State<ShrineApp> {
     return (response==1) ? new HomePage() : new LoginPage();
   }
 }
-
-
