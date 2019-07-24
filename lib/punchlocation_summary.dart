@@ -15,6 +15,8 @@ import 'settings.dart';
 import 'globals.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'Image_view.dart';
+import 'notifications.dart';
+import 'package:flutter/services.dart';
 
 //import 'package:intl/intl.dart';
 
@@ -27,6 +29,7 @@ class PunchLocationSummary extends StatefulWidget {
 }
 
 class _PunchLocationSummary extends State<PunchLocationSummary> {
+  static const platform = const MethodChannel('location.spoofing.check');
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String lat="";
   String long="";
@@ -43,12 +46,32 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
   final _comments=TextEditingController();
   String latit,longi,location_addr1;
   Timer timer;
+  bool fakeLocationDetected=false;
+  var FakeLocationStatus=0;
   @override
   void initState() {
 
     super.initState();
     initPlatformState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     setLocationAddress();
+    platform.setMethodCallHandler(_handleMethod);
+
+  }
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        if(call.arguments=="Location is mocked"){
+          setState(() {
+            fakeLocationDetected=true;
+            FakeLocationStatus=1;
+          });
+        }
+
+        debugPrint(call.arguments);
+        return new Future.value("");
+    }
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
@@ -138,16 +161,9 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
           backgroundColor: Colors.teal,
         ),
         bottomNavigationBar: BottomNavigationBar(
-
           currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
           onTap: (newIndex) {
-            if(newIndex==2){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Settings()),
-              );
-              return;
-            }
             if(newIndex==1){
               Navigator.push(
                 context,
@@ -166,6 +182,20 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
               );
               return;
             }
+            if(newIndex==2){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Settings()),
+              );
+              return;
+            }
+            else if(newIndex == 3){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Notifications()),
+              );
+
+            }
             setState((){_currentIndex = newIndex;});
 
           }, // this will be set when a new tab is tapped
@@ -179,18 +209,24 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
             )
                 : BottomNavigationBarItem(
               icon: new Icon(
-                Icons.person,
+                Icons.person,color: Colors.black54,
               ),
-              title: new Text('Profile'),
+              title: new Text('Profile',style: TextStyle(color: Colors.black54)),
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.home,color: Colors.black54,),
-              title: new Text('Home',style:TextStyle(color: Colors.black54,)),
+              title: new Text('Home',style: TextStyle(color: Colors.black54)),
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings,),
-                title: Text('Settings')
-            )
+                icon: Icon(Icons.settings,color: Colors.black54,),
+                title: Text('Settings',style: TextStyle(color: Colors.black54),)
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.notifications
+                  ,color: Colors.black54,
+                ),
+                title: Text('Notifications',style: TextStyle(color: Colors.black54))),
           ],
         ),
         endDrawer: new AppDrawer(),
@@ -271,7 +307,7 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
                 print('22222222222222');
                 print('<<****************************');
                 Navigator.of(context, rootNavigator: true).pop();
-                saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),latit,longi,_comments.text,orgid).then((res){
+                saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),latit,longi,_comments.text,orgid,FakeLocationStatus).then((res){
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PunchLocationSummary()),

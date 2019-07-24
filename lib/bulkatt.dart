@@ -13,6 +13,7 @@ import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';
 import 'Image_view.dart';
+import 'notifications.dart';
 //import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class Bulkatt extends StatefulWidget {
@@ -72,6 +73,8 @@ class _Bulkatt extends State<Bulkatt> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
 /*    StreamLocation ns=new StreamLocation();
     ns.stopStreaming();*/
     final prefs = await SharedPreferences.getInstance();
@@ -160,14 +163,15 @@ class _Bulkatt extends State<Bulkatt> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
           onTap: (newIndex) {
-            if (newIndex == 1) {
+            if(newIndex==1){
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
               return;
-            } else if (newIndex == 0) {
+            }else if (newIndex == 0) {
               (admin_sts == '1')
                   ? Navigator.push(
                 context,
@@ -179,16 +183,22 @@ class _Bulkatt extends State<Bulkatt> {
               );
               return;
             }
-            if (newIndex == 2) {
+            if(newIndex==2){
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Settings()),
               );
               return;
             }
-            setState(() {
-              _currentIndex = newIndex;
-            });
+            else if(newIndex == 3){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Notifications()),
+              );
+
+            }
+            setState((){_currentIndex = newIndex;});
+
           }, // this will be set when a new tab is tapped
           items: [
             (admin_sts == '1')
@@ -200,23 +210,24 @@ class _Bulkatt extends State<Bulkatt> {
             )
                 : BottomNavigationBarItem(
               icon: new Icon(
-                Icons.person,
+                Icons.person,color: Colors.black54,
               ),
-              title: new Text('Profile'),
+              title: new Text('Profile',style: TextStyle(color: Colors.black54)),
             ),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.home),
-              title: new Text('Home'),
+              icon: new Icon(Icons.home,color: Colors.black54,),
+              title: new Text('Home',style: TextStyle(color: Colors.black54)),
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings,color: Colors.black54,),
+                title: Text('Settings',style: TextStyle(color: Colors.black54),)
             ),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.settings,
-                  color: Colors.black54,
+                  Icons.notifications
+                  ,color: Colors.black54,
                 ),
-                title: Text(
-                  'Settings',
-                  style: TextStyle(color: Colors.black54),
-                ))
+                title: Text('Notifications',style: TextStyle(color: Colors.black54))),
           ],
         ),
         endDrawer: new AppDrawer(),

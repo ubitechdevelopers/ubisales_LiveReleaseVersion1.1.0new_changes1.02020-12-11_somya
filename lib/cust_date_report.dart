@@ -36,6 +36,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
     today = new TextEditingController();

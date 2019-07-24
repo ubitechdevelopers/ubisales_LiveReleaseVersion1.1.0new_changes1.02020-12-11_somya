@@ -18,6 +18,7 @@ import 'package:Shrine/model/model.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
+import 'notifications.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class TimeoffSummary extends StatefulWidget {
@@ -60,6 +61,8 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     client_name = new TextEditingController();
     comments = new TextEditingController();
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     initPlatformState();
   }
   @override
@@ -232,15 +235,15 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
-          if(newIndex==2){
+          if(newIndex==1){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Settings()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
             return;
-          }
-          else if (newIndex == 0) {
+          }else if (newIndex == 0) {
             (admin_sts == '1')
                 ? Navigator.push(
               context,
@@ -252,15 +255,22 @@ class _TimeoffSummary extends State<TimeoffSummary> {
             );
             return;
           }
-          if(newIndex==1){
+          if(newIndex==2){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => Settings()),
             );
             return;
           }
-          print("Current pressed new indexed "+newIndex.toString());
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
+          }
           setState((){_currentIndex = newIndex;});
+
         }, // this will be set when a new tab is tapped
         items: [
           (admin_sts == '1')
@@ -272,21 +282,26 @@ class _TimeoffSummary extends State<TimeoffSummary> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style:TextStyle(color: Colors.black54,)),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings')
-          )
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
-
       endDrawer: new AppDrawer(),
       body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
       floatingActionButton: new FloatingActionButton(

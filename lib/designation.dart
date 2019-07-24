@@ -6,6 +6,7 @@ import 'home.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
+import 'notifications.dart';
 
 class Designation extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _Designation extends State<Designation> {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     desg = new TextEditingController();
     getOrgName();
   }
@@ -61,62 +64,75 @@ class _Designation extends State<Designation> {
               Navigator.pop(context);}),
             backgroundColor: Colors.teal,
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (newIndex) {
-              if(newIndex==1){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
-                return;
-              }else if (newIndex == 0) {
-                (admin_sts == '1')
-                    ? Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Reports()),
-                )
-                    : Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-                return;
-              }
-              if(newIndex==2){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Settings()),
-                );
-                return;
-              }
-              setState((){_currentIndex = newIndex;});
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (newIndex) {
+          if(newIndex==1){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+            return;
+          }else if (newIndex == 0) {
+            (admin_sts == '1')
+                ? Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Reports()),
+            )
+                : Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
+            return;
+          }
+          if(newIndex==2){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+            return;
+          }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
 
-            }, // this will be set when a new tab is tapped
-            items: [
-              (admin_sts == '1')
-                  ? BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.library_books,
-                ),
-                title: new Text('Reports'),
-              )
-                  : BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.person,
-                ),
-                title: new Text('Profile'),
-              ),
-              BottomNavigationBarItem(
-                icon: new Icon(Icons.home),
-                title: new Text('Home'),
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.settings,color: Colors.black54,),
-                  title: Text('Settings',style: TextStyle(color: Colors.black54),)
-              )
-            ],
+          }
+          setState((){_currentIndex = newIndex;});
+
+        }, // this will be set when a new tab is tapped
+        items: [
+          (admin_sts == '1')
+              ? BottomNavigationBarItem(
+            icon: new Icon(
+              Icons.library_books,
+            ),
+            title: new Text('Reports'),
+          )
+              : BottomNavigationBarItem(
+            icon: new Icon(
+              Icons.person,color: Colors.black54,
+            ),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
-
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home,color: Colors.black54,),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+        ],
+      ),
           endDrawer: new AppDrawer(),
           body:
           Container(

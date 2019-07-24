@@ -85,7 +85,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     //print(values);
   }
 
-  checkLoginForQr(User user) async{
+  checkLoginForQr(User user,int FakeLocationStatus) async{
     try {
       final prefs = await SharedPreferences.getInstance();
       print(user.userName + "----");
@@ -130,7 +130,8 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
                 timeinout["shiftId"],
                 timeinout["refid"].toString(),
                 timeinout["latit"].toString(),
-                timeinout["longi"].toString());
+                timeinout["longi"].toString(),
+                FakeLocationStatus);
             if (timeinout["act"] != "Imposed") {
               SaveImage mark = new SaveImage();
               bool res = await mark.saveTimeInOutQR(marktimeinout);
@@ -154,10 +155,10 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     }
   }
 
-  markAttByQR(String qr) async{
+  markAttByQR(String qr,int FakeLocationStatus) async{
     List splitstring = qr.split("ykks==");
     User qruser = new User(splitstring[0], splitstring[1]);
-    String result = await checkLoginForQr(qruser);
+    String result = await checkLoginForQr(qruser,FakeLocationStatus);
     return result;
     print(splitstring[0]);
     print(splitstring[1]);

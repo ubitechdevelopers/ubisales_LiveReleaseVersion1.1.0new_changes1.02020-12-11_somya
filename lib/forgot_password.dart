@@ -34,6 +34,8 @@ class _ForgotPassword extends State<ForgotPassword> {
   void initState() {
     super.initState();
     initPlatformState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {

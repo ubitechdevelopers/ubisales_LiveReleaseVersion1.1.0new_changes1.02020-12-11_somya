@@ -56,6 +56,7 @@ class SaveImage {
           "latit": lat,
           "longi": long,
           "file": new UploadFileInfo(imagei, "image.png"),
+          "FakeLocationStatus":mk.FakeLocationStatus
         });
         print("5");
         Response<String> response1 =
@@ -91,8 +92,11 @@ class SaveImage {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
         if (imagei != null) {
+          print("inside save image ckeck image");
           StreamLocation sl = new StreamLocation();
+
           sl.startStreaming(5);
+          print("inside save image ckeck image");
           /*
       final tempDir = await getTemporaryDirectory();
       String path = tempDir.path;
@@ -127,11 +131,12 @@ class SaveImage {
             "latit": lat,
             "longi": long,
             "file": new UploadFileInfo(imagei, "image.png"),
+            "FakeLocationStatus" : mk.FakeLocationStatus
           });
-          print("5");
+          print(formData);
           Response<String> response1 = await dio.post(
               globals.path + "saveImage", data: formData);
-          print(response1.toString());
+          print("Response from save image:"+response1.toString());
           //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
           //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
           //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
@@ -173,6 +178,7 @@ class SaveImage {
           "refid": mk.refid,
           "latit": lat,
           "longi": long,
+          "FakeLocationStatus":mk.FakeLocationStatus
          // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -182,8 +188,8 @@ class SaveImage {
         //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
         //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
         //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
-        imagei.deleteSync();
-        imageCache.clear();
+        /*imagei.deleteSync();
+        imageCache.clear();*/
         /*getTempImageDirectory();*/
         Map MarkAttMap = json.decode(response1.data);
         print(MarkAttMap["status"].toString());
@@ -269,6 +275,7 @@ class SaveImage {
                     "latit": lat,
                     "longi": long,
                     "file": new UploadFileInfo(imagei, "image.png"),
+                    "FakeLocationStatus":mk.FakeLocationStatus
                   });
                   print("5");
                   dio
@@ -407,6 +414,7 @@ class SaveImage {
           "latit": mk.latit,
           "longi": mk.longi,
           "file": new UploadFileInfo(imagei, "image.png"),
+          "FakeLocationStatus":mk.FakeLocationStatus
         });
         print("5");
         print(globals.path + "saveImage");
@@ -462,6 +470,8 @@ class SaveImage {
             "latit": lat,
             "longi": long,
             "file": new UploadFileInfo(imagei, "image.png"),
+            "FakeLocationStatus":mk.FakeLocationStatus
+
           });
           print("5*");
           Response<String> response1;
@@ -510,6 +520,7 @@ class SaveImage {
           "refid": mk.refid,
           "latit": lat,
           "longi": long,
+          "FakeLocationStatus":mk.FakeLocationStatus
           //   "file": new UploadFileInfo(imagei, "image.png"),@@@@@@@@@@@@@
         });
         print("5");
@@ -542,7 +553,7 @@ class SaveImage {
   }
 
   Future<bool> saveVisitOut(
-      empid, addr, visit_id, latit, longi, remark, refid) async {
+      empid, addr, visit_id, latit, longi, remark, refid,FakeLocationStatus) async {
     // visit in function
     try {
       File imagei = null;
@@ -571,6 +582,7 @@ class SaveImage {
             "remark": remark,
             "refid": refid,
             "file": new UploadFileInfo(imagei, "image.png"),
+            "FakeLocationStatus":FakeLocationStatus
           });
           print("5");
           Response<String> response1;
@@ -613,7 +625,8 @@ class SaveImage {
           "latit": latit,
           "longi": longi,
           "remark": remark,
-          "refid": refid
+          "refid": refid,
+          "FakeLocationStatus":FakeLocationStatus
         });
         print("5");
         Response<String> response1;
@@ -675,6 +688,7 @@ class SaveImage {
           "latit": lat,
           "longi": long,
           "file": new UploadFileInfo(imagei, "image.png"),
+          "FakeLocationStatus":mk.FakeLocationStatus
         });
         print("5*");
         Response<String> response1;
@@ -759,7 +773,7 @@ class SaveImage {
 
 
   Future<bool> saveFlexiOut(
-      empid, addr, visit_id, latit, longi,  refid) async
+      empid, addr, visit_id, latit, longi,  refid,FakeLocationStatus) async
   {
     // visit in function
     try {
@@ -790,6 +804,7 @@ class SaveImage {
           "longi": longi,
           "refid": refid,
           "file": new UploadFileInfo(imagei, "image.png"),
+          "FakeLocationStatus":FakeLocationStatus
         });
         print("5"+empid+"--"+visit_id+"--"+addr+"--"+latit+"--"+longi+"--"+refid+"--");
         Response<String> response1;

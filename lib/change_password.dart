@@ -12,7 +12,7 @@ import 'home.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
-
+import 'notifications.dart';
 
 
 class changePassword extends StatefulWidget {
@@ -95,18 +95,12 @@ class _changePassword extends State<changePassword> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
           if(newIndex==1){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
             );
             return;
           }else if (newIndex == 0) {
@@ -121,6 +115,20 @@ class _changePassword extends State<changePassword> {
             );
             return;
           }
+          if(newIndex==2){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+            return;
+          }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
+          }
           setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
@@ -134,18 +142,24 @@ class _changePassword extends State<changePassword> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
+            icon: new Icon(Icons.home,color: Colors.black54,),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          )
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
       endDrawer: new AppDrawer(),

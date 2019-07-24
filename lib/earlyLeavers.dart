@@ -10,7 +10,7 @@ import 'settings.dart';
 import 'home.dart';
 import 'reports.dart';
 import 'profile.dart';
-
+import 'notifications.dart';
 class EarlyLeavers extends StatefulWidget {
   @override
   _EarlyLeavers createState() => _EarlyLeavers();
@@ -30,6 +30,8 @@ class _EarlyLeavers extends State<EarlyLeavers> {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();
@@ -80,14 +82,15 @@ class _EarlyLeavers extends State<EarlyLeavers> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
-          if(newIndex==2){
+          if(newIndex==1){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Settings()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
             return;
-          } if (newIndex == 0) {
+          }else if (newIndex == 0) {
             (admin_sts == '1')
                 ? Navigator.push(
               context,
@@ -99,12 +102,19 @@ class _EarlyLeavers extends State<EarlyLeavers> {
             );
             return;
           }
-          if(newIndex==1){
+          if(newIndex==2){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => Settings()),
             );
             return;
+          }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
           }
           setState((){_currentIndex = newIndex;});
 
@@ -119,16 +129,24 @@ class _EarlyLeavers extends State<EarlyLeavers> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54),),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Settings'))
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
       endDrawer: new AppDrawer(),

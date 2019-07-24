@@ -3,6 +3,7 @@ import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
+import 'package:Shrine/services/services.dart';
 void main() => runApp(new UserGuide());
 
 class UserGuide extends StatefulWidget {
@@ -31,7 +32,10 @@ class _UserGuide extends State<UserGuide> {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     initPlatformState();
+
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {

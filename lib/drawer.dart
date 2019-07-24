@@ -475,6 +475,8 @@ class _AppDrawerState extends State<AppDrawer> {
     prefs.remove('longi');
     prefs.remove('aid');
     prefs.remove('shiftId');
+    prefs.remove('OfflineModePermission');
+    prefs.remove('ImageRequired');
     department_permission = 0;
     designation_permission = 0;
     leave_permission = 0;

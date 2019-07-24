@@ -32,6 +32,8 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
   }

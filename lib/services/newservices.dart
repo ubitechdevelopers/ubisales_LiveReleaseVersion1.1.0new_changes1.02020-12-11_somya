@@ -466,6 +466,11 @@ class StreamLocation{
     _locationSubscription =
         _location.onLocationChanged().listen((LocationData result) {
             _currentLocation = result;
+            /*
+            print("---------------- Location data------------------");
+            print(new DateTime.fromMillisecondsSinceEpoch((result.time).round()));
+            print("---------------- Location data------------------");
+*/
             list.add(result);
             getAddress(list[list.length-1]);
             //print("counter"+counter.toString());
@@ -493,6 +498,7 @@ class StreamLocation{
         var first = addresses.first;
         //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
         streamlocationaddr = "${first.addressLine}";
+
         globalstreamlocationaddr = streamlocationaddr;
       }
     }catch(e){

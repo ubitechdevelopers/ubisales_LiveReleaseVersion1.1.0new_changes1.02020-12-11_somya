@@ -47,6 +47,8 @@ class _SelfRegister extends State<SelfRegister> {
     _pass = new TextEditingController();
     title=title1.toString().length>20?title1.toString().substring(0,20)+'...':title1.toString();
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
   }
   setLocal(var fname, var empid, var  orgid) async {
     prefs = await SharedPreferences.getInstance();

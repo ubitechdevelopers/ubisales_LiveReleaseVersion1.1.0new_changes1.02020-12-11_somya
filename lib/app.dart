@@ -41,7 +41,10 @@ class _ShrineAppState extends State<ShrineApp> {
   void initState() {
     super.initState();
     getShared();
+
+
     checkNow().then((res){
+
       setState(() {
         new_ver=res;
       });
@@ -50,10 +53,10 @@ class _ShrineAppState extends State<ShrineApp> {
 
   getShared() async{
     final prefs = await SharedPreferences.getInstance();
-      setState(() {
-        response = prefs.getInt('response') ?? 0;
-        //print("Response "+response.toString());
-      });
+    setState(() {
+      response = prefs.getInt('response') ?? 0;
+      //print("Response "+response.toString());
+    });
   }
   // Set default home.
   // Get result of the login function.
@@ -62,7 +65,7 @@ class _ShrineAppState extends State<ShrineApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ubiAttendance',
-      home: (cur_ver == new_ver)?HomePage():CheckUpdate(),
+      home: (cur_ver == new_ver||new_ver=="error")?HomePage():CheckUpdate(),
       //home: (true)?HomePage():CheckUpdate(),
       routes: {
         // When we navigate to the "/" route, build the FirstScreen Widget
@@ -70,7 +73,7 @@ class _ShrineAppState extends State<ShrineApp> {
         // When we navigate to the "/second" route, build the SecondScreen Widget
         '/home': (context) => HomePage()
 
-  },
+      },
     );
   }
   getUpdate(response){

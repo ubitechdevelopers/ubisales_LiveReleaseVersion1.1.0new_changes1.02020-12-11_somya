@@ -7,14 +7,19 @@ import 'package:photo_view/photo_view.dart';
 /*import 'openCameraInActivity.dart';
 import 'package:camera/camera.dart';*/
 import 'package:connectivity/connectivity.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/widgets.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 void main() => runApp(new ImageView());
 
 class ImageView extends StatefulWidget {
-  final String myimage;
+  String myimage;
   final String org_name;
+   String img=null;
   ImageView({this.myimage,this.org_name});
+  ImageView.fromImage(this.img,this.org_name);
   @override
   _ImageView createState() => _ImageView();
 
@@ -26,6 +31,7 @@ class _ImageView extends State<ImageView> {
 Widget build(BuildContext context) {
   return MaterialApp(
     home: Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,14 +47,28 @@ Widget build(BuildContext context) {
         backgroundColor: Colors.teal,
       ),
       body: Center(
-        child:Container(
+        child:
+
+        (widget.img==null||widget.img=='')?
+        Container(
             child: PhotoView(
+
               imageProvider: NetworkImage(widget.myimage),
             )
-        ),
-      ),
+        )
+
+        :
+    Container(
+    color: Colors.black,
+    child:
+         Image.memory(base64Decode(widget.img),
+                  fit: BoxFit.fill,))
+
+
+
+
     ),
-  );
+  ));
 }
 
 }

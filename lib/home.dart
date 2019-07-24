@@ -35,14 +35,22 @@ import 'package:dio/dio.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
+import 'package:Shrine/database_models/attendance_offline.dart';
+import 'package:Shrine/offline_home.dart';
+import 'package:flutter/services.dart';
+import "package:Shrine/notifications.dart";
+
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+  static const platform = const MethodChannel('location.spoofing.check');
+
   AppLifecycleState state;
   StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -92,6 +100,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   String shiftId = "";
   List<Widget> widgets;
   bool refreshsts = false;
+  bool fakeLocationDetected=false;
+  bool offlineDataSaved=false;
 
   @override
   void initState() {
@@ -102,6 +112,137 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     initPlatformState();
     setLocationAddress();
     startTimer();
+   platform.setMethodCallHandler(_handleMethod);
+  }
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        if(call.arguments=="Location is mocked"){
+              setState(() {
+                fakeLocationDetected=true;
+              });
+        }
+
+        debugPrint(call.arguments);
+        return new Future.value("");
+    }
+  }
+
+
+  syncOfflineData() async{
+
+    int serverAvailable=await checkConnectionToServer ();
+    if(serverAvailable==1){
+
+      AttendanceOffline attendanceOffline=new AttendanceOffline.empty();
+      List<AttendanceOffline> attendances= await attendanceOffline.select();
+      List<Map> jsonList=[];
+      if(attendances.isNotEmpty){
+        for(int i=0;i<attendances.length;i++){
+
+          var address= await getAddressFromLati(attendances[i].Latitude,attendances[i].Longitude);
+          print(address);
+          jsonList.add({
+            "Id":attendances[i].Id,
+            "UserId":attendances[i].UserId,
+            "Action":attendances[i].Action, // 0 for time in and 1 for time out
+            "Date":attendances[i].Date,
+            "OrganizationId":attendances[i].OrganizationId,
+            "PictureBase64":attendances[i].PictureBase64,
+            "Latitude":attendances[i].Latitude,
+            "Longitude":attendances[i].Longitude,
+            "Time":attendances[i].Time,
+            "FakeLocationStatus":attendances[i].FakeLocationStatus,
+            "Address":address
+          });
+        }
+        var jsonList1=json.encode(jsonList);
+        //LogPrint('response1: ' + jsonList1.toString());
+        //LogPrint(attendances);
+        FormData formData = new FormData.from({"data":jsonList1});
+
+        Dio dioForSavingOfflineAttendance=new Dio();
+        dioForSavingOfflineAttendance.post(globals.path + "saveOfflineData", data: formData)
+            .then((responseAfterSavingOfflineData) async {
+          var response=json.decode(responseAfterSavingOfflineData.toString());
+
+          print('--------------------- Data Syncing Response--------------------------------');
+          LogPrint(responseAfterSavingOfflineData);
+
+          print('--------------------- Data Syncing Response--------------------------------');
+          for(int i=0;i<response.length;i++){
+            var map=response[i];
+            map.forEach((localDbId,status){
+              AttendanceOffline attendanceOffline=AttendanceOffline.empty();
+              print(status);
+              attendanceOffline.delete(int.parse(localDbId));
+
+
+            } );
+          }
+          setState(() {
+            offlineDataSaved=true;
+          });
+
+          Home ho = new Home();
+
+
+          act = await ho.checkTimeIn(empid, orgdir);
+          print("Action from check time in");
+          ho.managePermission(empid, orgdir, desinationId);
+
+          setState(() {
+            act1=act;
+          });
+
+
+        });
+      }
+      else{
+        setState(() {
+          offlineDataSaved=true;
+        });
+      }
+
+    }
+
+    Home ho = new Home();
+
+
+    act = await ho.checkTimeIn(empid, orgdir);
+    print("Action from check time in");
+    ho.managePermission(empid, orgdir, desinationId);
+
+    setState(() {
+      act1=act;
+    });
+
+  }
+
+
+  static void LogPrint(Object object) async {
+    int defaultPrintLength = 1020;
+    if (object == null || object
+        .toString()
+        .length <= defaultPrintLength) {
+      print(object);
+    } else {
+      String log = object.toString();
+      int start = 0;
+      int endIndex = defaultPrintLength;
+      int logLength = log.length;
+      int tmpLogLength = log.length;
+      while (endIndex < logLength) {
+        print(log.substring(start, endIndex));
+        endIndex += defaultPrintLength;
+        start += defaultPrintLength;
+        tmpLogLength -= defaultPrintLength;
+      }
+      if (tmpLogLength > 0) {
+        print(log.substring(start, logLength));
+      }
+    }
   }
 
    void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
@@ -109,6 +250,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       state = appLifecycleState;
       if(state==AppLifecycleState.resumed){
         //print('WidgetsBindingObserver called');
+
         if(timerrefresh.isActive){
           timerrefresh.cancel();
         }
@@ -125,6 +267,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
       }else if(state==AppLifecycleState.paused){
        // print('AppLifecycleState.paused');
+
         const tenSec = const Duration(seconds: 180);
         timerrefresh = new Timer.periodic(tenSec, (Timer t) {
           print('refreshsts true');
@@ -211,6 +354,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     /*await availableCameras();*/
+    checknetonpage(context);
+    SystemChannels.lifecycle.setMessageHandler((msg)async{
+      /*
+      if(msg=='AppLifecycleState.resumed' )
+      {
+        print("------------------------------------ App Resumed-----------------------------");
+        serverConnected= await checkConnectionToServer();
+        if(serverConnected==0){
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+        }
+
+      }
+*/
+    });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
@@ -220,9 +379,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     if (response == 1) {
       Loc lock = new Loc();
       location_addr = await lock.initPlatformState();
-      Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
-      ho.managePermission(empid, orgdir, desinationId);
+      await syncOfflineData();
       // //print(act);
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
@@ -249,7 +406,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           org_name = prefs.getString('org_name') ?? '';
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
-
+          print("Profile Image"+profile);
           profileimage = new NetworkImage(profile);
           // //print("1-"+profile);
           profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
@@ -322,60 +479,71 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
             onTap: (newIndex) {
-              if (newIndex == 2) {
+              if(newIndex==1){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+                return;
+              }else if (newIndex == 0) {
+                (admin_sts == '1')
+                    ? Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Reports()),
+                )
+                    : Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+                return;
+              }
+              if(newIndex==2){
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Settings()),
                 );
                 return;
-              } else if (newIndex == 0) {
-                (admin_sts == '1')
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Reports()),
-                      )
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()),
-                      );
-
-                return;
               }
+              else if(newIndex == 3){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
 
-              if (mounted) {
-                setState(() {
-                  _currentIndex = newIndex;
-                });
               }
+              setState((){_currentIndex = newIndex;});
+
             }, // this will be set when a new tab is tapped
             items: [
               (admin_sts == '1')
                   ? BottomNavigationBarItem(
-                      icon: new Icon(
-                        Icons.library_books,
-                      ),
-                      title: new Text('Reports'),
-                    )
-                  : BottomNavigationBarItem(
-                      icon: new Icon(
-                        Icons.person,
-                      ),
-                      title: new Text('Profile'),
-                    ),
-              BottomNavigationBarItem(
                 icon: new Icon(
-                  Icons.home,
-                  color: Colors.orangeAccent,
+                  Icons.library_books,
                 ),
-                title: new Text('Home',
-                    style: TextStyle(color: Colors.orangeAccent)),
+                title: new Text('Reports'),
+              )
+                  : BottomNavigationBarItem(
+                icon: new Icon(
+                  Icons.person,color: Colors.black54,
+                ),
+                title: new Text('Profile',style: TextStyle(color: Colors.black54)),
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.home,color: Colors.black54,),
+                title: new Text('Home',style: TextStyle(color: Colors.black54)),
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings,color: Colors.black54,),
+                  title: Text('Settings',style: TextStyle(color: Colors.black54),)
               ),
               BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.settings,
+                    Icons.notifications
+                    ,color: Colors.black54,
                   ),
-                  title: Text('Settings'))
+                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),
             ],
           ),
 
@@ -539,6 +707,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   poorNetworkWidget() {
+
+
     return Container(
       child: Center(
         child: Column(
@@ -581,6 +751,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     ////to do check act1 for poor network connection
 
     if (act1 == "Poor network connection") {
+
       return poorNetworkWidget();
     } else {
       return SafeArea(
@@ -1033,7 +1204,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               SizedBox(
                 height: 5.0,
               ),
-              areaId != 0 && geoFence == 1
+             if(fakeLocationDetected)
+              Container(
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                decoration: BoxDecoration(
+                 color: Color(0xfffc6203),
+                  //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                ),
+                child: Text(
+                  'Fake Location',
+                  style:
+                  TextStyle(fontSize: 20.0, color: Colors.white),
+                ),
+              )else
+                (areaId != 0 && geoFence == 1)
                   ? areaStatus == '0'
                       ? Container(
                           padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -1120,10 +1304,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   saveImage() async {
     sl.startStreaming(5);
     print('aidId' + aid);
+    var FakeLocationStatus=0;
+    if(fakeLocationDetected){
+      FakeLocationStatus=1;
+    }
     MarkTime mk = new MarkTime(
-        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
+        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long,FakeLocationStatus);
     /* mk1 = mk;*/
-
+    print("inside saveImage Home");
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -1139,7 +1327,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         });
       }
       issave = await saveImage.saveTimeInOutImagePicker(mk);
-      ////print(issave);
+      print(issave);
       if (issave) {
         showDialog(
             context: context,
@@ -1201,9 +1389,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   saveImage_old() async {
     sl.startStreaming(5);
-
+var FakeLocationStatus=0;
+    if(fakeLocationDetected){
+      FakeLocationStatus=1;
+    }
     MarkTime mk = new MarkTime(
-        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long);
+        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long,FakeLocationStatus
+    );
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
@@ -1635,9 +1827,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
     timer.cancel();
-     if(timerrefresh.isActive){
+    timerrefresh.cancel();
+    /* if(timerrefresh.isActive){
       timerrefresh.cancel();
-    }
+    }*/
   }
 //////////////////////////////////////////////////////////////////
 }

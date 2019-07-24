@@ -9,6 +9,7 @@ import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:Shrine/globals.dart';
+import 'package:Shrine/offline_home.dart';
 import 'dart:io';
 import 'package:flutter/scheduler.dart';
 import 'package:Shrine/no_net.dart';
@@ -18,8 +19,64 @@ import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:location/location.dart';
 import 'dart:math' show cos, sqrt, asin;
+import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
 
 class Services {}
+
+
+////////////////////Shashank///////////////////////////////
+
+bool isOfflineHomeRedirected=false;
+
+
+
+
+encode5t(String str) async
+{
+  for(int i=0; i<5;i++)
+  {
+    String rev=str.split('').reversed.join('');
+
+    str=base64Encode(str.codeUnits).split('').reversed.join('');; //apply base64 first and then reverse the string
+  }
+  return str;
+}
+decode5t(String str) async
+{
+
+  for(int i=0; i<5;i++)
+  {
+    String rev=str.split('').reversed.join('');
+
+    str=String.fromCharCodes(base64Decode(rev)); //apply base64 first and then reverse the string}
+  }
+  return str;
+}
+var serverConnected=0;
+
+Future<int> checkConnectionToServer () async{
+  try {
+    var uri = Uri.parse(path);
+    var host=uri.host;
+    // final result = await InternetAddress.lookup(host);
+     final result = await InternetAddress.lookup("google.com");
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      print('connected');
+      serverConnected=1;
+    }else{
+      serverConnected=0;
+    }
+  } on SocketException catch (_) {
+    print('not connected');
+    serverConnected=0;
+  }
+  return serverConnected;
+}
+////////////////////Shashank////////////////////////////////////////
+
+
+
 
 /////////// location punch
 punch(comments, client_name, empid, location_addr1, lid, act, orgdir, latit,
@@ -38,8 +95,15 @@ punch(comments, client_name, empid, location_addr1, lid, act, orgdir, latit,
 
 Future checkNow() async {
   print('*--*-*-*-*-*-*-*-*-*-');
-  final res = await http.get(globals.path + 'getAppVersion?platform=Android1');
-  return ((json.decode(res.body.toString()))[0]['version']).toString();
+  try{
+    final res = await http.get(globals.path + 'getAppVersion?platform=Android1');
+    return ((json.decode(res.body.toString()))[0]['version']).toString();
+  }
+  catch(e){
+    print("Error finding current version of the app");
+    return"error";
+  }
+
 }
 
 Future checkMandUpdate() async {
@@ -205,10 +269,10 @@ List<Punch> createUserList(List data) {
     String longi_out = data[i]["longi_out"];
     String desc = data[i]["desc"];
     String pi_img = data[i]["checkin_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkin_img"].toString();
     String po_img = data[i]["checkout_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkout_img"].toString();
     //print(data[i]["loc_out"]);
     Punch punches = new Punch(
@@ -466,10 +530,10 @@ List<Attn> createListEmpHistoryOf30(List data) {
         ? '-'
         : data[i]["TimeOut"].toString();
     String EntryImage = data[i]["EntryImage"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["EntryImage"].toString();
     String ExitImage = data[i]["ExitImage"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["ExitImage"].toString();
     String CheckInLoc = data[i]["checkInLoc"].toString();
     String CheckOutLoc = data[i]["CheckOutLoc"].toString();
@@ -944,6 +1008,67 @@ Future<List<Attn>> getTodaysAttn(listType) async {
   return userList;
 }
 
+Future<List<SyncNotification>> getNotifications() async {
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgid') ?? '0';
+  String empid = prefs.getString('empid') ?? '0';
+  print(globals.path +
+      'getNotifications'
+          '?EmployeeId=$empid&OrganizationId=$orgid');
+
+  final response = await http.get(globals.path +
+      'getNotifications'
+          '?EmployeeId=$empid&OrganizationId=$orgid');
+  print(globals.path +
+      'getNotifications'
+          '?EmployeeId=$empid&OrganizationId=$orgid');
+  final res = json.decode(response.body);
+
+   print(res);
+
+  List responseJson=res;
+
+  List<SyncNotification> userList = createNotificationList(responseJson);
+  return userList;
+}
+
+List<SyncNotification> createNotificationList(List data) {
+  // print('Create list called/*******************');
+  List<SyncNotification> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    int Id=int.parse(data[i]['Id']);
+    int EmployeeId=int.parse(data[i]['EmployeeId']);
+    int OrganizationId=int.parse(data[i]['OrganizationId']);
+    String SyncDate=data[i]['SyncDate'];
+    String OfflineMarkedDate=data[i]['OfflineMarkedDate'];
+    String Time=data[i]['Time'];;
+    String Action=data[i]['Action'];
+    String Latitude=data[i]['Latitude'];
+    String Longitude=data[i]['Longitude'];
+    String ReasonForFailure=data[i]['ReasonForFailure'];
+    String image=data[i]['image'];
+
+
+    SyncNotification tos = new SyncNotification(
+        Id,
+        EmployeeId,
+        OrganizationId,
+        SyncDate,
+        OfflineMarkedDate,
+        Time,
+        Action,
+        Latitude,
+        Longitude,
+        ReasonForFailure,
+        image
+    );
+    list.add(tos);
+  }
+  return list;
+}
+
+
+
 List<Attn> createTodayEmpList(List data) {
   // print('Create list called/*******************');
   List<Attn> list = new List();
@@ -955,10 +1080,10 @@ List<Attn> createTodayEmpList(List data) {
         ? '-'
         : data[i]["TimeOut"].toString();
     String EntryImage = data[i]["EntryImage"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["EntryImage"].toString();
     String ExitImage = data[i]["ExitImage"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["ExitImage"].toString();
     String CheckInLoc = data[i]["checkInLoc"].toString();
     String CheckOutLoc = data[i]["CheckOutLoc"].toString();
@@ -1027,6 +1152,37 @@ class Attn {
     this.Absent,
   });
 }
+
+class SyncNotification {
+  int Id;
+  int EmployeeId;
+  int OrganizationId;
+  String SyncDate;
+  String OfflineMarkedDate;
+  String Time;
+  String Action;
+  String Latitude;
+  String Longitude;
+  String ReasonForFailure;
+  String image;
+
+  SyncNotification(
+    this.Id,
+    this.EmployeeId,
+    this.OrganizationId,
+    this.SyncDate,
+    this.OfflineMarkedDate,
+    this.Time,
+    this.Action,
+    this.Latitude,
+    this.Longitude,
+    this.ReasonForFailure,
+    this.image,
+
+  );
+}
+
+
 
 //******************Cdate Attn List Data
 Future<List<Attn>> getCDateAttn(listType, date) async {
@@ -1722,16 +1878,88 @@ Future<int> checkNet() async {
 }
 ////////////check net/
 
+getAddressFromLati( String Latitude,String Longitude) async{
+  try {
+    ////print(_currentLocation);
+    //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
+    if (Latitude != null) {
+      var addresses = await Geocoder.local.findAddressesFromCoordinates(
+          Coordinates(
+              double.parse(Latitude), double.parse(Longitude)));
+      var first = addresses.first;
+      //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
+      var streamlocationaddr = "${first.addressLine}";
+
+      globalstreamlocationaddr = streamlocationaddr;
+      return streamlocationaddr;
+    }
+  }catch(e){
+    //print(e.toString());
+    if (Latitude != null) {
+      globalstreamlocationaddr = "${Latitude},${Longitude}";
+    }
+    return globals.globalstreamlocationaddr;
+  }
+}
+
+
+
+
+
+checkNetForOfflineMode(context) {
+  checkNet().then((value) async {
+    var prefs=await SharedPreferences.getInstance();
+    var isLoggedIn=prefs.getInt("response");
+  var OfflineModePermitted=prefs.getInt("OfflineModePermission")??0;
+
+
+    if (value == 0) {
+      print(
+          '====================internet checked...Not connected=====================');
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+      if(isLoggedIn==1 && OfflineModePermitted==1) {
+        Navigator
+            .of(context)
+            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+      }
+      });
+    }
+  });
+}
+
+appResumedFromBackground(context){
+  SystemChannels.lifecycle.setMessageHandler((msg)async{
+    if(msg=='AppLifecycleState.resumed' )
+    {
+      print("------------------------------------ App Resumed-----------------------------");
+      serverConnected= await checkConnectionToServer();
+
+      if(serverConnected==0){
+        Navigator
+            .of(context)
+            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+      }
+
+    }
+
+  });
+}
+
+
+
 checknetonpage(context) {
   checkNet().then((value) {
     if (value == 0) {
       print(
           '====================internet checked...Not connected=====================');
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.push(
+        Navigator
+            .of(context)
+            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+      /*  Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NoNet()),
-        );
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+        );*/
       });
     }
   });
@@ -1931,10 +2159,10 @@ List<FlexiAtt> createUserListFlexi(List data) {
     String longi_out = data[i]["longi_out"];
     String desc = data[i]["desc"];
     String pi_img = data[i]["checkin_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkin_img"].toString();
     String po_img = data[i]["checkout_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkout_img"].toString();
     print(data[i]["id"]);
 
@@ -2028,10 +2256,10 @@ List<FlexiAtt> createListFlexiReport(List data) {
     String longi_out = data[i]["longi_out"];
     String desc = data[i]["desc"];
     String pi_img = data[i]["checkin_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkin_img"].toString();
     String po_img = data[i]["checkout_img"].toString() == ''
-        ? 'http://ubiattendance.ubihrm.com/assets/img/avatar.png'
+        ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
         : data[i]["checkout_img"].toString();
     print(data[i]["id"]);
 

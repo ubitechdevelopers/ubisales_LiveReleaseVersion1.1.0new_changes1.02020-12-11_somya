@@ -39,6 +39,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
  //   today = new TextEditingController();

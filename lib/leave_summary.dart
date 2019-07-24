@@ -19,6 +19,7 @@ import 'leave.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
+import 'notifications.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -203,14 +204,8 @@ class _LeaveSummary extends State<LeaveSummary> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
           if(newIndex==1){
             Navigator.push(
               context,
@@ -229,7 +224,22 @@ class _LeaveSummary extends State<LeaveSummary> {
             );
             return;
           }
+          if(newIndex==2){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+            return;
+          }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
+          }
           setState((){_currentIndex = newIndex;});
+
         }, // this will be set when a new tab is tapped
         items: [
           (admin_sts == '1')
@@ -241,18 +251,24 @@ class _LeaveSummary extends State<LeaveSummary> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54),),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings')
-          )
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
 

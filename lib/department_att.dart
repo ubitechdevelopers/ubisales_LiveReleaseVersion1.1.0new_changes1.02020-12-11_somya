@@ -61,6 +61,8 @@ class _Department_att extends State<Department_att>
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
     today = new TextEditingController();

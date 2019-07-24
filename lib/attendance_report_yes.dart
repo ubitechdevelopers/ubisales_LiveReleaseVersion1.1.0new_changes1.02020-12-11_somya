@@ -31,6 +31,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
   }
   @override
   void initState() {
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();

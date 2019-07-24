@@ -24,6 +24,7 @@ import 'package:Shrine/services/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'no_net.dart';
 import 'flexi_report.dart';
+import 'notifications.dart';
 
 
 class Reports extends StatefulWidget {
@@ -42,6 +43,8 @@ class _Reports extends State<Reports> {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     checknetonpage(context);
 
     getOrgName();
@@ -86,14 +89,15 @@ class _Reports extends State<Reports> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
-          if(newIndex==2){
+          if(newIndex==1){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Settings()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
             return;
-          } if (newIndex == 0) {
+          }else if (newIndex == 0) {
             (admin_sts == '1')
                 ? Navigator.push(
               context,
@@ -105,12 +109,19 @@ class _Reports extends State<Reports> {
             );
             return;
           }
-          if(newIndex==1){
+          if(newIndex==2){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => Settings()),
             );
             return;
+          }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
           }
           setState((){_currentIndex = newIndex;});
 
@@ -119,24 +130,30 @@ class _Reports extends State<Reports> {
           (admin_sts == '1')
               ? BottomNavigationBarItem(
             icon: new Icon(
-                Icons.library_books,color: Colors.orangeAccent
+              Icons.library_books,
             ),
-            title: new Text('Reports',style: TextStyle(color: Colors.orangeAccent),),
+            title: new Text('Reports'),
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-                Icons.person,color: Colors.orangeAccent
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile',style: TextStyle(color: Colors.orangeAccent),),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54),),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text('Settings')
-          )
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
 

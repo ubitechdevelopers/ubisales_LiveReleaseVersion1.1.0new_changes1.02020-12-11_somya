@@ -11,6 +11,7 @@ import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
 import 'Image_view.dart';
+import 'notifications.dart';
 
 class FlexiReport extends StatefulWidget {
   @override
@@ -31,6 +32,8 @@ class _FlexiReport extends State<FlexiReport> {
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();
@@ -82,30 +85,43 @@ class _FlexiReport extends State<FlexiReport> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (newIndex){
+        type: BottomNavigationBarType.fixed,
+        onTap: (newIndex) {
+          if(newIndex==1){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+            return;
+          }else if (newIndex == 0) {
+            (admin_sts == '1')
+                ? Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Reports()),
+            )
+                : Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage()),
+            );
+            return;
+          }
           if(newIndex==2){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Settings()),
             );
             return;
-          }if (newIndex == 0) {
-            (admin_sts == '1')? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            ): Navigator.push( context, MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
           }
-          if(newIndex==1)
-          {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()),
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
             );
-            return;
+
           }
           setState((){_currentIndex = newIndex;});
 
-        },// this will be set when a new tab is tapped
+        }, // this will be set when a new tab is tapped
         items: [
           (admin_sts == '1')
               ? BottomNavigationBarItem(
@@ -116,18 +132,26 @@ class _FlexiReport extends State<FlexiReport> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54),),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text('Settings'))
-              ],
-             ),
+              icon: Icon(Icons.settings,color: Colors.black54,),
+              title: Text('Settings',style: TextStyle(color: Colors.black54),)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+        ],
+      ),
       endDrawer: new AppDrawer(),
       body: Container(
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),

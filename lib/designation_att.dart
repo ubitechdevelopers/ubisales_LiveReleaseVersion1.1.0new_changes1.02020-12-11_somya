@@ -39,6 +39,8 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
   @override
   void initState() {
     super.initState();
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
     today = new TextEditingController();

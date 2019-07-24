@@ -1,3 +1,15 @@
 <resources>
     <string name="shr_app_name">ubiAttendance</string>
+    <string name="empty">--</string>
+    <string name="ok">OK</string>
+    <string name="cancel">NO</string>
+    <string name="error">Error</string>
+    <string name="permissionExplanation">Your Location will be saved with attendance. It is very much required that you allow us to capture your location.</string>
+    <string name="switchOnLocationShort">Oops - you seem to have disabled location services at the moment. This app needs your location to save it with yout attendance. To continue, please click on "OK".</string>
+    <string name="switchOnLocationLong">Oops - you seem to have disabled location services at the moment. This app needs your location to save it with yout attendance. To continue, please click on "OK" and enable
+        location. </string>
+    <string name="permissionPermanentlyDeclined"> You have permanently declined the location permission. But
+        this app needs your location. Click "OK" to change the permission
+        settings.</string>
+    <string name="mockLocationMessage">Sorry this app can not continue if you provide a mocked location</string>
 </resources>

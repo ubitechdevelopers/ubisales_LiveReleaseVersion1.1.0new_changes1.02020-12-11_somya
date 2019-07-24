@@ -13,6 +13,7 @@ import 'settings.dart';
 import 'shift_list.dart';
 import 'reports.dart';
 import 'profile.dart';
+import 'notifications.dart';
 
 class addShift extends StatefulWidget {
   @override
@@ -44,6 +45,8 @@ class _addShift extends State<addShift> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? '0';
@@ -103,6 +106,7 @@ class _addShift extends State<addShift> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (newIndex) {
           if(newIndex==1){
             Navigator.push(
@@ -129,6 +133,13 @@ class _addShift extends State<addShift> {
             );
             return;
           }
+          else if(newIndex == 3){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+
+          }
           setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
@@ -142,18 +153,24 @@ class _addShift extends State<addShift> {
           )
               : BottomNavigationBarItem(
             icon: new Icon(
-              Icons.person,
+              Icons.person,color: Colors.black54,
             ),
-            title: new Text('Profile'),
+            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
+            icon: new Icon(Icons.home,color: Colors.black54,),
+            title: new Text('Home',style: TextStyle(color: Colors.black54)),
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          )
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.notifications
+                ,color: Colors.black54,
+              ),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
         ],
       ),
       endDrawer: new AppDrawer(),

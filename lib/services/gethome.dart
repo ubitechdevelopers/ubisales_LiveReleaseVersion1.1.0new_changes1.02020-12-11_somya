@@ -25,7 +25,7 @@ class Home{
           globals.path+"getInfo",
           data: formData);
       //print("<<------------------GET HOME-------------------->>");
-      //print(response.toString());
+      print(response.toString());
       //print("this is status "+response.statusCode.toString());
       if (response.statusCode == 200) {
         Map timeinoutMap = json.decode(response.data);
@@ -46,6 +46,10 @@ class Home{
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
         globals.attImage=int.parse(timeinoutMap['attImage']);
         globals.areaId=int.parse(timeinoutMap['areaId']);
+        print("Area Id :"+globals.areaId.toString()+" geofence :"+globals.geoFence.toString());
+
+        prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
+        prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
 
         globals.assign_lat=  (timeinoutMap['assign_lat']).toDouble();
         globals.assign_long=    (timeinoutMap['assign_long']).toDouble();
@@ -72,7 +76,7 @@ class Home{
       }
     }catch(e){
      // print('9999');
-   //   print(e.toString());
+     print(e.toString());
       return "Poor network connection";
     }
   }

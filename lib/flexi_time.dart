@@ -28,6 +28,8 @@ import 'flexi_list.dart';
 import 'services/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'notifications.dart';
+import 'package:flutter/services.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -38,6 +40,7 @@ class Flexitime extends StatefulWidget {
 
 class _Flexitime extends State<Flexitime> {
   StreamLocation sl = new StreamLocation();
+  static const platform = const MethodChannel('location.spoofing.check');
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _clientname = TextEditingController();
   List<Flexi> flexiidsts = null;
@@ -86,19 +89,36 @@ class _Flexitime extends State<Flexitime> {
   String flexitimein = "";
   String fid = "";
   String sts ="";
-
+  bool fakeLocationDetected=false;
+  var FakeLocationStatus=0;
 
   @override
   void initState() {
     super.initState();
-
+    checkNetForOfflineMode(context);
+    appResumedFromBackground(context);
     initPlatformState();
     setLocationAddress();
     startTimer();
 
-
+    platform.setMethodCallHandler(_handleMethod);
   }
 
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        if(call.arguments=="Location is mocked"){
+          setState(() {
+            fakeLocationDetected=true;
+            FakeLocationStatus=1;
+          });
+        }
+
+        debugPrint(call.arguments);
+        return new Future.value("");
+    }
+  }
 
   @override
   void dispose() {
@@ -277,14 +297,15 @@ class _Flexitime extends State<Flexitime> {
           ],
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
             onTap: (newIndex) {
-              if (newIndex == 2) {
+              if(newIndex==1){
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Settings()),
+                  MaterialPageRoute(builder: (context) => HomePage()),
                 );
                 return;
-              } else if (newIndex == 0) {
+              }else if (newIndex == 0) {
                 (admin_sts == '1')
                     ? Navigator.push(
                   context,
@@ -294,19 +315,24 @@ class _Flexitime extends State<Flexitime> {
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
-
                 return;
-              }else if (newIndex == 1) {
+              }
+              if(newIndex==2){
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => Settings()),
                 );
                 return;
               }
+              else if(newIndex == 3){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
 
-              setState(() {
-                _currentIndex = newIndex;
-              });
+              }
+              setState((){_currentIndex = newIndex;});
+
             }, // this will be set when a new tab is tapped
             items: [
               (admin_sts == '1')
@@ -318,22 +344,26 @@ class _Flexitime extends State<Flexitime> {
               )
                   : BottomNavigationBarItem(
                 icon: new Icon(
-                  Icons.person,
+                  Icons.person,color: Colors.black54,
                 ),
-                title: new Text('Profile'),
+                title: new Text('Profile',style: TextStyle(color: Colors.black54)),
               ),
               BottomNavigationBarItem(
                 icon: new Icon(Icons.home,color: Colors.black54,),
-                title: new Text('Home',style:TextStyle(color: Colors.black54,)),
+                title: new Text('Home',style: TextStyle(color: Colors.black54)),
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings,color: Colors.black54,),
+                  title: Text('Settings',style: TextStyle(color: Colors.black54),)
               ),
               BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.settings,
+                    Icons.notifications
+                    ,color: Colors.black54,
                   ),
-                  title: Text('Settings'))
+                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),
             ],
           ),
-
           endDrawer: new AppDrawer(),
           body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
         ));
@@ -748,7 +778,7 @@ class _Flexitime extends State<Flexitime> {
           print('<<****************************');
 
          // Navigator.of(context, rootNavigator: true).pop();
-         saveImage.saveFlexiOut(empid,streamlocationaddr.toString(),fid.toString(),lat,long,orgid)
+         saveImage.saveFlexiOut(empid,streamlocationaddr.toString(),fid.toString(),lat,long,orgid,FakeLocationStatus)
              .then((res){
 
            print(res);
@@ -833,7 +863,7 @@ print('visit out called for visit id:'+visit_id);
    // client = _clientname.text;
     client ="";
     MarkVisit mk = new MarkVisit(
-        empid,client, streamlocationaddr, orgdir, lat, long);
+        empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());

@@ -18,11 +18,13 @@ import 'dart:async';
 import 'home.dart';
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
+import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'forgot_password.dart';
 import 'askregister.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:Shrine/offline_home.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -31,9 +33,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  static const platform = const MethodChannel('location.spoofing.check');
   String barcode = "";
   final _formKey = GlobalKey<FormState>();
   String loginuser="";
+  bool fakeLocationDetected=false;
 
   bool loader = false;
   FocusNode textSecondFocusNode = new FocusNode();
@@ -43,9 +47,43 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     initPlatformState();
+    platform.setMethodCallHandler(_handleMethod);
+  }
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        if(call.arguments=="Location is mocked"){
+          setState(() {
+            fakeLocationDetected=true;
+          });
+        }
+
+        debugPrint(call.arguments);
+        return new Future.value("");
+    }
   }
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
+
+    var isAlreadyLoggedIn=prefs.getInt("response");
+    var isConnected=await checkConnectionToServer ();
+
+    if(isAlreadyLoggedIn==1){
+      if(isConnected==1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+
+      else if(prefs.getInt("OfflineModePermission")==1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+        );
+      }
+    }
+
     setState(() {
       loginuser = prefs.getString('username') ?? "";
       _usernameController.text=loginuser;
@@ -231,7 +269,8 @@ class _LoginPageState extends State<LoginPage> {
       loader = true;
     });
     print('ab');
-    var islogin = await dologin.markAttByQR(qr);
+
+    var islogin = await dologin.markAttByQR(qr,fakeLocationDetected?1:0);
     print(islogin);
     if(islogin=="success"){
       setState(() {

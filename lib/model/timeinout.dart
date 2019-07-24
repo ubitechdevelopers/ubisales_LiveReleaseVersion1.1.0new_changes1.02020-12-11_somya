@@ -8,8 +8,9 @@ class MarkTime{
   String refid;
   String latit;
   String longi;
+  int FakeLocationStatus;
 
-  MarkTime(this.uid, this.location, this.aid, this.act, this.shiftid, this.refid, this.latit, this.longi);
+  MarkTime(this.uid, this.location, this.aid, this.act, this.shiftid, this.refid, this.latit, this.longi,this.FakeLocationStatus);
 
   MarkTime.fromMap(Map map){
     uid = map[uid];
@@ -20,6 +21,7 @@ class MarkTime{
     refid = map[refid];
     latit = map[latit];
     longi = map[longi];
+    FakeLocationStatus= map[FakeLocationStatus];
   }
   MarkTime.fromJson(Map map){
     uid = map[uid];
@@ -30,6 +32,7 @@ class MarkTime{
     refid = map[refid];
     latit = map[latit];
     longi = map[longi];
+    FakeLocationStatus=map[FakeLocationStatus];
   }
 
 
@@ -43,8 +46,9 @@ class MarkVisit{
   String refid;
   String latit;
   String longi;
+  int FakeLocationStatus;
 
-  MarkVisit(this.uid,this.cid, this.location, this.refid, this.latit, this.longi);
+  MarkVisit(this.uid,this.cid, this.location, this.refid, this.latit, this.longi,this.FakeLocationStatus);
 
   MarkVisit.fromMap(Map map){
     uid = map[uid];
@@ -53,6 +57,7 @@ class MarkVisit{
     refid = map[refid];
     latit = map[latit];
     longi = map[longi];
+    FakeLocationStatus= map[FakeLocationStatus];
   }
   MarkVisit.fromJson(Map map){
     uid = map[uid];
@@ -61,6 +66,7 @@ class MarkVisit{
     refid = map[refid];
     latit = map[latit];
     longi = map[longi];
+    FakeLocationStatus=map[FakeLocationStatus];
   }
 
 
