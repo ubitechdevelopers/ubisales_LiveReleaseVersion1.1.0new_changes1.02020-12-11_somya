@@ -4,11 +4,7 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
-/*import 'openCameraInActivity.dart';
-import 'package:camera/camera.dart';*/
-import 'package:connectivity/connectivity.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 
 // This app is a stateful, it tracks the user's current choice.

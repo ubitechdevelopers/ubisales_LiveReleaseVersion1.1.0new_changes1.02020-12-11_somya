@@ -8,16 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 class DbHelper{
   static Database _db;
-
-
-
-
   Future<Database> get db async{
     print("inside get");
     if(_db!=null){
       return _db;
     }
-
     _db = await initDB();
     return _db;
   }
@@ -32,13 +27,9 @@ class DbHelper{
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
     var db = await openDatabase(path, version: 21, onCreate: _onCreate,onUpgrade: _onUpgrade);
-
     return db;
     //}
-
   }
-
-
 
   _onCreate(Database db,int version) async{
     await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"

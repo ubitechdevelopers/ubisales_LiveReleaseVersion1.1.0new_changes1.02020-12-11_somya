@@ -289,7 +289,6 @@ class AttendanceOffline{
   Future<int> update(AttendanceOffline am) async{
     DbHelper dbHelper=new DbHelper();
     var dbClient = await dbHelper.db;
-
     return dbClient.update('AttendanceOffline', am.toMap(),where:'id=?',whereArgs: [am.Id]);
   }
 

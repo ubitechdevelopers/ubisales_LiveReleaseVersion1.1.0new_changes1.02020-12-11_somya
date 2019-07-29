@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart' as globals;
 import 'askregister.dart';
-import 'package:Shrine/services/checklogin.dart';
 import 'services/services.dart';
 import 'self_register_emp.dart';
 import 'register_org.dart';

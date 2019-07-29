@@ -17,8 +17,6 @@ import 'package:splashscreen/splashscreen.dart';
 import 'package:Shrine/app.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'services/services.dart';
-import "dart:async";
-import 'package:flutter/services.dart';
 
 void main(){
 
@@ -30,7 +28,6 @@ void main(){
 
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => new _MyAppState();
 }

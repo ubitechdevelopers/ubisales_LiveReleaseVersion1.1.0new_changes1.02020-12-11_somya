@@ -4,23 +4,14 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'punchlocation.dart';
 import 'drawer.dart';
 import 'package:Shrine/model/model.dart';
-import 'timeoff_summary.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'home.dart';
-import 'dart:io';
-import 'dart:async';
 import 'settings.dart';
 import 'reports.dart';
 import 'notifications.dart';
@@ -93,14 +84,15 @@ class _ProfilePageState extends State<ProfilePage> {
         profile = prefs.getString('profile') ?? '';
         print(profile);
         profileimage = new NetworkImage(profile);
+        _checkLoaded = false;
         //print("1-"+profile);
-        profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+        /*profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
           if (mounted) {
             setState(() {
               _checkLoaded = false;
             });
           }
-        });
+        });*/
         //print("2-"+_checkLoaded.toString());
         act1=act;
         department = profileMap["dept"]??'';

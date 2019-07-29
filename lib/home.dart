@@ -4,7 +4,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'askregister.dart';
@@ -36,7 +35,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
-import 'package:Shrine/offline_home.dart';
 import 'package:flutter/services.dart';
 import "package:Shrine/notifications.dart";
 
@@ -408,14 +406,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
           profileimage = new NetworkImage(profile);
+          _checkLoaded = false;
           // //print("1-"+profile);
-          profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+          /*profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
               });
             }
-          });
+          });*/
           // //print("2-"+_checkLoaded.toString());
           latit = prefs.getString('latit') ?? '';
           longi = prefs.getString('longi') ?? '';

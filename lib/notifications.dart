@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
-import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'Image_view.dart';

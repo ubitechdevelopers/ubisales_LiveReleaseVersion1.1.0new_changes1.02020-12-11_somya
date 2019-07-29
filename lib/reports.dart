@@ -16,13 +16,10 @@ import 'home.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'payment.dart';
 import 'profile.dart';
-import 'department_att.dart';
 import 'designation_att.dart';
 import 'Employeewise_att.dart';
 import  'globals.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:flutter/scheduler.dart';
-import 'no_net.dart';
 import 'flexi_report.dart';
 import 'notifications.dart';
 
@@ -34,7 +31,7 @@ class Reports extends StatefulWidget {
 class _Reports extends State<Reports> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-  String _orgName;
+  String _orgName='';
   String buystatus = "";
   String trialstatus = "";
   String orgmail = "";

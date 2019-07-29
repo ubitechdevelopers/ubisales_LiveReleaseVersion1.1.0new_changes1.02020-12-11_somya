@@ -99,13 +99,14 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         act= lid!='0'?'PunchOut':'PunchIn';
 
         profileimage = new NetworkImage(profile);
-        profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+        _checkLoaded = false;
+       /* profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
           if (mounted) {
             setState(() {
               _checkLoaded = false;
             });
           }
-        });
+        });*/
         latit = prefs.getString('latit') ?? '';
         longi = prefs.getString('longi') ?? '';
         shiftId = prefs.getString('shiftId') ?? "";

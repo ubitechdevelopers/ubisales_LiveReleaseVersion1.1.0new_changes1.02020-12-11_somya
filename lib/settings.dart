@@ -23,7 +23,7 @@ class Settings extends StatefulWidget {
 class _Settings extends State<Settings> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 2;
-  String _orgName;
+  String _orgName='';
   String admin_sts='0';
   String buystatus = "";
   String trialstatus = "";
