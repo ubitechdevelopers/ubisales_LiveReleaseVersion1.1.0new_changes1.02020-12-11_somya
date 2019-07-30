@@ -271,7 +271,7 @@ class _FlexiReport extends State<FlexiReport> {
   Widget getEmployee_DD() {
     String dc = "0";
     return new FutureBuilder<List<Map>>(
-        future: getEmployeesList(0),// with -select- label
+        future: getEmployeesList(1),// with -select- label
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             try {

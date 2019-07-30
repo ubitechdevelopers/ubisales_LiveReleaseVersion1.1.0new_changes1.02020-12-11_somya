@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
     initPlatformState();
-    setLocationAddress();
+    //setLocationAddress();
     startTimer();
    platform.setMethodCallHandler(_handleMethod);
   }
@@ -329,6 +329,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
         if (streamlocationaddr == '') {
           print('again');
+          timer.cancel();
           sl.startStreaming(5);
           startTimer();
         }

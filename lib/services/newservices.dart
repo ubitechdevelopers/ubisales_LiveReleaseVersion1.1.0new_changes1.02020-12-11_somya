@@ -461,10 +461,11 @@ class StreamLocation{
   String lat="";
   String long="";
   void startStreaming(int listlength) async{
-    int counter = 0;
-    stopstreamingstatus = false;
-    _locationSubscription =
-        _location.onLocationChanged().listen((LocationData result) {
+    try {
+      int counter = 0;
+      stopstreamingstatus = false;
+      _locationSubscription =
+          _location.onLocationChanged().listen((LocationData result) {
             _currentLocation = result;
             /*
             print("---------------- Location data------------------");
@@ -472,10 +473,10 @@ class StreamLocation{
             print("---------------- Location data------------------");
 */
             list.add(result);
-            getAddress(list[list.length-1]);
+            getAddress(list[list.length - 1]);
             //print("counter"+counter.toString());
             //print("List length  ->>>>>> "+list.length.toString());
-            if(counter>listlength) {
+            if (counter > listlength) {
               list.removeAt(0);
               stopstreamingstatus = true;
               // //print("index 0 is removed");
@@ -483,8 +484,11 @@ class StreamLocation{
               //print("subscription canceled");
             }
             counter++;
-          //print("----------> Running");
-        });
+            //print("----------> Running");
+          });
+    }catch(e){
+      print(e.toString());
+    }
   }
 
   getAddress( LocationData _currentLocation) async{

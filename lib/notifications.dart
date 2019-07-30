@@ -16,7 +16,7 @@ class Notifications extends StatefulWidget {
   @override
   _Notifications createState() => _Notifications();
 }
-String _orgName;
+String _orgName="";
 String org_name="";
 class _Notifications extends State<Notifications> with SingleTickerProviderStateMixin {
   TabController _controller;
@@ -25,7 +25,6 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
   String lname="";
   String desination="";
   String profile="";
-
   int _currentIndex = 1;
   String admin_sts='0';
   String countP='-',countA='-',countL='-',countE='-';

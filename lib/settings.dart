@@ -434,7 +434,7 @@ class _Settings extends State<Settings> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(Icons.group,size: 40.0,),
+              Icon(Icons.weekend,size: 40.0,),
               SizedBox(width: 15.0,),
               Expanded(
                 //widthFactor: MediaQuery.of(context).size.width*0.10,
@@ -473,7 +473,7 @@ class _Settings extends State<Settings> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(Icons.group,size: 40.0,),
+              Icon(Icons.add_location,size: 40.0,),
               SizedBox(width: 15.0,),
               Expanded(
 //                            widthFactor: MediaQuery.of(context).size.width*0.10,
