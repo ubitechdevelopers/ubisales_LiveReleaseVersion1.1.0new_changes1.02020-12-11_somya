@@ -69,14 +69,15 @@ class _LoginPageState extends State<LoginPage> {
     var isConnected=await checkConnectionToServer ();
 
     if(isAlreadyLoggedIn==1){
-      if(isConnected==1){
+      /*if(isConnected==1){
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       }
 
-      else if(prefs.getInt("OfflineModePermission")==1){
+      else */
+      if(prefs.getInt("OfflineModePermission")==1 && isConnected!=1){
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),

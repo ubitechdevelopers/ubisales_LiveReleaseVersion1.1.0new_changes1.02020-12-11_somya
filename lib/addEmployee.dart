@@ -149,13 +149,13 @@ class _AddEmployee extends State<AddEmployee> {
             );
             return;
           }
-          else if(newIndex == 3){
+          /*else if(newIndex == 3){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Notifications()),
             );
 
-          }
+          }*/
           setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
@@ -181,12 +181,12 @@ class _AddEmployee extends State<AddEmployee> {
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
           ),
-          BottomNavigationBarItem(
+         /* BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications
                 ,color: Colors.black54,
               ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
         ],
       ),
       endDrawer: new AppDrawer(),

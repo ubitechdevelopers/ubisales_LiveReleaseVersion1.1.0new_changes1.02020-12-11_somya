@@ -43,6 +43,7 @@ class Home{
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
+        globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
         globals.attImage=int.parse(timeinoutMap['attImage']);
         globals.areaId=int.parse(timeinoutMap['areaId']);

@@ -13,15 +13,15 @@ import 'reports.dart';
 import 'Image_view.dart';
 import 'notifications.dart';
 
-class FlexiReport extends StatefulWidget {
+class Outsidegeofance extends StatefulWidget {
   @override
-  _FlexiReport createState() => _FlexiReport();
+  _Outsidegeofance createState() => _Outsidegeofance();
 }
 
 TextEditingController today;
 String _orgName;
 //FocusNode f_dept ;
-class _FlexiReport extends State<FlexiReport> {
+class _Outsidegeofance extends State<Outsidegeofance> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
   String emp='0';
@@ -75,13 +75,16 @@ class _FlexiReport extends State<FlexiReport> {
                     'assets/logo.png', height: 40.0, width: 40.0),*/
           ],
         ),
-        automaticallyImplyLeading: false,
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+          Navigator.pop(context);}),
+        backgroundColor: Colors.teal,
+     //   automaticallyImplyLeading: false,
         /*  leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             }),*/
-        backgroundColor: Colors.teal,
+      //  backgroundColor: Colors.teal,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -112,7 +115,7 @@ class _FlexiReport extends State<FlexiReport> {
             );
             return;
           }
-         /* else if(newIndex == 3){
+          /*else if(newIndex == 3){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Notifications()),
@@ -144,7 +147,7 @@ class _FlexiReport extends State<FlexiReport> {
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
           ),
-         /* BottomNavigationBarItem(
+          /*BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications
                 ,color: Colors.black54,
@@ -160,7 +163,7 @@ class _FlexiReport extends State<FlexiReport> {
             SizedBox(height: 8.0),
             Center(
               child: Text(
-                'Flexi Attendance',
+                'Outside The Geo Fence',
                 style: new TextStyle(
                   fontSize: 22.0,
                   color: Colors.black54,
@@ -211,34 +214,38 @@ class _FlexiReport extends State<FlexiReport> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   SizedBox(width: 1.0,),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: Text(
-                      'Name',
-                      style: TextStyle(color: Colors.orange),
-                      textAlign: TextAlign.left,
+                  Expanded(
+                    flex: 20,
+                    child:  Container(
+                      child: Text(
+                        '  Name',
+                        style: TextStyle(color: Colors.orange),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
                   ),
-                  Container(
+                 Expanded(
+                   flex: 40,
+                  child:Container(
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
-                      'Location',
+                      '    In',
                       style: TextStyle(color: Colors.orange),
                       textAlign: TextAlign.left,
                     ),
+                   ),
                   ),
-                  Container(
+
+                  Expanded(
+                    flex: 40,
+                  child:Container(
                     width: MediaQuery.of(context).size.width * 0.15,
-                    child: Text('In',
+                    child: Text('    Out',
                         style: TextStyle(color: Colors.orange),
                         textAlign: TextAlign.left),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    child: Text('Out ',
-                        style: TextStyle(color: Colors.orange),
-                        textAlign: TextAlign.left),
                   ),
+
                 ],
               ),
             ),
@@ -338,8 +345,8 @@ class _FlexiReport extends State<FlexiReport> {
 
 
   getEmpDataList(date) {
-    return new FutureBuilder<List<FlexiAtt>>(
-        future: getFlexiDataListReport(date,emp),
+    return new FutureBuilder<List<OutsideAttendance>>(
+        future: getOutsidegeoReport(date,emp),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data.length > 0) {
@@ -355,50 +362,96 @@ class _FlexiReport extends State<FlexiReport> {
                           mainAxisAlignment : MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             SizedBox(width: 8.0,),
-                            new Container(
-                                width: MediaQuery.of(context).size.width * 0.18,
+                            Expanded(
+                              flex: 20,
+                              child:  new Container(
+                                  width: MediaQuery.of(context).size.width * 0.18,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      new Text(
+                                        snapshot.data[index].empname.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
+                                    ],
+                                  )),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(""),
+                            ),
+                            Expanded(
+                              flex: 37,
+                              child:  new Container(
+                                //width: MediaQuery.of(context).size.width * 0.37,
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    new Text(
-                                      snapshot.data[index].Emp.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
-                                  ],
-                                )),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.37,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  /* new Text(
+                                    /* new Text(
                                     snapshot.data[index].client.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
                                   ),*/
-                                  InkWell(
-                                    child:Text("In: "+
-                                        snapshot.data[index].pi_loc.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
-                                    onTap: () {
-                                      goToMap(snapshot.data[index].pi_latit,snapshot.data[index].pi_longi.toString());
+                                    InkWell(
+                                      child:Text(
+                                          snapshot.data[index].locationin.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                                      onTap: () {
+                                        goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
                                       },
-                                  ),
-                                  InkWell(
-                                    child:Text("Out: "+
-                                    snapshot.data[index].po_loc.toString(),
-                                    style: TextStyle
-                                    (
-                                    color: Colors.black54,fontSize: 12.0
                                     ),
-                                    ),
-                                    onTap: ()
-                                    {
-                                    goToMap(
-                                          snapshot.data[index].po_latit.toString(),
-                                          snapshot.data[index].po_longi.toString()
-                                          );
-                                        },
-                                  ),
-                                ],
+                                   Container(
+                                     padding: EdgeInsets.all(2.0),
+                                     color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                                     child: Text(snapshot.data[index].instatus,
+                                       style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                     ),
+                                   ),
+                                  ],
+                                ),
                               ),
-                           ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(""),
+                            ),
+                            Expanded(
+                              flex: 37,
+                              child:  new Container(
+                               // width: MediaQuery.of(context).size.width * 0.37,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+
+
+                                    InkWell(
+                                      child:Text(
+                                          snapshot.data[index].locationout.toString(),
+                                        style: TextStyle
+                                          (
+                                            color: Colors.black54,fontSize: 12.0
+                                        ),
+                                      ),
+                                      onTap: ()
+                                      {
+                                        goToMap(
+                                            snapshot.data[index].latout.toString(),
+                                            snapshot.data[index].lonout.toString()
+                                        );
+                                      },
+                                    ),
+                                 snapshot.data[index].outstatus!=''?
+                                    new Container(
+                                      padding: EdgeInsets.all(2.0),
+
+                                      color: snapshot.data[index].outcolor.toString()=='0'?Colors.red:Colors.green,
+                                      child: Text(snapshot.data[index].outstatus,
+                                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                      ),
+                                    ):Center(child: Text("-"),),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            /*
                             Container(
                                 width: MediaQuery
                                     .of(context)
@@ -408,31 +461,10 @@ class _FlexiReport extends State<FlexiReport> {
                                   crossAxisAlignment: CrossAxisAlignment
                                       .center,
                                   children: <Widget>[
-                                    Text(snapshot.data[index].pi_time
+                                    Text(snapshot.data[index].timein
                                         .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Container(
-                                      width: 62.0,
-                                      height: 62.0,
-                                      child:InkWell(
-                                        child: Container(
-                                            decoration: new BoxDecoration(
-                                            shape: BoxShape .circle,
-                                              image: new DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: new NetworkImage(snapshot.data[index].pi_img)
-                                              )
-                                            )),
-                                        onTap: ()
-                                        {
 
-                                        Navigator.push(
-                                        context, MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: _orgName)),
-                                        );
-
-                                       },
-                                      ),
-                                    ),
-                                    Text(snapshot.data[index].timeindate
+                                    Text(snapshot.data[index].attdate
                                         .toString(),style: TextStyle(color: Colors.grey),),
                                   ],
                                 )
@@ -447,51 +479,30 @@ class _FlexiReport extends State<FlexiReport> {
                                   crossAxisAlignment: CrossAxisAlignment
                                       .center,
                                   children: <Widget>[
-                                    Text(snapshot.data[index].po_time
+                                    Text(snapshot.data[index].timein
                                         .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Container(
-                                      width: 62.0,
-                                      height: 62.0,
-                                      child:InkWell(
-                                        child: Container(
-                                            decoration: new BoxDecoration(
-                                                shape: BoxShape
-                                                    .circle,
-                                                image: new DecorationImage(
-                                                    fit: BoxFit.fill,
-                                                    image: new NetworkImage(
-                                                    snapshot.data[index].po_img)
-                                                )
-                                            )),
-                                        onTap: ()
-                                        {
-                                          Navigator.push(context,MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].po_img,org_name: _orgName)),
-                                       );
 
-                                       },
-                                      ),
-                                    ),
-                                    Text(snapshot.data[index].timeoutdate .toString(),style: TextStyle(color: Colors.grey
+                                    Text(snapshot.data[index].attdate .toString(),style: TextStyle(color: Colors.grey
                                     ),),
                                   ],
                                 )
 
-                            ),
+                            ),*/
                           ],
                         ),
 
                         Divider
                           (
                           color: Colors.blueGrey.withOpacity(0.25),
-                          height: 0.2,
-                         ),
+                          height: 10.2,
+                        ),
                       ]),
                     );
                   });
-                }
-             else
-              {
-                return new Center(
+            }
+            else
+            {
+              return new Center(
                 child: Text("No Attendance",style: TextStyle(color: Colors.orangeAccent,fontSize: 18.0),),
               );
             }

@@ -22,6 +22,7 @@ import  'globals.dart';
 import 'package:Shrine/services/services.dart';
 import 'flexi_report.dart';
 import 'notifications.dart';
+import 'Outsidegeofance.dart';
 
 
 class Reports extends StatefulWidget {
@@ -113,13 +114,13 @@ class _Reports extends State<Reports> {
             );
             return;
           }
-          else if(newIndex == 3){
+          /*else if(newIndex == 3){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Notifications()),
             );
 
-          }
+          }*/
           setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
@@ -145,12 +146,12 @@ class _Reports extends State<Reports> {
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
           ),
-          BottomNavigationBarItem(
+          /*BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications
                 ,color: Colors.black54,
               ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
         ],
       ),
 
@@ -526,6 +527,50 @@ class _Reports extends State<Reports> {
                 }
               },
             ):Center(),
+
+            flexi_permission ==1 ? SizedBox(height: 6.0):Center(),
+            flexi_permission ==1 ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.my_location,size: 40.0,),
+                    SizedBox(width: 15.0,),
+                    Expanded(
+// widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Outside the fence',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                          ),
+                          Container(
+                              child: Text('Outside the geo fence',style: TextStyle(fontSize: 15.0,),)
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 50.0,),
+                  ],
+                ),
+              ),
+              color: color,
+              elevation: 4.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to plan for this report");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Outsidegeofance()),
+                  );
+                }
+              },
+            ):Center(),
+
 
             visitpunch==1?SizedBox(height: 6.0):Center(),
             visitpunch==1?

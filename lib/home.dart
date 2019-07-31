@@ -407,15 +407,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
           profileimage = new NetworkImage(profile);
-          _checkLoaded = false;
+         // _checkLoaded = false;
           // //print("1-"+profile);
-          /*profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+          profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
               });
             }
-          });*/
+          }));
           // //print("2-"+_checkLoaded.toString());
           latit = prefs.getString('latit') ?? '';
           longi = prefs.getString('longi') ?? '';
@@ -441,7 +441,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     return (response == 0 || userpwd != newpwd || Is_Delete != 0)
         ? new AskRegisterationPage()
         : getmainhomewidget();
-
     /* return MaterialApp(
       home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
     );*/
@@ -506,13 +505,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 );
                 return;
               }
-              else if(newIndex == 3){
+              /*else if(newIndex == 3){
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Notifications()),
                 );
 
-              }
+              }*/
               setState((){_currentIndex = newIndex;});
 
             }, // this will be set when a new tab is tapped
@@ -538,12 +537,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   icon: Icon(Icons.settings,color: Colors.black54,),
                   title: Text('Settings',style: TextStyle(color: Colors.black54),)
               ),
-              BottomNavigationBarItem(
+            /*  BottomNavigationBarItem(
                   icon: Icon(
                     Icons.notifications
                     ,color: Colors.black54,
                   ),
-                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
             ],
           ),
 

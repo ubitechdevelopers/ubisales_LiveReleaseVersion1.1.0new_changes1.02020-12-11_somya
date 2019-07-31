@@ -46,10 +46,7 @@ class _CheckUpdate extends State<CheckUpdate> {
    //     print('************************'+res.toString()+'***********************************');
         mand_update=res;
       });
-
     });
-
-
     super.initState();
     getShared();
     }

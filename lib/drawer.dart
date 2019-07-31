@@ -17,6 +17,7 @@ import 'profile.dart';
 import 'userGuide.dart';
 import 'services/services.dart';
 import 'flexi_time.dart';
+import 'notifications.dart';
 
 
 class AppDrawer extends StatefulWidget {
@@ -66,15 +67,13 @@ class _AppDrawerState extends State<AppDrawer> {
       trialstatus = prefs.getString('trialstatus') ?? '';
       orgmail = prefs.getString('orgmail') ?? '';
       profileimage = new NetworkImage(profile);
-      _checkLoaded = false;
-     /* profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+      profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
         if (mounted) {
           setState(() {
             _checkLoaded = false;
           });
-
         }
-      });*/
+      }));
     });
   }
 
@@ -271,6 +270,21 @@ class _AppDrawerState extends State<AppDrawer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Flexitime()),
+              );
+            },
+          ):new Center(),
+          offline_permission ==1 ?
+          new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.notifications,size: 20.0),SizedBox(width: 5.0),
+                new Text("Rejected Attendance Log", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Notifications()),
               );
             },
           ):new Center(),

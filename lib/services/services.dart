@@ -1600,13 +1600,13 @@ class EmpListTimeOff {
 ////////////////////////////Punch location/visits  reports start////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-Future<List<Punch>> getVisitsDataList(date) async {
+Future<List<Punch>> getVisitsDataList(date,emp) async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
   // print(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date');
   final response =
-      await http.get(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date');
+      await http.get(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date&uid=$emp');
   List responseJson = json.decode(response.body.toString());
   List<Punch> userList = createUserList(responseJson);
   // print('getSummaryPunch called--1');
@@ -2121,6 +2121,7 @@ class FlexiAtt {
       this.po_img});
 }
 
+
 Future<List<FlexiAtt>> getFlexiDataList(date) async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
@@ -2234,6 +2235,7 @@ Future<List<FlexiAtt>> getFlexiDataListReport(date, emp) async {
   return userList;
 }
 
+
 List<FlexiAtt> createListFlexiReport(List data) {
   List<FlexiAtt> list = new List();
   for (int i = data.length - 1; i >= 0; i--) {
@@ -2285,4 +2287,109 @@ List<FlexiAtt> createListFlexiReport(List data) {
   return list;
 }
 
+
 ///flexi attendance end////
+
+class OutsideAttendance {
+  String Id;
+  String empname;
+  String timein;
+  String timeout;
+  String locationin;
+  String locationout;
+  String attdate;
+  String latin;
+  String lonin;
+  String latout;
+  String lonout;
+  String outstatus;
+  String instatus;
+  String incolor;
+  String outcolor;
+
+
+  OutsideAttendance(
+      {
+        this.Id,
+        this.empname,
+        this.timein,
+        this.timeout,
+        this.locationin,
+        this.locationout,
+        this.attdate,
+        this.latin,
+        this.lonin,
+        this.latout,
+        this.lonout,
+        this.outstatus,
+        this.instatus,
+        this.incolor,
+        this.outcolor,
+      });
+}
+Future<List<OutsideAttendance>> getOutsidegeoReport(date, emp) async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+
+  print(globals.path +
+      'getOutsidegeoReport?seid=$emp&uid=$empid&orgid=$orgdir&date=$date');
+  final response = await http.get(globals.path +
+      'getOutsidegeoReport?seid=$emp&uid=$empid&orgid=$orgdir&date=$date');
+
+  List responseJson = json.decode(response.body.toString());
+  print("Json responce ");
+
+  List<OutsideAttendance> userList = createListOutsidefance(responseJson);
+  print('getSummaryPunch called--1');
+  print('getSummaryPunch called--2');
+  return userList;
+}
+
+
+List<OutsideAttendance> createListOutsidefance(List data) {
+  List<OutsideAttendance> list = new List();
+  print("Data length");
+  print(data.length);
+
+  for (int i = data.length - 1; i >= 0; i--) {
+    String id = data[i]["id"];
+    String timein = data[i]["timein"] == "00:00:00" ? '-'
+        : data[i]["timein"].toString().substring(0, 5);
+    String timeout = data[i]["timeout"] == "00:00:00" ? '-'
+        : data[i]["timeout"].toString().substring(0, 5);
+    String locationin = data[i]["locationin"];
+    String locationout = data[i]["locationout"];
+    String attdate = data[i]["attdate"];
+    String empname = data[i]["empname"];
+    String latin = data[i]["latin"];
+    String lonin = data[i]["lonin"];
+    String latout = data[i]["latout"];
+    String lonout = data[i]["lonout"];
+    String outstatus = data[i]["outstatus"];
+    String instatus = data[i]["instatus"];
+    String incolor = data[i]["incolor"];
+    String outcolor = data[i]["outcolor"];
+
+
+    OutsideAttendance Outsid = new OutsideAttendance(
+        Id: id,
+        empname: empname,
+        timein: timein == '00:00' ? '-' : timein,
+        timeout: timeout == '00:00' ? '-' : timeout,
+        locationin: locationin.length > 40 ? locationin.substring(0, 40) + '...' : locationin,
+        locationout: locationout.length > 40 ? locationout.substring(0, 40) + '...' : locationout,
+        attdate: attdate,
+        latin: latin,
+        lonin: lonin,
+        latout: latout,
+        lonout: lonout,
+        outstatus: outstatus,
+        instatus: instatus,
+        incolor: incolor,
+        outcolor: outcolor,
+        );
+    list.add(Outsid);
+  }
+  return list;
+}

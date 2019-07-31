@@ -255,7 +255,17 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                                       .data[index]
                                                                       .EntryImage)
                                                           )
-                                                      )),
+                                                      ),
+                                                    /*child: new Stack(
+                                                      children: <Widget>[
+                                                        new Positioned(
+                                                          right: MediaQuery.of(context).size.width*.00,
+                                                          bottom: MediaQuery.of(context).size.height*.00,
+                                                          child: new Icon(Icons.add,size: 25.0,color: Colors.teal,),
+                                                        )
+                                                      ],
+                                                    ),*/
+                                                  ),
                                                     onTap: (){
                                                       Navigator.push(
                                                         context,
@@ -294,7 +304,10 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                                       .data[index]
                                                                       .ExitImage)
                                                           )
-                                                      )),
+                                                      ),
+
+                                                  ),
+
                                                     onTap: (){
                                                       Navigator.push(
                                                         context,

@@ -84,15 +84,13 @@ class _ProfilePageState extends State<ProfilePage> {
         profile = prefs.getString('profile') ?? '';
         print(profile);
         profileimage = new NetworkImage(profile);
-        _checkLoaded = false;
-        //print("1-"+profile);
-        /*profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+        profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
           if (mounted) {
             setState(() {
               _checkLoaded = false;
             });
           }
-        });*/
+        }));
         //print("2-"+_checkLoaded.toString());
         act1=act;
         department = profileMap["dept"]??'';
@@ -260,13 +258,13 @@ class _ProfilePageState extends State<ProfilePage> {
             );
             return;
           }
-          else if(newIndex == 3){
+          /*else if(newIndex == 3){
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Notifications()),
             );
 
-          }
+          }*/
           setState((){_currentIndex = newIndex;});
 
         }, // this will be set when a new tab is tapped
@@ -292,12 +290,12 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: Icon(Icons.settings,color: Colors.black54,),
               title: Text('Settings',style: TextStyle(color: Colors.black54),)
           ),
-          BottomNavigationBarItem(
+          /*BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications
                 ,color: Colors.black54,
               ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),
+              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
         ],
       ),
 
