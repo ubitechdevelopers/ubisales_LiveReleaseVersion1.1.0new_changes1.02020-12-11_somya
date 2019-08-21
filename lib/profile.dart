@@ -495,6 +495,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             controller: _phone,
                             keyboardType: TextInputType.phone,
+                         validator: (date) {
+                           if (_phone.text==null||_phone.text.trim()==''){
+                             return 'Please enter Phone Number';
+                           }
+                         },
                           ),
                       ButtonBar(
                         children: <Widget>[
@@ -514,10 +519,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () {
                               if(_isButtonDisabled)
                                 return null;
+                              if(_phone.text.trim()==''){
+                                showInSnackBar('Please enter Phone no.');
+                                return null;
+                              }
+
                               setState(() {
                                 _isButtonDisabled=true;
                               });
-                              updateProfile(_phone.text,'');
+                              updateProfile(_phone.text.trim(),'');
                             },
                           ),
                         ],

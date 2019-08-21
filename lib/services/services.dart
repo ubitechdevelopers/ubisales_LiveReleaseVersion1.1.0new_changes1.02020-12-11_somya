@@ -1188,9 +1188,13 @@ class SyncNotification {
 Future<List<Attn>> getCDateAttn(listType, date) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  print(globals.path +
+      'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType');
   final response = await http.get(globals.path +
       'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType');
+  print(response.body);
   final res = json.decode(response.body);
+
   // print(res);
   List responseJson;
   if (listType == 'present')
@@ -1720,7 +1724,7 @@ Future<List<grpattemp>> getDeptEmp(value) async {
     formattedDate = formatter.format(onedayago);
     print(formattedDate);
   }
-  //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=13');
+  //print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
   final response =
       await http.get(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
 
@@ -2393,3 +2397,71 @@ List<OutsideAttendance> createListOutsidefance(List data) {
   }
   return list;
 }
+
+/************************************************************************
+ ****************************Start Holiday functions*********************
+ ************************************************************************/
+
+
+Future<List<Holiday>> getHolidays() async {
+   print('holidays called');
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+   print(globals.path + 'getAllHoliday?orgid=$orgid');
+  final response = await http.get(globals.path + 'getAllHoliday?orgid=$orgid');
+  List responseJson = json.decode(response.body.toString());
+  print(responseJson);
+  List<Holiday> holidayList = createHolidayList(responseJson);
+//  print(shiftList);
+  return holidayList;
+}
+
+List<Holiday> createHolidayList(List data) {
+  List<Holiday> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String name = data[i]["Name"];
+    String from = Formatdate(data[i]["fromDate"]);
+    String to = Formatdate(data[i]["DateTo"]);
+    String days = data[i]["DiffDate"];
+    Holiday holiday = new Holiday(
+        Name: name,
+        From: from,
+        To: to,
+        Days: days
+    );
+    list.add(holiday);
+  }
+  return list;
+}
+
+
+
+class Holiday {
+  //String Id;
+  String Name;
+  String From;
+  String To;
+  String Days;
+
+  Holiday(
+      {this.Name, this.From, this.To, this.Days});
+}
+
+
+Future<int> createHoliday(name, from, to, description) async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+  print(globals.path +
+      'addHoliday?name=$name&org_id=$orgdir&from=$from&to=$to&description=$description&empid=$empid');
+  final response = await http.get(globals.path +
+      'addHoliday?name=$name&org_id=$orgdir&from=$from&to=$to&description=$description&empid=$empid');
+  int res = int.parse(response.body);
+  print(response.body);
+  return res;
+}
+
+
+/************************************************************************
+ ****************************End Holiday functions*********************
+ ************************************************************************/

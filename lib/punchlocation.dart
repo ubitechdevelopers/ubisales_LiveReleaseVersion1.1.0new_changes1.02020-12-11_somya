@@ -623,7 +623,7 @@ var FakeLocationStatus=0;
           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
       color: Colors.orangeAccent,
       onPressed: () {
-        if(_clientname.text=='') {
+        if(_clientname.text.trim()=='') {
           showInSnackBar('Please insert client name first');
           return false;
         }else

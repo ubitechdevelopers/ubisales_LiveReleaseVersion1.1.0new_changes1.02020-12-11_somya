@@ -21,7 +21,7 @@ TextEditingController today;
 class _LateComers extends State<LateComers> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-  String _orgName;
+  String _orgName='';
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');
@@ -66,7 +66,6 @@ class _LateComers extends State<LateComers> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-
             /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
           ],
@@ -168,10 +167,19 @@ class _LateComers extends State<LateComers> {
             ),
             SizedBox(height: 2.0),
             Container(
-              child: DateTimePickerFormField(
-                dateOnly: true,
+
+              child: DateTimeField(
                 format: formatter,
                 controller: today,
+                onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+
+                },
+                readOnly: true,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(0.0),
@@ -182,6 +190,11 @@ class _LateComers extends State<LateComers> {
                   ), // icon is 48px widget.
                   labelText: 'Select Date',
                 ),
+                validator: (date) {
+                  if (date == null) {
+                    return 'Please select date';
+                  }
+                },
                 onChanged: (date) {
                   setState(() {
                     if (date != null && date.toString()!='')
@@ -190,12 +203,39 @@ class _LateComers extends State<LateComers> {
                       res = false;
                   });
                 },
-                validator: (date) {
-                  if (date == null) {
-                    return 'Please select date';
-                  }
-                },
+
               ),
+                /*child: DateTimePickerFormField(
+                  inputType: InputType.date,
+                  dateOnly: true,
+                  format: formatter,
+                  controller: today,
+                  editable: false,
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(0.0),
+                      child: Icon(
+                        Icons.date_range,
+                        color: Colors.grey,
+                      ), // icon is 48px widget.
+                    ), // icon is 48px widget.
+                    labelText: 'Select Date',
+                  ),
+                  validator: (date) {
+                    if (date == null) {
+                      return 'Please select date';
+                    }
+                  },
+                  onChanged: (date) {
+                    setState(() {
+                      if (date != null && date.toString()!='')
+                        res = true; //showInSnackBar(date.toString());
+                      else
+                        res = false;
+                    });
+                  },
+
+                ),*/
             ),
             SizedBox(height: 12.0),
             Container(

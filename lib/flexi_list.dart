@@ -9,7 +9,7 @@ import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
 import 'Image_view.dart';
-import 'notifications.dart';
+import 'package:flutter/services.dart';
 
 class FlexiList extends StatefulWidget {
   @override
@@ -20,12 +20,13 @@ TextEditingController today;
 String _orgName;
 //FocusNode f_dept ;
 class _FlexiList extends State<FlexiList> {
+  @override
+  bool get hasFocus => false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');
-
   @override
   void initState() {
     super.initState();
@@ -73,11 +74,11 @@ class _FlexiList extends State<FlexiList> {
           ],
         ),
         automaticallyImplyLeading: false,
-    /*  leading: IconButton(
+     leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
-            }),*/
+            }),
         backgroundColor: Colors.teal,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -169,33 +170,47 @@ class _FlexiList extends State<FlexiList> {
             ),
             SizedBox(height: 2.0),
             Container(
-              child: DateTimePickerFormField(
-                dateOnly: true,
-                format: formatter,
-                controller: today,
-                decoration: InputDecoration(
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(0.0),
-                    child: Icon(
-                      Icons.date_range,
-                      color: Colors.grey,
+              child: new GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+                child: DateTimeField(
+                 // dateOnly: true,
+                  format: formatter,
+                  controller: today,
+                  onShowPicker: (context, currentValue) {
+                    return showDatePicker(
+                        context: context,
+                        firstDate: DateTime(1900),
+                        initialDate: currentValue ?? DateTime.now(),
+                        lastDate: DateTime(2100));
+
+                  },
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(0.0),
+                      child: Icon(
+                        Icons.date_range,
+                        color: Colors.grey,
+                      ), // icon is 48px widget.
                     ), // icon is 48px widget.
-                  ), // icon is 48px widget.
-                  labelText: 'Select Date',
+                    labelText: 'Select Date',
+                  ),
+                  onChanged: (date) {
+                    setState(() {
+                      if (date != null && date.toString() != '')
+                        res = true; //showInSnackBar(date.toString());
+                      else
+                        res = false;
+                    });
+                  },
+                  validator: (date) {
+                    if (date == null) {
+                      return 'Please select date';
+                    }
+                  },
                 ),
-                onChanged: (date) {
-                  setState(() {
-                    if (date != null && date.toString() != '')
-                      res = true; //showInSnackBar(date.toString());
-                    else
-                      res = false;
-                  });
-                },
-                validator: (date) {
-                  if (date == null) {
-                    return 'Please select date';
-                  }
-                },
               ),
             ),
             SizedBox(height: 12.0),
@@ -338,6 +353,7 @@ class _FlexiList extends State<FlexiList> {
                                                 )
                                             )),
                                         onTap: (){
+                                          print(snapshot.data[index].pi_img);
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: _orgName)),

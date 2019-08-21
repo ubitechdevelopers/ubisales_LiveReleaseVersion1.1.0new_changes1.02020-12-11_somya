@@ -15,7 +15,7 @@ import 'punchlocation.dart';
 import 'drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:datetime_picker_formfield/time_picker_formfield.dart';
+//import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/model/model.dart' as TimeOffModal;
 import 'package:Shrine/services/newservices.dart';
 import 'timeoff_summary.dart';
@@ -296,7 +296,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   SizedBox(height: 10.0,),
                   Center(child:Text("Monitor Sites",style: TextStyle(fontSize: 15.0,),)),
                   SizedBox(height: 10.0,),
-                  Center(child:Text("Basic Payroll",style: TextStyle(fontSize: 15.0,),)),
+                  Center(child:Text("Hourly Wages",style: TextStyle(fontSize: 15.0,),)),
                   SizedBox(height: 10.0,),
                 Center(child:Text("Self Attendance",style: TextStyle(fontSize: 15.0),)),
                   SizedBox(height: 10.0,),

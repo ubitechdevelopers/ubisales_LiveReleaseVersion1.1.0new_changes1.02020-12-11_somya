@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'payment.dart';
 import 'reports.dart';
 import 'services/services.dart';
-import 'notifications.dart';
+import 'holidays.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -459,7 +459,11 @@ class _Settings extends State<Settings> {
         splashColor: splashcolor,
         textColor: textcolor,
         onPressed: () {
-          showDialogWidget("To configure the Holidays, login to the web admin panel.");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HolidayList()),
+          );
+          //showDialogWidget("To configure the Holidays, login to the web admin panel.");
           // Perform some action
         },
       ));

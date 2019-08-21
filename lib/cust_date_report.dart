@@ -60,10 +60,19 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
             child: Center(child:Text("Custom Date Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
           ),
           Container(
-            child: DateTimePickerFormField(
-              dateOnly: true,
+            child: DateTimeField(
+              //dateOnly: true,
               format: formatter,
               controller: today,
+              //editable: false,
+              onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+                },
+              readOnly: true,
               decoration: InputDecoration(
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(0.0),

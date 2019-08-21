@@ -163,9 +163,9 @@ class _Outsidegeofance extends State<Outsidegeofance> {
             SizedBox(height: 8.0),
             Center(
               child: Text(
-                'Outside The Geo Fence',
+                'Outside the geo fence',
                 style: new TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 20.0,
                   color: Colors.black54,
                 ),
               ),
@@ -176,10 +176,19 @@ class _Outsidegeofance extends State<Outsidegeofance> {
             getEmployee_DD(),
             SizedBox(height: 2.0),
             Container(
-              child: DateTimePickerFormField(
-                dateOnly: true,
+              child: DateTimeField(
+                //dateOnly: true,
                 format: formatter,
                 controller: today,
+                onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+
+                },
+                readOnly: true,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(0.0),
@@ -370,7 +379,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       new Text(
-                                        snapshot.data[index].empname.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
+                                        snapshot.data[index].empname.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13.0),textAlign: TextAlign.left,),
                                     ],
                                   )),
                             ),

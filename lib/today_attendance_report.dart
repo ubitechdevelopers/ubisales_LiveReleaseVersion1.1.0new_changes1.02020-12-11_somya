@@ -71,7 +71,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
             child: new ListTile(
-              title: new SizedBox(height: MediaQuery.of(context).size.height*0.30,
+              title: new SizedBox(height: MediaQuery.of(context).size.height*0.20,
 
                   child: new FutureBuilder<List<Map<String,String>>>(
                     future: getChartDataToday(),
@@ -147,7 +147,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
           ),
           new Divider(height: 1.0,color: Colors.black45,),
           new Container(
-            height: MediaQuery.of(context).size.height*0.30,
+            height: MediaQuery.of(context).size.height*0.50,
             child: new TabBarView(
               controller: _controller,
               children: <Widget>[
@@ -156,7 +156,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -349,11 +349,11 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                 //////////////TABB 2 Start
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.3,
+                  height: MediaQuery.of(context).size.height*0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.3,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -454,11 +454,11 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
 
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.3,
+                  height: MediaQuery.of(context).size.height*0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.3,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -643,11 +643,11 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                 new Container(
 
 
-                  height: MediaQuery.of(context).size.height*0.3,
+                  height: MediaQuery.of(context).size.height*0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.3,
+                    Container( height: MediaQuery.of(context).size.height*.45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------

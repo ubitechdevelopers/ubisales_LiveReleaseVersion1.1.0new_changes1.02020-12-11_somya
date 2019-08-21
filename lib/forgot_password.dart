@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'home.dart';
 import 'login.dart';
 
@@ -119,7 +118,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                               focusNode: __username,
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
-                                  labelText: 'Email/Phone',
+                                  labelText: 'Email',
                                   prefixIcon: Padding(
                                     padding: EdgeInsets.all(0.0),
                                     child: Icon(
@@ -131,7 +130,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                               validator: (value) {
                                 if (value.isEmpty || value==null) {
 //                                  FocusScope.of(context).requestFocus(__oldPass);
-                                  return 'Please enter valid Email or Phone';
+                                  return 'Please enter valid Email';
                                 }
                               },
 
@@ -157,7 +156,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             if (_username.text == ''||_username.text == null) {
-                              showInSnackBar("Please Enter Email/Phone");
+                              showInSnackBar("Please Enter Email");
                               FocusScope.of(context).requestFocus(__username);
                             } else {
                               if(_isButtonDisabled)
@@ -193,7 +192,7 @@ class _ForgotPassword extends State<ForgotPassword> {
 
                                 }
                                 else {
-                                  showInSnackBar("Email/Phone Not Found.");
+                                  showInSnackBar("Email Not Found.");
                                   setState(() {
                                     login=false;
                                     succ=false;
@@ -218,7 +217,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                       ),
                     ],
                   ):Center(),
-                  err==true?Text('Invalid Email/Phone.',style: TextStyle(color: Colors.red,fontSize: 16.0),):Center(),
+                  err==true?Text('Invalid Email.',style: TextStyle(color: Colors.red,fontSize: 16.0),):Center(),
                   succ==true?Text('Please check your mail for the Password reset link. After you have reset the password, please click below link to login.',style: TextStyle(fontSize: 16.0),):Center(),
                   login==true?InkWell(
                     child: Text('\nClick here to Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0,color: Colors.teal),),

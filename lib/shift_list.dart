@@ -21,7 +21,7 @@ class _ShiftList extends State<ShiftList> {
   int _currentIndex = 2;
   String _sts = 'Active';
   String _sts1 = 'Active';
-  String _orgName;
+  String _orgName='';
   bool _isButtonDisabled = false;
   String admin_sts='0';
   @override

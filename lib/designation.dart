@@ -310,7 +310,7 @@ class _Designation extends State<Designation> {
               onPressed: ()
               {
 
-                if(desg.text==''){
+                if(desg.text.trim()==''){
                     showInSnackBar('Input Designation');
                   }
                 else {
@@ -426,7 +426,7 @@ class _Designation extends State<Designation> {
               child: const Text('UPDATE', style: TextStyle(color: Colors.white)),
               onPressed: ()
               {
-                if( new_dept.text==''){
+                if( new_dept.text.trim()==''){
                   //  FocusScope.of(context).requestFocus(f_dept);
                   showInSnackBar('Input Designation Name');
                 }

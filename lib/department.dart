@@ -20,7 +20,7 @@ class _Department extends State<Department> {
   String _sts = 'Active';
   String _sts1 = 'Active';
 
-  String _orgName;
+  String _orgName='';
   String admin_sts='0';
   bool _isButtonDisabled= false;
   @override
@@ -316,7 +316,7 @@ class _Department extends State<Department> {
               child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
               onPressed: ()
               {
-                if( dept.text==''){
+                if( dept.text.trim()==''){
               //    FocusScope.of(context).requestFocus(f_dept);
                   showInSnackBar('Input Department Name');
                 }
@@ -426,7 +426,7 @@ class _Department extends State<Department> {
               child: const Text('UPDATE',style: TextStyle(color: Colors.white),),
               onPressed: ()
               {
-                if( new_dept.text==''){
+                if( new_dept.text.trim()==''){
                 //  FocusScope.of(context).requestFocus(f_dept);
                   showInSnackBar('Input Department Name');
                 }

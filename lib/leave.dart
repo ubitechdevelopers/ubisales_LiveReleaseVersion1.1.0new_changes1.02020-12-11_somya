@@ -15,7 +15,7 @@ import 'punchlocation.dart';
 import 'drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:datetime_picker_formfield/time_picker_formfield.dart';
+//import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/model/model.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'leave_summary.dart';
@@ -302,7 +302,7 @@ class _LeavePageState extends State<LeavePage> {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            child: DateTimePickerFormField(
+                            /*child: DateTimePickerFormField(
 
                               firstDate: new DateTime.now(),
                               initialDate: new DateTime.now(),
@@ -331,7 +331,7 @@ class _LeavePageState extends State<LeavePage> {
                                 });
                                 print("----->Changed date------> "+Date1.toString());
                                 },
-                            ),
+                            ),*/
                           ),
                           SizedBox(width: 10.0),
                           Expanded(
@@ -399,7 +399,7 @@ class _LeavePageState extends State<LeavePage> {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            child: DateTimePickerFormField(
+                            /*child: DateTimePickerFormField(
                               firstDate: new DateTime.now(),
                               initialDate: new DateTime.now(),
                               dateOnly: true,
@@ -433,7 +433,7 @@ class _LeavePageState extends State<LeavePage> {
                                 }
 
                               },
-                            ),
+                            ),*/
                           ),
                           SizedBox(width: 10.0),
                           Expanded(
