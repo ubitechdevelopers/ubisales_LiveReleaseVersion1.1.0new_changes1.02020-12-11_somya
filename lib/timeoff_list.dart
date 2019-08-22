@@ -8,6 +8,7 @@ import 'profile.dart';
 import 'reports.dart';
 import 'settings.dart';
 import 'home.dart';
+import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
 
 class TimeOffList extends StatefulWidget {
@@ -77,75 +78,7 @@ class _TimeOffList extends State<TimeOffList> {
             }),
         backgroundColor: Colors.teal,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          if(newIndex==1){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }else if (newIndex == 0) {
-            (admin_sts == '1')
-                ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-          /*else if(newIndex == 3){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Notifications()),
-            );
-
-          }*/
-          setState((){_currentIndex = newIndex;});
-
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.library_books,
-            ),
-            title: new Text('Reports'),
-          )
-              : BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.person,color: Colors.black54,
-            ),
-            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings,color: Colors.black54,),
-              title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          ),
-          /*BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications
-                ,color: Colors.black54,
-              ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-        ],
-      ),
+      bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
       body: Container(
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
@@ -278,51 +211,55 @@ class _TimeOffList extends State<TimeOffList> {
                   //    padding: EdgeInsets.only(left: 15.0,right: 15.0),
                   itemBuilder: (BuildContext context, int index) {
                     return new Column(children: <Widget>[
-                      new FlatButton(
-                        child: new Row(
+                      SizedBox(height: MediaQuery.of(context).size.height*.01,),
+                      new Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            new Container(
+                            new Padding(
+                                padding: EdgeInsets.only(left: 5.0),
+                              child:Container(
                                 width: MediaQuery.of(context).size.width * 0.37,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     new Text(
-                                        snapshot.data[index].name.toString()),
-
+                                        snapshot.data[index].name.toString(),style: TextStyle(fontWeight: FontWeight.bold)),
                                   ],
+                                )
                                 )),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.18,
                               child: new Text(
-                                snapshot.data[index].from.toString(),
+                                snapshot.data[index].from.toString(),style: TextStyle(fontWeight: FontWeight.bold)
                               ),
                             ),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.20,
                               child: new Text(
-                                snapshot.data[index].to.toString(),
+                                snapshot.data[index].to.toString(),style: TextStyle(fontWeight: FontWeight.bold)
                               ),
                             ),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.12,
+                              width: MediaQuery.of(context).size.width * 0.16,
                               child: new Text(
                                 snapshot.data[index].diff.toString(),
-                                style: TextStyle(
-                                    color:Colors.deepOrange),
+                                  style: TextStyle(fontWeight: FontWeight.bold)
                               ),
                             ),
                           ],
                         ),
-                        onPressed: () {
-                          null;
-                          //    editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
-                        },
-                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height*.01,),
+                    new Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(" Status: "),
+                      new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                    ]),
+                      SizedBox(height: MediaQuery.of(context).size.height*.005,),
                       Divider(
                         color: Colors.blueGrey.withOpacity(0.25),
-                        height: 0.2,
+                        height: 0.5,
                       ),
                     ]);
                   });

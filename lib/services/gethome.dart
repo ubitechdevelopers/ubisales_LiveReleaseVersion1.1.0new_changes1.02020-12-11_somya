@@ -32,10 +32,13 @@ class Home{
         String aid = timeinoutMap['aid'].toString();
         print('aid'+aid);
         String sstatus = timeinoutMap['sstatus'].toString();
+
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
         int Is_Delete = int.parse(timeinoutMap['Is_Delete']);
+        globals.departmentname = timeinoutMap['departmentname'].toString();
+        globals.departmentid = int.parse(timeinoutMap['departmentid']);
         globals.bulkAttn=int.parse(timeinoutMap['Addon_BulkAttn']);
         globals.geoFence=int.parse(timeinoutMap['Addon_GeoFence']);
         globals.tracking=int.parse(timeinoutMap['Addon_Tracking']);

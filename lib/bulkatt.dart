@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';
 import 'Image_view.dart';
+import 'Bottomnavigationbar.dart';
+import 'notifications.dart';
+//import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class Bulkatt extends StatefulWidget {
@@ -156,75 +159,7 @@ class _Bulkatt extends State<Bulkatt> {
           },),
           backgroundColor: Colors.teal,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          type: BottomNavigationBarType.fixed,
-          onTap: (newIndex) {
-            if(newIndex==1){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              return;
-            }else if (newIndex == 0) {
-              (admin_sts == '1')
-                  ? Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Reports()),
-              )
-                  : Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
-              );
-              return;
-            }
-            if(newIndex==2){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Settings()),
-              );
-              return;
-            }
-           /* else if(newIndex == 3){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Notifications()),
-              );
-
-            }*/
-            setState((){_currentIndex = newIndex;});
-
-          }, // this will be set when a new tab is tapped
-          items: [
-            (admin_sts == '1')
-                ? BottomNavigationBarItem(
-              icon: new Icon(
-                Icons.library_books,
-              ),
-              title: new Text('Reports'),
-            )
-                : BottomNavigationBarItem(
-              icon: new Icon(
-                Icons.person,color: Colors.black54,
-              ),
-              title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home,color: Colors.black54,),
-              title: new Text('Home',style: TextStyle(color: Colors.black54)),
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings,color: Colors.black54,),
-                title: Text('Settings',style: TextStyle(color: Colors.black54),)
-            ),
-           /* BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.notifications
-                  ,color: Colors.black54,
-                ),
-                title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-          ],
-        ),
+        bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
         body: Container(
           padding: EdgeInsets.only(left: 2.0, right: 2.0),
@@ -521,6 +456,7 @@ class _Bulkatt extends State<Bulkatt> {
                 //List til=emplist[index].timein.split(":");
                 //if(!til[0]){til[0]=0;};
                 // TimeOfDay ti = TimeOfDay(hour: int.fromEnvironment(til[0]), minute: int.fromEnvironment(til[1]));
+
                 /* print(emplist[index].timein);
                print(int.parse(til[0]));
                print(til[1]);*/
@@ -705,6 +641,7 @@ class _Bulkatt extends State<Bulkatt> {
                               //editable: false,
                               //controller: _to,
                               decoration: InputDecoration(
+
                                 // labelText: 'Time Out',
                                 /*prefixIcon: Padding(
                                       padding: EdgeInsets.all(0.0),

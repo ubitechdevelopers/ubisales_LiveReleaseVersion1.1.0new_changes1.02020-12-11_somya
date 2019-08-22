@@ -9,6 +9,8 @@ import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
 import 'Image_view.dart';
+import 'notifications.dart';
+import 'Bottomnavigationbar.dart';
 import 'package:flutter/services.dart';
 
 class FlexiList extends StatefulWidget {
@@ -20,13 +22,12 @@ TextEditingController today;
 String _orgName;
 //FocusNode f_dept ;
 class _FlexiList extends State<FlexiList> {
-  @override
-  bool get hasFocus => false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');
+
   @override
   void initState() {
     super.initState();
@@ -81,75 +82,7 @@ class _FlexiList extends State<FlexiList> {
             }),
         backgroundColor: Colors.teal,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          if(newIndex==1){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }else if (newIndex == 0) {
-            (admin_sts == '1')
-                ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-         /* else if(newIndex == 3){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Notifications()),
-            );
-
-          }*/
-          setState((){_currentIndex = newIndex;});
-
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.library_books,
-            ),
-            title: new Text('Reports'),
-          )
-              : BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.person,color: Colors.black54,
-            ),
-            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings,color: Colors.black54,),
-              title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          ),
-          /*BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications
-                ,color: Colors.black54,
-              ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-        ],
-      ),
+      bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
       body: Container(
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
@@ -353,7 +286,6 @@ class _FlexiList extends State<FlexiList> {
                                                 )
                                             )),
                                         onTap: (){
-                                          print(snapshot.data[index].pi_img);
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: _orgName)),

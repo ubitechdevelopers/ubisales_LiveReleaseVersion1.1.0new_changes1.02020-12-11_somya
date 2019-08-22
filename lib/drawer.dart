@@ -7,7 +7,7 @@ import 'about.dart';
 import 'package:Shrine/services/services.dart';
 import 'home.dart';
 import 'settings.dart';
-import 'Reports.dart';
+import 'reports.dart';
 import 'globals.dart';
 import 'package:share/share.dart';
 import 'package:launch_review/launch_review.dart';
@@ -243,7 +243,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
-          reportper ==1?new ListTile(
+        (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.library_books,size: 20.0),SizedBox(width: 5.0),
@@ -288,7 +288,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ):new Center(),
-          reportper ==1&&geoFence==1?new ListTile(
+          (reportper ==1 || reportper ==2)&&geoFence==1?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_on,size: 20.0),SizedBox(width: 5.0),
@@ -310,7 +310,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To Generate Payroll, Login to the web panel.", "To Generate Payroll upgrade to Premium Plan.");
             },
           ):new Center(),*/
-          reportper == 1?new ListTile(
+          (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.camera,size: 20.0),SizedBox(width: 5.0),
