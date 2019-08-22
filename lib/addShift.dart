@@ -504,7 +504,7 @@ class _addShift extends State<addShift> {
                             }*/else {
                               if (shifttype.toString() == '1') {
                                 if (diff.startsWith('-')) {
-                                  showInSnackBar('Invalid start time');
+                                  showInSnackBar('Invalid Shift timimgs');
                                   return null;
                                 } else {
                                   print('Valid shift for single date');
@@ -512,12 +512,11 @@ class _addShift extends State<addShift> {
                                 }
                               } else {
                                 if (!diff.startsWith('-')) {
-                                  showInSnackBar('Invalid data');
+                                  showInSnackBar('Invalid Shift timimgs');
                                   return null;
                                 } else {
                                   print('Valid shift for multi date');
                                   print("Diff: " + diff);
-
                                 }
                               }
                             }
