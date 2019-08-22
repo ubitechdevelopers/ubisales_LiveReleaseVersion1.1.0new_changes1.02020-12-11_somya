@@ -166,7 +166,7 @@ class _FlexiList extends State<FlexiList> {
               ),
             ),
             Divider(
-              height: 10.0,
+              height: 10.0, 
             ),
             SizedBox(height: 2.0),
             Container(
