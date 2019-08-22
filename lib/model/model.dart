@@ -14,7 +14,7 @@
     starttime = map[starttime];
     endtime = map[endtime];
     reason = map[reason];
-    empid = map[empid];
+    empid = map[empid]; 
     orgid = map[orgid];
   }
 
