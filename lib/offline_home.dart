@@ -339,7 +339,17 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       org_name=prefs.getString("org_name") ?? "";
       attendanceFound=attendanceFound1;
     });
-
+    getAreaStatus().then((res) {
+      // print('called again');
+      if (mounted) {
+        setState(() {
+          areaStatus = res.toString();
+        });
+      }
+    }).catchError((onError) {
+      print('Exception occured in clling function.......');
+      print(onError);
+    });
 
   }
 

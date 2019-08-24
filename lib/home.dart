@@ -505,7 +505,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
-
+    getAreaStatus().then((res) {
+      // print('called again');
+      if (mounted) {
+        setState(() {
+          areaStatus = res.toString();
+        });
+      }
+    }).catchError((onError) {
+      print('Exception occured in clling function.......');
+      print(onError);
+    });
     if (response == 1) {
       Loc lock = new Loc();
       location_addr = await lock.initPlatformState();

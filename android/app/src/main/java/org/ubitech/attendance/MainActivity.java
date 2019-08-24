@@ -133,6 +133,9 @@ public void startTimeOutNotificationWorker(String ShiftTimeOut){
     if(minutes<0){
       minutes=0;
     }
+    else{
+      minutes=minutes+5;
+    }
   } catch (ParseException e) {
     Log.i("TimeError","Time not correct when calculating worker interval");
     e.printStackTrace();
@@ -140,7 +143,7 @@ public void startTimeOutNotificationWorker(String ShiftTimeOut){
 
 Log.i("WorkerMinutes",minutes+"");
   final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeOutNotificationWork.class)
-          .setInitialDelay(minutes+5, TimeUnit.MINUTES)
+          .setInitialDelay(minutes, TimeUnit.MINUTES)
           .build();
   WorkManager.getInstance().enqueue(workRequest);
 }

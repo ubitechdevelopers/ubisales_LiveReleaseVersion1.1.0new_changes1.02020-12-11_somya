@@ -38,7 +38,7 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
       type: BottomNavigationBarType.fixed,
       onTap: (newIndex) {
         if(newIndex==1){
-          Navigator.pushReplacement(    
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
