@@ -36,7 +36,9 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:flutter/services.dart';
+import 'package:Shrine/database_models/visits_offline.dart';
 import "package:Shrine/notifications.dart";
+import "offline_home.dart";
 import 'Bottomnavigationbar.dart';
 
 
@@ -51,7 +53,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   static const platform = const MethodChannel('location.spoofing.check');
 
   AppLifecycleState state;
-  StreamLocation sl = new StreamLocation();
+ // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   /*var _defaultimage =
@@ -101,42 +103,176 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   bool refreshsts = false;
   bool fakeLocationDetected=false;
   bool offlineDataSaved=false;
-
+  bool internetAvailable=true;
+  String address='';
   @override
   void initState() {
     print('aintitstate');
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
+    lat=assign_lat.toString();
+    long=assign_long.toString();
+    streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
     //setLocationAddress();
-    startTimer();
+   // startTimer();
    platform.setMethodCallHandler(_handleMethod);
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-              setState(() {
-                fakeLocationDetected=true;
-              });
-        }
 
-        debugPrint(call.arguments);
+      case "locationAndInternet":
+       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+       // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+          internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+/*
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+*/
+        }
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        globalstreamlocationaddr=address;
+        print(call.arguments["mocked"].toString());
+        getAreaStatus().then((res) {
+          // print('called again');
+          if (mounted) {
+            setState(() {
+              areaStatus = res.toString();
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          streamlocationaddr=address;
+
+          location_addr=streamlocationaddr;
+          location_addr1=streamlocationaddr;
+
+
+        });
+        break;
+
         return new Future.value("");
     }
   }
 
 
+  syncVisits(visits) async {
+    for (int i = 0; i < visits.length; i++) {
+      var VisitInaddress = await getAddressFromLati(
+          visits[i].VisitInLatitude, visits[i].VisitInLongitude);
+
+      var VisitOutaddress = await getAddressFromLati(
+          visits[i].VisitOutLatitude, visits[i].VisitOutLongitude);
+      // print(address);
+      List<Map> jsonList = [];
+      jsonList.add({
+        'Id': visits[i].Id,
+
+
+        'EmployeeId': visits[i].EmployeeId,
+        'VisitInLatitude': visits[i].VisitInLatitude,
+        'VisitInLongitude': visits[i].VisitInLongitude,
+        'VisitInTime': visits[i].VisitInTime,
+        'VisitInDate': visits[i].VisitInDate,
+
+        'VisitOutLatitude': visits[i].VisitOutLatitude,
+        'VisitOutLongitude': visits[i].VisitOutLongitude,
+        'VisitOutTime': visits[i].VisitOutTime,
+        'VisitOutDate': visits[i].VisitOutDate,
+        'ClientName': visits[i].ClientName,
+        'VisitInDescription': visits[i].VisitInDescription,
+        'VisitOutDescription': visits[i].VisitOutDescription,
+        'OrganizationId': visits[i].OrganizationId,
+        'Skipped': visits[i].Skipped,
+        'VisitInImage': visits[i].VisitInImage,
+        'VisitOutImage': visits[i].VisitOutImage,
+        'VisitInAddress': VisitInaddress,
+        'VisitOutAddress': VisitOutaddress,
+
+        'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
+        'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut
+      });
+
+      var jsonList1 = json.encode(jsonList);
+      LogPrint('response1: ' + jsonList1.toString());
+      //LogPrint(attendances);
+      FormData formData = new FormData.from({"data": jsonList1});
+
+      Dio dioForSavingOfflineAttendance = new Dio();
+      dioForSavingOfflineAttendance.post(
+          globals.path + "saveOfflineVisits", data: formData)
+          .then((responseAfterSavingOfflineData) async {
+        var response = json.decode(responseAfterSavingOfflineData.toString());
+
+        print(
+            '--------------------- Data Syncing Response--------------------------------');
+        print(responseAfterSavingOfflineData);
+
+        print(
+            '--------------------- Data Syncing Response--------------------------------');
+        for (int i = 0; i < response.length; i++) {
+          var map = response[i];
+          map.forEach((localDbId, status) {
+            VisitsOffline visitsOffline = VisitsOffline.empty();
+            print(status);
+            visitsOffline.delete(int.parse(localDbId));
+          });
+        }
+        setState(() {
+          offlineDataSaved = true;
+        });
+      });
+    }
+  }
+
   syncOfflineData() async{
+
+
 
     int serverAvailable=await checkConnectionToServer ();
     if(serverAvailable==1){
+      /*****************************For Attendances***********************************************/
 
       AttendanceOffline attendanceOffline=new AttendanceOffline.empty();
+      VisitsOffline visitsOffline=VisitsOffline.empty();
+
       List<AttendanceOffline> attendances= await attendanceOffline.select();
+      List<VisitsOffline> visits= await visitsOffline.select();
+
       List<Map> jsonList=[];
+      List<Map> jsonListVisits=[];
+      if(visits.isNotEmpty){
+        await syncVisits(visits);
+      }
+      else{
+        offlineDataSaved=true;
+      }
       if(attendances.isNotEmpty){
         for(int i=0;i<attendances.length;i++){
 
@@ -217,6 +353,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       act1=act;
     });
 
+    /*****************************For Attendances***********************************************/
+
+
   }
 
 
@@ -245,6 +384,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
    void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+    /*
     setState(() {
       state = appLifecycleState;
       if(state==AppLifecycleState.resumed){
@@ -274,7 +414,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           timerrefresh.cancel();
         });
       }
-    });
+    });*/
   }
 
   startTimer() {
@@ -285,7 +425,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       //print("timmer is running");
       count++;
       //print("timer counter" + count.toString());
-      setLocationAddress();
+     // setLocationAddress();
       if (stopstreamingstatus) {
         t.cancel();
         //print("timer canceled");
@@ -305,6 +445,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   setLocationAddress() async {
+
     //print('called');
     getAreaStatus().then((res) {
       // print('called again');
@@ -331,8 +472,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         if (streamlocationaddr == '') {
           print('again');
           timer.cancel();
-          sl.startStreaming(5);
-          startTimer();
+        //  sl.startStreaming(5);
+         // startTimer();
         }
         //print("home addr" + streamlocationaddr);
         //print(lat + ", " + long);
@@ -355,20 +496,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   initPlatformState() async {
     /*await availableCameras();*/
     checknetonpage(context);
+    checkLocationEnabled(context);
     SystemChannels.lifecycle.setMessageHandler((msg)async{
-      /*
-      if(msg=='AppLifecycleState.resumed' )
-      {
-        print("------------------------------------ App Resumed-----------------------------");
-        serverConnected= await checkConnectionToServer();
-        if(serverConnected==0){
-          Navigator
-              .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-        }
 
-      }
-*/
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
@@ -515,6 +645,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   refreshPageWidgit() {
     if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
+
+
+
+
       return new Container(
         child: Center(
           child: new Column(
@@ -526,14 +660,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                     SizedBox(
                       width: 20.0,
                     ),
+                    /*
                     Icon(
                       Icons.all_inclusive,
                       color: Colors.teal,
                     ),
                     Text(
-                      " Fetching location, please wait..",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.teal),
-                    )
+                      "Sorry! can't fetch location. \nPlease check if GPS is enabled on your device",
+                      style: new TextStyle(fontSize: 20.0, color: Colors.red),
+                    )*/
+                    Container(
+                      decoration: new ShapeDecoration(
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(13.0)),
+                          color: Colors.red,),
+                      child: Text(
+                        '\nProblem Getting Location! Please turn on GPS and try again.',
+                        textAlign: TextAlign.center,
+                        style: new TextStyle(color: Colors.white, fontSize: 15.0),
+                      ),
+                      width: 220.0,
+                      height: 90.0,
+                    ),
                   ]),
               SizedBox(height: 15.0),
               Row(
@@ -542,6 +690,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                     SizedBox(
                       width: 20.0,
                     ),
+                    /*
                     Text(
                       "Note: ",
                       style: new TextStyle(
@@ -554,7 +703,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       " If Location not being fetched automatically?",
                       style: new TextStyle(fontSize: 12.0, color: Colors.black),
                       textAlign: TextAlign.left,
-                    ),
+                    ),*/
                     /* new InkWell(
                       child: new Text(
                         "Fetch Location now",
@@ -574,17 +723,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   ]),
               FlatButton(
                 child: new Text(
-                  "Fetch Location now",
+                  "Try now",
                   style: new TextStyle(
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
-                  Navigator.push(
+                //  sl.startStreaming(5);
+                 // startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
+                 /* Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                  );*/
                 },
               ),
             ],
@@ -661,13 +811,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               SizedBox(height: 5.0),
               FlatButton(
                 child: new Text(
-                  "Refresh location",
+                  "Refresh Page",
                   style: new TextStyle(
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                 // sl.startStreaming(5);
+                 // startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -1122,8 +1272,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                        startTimer();
-                        sl.startStreaming(5);
+                      //  startTimer();
+                      //  sl.startStreaming(5);
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
@@ -1203,6 +1353,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         color: Colors.orangeAccent,
         onPressed: () {
           // //print("Time out button pressed");
+
           saveImage();
           //Navigator.pushNamed(context, '/home');
         },
@@ -1234,7 +1385,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   saveImage() async {
-    sl.startStreaming(5);
+
+    timeWhenButtonPressed= DateTime.now();
+  //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus=0;
     if(fakeLocationDetected){
@@ -1260,6 +1413,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       }
       issave = await saveImage.saveTimeInOutImagePicker(mk);
       print(issave);
+      if(issave==null){
+        globals.timeWhenButtonPressed=null;
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              title: new Text(""),
+              content: new Text("Sorry you have taken more time than expected to mark attendance. Please mark again!"),
+            ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+
+      }
+
       if (issave) {
         showDialog(
             context: context,
@@ -1289,11 +1457,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
       }
     } else {
-      showDialog(
-          context: context,
-          child: new AlertDialog(
-            content: new Text("Internet connection not found!."),
-          ));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int offlinemode=prefs.getInt("OfflineModePermission");
+      if(offlinemode==1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+        );
+
+      }
+      else{
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              content: new Text("Internet connection not found!."),
+            ));
+      }
+
     }
 
     /*SaveImage saveImage = new SaveImage();
@@ -1320,7 +1500,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   saveImage_old() async {
-    sl.startStreaming(5);
+   // sl.startStreaming(5);
 var FakeLocationStatus=0;
     if(fakeLocationDetected){
       FakeLocationStatus=1;
@@ -1373,11 +1553,22 @@ var FakeLocationStatus=0;
            }*/
       });
     } else {
-      showDialog(
-          context: context,
-          child: new AlertDialog(
-            content: new Text("Internet connection not found!."),
-          ));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int offlinemode=prefs.getInt("OfflineModePermission");
+      if(offlinemode==1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+        );
+
+      }
+      else{
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              content: new Text("Internet connection not found!."),
+            ));
+      }
     }
 
     /*SaveImage saveImage = new SaveImage();
@@ -1487,7 +1678,7 @@ var FakeLocationStatus=0;
     try {
       ///////////////////////////
       StreamLocation sl = new StreamLocation();
-      sl.startStreaming(5);
+     // sl.startStreaming(5);
       Location _location = new Location();
 
       ////////////////////////////////suumitted block
@@ -1758,8 +1949,10 @@ var FakeLocationStatus=0;
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+   /* if(timer!=null)
     timer.cancel();
-    timerrefresh.cancel();
+    if(timerrefresh!=null)
+    timerrefresh.cancel();*/
     /* if(timerrefresh.isActive){
       timerrefresh.cancel();
     }*/

@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'employee_list.dart';
 import 'home.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
@@ -88,8 +90,32 @@ class _AddEmployee extends State<AddEmployee> {
 */
       });
     }
+    platform.setMethodCallHandler(_handleMethod);
   }
 
+  static const platform = const MethodChannel('location.spoofing.check');
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+          //internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
+        break;
+
+        return new Future.value("");
+    }
+  }
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;

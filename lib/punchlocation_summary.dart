@@ -17,6 +17,7 @@ import 'package:Shrine/services/saveimage.dart';
 import 'Image_view.dart';
 import 'notifications.dart';
 import 'package:flutter/services.dart';
+import 'offline_home.dart';
 import 'Bottomnavigationbar.dart';
 //import 'package:intl/intl.dart';
 
@@ -41,38 +42,66 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
   String admin_sts='0';
   int _currentIndex = 1;
   String streamlocationaddr = "";
-  StreamLocation sl = new StreamLocation();
+ // StreamLocation sl = new StreamLocation();
   bool _isButtonDisabled= false;
   final _comments=TextEditingController();
   String latit,longi,location_addr1;
   Timer timer;
-  bool fakeLocationDetected=false;
+
   var FakeLocationStatus=0;
   @override
   void initState() {
 
     super.initState();
+    streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
     checkNetForOfflineMode(context);
     appResumedFromBackground(context);
-    setLocationAddress();
+   // setLocationAddress();
     platform.setMethodCallHandler(_handleMethod);
 
   }
+  bool internetAvailable=true;
+String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-          setState(() {
-            fakeLocationDetected=true;
-            FakeLocationStatus=1;
-          });
-        }
 
-        debugPrint(call.arguments);
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        globalstreamlocationaddr=address;
+        print(call.arguments["mocked"].toString());
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          streamlocationaddr=address;
+
+          location_addr1=streamlocationaddr;
+
+
+        });
+        break;
+
         return new Future.value("");
     }
   }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
@@ -98,14 +127,16 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
         }
       }
       if(streamlocationaddr == ''){
-        sl.startStreaming(5);
-        startTimer();
+      //  sl.startStreaming(5);
+       // startTimer();
       }
       //print("home addr" + streamlocationaddr);
       //print(lat + ", " + long);
 
       //print(stopstreamingstatus.toString());
     });
+
+
   }
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
@@ -181,7 +212,7 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
   }
   /////////////
   _showDialog(visit_id) async {
-    sl.startStreaming(2);
+   // sl.startStreaming(2);
     setState(() {
       if(list!=null && list.length>0) {
         latit = list[list.length - 1].latitude.toString();
@@ -227,7 +258,7 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
               color: Colors.orangeAccent,
               onPressed: () {
-                sl.startStreaming(5);
+              //  sl.startStreaming(5);
                 SaveImage saveImage = new SaveImage();
                 print('****************************>>');
                 print(streamlocationaddr.toString());

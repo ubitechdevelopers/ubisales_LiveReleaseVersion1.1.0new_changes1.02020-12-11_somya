@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/services.dart';
+import 'offline_home.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -61,8 +63,8 @@ class _Departmentwise_att extends State<Departmentwise_att>
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
-  }
 
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

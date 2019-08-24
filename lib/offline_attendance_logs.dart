@@ -1,8 +1,11 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/punch_location_summary_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/services.dart';
+import 'globals.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
@@ -15,6 +18,7 @@ import 'package:Shrine/database_models/attendance_offline.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
+import "offline_home.dart";
 
 // This app is a stateful, it tracks the user's current choice.
 class OfflineAttendanceLogs extends StatefulWidget {
@@ -82,6 +86,31 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
 
 
     });
+    platform.setMethodCallHandler(_handleMethod);
+  }
+  static const platform = const MethodChannel('location.spoofing.check');
+
+  String address="";
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+
+        var long=call.arguments["longitude"].toString();
+        var lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        globalstreamlocationaddr=address;
+        print(call.arguments["mocked"].toString());
+
+        break;
+
+        return new Future.value("");
+    }
   }
   Future<bool> sendToHome() async{
     /*Navigator.push(
@@ -91,7 +120,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
     print("-------> back button pressed");
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
+      MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,
     );
     return false;
   }
@@ -108,13 +137,75 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
               ],
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => OfflineHomePage()),
               );
             },),
             backgroundColor: Colors.teal,
           ),
+          bottomNavigationBar:
+    Hero(
+    tag: "bottom",
+    child:BottomNavigationBar(
+
+    currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.teal,
+      onTap: (newIndex) {
+        if(newIndex==0){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
+          );
+          return;
+        }else
+        if(newIndex==1){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+          );
+          return;
+        }
+        if(newIndex==2){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => PunchLocationSummaryOffline()),
+          );
+          return;
+        }
+              /*else if(newIndex == 3){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
+
+              }*/
+              setState((){_currentIndex = newIndex;});
+
+            }, // this will be set when a new tab is tapped
+            items: [
+
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.art_track,color: Colors.white,),
+                title: new Text('Logs',style: TextStyle(color: Colors.white)),
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.home,color: Colors.white,),
+                title: new Text('Home',style: TextStyle(color: Colors.white)),
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,color: Colors.white,),
+                  title: Text('Visits',style: TextStyle(color: Colors.white),)
+              ),
+              /*  BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.notifications
+                    ,color: Colors.black54,
+                  ),
+                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
+            ],
+          )),
 
 
           body: getWidgets(context),
@@ -143,9 +234,10 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
 //            crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 70.0,),
+
             Container(
               width: MediaQuery.of(context).size.width*0.22,
-              child:Text('  Selfie',style: TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('  Image',style: TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 70.0,),
             Container(
@@ -229,7 +321,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text((snapshot.data[index].Action
-                                                ==0)?" Time In"+", "+ snapshot.data[index].Time+" , Location:"+snapshot.data[index].Latitude+", "+snapshot.data[index].Longitude:" Time Out"+", "+ snapshot.data[index].Time+" , Location:"+snapshot.data[index].Latitude+", "+snapshot.data[index].Longitude ,style: TextStyle(fontSize: 14.0,)),
+                                                ==0)?"Time In"+": "+ formatTime(snapshot.data[index].Time)+" , Location: "+snapshot.data[index].Latitude+", "+snapshot.data[index].Longitude:"Time Out"+": "+ formatTime(snapshot.data[index].Time)+" , Location: "+snapshot.data[index].Latitude+", "+snapshot.data[index].Longitude ,style: TextStyle(fontSize: 14.0,)),
 
 
                                           ],
@@ -280,7 +372,16 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
             )
         ),
       ],
+
     );
+
+  }
+  formatTime(String time){
+    if(time.contains(":")){
+      var a=time.split(":");
+      return a[0]+":"+a[1];
+    }
+    else return time;
 
   }
 }

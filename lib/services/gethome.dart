@@ -54,9 +54,10 @@ class Home{
 
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
+        prefs.setInt("VisitImageRequired", int.parse(timeinoutMap['visitImage']));
 
-        globals.assign_lat=  (timeinoutMap['assign_lat']).toDouble();
-        globals.assign_long=    (timeinoutMap['assign_long']).toDouble();
+        globals.assigned_lat=  (timeinoutMap['assign_lat']).toDouble();
+        globals.assigned_long=    (timeinoutMap['assign_long']).toDouble();
         globals.assign_radius=  (timeinoutMap['assign_radius']).toDouble();
         print("----visitImage------>"+globals.visitImage.toString());
 
@@ -70,6 +71,8 @@ class Home{
         prefs.setString('newpwd', newpwd);
         prefs.setString('shiftId', timeinoutMap['shiftId']);
         prefs.setString('leavetypeid', timeinoutMap['leavetypeid']);
+        prefs.setString('ShiftTimeOut', timeinoutMap['ShiftTimeOut']);
+
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));
 
@@ -164,8 +167,8 @@ class Home{
         String lat="",long="";
         String streamlocationaddr = "";
         if(globals.list!=null && globals.list.length>0) {
-          lat = globals.list[globals.list.length - 1].latitude.toString();
-          long = globals.list[globals.list.length - 1].longitude.toString();
+          lat = globals.assign_lat.toString();
+          long = globals.assign_long.toString();
           streamlocationaddr = globals.globalstreamlocationaddr;
           timeinoutMap.putIfAbsent('latit', ()=> lat );
           timeinoutMap.putIfAbsent('longi', ()=> long );

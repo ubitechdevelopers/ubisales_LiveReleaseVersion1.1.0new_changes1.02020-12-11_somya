@@ -114,8 +114,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           print(user.org_perm);
           prefs.setString('empid', user.empid);
           Home ho = new Home();
-          StreamLocation sl = new StreamLocation();
-          sl.startStreaming(5);
+
           Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
           print(timeinout);
           if(timeinout["latit"]==0.0 && timeinout["longi"]==0.0){

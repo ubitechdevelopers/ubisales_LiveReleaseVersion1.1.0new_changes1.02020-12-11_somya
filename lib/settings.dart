@@ -3,6 +3,7 @@ import 'drawer.dart';
 import 'department.dart';
 import 'designation.dart';
 import 'employee_list.dart';
+import 'notification_settings.dart';
 import 'shift_list.dart';
 import 'change_password.dart';
 import 'permission.dart';
@@ -562,7 +563,45 @@ class _Settings extends State<Settings> {
         );
       },
     ));
+    list.add(SizedBox(height: 6.0));
 
+    list.add(new RaisedButton(
+      child: Container(
+        padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Icon(Icons.perm_identity,size: 40.0,),
+            SizedBox(width: 15.0,),
+            Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                      child: Text('Notifications',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 20.0),)
+                  ),
+                  Container(
+                      child: Text('Manage Notifications ',style: TextStyle(fontSize: 15.0,),)
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.keyboard_arrow_right,size: 50.0,),
+          ],
+        ),
+      ),
+      color: color,
+      elevation: 4.0,
+      splashColor: splashcolor,
+      textColor: textcolor,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NotificationSettings()),
+        );
+      },
+    ));
     return list;
   }
 

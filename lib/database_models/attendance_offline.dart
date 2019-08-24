@@ -106,7 +106,7 @@ class AttendanceOffline{
         'Time',
         'FakeLocationStatus'
 
-      ]);
+      ],orderBy: "Id desc");
     List<AttendanceOffline> ams=[];
     if(maps.length>0){
       for (int i=0;i<maps.length;i++){
@@ -134,7 +134,7 @@ class AttendanceOffline{
       'Time',
       'FakeLocationStatus'
 
-    ]);
+    ],orderBy: "Id desc");
     return maps;
 
   }

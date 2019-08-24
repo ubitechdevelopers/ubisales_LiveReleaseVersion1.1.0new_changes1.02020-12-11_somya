@@ -30,6 +30,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'notifications.dart';
 import 'package:flutter/services.dart';
+import 'offline_home.dart';
 import 'Bottomnavigationbar.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -89,8 +90,9 @@ class _Flexitime extends State<Flexitime> {
   String flexitimein = "";
   String fid = "";
   String sts ="";
-  bool fakeLocationDetected=false;
+
   var FakeLocationStatus=0;
+  bool internetAvailable=true;
 
   @override
   void initState() {
@@ -104,16 +106,51 @@ class _Flexitime extends State<Flexitime> {
     platform.setMethodCallHandler(_handleMethod);
   }
 
-
+  String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-          setState(() {
-            fakeLocationDetected=true;
-            FakeLocationStatus=1;
-          });
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+          internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
         }
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        print(call.arguments["mocked"].toString());
+
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          streamlocationaddr=address;
+
+          location_addr=streamlocationaddr;
+          location_addr1=streamlocationaddr;
+
+
+        });
+        break;
 
         debugPrint(call.arguments);
         return new Future.value("");
@@ -160,7 +197,7 @@ class _Flexitime extends State<Flexitime> {
       }
       if(streamlocationaddr == ''){
         sl.startStreaming(5);
-        startTimer();
+      //  startTimer();
       }
       //print("home addr" + streamlocationaddr);
       //print(lat + ", " + long);
@@ -370,8 +407,8 @@ class _Flexitime extends State<Flexitime> {
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                //  sl.startStreaming(5);
+                //  startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -457,8 +494,8 @@ class _Flexitime extends State<Flexitime> {
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                //  sl.startStreaming(5);
+                 // startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Flexitime()),
@@ -602,8 +639,10 @@ class _Flexitime extends State<Flexitime> {
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                       startTimer();
-                       sl.startStreaming(5);
+
+
+                     //  startTimer();
+                     //  sl.startStreaming(5);
                        Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => Flexitime()),
@@ -645,8 +684,8 @@ class _Flexitime extends State<Flexitime> {
         ),
         child: new GestureDetector(
             onTap: () {
-              startTimer();
-              sl.startStreaming(5);
+             // startTimer();
+            //  sl.startStreaming(5);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => FlexiList()),

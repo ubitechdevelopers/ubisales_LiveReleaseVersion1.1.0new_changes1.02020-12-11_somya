@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,10 @@ import 'package:location/location.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:android_intent/android_intent.dart';
+import 'package:path/path.dart';
 
+import '../home.dart';
 class Services {}
 
 
@@ -29,7 +33,64 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 
+checkLocationEnabled(context) async{
+  print("checkLocationEnabled function");
 
+  bool isLocationEnabled = await Geolocator().isLocationServiceEnabled();
+  print("isLocationEnabled:-------------------"+isLocationEnabled.toString());
+
+
+
+
+  if(!isLocationEnabled){
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          title: new Text(""),
+          content: new Text("Sorry we can't continue without GPS"),
+          actions: <Widget>[
+            RaisedButton(
+              child: new Text(
+                "Turn On",
+                style: new TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                openLocationSetting();
+              },
+            ),
+            RaisedButton(
+              child: new Text(
+                "Done",
+                style: new TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                cameraChannel.invokeMethod("startAssistant");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+                Navigator.of(context, rootNavigator: true)
+                    .pop();
+
+              },
+            ),
+          ],
+        ));
+  }
+}
+
+void openLocationSetting() async {
+  final AndroidIntent intent = new AndroidIntent(
+    action: 'android.settings.LOCATION_SOURCE_SETTINGS',
+  );
+  await intent.launch();
+}
 
 
 encode5t(String str) async
@@ -59,7 +120,7 @@ Future<int> checkConnectionToServer () async{
   try {
     var uri = Uri.parse(path);
     var host=uri.host;
-    // final result = await InternetAddress.lookup(host);
+    //final result = await InternetAddress.lookup(host);
      final result = await InternetAddress.lookup("google.com");
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       print('connected');
@@ -1888,7 +1949,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
   try {
     ////print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-    if (Latitude != null) {
+    if (Latitude != null||Latitude !='') {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(
               double.parse(Latitude), double.parse(Longitude)));
@@ -1900,8 +1961,8 @@ getAddressFromLati( String Latitude,String Longitude) async{
       return streamlocationaddr;
     }
   }catch(e){
-    //print(e.toString());
-    if (Latitude != null) {
+    print(e.toString());
+    if (Latitude != null||Latitude!='') {
       globalstreamlocationaddr = "${Latitude},${Longitude}";
     }
     return globals.globalstreamlocationaddr;
@@ -1913,6 +1974,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
 
 
 checkNetForOfflineMode(context) {
+ // checkLocationEnabled(context);
   checkNet().then((value) async {
     var prefs=await SharedPreferences.getInstance();
     var isLoggedIn=prefs.getInt("response");
@@ -1932,6 +1994,7 @@ checkNetForOfflineMode(context) {
     }
   });
 }
+
 
 appResumedFromBackground(context){
   SystemChannels.lifecycle.setMessageHandler((msg)async{
@@ -1973,11 +2036,11 @@ checknetonpage(context) {
 
 Future<String> getAreaStatus() async {
   //print('getAreaStatus 1');
-  LocationData _currentLocation = globals.list[globals.list.length - 1];
-  double lat = _currentLocation.latitude;
-  double long = _currentLocation.longitude;
-  double assign_lat = globals.assign_lat;
-  double assign_long = globals.assign_long;
+ // LocationData _currentLocation = globals.list[globals.list.length - 1];
+  double lat = globals.assign_lat;
+  double long = globals.assign_long;
+  double assign_lat = globals.assigned_lat;
+  double assign_long = globals.assigned_long;
   double assign_radius = globals.assign_radius;
 
   /*print("${assign_long}");
@@ -2011,6 +2074,7 @@ Future<String> getAreaStatus() async {
     status = (assign_radius >= totalDistance) ? '1' : '0';
     // print("sohan ${status}");
   }
+ // print(status);
   return status;
 }
 

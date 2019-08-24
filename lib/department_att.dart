@@ -3,12 +3,15 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
 import 'generatepdf.dart';
 import 'package:simple_share/simple_share.dart';
+
+import 'offline_home.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class Department_att extends StatefulWidget {
@@ -69,8 +72,8 @@ class _Department_att extends State<Department_att>
     today.text = formatter.format(DateTime.now());
     tdate = widget.date;
     print(tdate);
-  }
 
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

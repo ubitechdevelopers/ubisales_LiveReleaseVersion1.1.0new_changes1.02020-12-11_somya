@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
+import 'globals.dart';
 import 'home.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
@@ -62,7 +65,7 @@ class _Bulkatt extends State<Bulkatt> {
   String colorti;
   String colorto;
   bool loaderr=false;
-
+bool fakeLocationDetected=false;
   @override
   void initState() {
     // TODO: implement initState
@@ -106,8 +109,63 @@ class _Bulkatt extends State<Bulkatt> {
       aid = prefs.getString('aid') ?? "";
       shiftId = prefs.getString('shiftId') ?? "";
     }
+    platform.setMethodCallHandler(_handleMethod);
   }
+  static const platform = const MethodChannel('location.spoofing.check');
+  String address="";
+  String areaStatus="";
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
 
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
+
+        assign_lat=double.parse(call.arguments["longitude"].toString());
+        assign_long=double.parse(call.arguments["latitude"].toString());
+        address=await getAddressFromLati(assign_lat.toString(), assign_long.toString());
+        print(call.arguments["mocked"].toString());
+        getAreaStatus().then((res) {
+          // print('called again');
+          if (mounted) {
+            setState(() {
+              areaStatus = res.toString();
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+
+
+
+        });
+        break;
+
+        return new Future.value("");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

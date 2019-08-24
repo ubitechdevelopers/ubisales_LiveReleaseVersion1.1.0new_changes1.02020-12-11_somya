@@ -7,16 +7,25 @@ import 'package:dio/dio.dart';
 import 'package:Shrine/model/timeinout.dart';
 import 'package:flutter/painting.dart';
 import 'package:Shrine/globals.dart' as globals;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'newservices.dart';
 import 'package:location/location.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:flutter/services.dart';
 
 class SaveImage {
   String base64Image;
   String base64Image1;
 
+  static const platform = const MethodChannel('force.garbage.collection');
   Future<bool> saveTimeInOut(File imagefile, MarkTime mk) async {
+
+
+
     try {
+
+
       File imagei = imagefile;
       imageCache.clear();
       //imagei = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 200.0,maxHeight: 200.0);
@@ -24,10 +33,9 @@ class SaveImage {
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation =
-            globals.list[globals.list.length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         print("global Address: " + location);
         print("global lat" + lat);
         print("global long" + long);
@@ -84,18 +92,45 @@ class SaveImage {
     }
   }
 
+  startTimeOutNotificationWorker() async{
+    final prefs = await SharedPreferences.getInstance();
+    String ShiftTimeOut=await prefs.getString("ShiftTimeOut")??"18:00:00";
+
+    globals.cameraChannel.invokeMethod("startTimeOutNotificationWorker",{"ShiftTimeOut":ShiftTimeOut});
+  }
+
+
   Future<bool> saveTimeInOutImagePicker(MarkTime mk) async {
+
+
+
     try{
       File imagei = null;
+
       imageCache.clear();
       if (globals.attImage == 1) {
+
+        globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
-        if (imagei != null) {
-          print("inside save image ckeck image");
-          StreamLocation sl = new StreamLocation();
 
-          sl.startStreaming(5);
+        if (imagei != null) {
+        //print("---------------actionb   ----->"+mk.act);
+          if(mk.act=="TimeIn"&&globals.showTimeOutNotification){
+            startTimeOutNotificationWorker();  
+          }
+          
+          var currentTime=DateTime.now();
+          int timeDifference=currentTime.difference(globals.timeWhenButtonPressed).inSeconds;
+          print("--------------------------Time difference------>"+timeDifference.toString());
+           if(timeDifference>120){
+                return null;
+          }
+
+          print("inside save image ckeck image");
+
+
+         // sl.startStreaming(5);
           print("inside save image ckeck image");
           /*
       final tempDir = await getTemporaryDirectory();
@@ -109,10 +144,9 @@ class SaveImage {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
-          LocationData _currentLocation = globals.list[globals.list
-              .length - 1];
-          String lat = _currentLocation.latitude.toString();
-          String long = _currentLocation.longitude.toString();
+
+          String lat = globals.assign_lat.toString();
+          String long = globals.assign_long.toString();
           print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
               mk.aid + "&act=" + mk.act + "&shiftid=" + mk.shiftid + "&refid=" +
               mk.refid + "&latit=" + lat + "&longi=" + long);
@@ -142,6 +176,7 @@ class SaveImage {
           //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
           imagei.deleteSync();
           imageCache.clear();
+          globals.cameraChannel.invokeMethod("cameraClosed");
           /*getTempImageDirectory();*/
           Map MarkAttMap = json.decode(response1.data);
           print(MarkAttMap["status"].toString());
@@ -155,6 +190,14 @@ class SaveImage {
           return false;
         }
       }else{
+
+        var currentTime=DateTime.now();
+        int timeDifference=currentTime.difference(globals.timeWhenButtonPressed).inSeconds;
+        print("--------------------------Time difference------>"+timeDifference.toString());
+        if(timeDifference>120){
+          return null;
+        }
+
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
         LocationData _currentLocation = globals.list[globals.list
@@ -208,10 +251,9 @@ class SaveImage {
   Future<bool> saveTimeInOutImagePicker_old123(MarkTime mk) async {
     bool ready = false;
     String location = globals.globalstreamlocationaddr;
-    LocationData _currentLocation =
-        globals.list[globals.list.length - 1];
-    String lat = _currentLocation.latitude.toString();
-    String long = _currentLocation.longitude.toString();
+
+    String lat = globals.assign_lat.toString();
+    String long = globals.assign_long.toString();
 
     try {
       ///////////////////////////
@@ -221,6 +263,7 @@ class SaveImage {
 
       ////////////////////////////////suumitted block
       File imagei = null;
+      globals.cameraChannel.invokeMethod("cameraOpened");
       imageCache.clear();
       if (globals.attImage == 1) {
         ImagePicker.pickImage(
@@ -281,7 +324,7 @@ class SaveImage {
                   dio
                       .post(globals.path + "saveImage", data: formData)
                       .then((response1) {
-
+                    globals.cameraChannel.invokeMethod("cameraClosed");
                     print('response1: '+response1.toString());
                     imagei.deleteSync();
                     imageCache.clear();
@@ -379,7 +422,7 @@ class SaveImage {
     try {
       File imagei = null;
       imageCache.clear();
-
+      globals.cameraChannel.invokeMethod("cameraOpened");
       imagei = await ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0);
 
@@ -423,6 +466,7 @@ class SaveImage {
         //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
         //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
         //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
+        globals.cameraChannel.invokeMethod("cameraClosed");
         imagei.deleteSync();
         imageCache.clear();
         /*getTempImageDirectory();*/
@@ -447,6 +491,7 @@ class SaveImage {
     try {
       File imagei = null;
       imageCache.clear();
+      globals.cameraChannel.invokeMethod("cameraOpened");
       if (globals.visitImage == 1) {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
@@ -454,10 +499,9 @@ class SaveImage {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
-          LocationData _currentLocation =
-              globals.list[globals.list.length - 1];
-          String lat = _currentLocation.latitude.toString();
-          String long = _currentLocation.longitude.toString();
+
+          String lat = globals.assign_lat.toString();
+          String long = globals.assign_long.toString();
           /*print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
@@ -485,6 +529,7 @@ class SaveImage {
             print(e.toString());
             print('------------*');
           }
+          globals.cameraChannel.invokeMethod("cameraClosed");
           imagei.deleteSync();
           imageCache.clear();
           /*getTempImageDirectory();*/
@@ -505,10 +550,8 @@ class SaveImage {
 
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation =
-            globals.list[globals.list.length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         /*print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
@@ -559,16 +602,15 @@ class SaveImage {
       File imagei = null;
       imageCache.clear();
       if (globals.visitImage == 1) {
+        globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
-          LocationData _currentLocation =
-              globals.list[globals.list.length - 1];
-          String lat = _currentLocation.latitude.toString();
-          String long = _currentLocation.longitude.toString();
+          String lat = globals.assign_lat.toString();
+          String long = globals.assign_long.toString();
           /*print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
@@ -595,6 +637,7 @@ class SaveImage {
             print(e.toString());
             print('------------visit out--2');
           }
+          globals.cameraChannel.invokeMethod("cameraClosed");
           imagei.deleteSync();
           imageCache.clear();
           /*getTempImageDirectory();*/
@@ -614,10 +657,8 @@ class SaveImage {
         // if image is notmandatory while marking punchout
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation =
-            globals.list[globals.list.length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         FormData formData = new FormData.from({
           "empid": empid,
           "visit_id": visit_id,
@@ -667,15 +708,15 @@ class SaveImage {
       imageCache.clear();
       //   if (globals.FlexiImage != 1) {
       print('------------**vvxx');
+      globals.cameraChannel.invokeMethod("cameraOpened");
       imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
       if (imagei != null) {
         print('------------**vvxxbb');
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation = globals.list[globals.list.length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         print('-------------------------------');
         print(mk.uid+" "+mk.cid);
         print('-------------------------------');
@@ -702,6 +743,7 @@ class SaveImage {
           print(e.toString());
           print('------------*');
         }
+        globals.cameraChannel.invokeMethod("cameraClosed");
         imagei.deleteSync();
         imageCache.clear();
         /*getTempImageDirectory();*/
@@ -779,6 +821,7 @@ class SaveImage {
     try {
       File imagei = null;
       imageCache.clear();
+      globals.cameraChannel.invokeMethod("cameraOpened");
       // if (globals.FlexiImage != 1) {
       imagei = await ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
@@ -788,10 +831,8 @@ class SaveImage {
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation =
-        globals.list[globals.list.length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         /*print('-------------------------------');
       print(mk.uid+" "+mk.cid);
       print('-------------------------------');
@@ -818,6 +859,7 @@ class SaveImage {
           print(e.toString());
           print('------------visit out--2');
         }
+        globals.cameraChannel.invokeMethod("cameraClosed");
         imagei.deleteSync();
         imageCache.clear();
         /*getTempImageDirectory();*/

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
@@ -32,7 +34,9 @@ class _Department extends State<Department> {
     dept = new TextEditingController();
    // f_dept = FocusNode();
     getOrgName();
+
   }
+
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {

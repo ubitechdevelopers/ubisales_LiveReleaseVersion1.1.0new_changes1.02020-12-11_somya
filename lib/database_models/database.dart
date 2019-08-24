@@ -26,7 +26,7 @@ class DbHelper{
     String path =
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
-    var db = await openDatabase(path, version: 21, onCreate: _onCreate,onUpgrade: _onUpgrade);
+    var db = await openDatabase(path, version: 22, onCreate: _onCreate,onUpgrade: _onUpgrade);
     return db;
     //}
   }
@@ -65,6 +65,29 @@ class DbHelper{
         'Time TEXT,'
         'FakeLocationStatus INTEGER'
         ")");
+    await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
+
+
+        'EmployeeId INTEGER,'
+        'VisitInLatitude TEXT,'
+        'VisitInLongitude TEXT,'
+        'VisitInTime TEXT,'
+        'VisitInDate TEXT,'
+
+        'VisitOutLatitude TEXT,'
+        'VisitOutLongitude TEXT,'
+        'VisitOutTime TEXT,'
+        'VisitOutDate TEXT,'
+        'ClientName TEXT,'
+        'VisitInDescription TEXT,'
+        'VisitOutDescription TEXT,'
+        'OrganizationId TEXT,'
+        'Skipped INTEGER,'
+        'VisitInImage TEXT,'
+        'VisitOutImage TEXT,'
+        'FakeLocationStatusVisitIn INTEGER,'
+        'FakeLocationStatusVisitOut INTEGER'
+        ")");
 
 
 
@@ -78,7 +101,8 @@ print("database upgraded");
 
       await db.execute('DROP TABLE IF EXISTS LoginOffline;');
       await db.execute('DROP TABLE IF EXISTS AttendanceOffline;');
-      await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
+      await db.execute('DROP TABLE IF EXISTS VisitsOffline;');
+await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
           "UserTableId INTEGER,"
           "EmployeeId INTEGER,"
           "Password TEXT,"
@@ -111,6 +135,30 @@ print("database upgraded");
           'Time TEXT,'
           'FakeLocationStatus INTEGER'
           ")");
+await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
+
+
+    'EmployeeId INTEGER,'
+    'VisitInLatitude TEXT,'
+    'VisitInLongitude TEXT,'
+    'VisitInTime TEXT,'
+    'VisitInDate TEXT,'
+
+    'VisitOutLatitude TEXT,'
+    'VisitOutLongitude TEXT,'
+    'VisitOutTime TEXT,'
+    'VisitOutDate TEXT,'
+    'ClientName TEXT,'
+    'VisitInDescription TEXT,'
+    'VisitOutDescription TEXT,'
+    'OrganizationId TEXT,'
+    'Skipped INTEGER,'
+    'VisitInImage TEXT,'
+    'VisitOutImage TEXT,'
+    'FakeLocationStatusVisitIn INTEGER,'
+    'FakeLocationStatusVisitOut INTEGER'
+    ")");
+
     }
   }
 

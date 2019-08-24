@@ -1,25 +1,22 @@
+import 'package:flutter/services.dart';
+
 import 'model/timeinout.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
 Color color = Colors.teal.shade50;
-Color splashcolor = Colors.teal.shade100; 
+Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
-/*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services/";
-*/
-
 /*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
-
-
+/*
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
-
-
+*/
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
 
 MarkTime mk1;
@@ -34,6 +31,14 @@ String departmentname = "";
 int departmentid = 1;
 int varCheckNet=0;
 int areaId=0;
-var assign_lat = 0.0;
-var assign_long = 0.0;
+var assign_lat = 0.0;//These are user to store latitude got from javacode throughout the app
+var assign_long = 0.0;//These are user to store latitude got from javacode throughout the app
+var assigned_lat = 0.0;//These are user to store geofence latitude got from server throughout the app
+var assigned_long = 0.0;//These are user to store geofence latitude got from server throughout the app
 var assign_radius = 0.0;
+var timeInPressedTime;
+var timeOutPressedTime;
+var timeWhenButtonPressed;
+const cameraChannel = const MethodChannel('update.camera.status');
+bool fakeLocationDetected=false;
+bool showTimeOutNotification=true;

@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'globals.dart';
 import 'home.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,14 +23,16 @@ import 'dart:async';
 import 'check_update.dart';
 import 'package:Shrine/services/services.dart';
 
+import 'offline_home.dart';
+
 class ShrineApp extends StatefulWidget {
   @override
   _ShrineAppState createState() => _ShrineAppState();
 }
 class _ShrineAppState extends State<ShrineApp> {
   Map<String, double> _currentLocation;
-  StreamSubscription<Map<String, double>> _locationSubscription;
-  Location _location = new Location();
+ // StreamSubscription<Map<String, double>> _locationSubscription;
+ // Location _location = new Location();
   String streamlocationaddr="";
   String lat="";
   String long="";
@@ -40,12 +44,41 @@ class _ShrineAppState extends State<ShrineApp> {
   @override
   void initState() {
     super.initState();
+
     getShared();
     checkNow().then((res){
       setState(() {
         new_ver=res;
       });
     });
+    platform.setMethodCallHandler(_handleMethod);
+  }
+  static const platform = const MethodChannel('location.spoofing.check');
+  String address="";
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+
+        String long=call.arguments["longitude"].toString();
+        String lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        print(call.arguments["mocked"].toString());
+
+        globalstreamlocationaddr=address;
+
+
+
+
+        break;
+
+        return new Future.value("");
+    }
   }
 
   getShared() async{

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
@@ -29,6 +31,7 @@ class _Designation extends State<Designation> {
     appResumedFromBackground(context);
     desg = new TextEditingController();
     getOrgName();
+
   }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();

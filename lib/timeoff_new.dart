@@ -92,8 +92,8 @@ class _TimeOff_New extends State<TimeOff_New> {
     checkNetForOfflineMode(context);
     appResumedFromBackground(context);
     initPlatformState();
-    setLocationAddress();
-    startTimer();
+  //  setLocationAddress();
+   // startTimer();
     platform.setMethodCallHandler(_handleMethod);
 
 
@@ -152,8 +152,8 @@ class _TimeOff_New extends State<TimeOff_New> {
         }
       }
       if(streamlocationaddr == ''){
-        sl.startStreaming(5);
-        startTimer();
+       // sl.startStreaming(5);
+      //  startTimer();
       }
       //print("home addr" + streamlocationaddr);
       //print(lat + ", " + long);
@@ -409,8 +409,8 @@ class _TimeOff_New extends State<TimeOff_New> {
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+              //    sl.startStreaming(5);
+                //  startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -496,8 +496,8 @@ class _TimeOff_New extends State<TimeOff_New> {
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                 // sl.startStreaming(5);
+               //   startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -592,8 +592,8 @@ class _TimeOff_New extends State<TimeOff_New> {
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                        startTimer();
-                        sl.startStreaming(5);
+                       // startTimer();
+                       // sl.startStreaming(5);
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
@@ -651,7 +651,7 @@ class _TimeOff_New extends State<TimeOff_New> {
   }
 
   saveVisitImage() async {
-    sl.startStreaming(5);
+   // sl.startStreaming(5);
     client = _clientname.text;
     MarkVisit mk = new MarkVisit(
         empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);

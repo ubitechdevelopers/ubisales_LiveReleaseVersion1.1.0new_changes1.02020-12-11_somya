@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/punch_location_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -29,6 +30,8 @@ import 'services/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'notifications.dart';
 import 'package:flutter/services.dart';
+import 'offline_home.dart';
+
 import 'Bottomnavigationbar.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PunchLocation extends StatefulWidget {
@@ -38,7 +41,7 @@ class PunchLocation extends StatefulWidget {
 
 class _PunchLocation extends State<PunchLocation> {
   static const platform = const MethodChannel('location.spoofing.check');
-  StreamLocation sl = new StreamLocation();
+ // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _clientname = TextEditingController();
   /*var _defaultimage =
@@ -82,30 +85,69 @@ class _PunchLocation extends State<PunchLocation> {
   String aid = "";
   String client='0';
   String shiftId = "";
+
   List<Widget> widgets;
-bool fakeLocationDetected=false;
+
 var FakeLocationStatus=0;
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
     appResumedFromBackground(context);
+    streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
-    setLocationAddress();
-    startTimer();
+  //  setLocationAddress();
+   // startTimer();
     platform.setMethodCallHandler(_handleMethod);
   }
+  bool internetAvailable=true;
+  String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-          setState(() {
-            fakeLocationDetected=true;
-            FakeLocationStatus=1;
-          });
-        }
 
-        debugPrint(call.arguments);
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+          internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => PunchLocationOffline()));
+
+        }
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        globalstreamlocationaddr=address;
+        print(call.arguments["mocked"].toString());
+
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          streamlocationaddr=address;
+
+          location_addr=streamlocationaddr;
+          location_addr1=streamlocationaddr;
+
+
+        });
+        break;
+
         return new Future.value("");
     }
   }
@@ -122,7 +164,7 @@ var FakeLocationStatus=0;
       //print("timmer is running");
       count++;
       //print("timer counter" + count.toString());
-      setLocationAddress();
+    //  setLocationAddress();
       if (stopstreamingstatus) {
         t.cancel();
         //print("timer canceled");
@@ -149,8 +191,8 @@ var FakeLocationStatus=0;
         }
       }
       if(streamlocationaddr == ''){
-        sl.startStreaming(5);
-        startTimer();
+       //sl.startStreaming(5);
+      //  startTimer();
       }
       //print("home addr" + streamlocationaddr);
       //print(lat + ", " + long);
@@ -338,8 +380,8 @@ var FakeLocationStatus=0;
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                  //sl.startStreaming(5);
+            //      startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -425,8 +467,10 @@ var FakeLocationStatus=0;
                       color: Colors.teal, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                  sl.startStreaming(5);
-                  startTimer();
+                  //sl.startStreaming(5);
+               //   startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PunchLocation()),
@@ -519,8 +563,8 @@ var FakeLocationStatus=0;
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                        startTimer();
-                        sl.startStreaming(5);
+                     //   startTimer();
+                        //sl.startStreaming(5);
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => PunchLocation()),
@@ -578,7 +622,7 @@ var FakeLocationStatus=0;
   }
 
   saveVisitImage() async {
-    sl.startStreaming(5);
+   // sl.startStreaming(5);
     client = _clientname.text;
     MarkVisit mk = new MarkVisit(
         empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);

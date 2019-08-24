@@ -27,7 +27,7 @@ import 'package:Shrine/login.dart';
 import 'package:Shrine/home.dart';
 import 'package:Shrine/loggedOut.dart';
 import 'offline_attendance_logs.dart';
-
+import 'punch_location_summary_offline.dart';
 
 
 
@@ -39,8 +39,8 @@ class OfflineHomePage extends StatefulWidget {
 
 class _OfflineHomePageState extends State<OfflineHomePage>{
   //AppLifecycleState state;
-  static const platform = const MethodChannel('location.spoofing.check');
-  StreamLocation sl = new StreamLocation();
+  var _context1;
+   // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
@@ -77,30 +77,86 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   bool issave = false;
   List<Widget> widgets;
   bool refreshsts=false;
-  bool fakeLocationDetected=false;
+
+  bool internetAvailable=false;
+  int _currentIndex=1;
 
   @override
   void initState() {
     print('offline home aintitstate');
     super.initState();
-    platform.setMethodCallHandler(_handleMethod);
+    print("-----------------------Context-----------------------");
+    print(context);
+    _context1=context;
+    streamlocationaddr=globalstreamlocationaddr;
+    checkLocationEnabled(context);
     // WidgetsBinding.instance.addObserver(this);
-    // checknetonpage(context);
+     //checknetonpage(context);
 
     initPlatformState();
-    setLocationAddress();
-    startTimer();
+   // setLocationAddress();
+   // startTimer();
+    platform.setMethodCallHandler(_handleMethod);
   }
+  static const platform = const MethodChannel('location.spoofing.check');
+
+  String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-          setState(() {
-            fakeLocationDetected=true;
-          });
-        }
 
-        debugPrint(call.arguments);
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Available")
+        {
+          internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+/*
+          Navigator
+              .of(context)
+              .push(new MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+*/
+        }
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        globalstreamlocationaddr=address;
+        print(call.arguments["mocked"].toString());
+        getAreaStatus().then((res) {
+          // print('called again');
+          if (mounted) {
+            setState(() {
+              areaStatus = res.toString();
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
+
+        setState(() {
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          streamlocationaddr=address;
+
+          location_addr=streamlocationaddr;
+          location_addr1=streamlocationaddr;
+
+
+        });
+        break;
+
         return new Future.value("");
     }
   }
@@ -134,7 +190,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       }
     });
   }*/
-
+/*
   startTimer()  {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
@@ -143,7 +199,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       //print("timmer is running");
       count++;
       //print("timer counter" + count.toString());
-      setLocationAddress();
+   //   setLocationAddress();
       if (stopstreamingstatus) {
         t.cancel();
         //print("timer canceled");
@@ -196,8 +252,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         }
         if (streamlocationaddr == '' && varCheckNet==0) {
           print('again');
-          sl.startStreaming(5);
-          startTimer();
+       //   sl.startStreaming(5);
+        //  startTimer();
         }
         //print("home addr" + streamlocationaddr);
         //print(lat + ", " + long);
@@ -206,7 +262,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       });
     }
   }
-
+*/
 
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
@@ -220,17 +276,21 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
-    StreamLocation sl = new StreamLocation();
+  //  StreamLocation sl = new StreamLocation();
+
     Loc lock = new Loc();
     String location_addr111 = await lock.initPlatformState();
-    if(prefs.getInt("OfflineModePermission")!=1){
+    int off= prefs.getInt("OfflineModePermission")??0;
+    var isAlreadyLoggedIn=prefs.getInt("response")??0;
+    if(off!=1){
 
 
       //Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.pop(context,true);// It worked for me instead of above line
+     // Navigator.pop(context,true);// It worked for me instead of above line
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
+
 
     int serverConnected;
     SystemChannels.lifecycle.setMessageHandler((msg)async{
@@ -238,12 +298,17 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       {
         print("------------------------------------ App Resumed-----------------------------");
         serverConnected= await checkConnectionToServer();
-        if(serverConnected==1){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        if(isAlreadyLoggedIn==1){
+          if(serverConnected==1){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          }
+          else{
+
+            Navigator.push(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
+
+          }
         }
-        else{
-          Navigator.push(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
-        }
+
 
       }
       if(msg=='AppLifecycleState.paused' ){
@@ -252,6 +317,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
     });
     serverConnected= await checkConnectionToServer();
+    //if(isAlreadyLoggedIn==1)
     if(serverConnected==1){
       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     }
@@ -266,6 +332,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     }
     var attendanceFound1 = await ao.findCurrentDateAttendance(Id);
     print('--------------------------Attendance Found:'+attendanceFound1.toString());
+  if(mounted)
     setState(() {
       fname = prefs.getString('fname') ?? "";
 
@@ -312,7 +379,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   void dispose() {
     // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-    timer.cancel();
+   // timer.cancel();
     /* if(timerrefresh.isActive){
       timerrefresh.cancel();
     }*/
@@ -325,6 +392,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           key: _scaffoldKey,
           appBar: AppBar(
             actions: [
+              /*
               RaisedButton.icon(
                   color:Colors.teal,
                   onPressed: (){
@@ -335,8 +403,19 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               },
                   icon: Icon(Icons.assignment,color: Colors.white,),
 
-                  label: Text('Logs',style: new TextStyle(color: Colors.white)))
+                  label: Text('Logs',style: new TextStyle(color: Colors.white))),
+            RaisedButton.icon(
+            color:Colors.teal,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocationSummaryOffline()),
+              );
+            },
+            icon: Icon(Icons.assignment,color: Colors.white,),
 
+            label: Text('Visits',style: new TextStyle(color: Colors.white)))
+*/
             ],
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -350,6 +429,68 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           ),
           //bottomSheet: getQuickLinksWidget(),
 
+          bottomNavigationBar:
+          Hero(
+              tag: "bottom",
+              child:BottomNavigationBar(
+            currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.teal,
+                onTap: (newIndex) {
+                  if(newIndex==0){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
+                    );
+                    return;
+                  }else
+                  if(newIndex==1){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => OfflineHomePage()),
+                    );
+                    return;
+                  }
+                  if(newIndex==2){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => PunchLocationSummaryOffline()),
+                    );
+                    return;
+                  }
+              /*else if(newIndex == 3){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notifications()),
+                );
+
+              }*/
+              setState((){_currentIndex = newIndex;});
+
+            }, // this will be set when a new tab is tapped
+            items: [
+
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.art_track,color: Colors.white,),
+                title: new Text('Logs',style: TextStyle(color: Colors.white)),
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.home,color: Colors.white,),
+                title: new Text('Home',style: TextStyle(color: Colors.white)),
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,color: Colors.white,),
+                  title: Text('Visits',style: TextStyle(color: Colors.white),)
+              ),
+              /*  BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.notifications
+                    ,color: Colors.black54,
+                  ),
+                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
+            ],
+          ))
+          ,
 
 
           /* endDrawer: new AppDrawer(),*/
@@ -409,11 +550,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
              children: [
                 FlatButton(
-                  child: new Text('You are at: ' + streamlocationaddr,
+                  child: new Text('You are at: ' + globalstreamlocationaddr,
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontSize: 14.0)),
                   onPressed: () {
-                    launchMap(lat, long);
+                    launchMap(assign_lat.toString(), assign_long.toString());
                     /* Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -474,7 +615,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         setState(() {
           loading=false;
         });
+
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+
       }
       else{
         setState(() {
@@ -519,6 +662,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 style: new TextStyle(fontSize: 22.0, color: Colors.white)),
             color: timeInClicked?Colors.grey:Colors.orangeAccent,
             onPressed: () {
+              timeInPressedTime=DateTime.now();
               if(!timeInClicked){
                 saveOfflineAttendance(0);
                 setState(() {
@@ -556,6 +700,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
                       color: timeOutClicked?Colors.grey:Colors.orangeAccent,
                       onPressed: () {
+                        timeOutPressedTime=DateTime.now();
                         if(!timeOutClicked){
                           saveOfflineAttendance(1);
                           setState(() {
@@ -799,8 +944,17 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       },
     );
   }
+  startTimeOutNotificationWorker() async{
+    final prefs = await SharedPreferences.getInstance();
+    String ShiftTimeOut=await prefs.getString("ShiftTimeOut")??"18:00:00";
 
+    cameraChannel.invokeMethod("startTimeOutNotificationWorker",{"ShiftTimeOut":ShiftTimeOut});
+  }
   saveOfflineAttendance(int actionPressed) async {
+
+    if(actionPressed==0&&showTimeOutNotification){
+      startTimeOutNotificationWorker();
+    }
 
     final prefs = await SharedPreferences.getInstance();
     int UserId = int.parse(prefs.getString("empid")) ?? 0;
@@ -830,13 +984,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     else{
       var imageRequired = prefs.getInt("ImageRequired");
       if (imageRequired == 1) {
+        print("-----------------------Context before-----------------------");
+        print(context);
+        cameraChannel.invokeMethod("cameraOpened");
         ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
             .then((img) async {
           if (img != null) {
             List<int> imageBytes = await img.readAsBytes();
             PictureBase64 = base64.encode(imageBytes);
-            sl.startStreaming(5);
+           /* sl.startStreaming(5);
             if (list != null && list.length > 0) {
               lat = list[list.length - 1].latitude.toString();
               long = list[list.length - 1].longitude.toString();
@@ -849,11 +1006,19 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               sl.startStreaming(5);
               startTimer();
             }
+            */
             print("--------------------Image---------------------------");
             print(PictureBase64);
 
             print("--------------------Image---------------------------");
-            var now = new DateTime.now();
+
+            var now;
+            if(actionPressed==0){
+              now=timeInPressedTime;
+            }
+            else{
+              now=timeOutPressedTime;
+            }
             var formatter = new DateFormat('yyyy-MM-dd');
 
             Date = formatter.format(now);
@@ -865,8 +1030,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
             print("--------------------Date Time---------------------------");
 
-            Latitude = await lat;
-            Longitude = await long;
+            Latitude = await assign_lat.toString();
+            Longitude = await assign_long.toString();
             var FakeLocationStatus=0;
              if(fakeLocationDetected)
                FakeLocationStatus=1;
@@ -890,20 +1055,24 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 FakeLocationStatus
             );
             attendanceOffline.save();
+            timeInPressedTime=null;
+            timeOutPressedTime=null;
+            cameraChannel.invokeMethod("cameraClosed");
             img.deleteSync();
             imageCache.clear();
+
             showDialog(context: context, child:
             new AlertDialog(
               content: new Text(
                   actionString+" is marked. It will be synced when you are online"),
             )
             );
-            Navigator.of(context).push(
-                new MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return new OfflineHomePage();
-                    }
-                )
+            print("-----------------------Context-----------------------");
+            print(context);
+            Navigator
+                .of(context)
+                .push(
+              MaterialPageRoute(builder: (context) => OfflineHomePage()),
             );
           }
           else {
@@ -915,7 +1084,13 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         });
       }
       else {
-        var now = new DateTime.now();
+        var now;
+        if(actionPressed==0){
+          now=timeInPressedTime;
+        }
+        else{
+          now=timeOutPressedTime;
+        }
         var formatter = new DateFormat('yyyy-MM-dd');
 
         Date = formatter.format(now);
@@ -927,8 +1102,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
         print("--------------------Date Time---------------------------");
 
-        Latitude = await lat;
-        Longitude = await long;
+        Latitude = await assign_lat.toString();
+        Longitude = await assign_long.toString();
 
         // print(lat+"lalalal"+long+location_addr);
 
@@ -952,18 +1127,22 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             FakeLocationStatus
         );
         attendanceOffline.save();
+
+        timeInPressedTime=null;
+        timeOutPressedTime=null;
+
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text(
               "Attendance marked successfully and will be synced when you get connected!"),
         )
         );
-        Navigator.of(context).push(
-            new MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return new OfflineHomePage();
-                }
-            )
+        print("-----------------------Context-----------------------");
+        print(context);
+        Navigator
+            .of(context)
+            .push(
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
         );
       }
 

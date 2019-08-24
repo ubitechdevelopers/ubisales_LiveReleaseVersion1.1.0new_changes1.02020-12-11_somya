@@ -3,12 +3,14 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'home.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'shift_list.dart';
 import 'reports.dart';
@@ -70,9 +72,32 @@ class _addShift extends State<addShift> {
         */
       });
     }
+    platform.setMethodCallHandler(_handleMethod);
   }
+  static const platform = const MethodChannel('location.spoofing.check');
 
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
 
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
+        break;
+
+        return new Future.value("");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

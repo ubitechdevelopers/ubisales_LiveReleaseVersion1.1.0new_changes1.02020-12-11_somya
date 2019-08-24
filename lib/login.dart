@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'globals.dart';
 import 'home.dart';
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
@@ -37,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
   String barcode = "";
   final _formKey = GlobalKey<FormState>();
   String loginuser="";
-  bool fakeLocationDetected=false;
+
 
   bool loader = false;
   FocusNode textSecondFocusNode = new FocusNode();
@@ -46,22 +47,48 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
     initPlatformState();
     platform.setMethodCallHandler(_handleMethod);
   }
+  String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-      case "message":
-        if(call.arguments=="Location is mocked"){
-          setState(() {
-            fakeLocationDetected=true;
-          });
-        }
 
-        debugPrint(call.arguments);
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+
+        String long=call.arguments["longitude"].toString();
+        String lat=call.arguments["latitude"].toString();
+        assign_lat=double.parse(lat);
+        assign_long=double.parse(long);
+        address=await getAddressFromLati(lat, long);
+        print(call.arguments["mocked"].toString());
+
+
+
+          if(call.arguments["mocked"].toString()=="Yes"){
+            fakeLocationDetected=true;
+          }
+          else{
+            fakeLocationDetected=false;
+          }
+
+          long=call.arguments["longitude"].toString();
+          lat=call.arguments["latitude"].toString();
+          globalstreamlocationaddr=address;
+
+
+
+
+        break;
+
         return new Future.value("");
     }
   }
+
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -131,6 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                             print("******************** QR value **************************");
                             //return false;
                             if(onValue!='error') {
+                              checkLocationEnabled(context);
                               markAttByQR(onValue, context);
                             }else {
                               setState(() {

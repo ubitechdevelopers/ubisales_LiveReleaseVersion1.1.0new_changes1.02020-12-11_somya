@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/services.dart';
+import 'offline_home.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -44,8 +46,32 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
+    platform.setMethodCallHandler(_handleMethod);
   }
-  @override
+  static const platform = const MethodChannel('location.spoofing.check');
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
+        break;
+
+        return new Future.value("");
+    }
+  } @override
   Widget build(BuildContext context) {
     return new Scaffold(
       key: _scaffoldKey,

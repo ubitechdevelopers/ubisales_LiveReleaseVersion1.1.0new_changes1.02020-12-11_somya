@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -7,6 +8,7 @@ import 'drawer.dart';
 import 'home.dart';
 import 'globals.dart' as globals;
 import 'package:Shrine/services/services.dart';
+import 'offline_home.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'reports.dart';
@@ -50,8 +52,32 @@ class _MyApp extends State<MyApp> {
       org_name = prefs.getString('org_name') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
     });
+    platform.setMethodCallHandler(_handleMethod);
   }
-  // This widget is the root of your application.
+  static const platform = const MethodChannel('location.spoofing.check');
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+
+      case "locationAndInternet":
+      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+      // Map<String,String> responseMap=call.arguments;
+
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
+        break;
+
+        return new Future.value("");
+    }
+  } // This widget is the root of your application.
   Future<bool> sendToHome() async{
     /*Navigator.push(
       context,
