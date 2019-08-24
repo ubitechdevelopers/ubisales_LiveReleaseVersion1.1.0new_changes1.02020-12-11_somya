@@ -21,6 +21,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
+  String admin_sts = "0";
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -31,6 +32,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _orgName= prefs.getString('org_name') ?? '';
+      admin_sts = prefs.getString('sstatus') ?? '';
     });
   }
   @override
@@ -60,10 +62,19 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
             child: Center(child:Text("Custom Date Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
           ),
           Container(
-            child: DateTimePickerFormField(
-              dateOnly: true,
+            child: DateTimeField(
+              //dateOnly: true,
               format: formatter,
               controller: today,
+              //editable: false,
+              onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+                },
+              readOnly: true,
               decoration: InputDecoration(
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(0.0),
@@ -89,7 +100,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               },
             ),
           ),
-          res==true?new Container(
+
+          (res==true && admin_sts=='1') ?new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
             child: new ListTile(
@@ -111,13 +123,14 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                 width: MediaQuery.of(context).size.width*1.0,),
             ),
-          ):Container(
-            height: MediaQuery.of(context).size.height*0.25,
-            child: Center(
+          ): admin_sts=='1'?Container(
+              height: MediaQuery.of(context).size.height*0.25,
+              child: Center(
               child:Text('No Chart Available'),
-            ),
-          ),
-          res==true?new Row(
+              ),
+
+          ):Center(),
+          (res==true && admin_sts=='1')?new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -127,6 +140,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
             ],
           ):Center(),
+
           Divider(),
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
@@ -171,17 +185,17 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
             ],
           ),
           new Divider(height: 1.0,),
-    res==true?new Container(
-            height: MediaQuery.of(context).size.height*0.30,
+          res==true?new Container(
+            height: MediaQuery.of(context).size.height*0.56,
             child: new TabBarView(
               controller: _controller,
               children: <Widget>[
                 new Container(
-                  height: MediaQuery.of(context).size.height*0.30,
+                  height: MediaQuery.of(context).size.height*0.56,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.40,
+                    Container( height: MediaQuery.of(context).size.height*.56,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -370,11 +384,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                 //////////////TABB 2 Start
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.30,
+                  height: MediaQuery.of(context).size.height*0.56,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.28,
+                    Container( height: MediaQuery.of(context).size.height*.56,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -482,11 +496,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.30,
+                  height: MediaQuery.of(context).size.height*0.56,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.56,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -679,11 +693,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                 new Container(
 
 
-                  height: MediaQuery.of(context).size.height*0.30,
+                  height: MediaQuery.of(context).size.height*0.56,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.30,
+                    Container( height: MediaQuery.of(context).size.height*.56,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------

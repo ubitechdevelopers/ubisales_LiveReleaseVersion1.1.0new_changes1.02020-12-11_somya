@@ -97,7 +97,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
         "password": user.userPassword,
         "qr":true,
       });
-
+print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPassword+"&qr=true");
       // Response response1 = await dio.post("https://sandbox.ubiattendance.com/index.php/services/checkLogin",data: formData);
       // Response response1 = await dio.post("https://ubiattendance.ubihrm.com/index.php/services/checkLogin",data: formData);
       Response response1 = await dio.post(globals.path+"checkLogin", data: formData);

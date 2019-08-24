@@ -37,6 +37,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:flutter/services.dart';
 import "package:Shrine/notifications.dart";
+import 'Bottomnavigationbar.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -476,75 +477,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             quickLinkList1(),
           ],
 
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            type: BottomNavigationBarType.fixed,
-            onTap: (newIndex) {
-              if(newIndex==1){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
-                return;
-              }else if (newIndex == 0) {
-                (admin_sts == '1')
-                    ? Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Reports()),
-                )
-                    : Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-                return;
-              }
-              if(newIndex==2){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Settings()),
-                );
-                return;
-              }
-              /*else if(newIndex == 3){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Notifications()),
-                );
-
-              }*/
-              setState((){_currentIndex = newIndex;});
-
-            }, // this will be set when a new tab is tapped
-            items: [
-              (admin_sts == '1')
-                  ? BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.library_books,
-                ),
-                title: new Text('Reports'),
-              )
-                  : BottomNavigationBarItem(
-                icon: new Icon(
-                  Icons.person,color: Colors.black54,
-                ),
-                title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-              ),
-              BottomNavigationBarItem(
-                icon: new Icon(Icons.home,color: Colors.black54,),
-                title: new Text('Home',style: TextStyle(color: Colors.black54)),
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.settings,color: Colors.black54,),
-                  title: Text('Settings',style: TextStyle(color: Colors.black54),)
-              ),
-            /*  BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.notifications
-                    ,color: Colors.black54,
-                  ),
-                  title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-            ],
-          ),
+          bottomNavigationBar: Bottomnavigationbar(),
 
           endDrawer: new AppDrawer(),
           body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
@@ -865,7 +798,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   Widget getBulkAttnWid() {
     List<Widget> widList = List<Widget>();
 
-    if (bulkAttn.toString() == '1' && admin_sts == '1') {
+    if (bulkAttn.toString() == '1' && (admin_sts == '1' ||admin_sts == '2')) {
       widList.add(Container(
         padding: EdgeInsets.only(top: 10.0),
         constraints: BoxConstraints(
@@ -1346,7 +1279,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         showDialog(
             context: context,
             child: new AlertDialog(
-              title: new Text("!"),
+              title: new Text("Warning!"),
               content: new Text("Problem while marking attendance, try again."),
             ));
         if (mounted) {

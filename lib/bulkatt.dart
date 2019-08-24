@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'package:Shrine/services/gethome.dart';
 import 'drawer.dart';
 import 'home.dart';
 import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
-import 'globals.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';
 import 'Image_view.dart';
+import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
 //import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class Bulkatt extends StatefulWidget {
   @override
@@ -161,75 +159,7 @@ class _Bulkatt extends State<Bulkatt> {
           },),
           backgroundColor: Colors.teal,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          type: BottomNavigationBarType.fixed,
-          onTap: (newIndex) {
-            if(newIndex==1){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              return;
-            }else if (newIndex == 0) {
-              (admin_sts == '1')
-                  ? Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Reports()),
-              )
-                  : Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
-              );
-              return;
-            }
-            if(newIndex==2){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Settings()),
-              );
-              return;
-            }
-           /* else if(newIndex == 3){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Notifications()),
-              );
-
-            }*/
-            setState((){_currentIndex = newIndex;});
-
-          }, // this will be set when a new tab is tapped
-          items: [
-            (admin_sts == '1')
-                ? BottomNavigationBarItem(
-              icon: new Icon(
-                Icons.library_books,
-              ),
-              title: new Text('Reports'),
-            )
-                : BottomNavigationBarItem(
-              icon: new Icon(
-                Icons.person,color: Colors.black54,
-              ),
-              title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-            ),
-            BottomNavigationBarItem(
-              icon: new Icon(Icons.home,color: Colors.black54,),
-              title: new Text('Home',style: TextStyle(color: Colors.black54)),
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings,color: Colors.black54,),
-                title: Text('Settings',style: TextStyle(color: Colors.black54),)
-            ),
-           /* BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.notifications
-                  ,color: Colors.black54,
-                ),
-                title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-          ],
-        ),
+        bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
         body: Container(
           padding: EdgeInsets.only(left: 2.0, right: 2.0),
@@ -263,9 +193,7 @@ class _Bulkatt extends State<Bulkatt> {
     setState(() {
     loaderr=true;
     });
-
                 getDeptEmp(changedValue).then((EmpList) {
-
                  setState(() {
                  emplist = EmpList;
                  _saved.clear();
@@ -398,10 +326,38 @@ class _Bulkatt extends State<Bulkatt> {
                             return null;
                           }
                           else{
+                            var formatter = new DateFormat('yyyy-MM-dd');
+                            String todaydate=formatter.format(DateTime.now());
+                            //print( todaydate);
                             DateTime from;
                             DateTime to;
                             for(var i = 0; i < _saved.length; i++){
                               print( _saved[i].Name);
+                              print( _saved[i].data_date);
+                              print( _saved[i].timeout);
+                              if(_saved[i].data_date==todaydate){
+                                DateTime now = DateTime.now();
+                                to = new DateTime(now.year, now.month, now.day, now.hour, now.minute,00,00);
+                                //print(to);
+                                if(_saved[i].timein!='0:0' && _saved[i].timein!='00:00:00'){
+                                  var arr = _saved[i].timein.split(':');
+                                  from = new DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]),00,00);
+                                  if (to.isBefore(from)) {
+                                    showInSnackBar(_saved[i].Name +
+                                        "'s timein is greater than current time...");
+                                    return null;
+                                  }
+                                }
+                                if(_saved[i].timeout!='0:0' && _saved[i].timeout!='00:00:00') {
+                                  var arr = _saved[i].timeout.split(':');
+                                  from = new DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]),00,00);
+                                  if (to.isBefore(from)) {
+                                    showInSnackBar(_saved[i].Name +
+                                        "'s timeout is greater than current time...");
+                                     return null;
+                                  }
+                                }
+                              }
                               print( _saved[i].Attid);
                               if(_saved[i].shifttype=='1'){
                                 print(_saved[i].timeout);
@@ -424,7 +380,7 @@ class _Bulkatt extends State<Bulkatt> {
                                       int.parse(arr1[1]),
                                       00,
                                       00);
-                                  if (!from.isBefore(to)) {
+                                  if (!to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
                                         "'s timein is greater than timeout...");
                                     return null;
@@ -433,7 +389,6 @@ class _Bulkatt extends State<Bulkatt> {
                               }
                             }
                           }
-
                           setState(() {
                             _isButtonDisabled = true;
                           });
@@ -486,7 +441,6 @@ class _Bulkatt extends State<Bulkatt> {
   }
 
   getBulkEmpWidget() {
-
     if (emplist != null) {
       return new Container(
         height: MediaQuery.of(context).size.height * 0.60,
@@ -499,38 +453,48 @@ class _Bulkatt extends State<Bulkatt> {
               //  padding: EdgeInsets.only(left: 5.0,right: 5.0),
               itemBuilder: (BuildContext context, int index) {
                 final int alreadySaved = emplist[index].csts;
-                List til=emplist[index].timein.split(":");
+                //List til=emplist[index].timein.split(":");
                 //if(!til[0]){til[0]=0;};
                 // TimeOfDay ti = TimeOfDay(hour: int.fromEnvironment(til[0]), minute: int.fromEnvironment(til[1]));
 
                 /* print(emplist[index].timein);
                print(int.parse(til[0]));
                print(til[1]);*/
-
-
-
-                TimeOfDay ti = TimeOfDay(hour: int.parse(emplist[index].timein.split(":")[0]), minute: int.parse(emplist[index].timein.split(":")[1]));
+                DateTime ti = new DateTime(
+                    2001,
+                    01,
+                    01,
+                    int.parse(emplist[index].timein.split(":")[0]),
+                    int.parse(emplist[index].timein.split(":")[1]),
+                    00,
+                    00);
+                DateTime tout = new DateTime(
+                    2001,
+                    01,
+                    01,
+                    int.parse(emplist[index].timeout.split(":")[0]),
+                    int.parse(emplist[index].timeout.split(":")[1]),
+                    00,
+                    00);
+                //TimeOfDay(hour: int.parse(emplist[index].timein.split(":")[0]), minute: int.parse(emplist[index].timein.split(":")[1]));
                 //print(ti);
-                TimeOfDay tout = TimeOfDay(hour: int.parse(emplist[index].timeout.split(":")[0]), minute: int.parse(emplist[index].timeout.split(":")[1]));
-
-                if(emplist[index].timein=='00:00:00'){
+                //TimeOfDay tout = TimeOfDay(hour: int.parse(emplist[index].timeout.split(":")[0]), minute: int.parse(emplist[index].timeout.split(":")[1]));
+                if(emplist[index].Attid=='0'){
                   _enabletimein=true;
                   ti=null;
                 }
                 else{
                   _enabletimein=false;
-
                 }
                 if(emplist[index].timeout=='00:00:00' || emplist[index].device=='Auto Time Out'){
                   _enabletimeout=true;
                 }
               else{
                   _enabletimeout=false;
-
                 }
-
-
-                print(tout);
+               // print(tout);
+                //print('_enabletimeout'+emplist[index].Name+_enabletimeout.toString()+emplist[index].Attid.toString());
+                print('_enabletimein'+emplist[index].Name+_enabletimein.toString()+emplist[index].Attid.toString());
                 //  print(_saved.elementAt(index).Name);
                 return new Column(children: <Widget>[
                   new FlatButton(
@@ -577,11 +541,11 @@ class _Bulkatt extends State<Bulkatt> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Container(
-
-                                  child: TimePickerFormField(
+                                  child: DateTimeField(
                                     format: timeFormat,
                                     initialValue: ti,
                                     enabled:_enabletimein,
+                                    readOnly: true,
                                     //controller: _from,
                                     decoration: InputDecoration(
                                       // labelText: 'Time In',
@@ -590,17 +554,37 @@ class _Bulkatt extends State<Bulkatt> {
                                       child: Text('Time In'), // icon is 48px widget.
                                     ),*/
                                     ),
+                                    onShowPicker: (context, currentValue) async {
+                                      final time = await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                      );
+                                      return DateTimeField.convert(time);
+                                    },
                                     onChanged: (t) => setState(() {
-                                      emplist[index].timein = t.hour.toString()+':'+t.minute.toString();
-
+                                      print('time');
+                                      print(t);
+                                      if(t!=null) {
+                                        emplist[index].timein =
+                                            t.hour.toString() + ':' +
+                                                t.minute.toString();
+                                      }else{
+                                       // emplist[index].timein = t.toString();
+                                      }
                                       if (emplist[index].csts != 1) {
                                         _saved.add(emplist[index]);
                                         emplist[index].csts = 1;
-
                                       }
-
                                     }
                                     ),
+                                   /* onSaved: (t) => setState(() {
+                                      emplist[index].timein = t.hour.toString()+':'+t.minute.toString();
+                                      if (emplist[index].csts != 1) {
+                                        _saved.add(emplist[index]);
+                                        emplist[index].csts = 1;
+                                      }
+                                    }
+                                    ),*/
                                     validator: (time) {
                                       if (time == null && emplist[index].csts==1) {
                                         return 'Please enter TimeIn';
@@ -641,14 +625,20 @@ class _Bulkatt extends State<Bulkatt> {
                         new Expanded(child: Container(
                           width: MediaQuery.of(context).size.width * 0.4,
                           child: Container(
-
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: TimePickerFormField(
+                            child: DateTimeField(
                               format: timeFormat,
-                              // initialValue: tout,
-                              enabled:_enabletimeout,
-
-
+                               //initialValue: tout,
+                              //enabled:_enabletimeout,
+                              readOnly: true,
+                              onShowPicker: (context, currentValue) async {
+                                final time = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                );
+                                return DateTimeField.convert(time);
+                              },
+                              //editable: false,
                               //controller: _to,
                               decoration: InputDecoration(
 
@@ -659,11 +649,17 @@ class _Bulkatt extends State<Bulkatt> {
                                     ),*/
                               ),
                               onChanged: (t) => setState(() {
-                                emplist[index].timeout = t.hour.toString()+':'+t.minute.toString();
+                print('timeout');
+                print(t);
+                if(t!=null) {
+                  emplist[index].timeout =
+                      t.hour.toString() + ':' + t.minute.toString();
+                }else{
+
+                }
                                 if (emplist[index].csts != 1) {
                                   _saved.add(emplist[index]);
                                   emplist[index].csts = 1;
-
                                 }
                               }),
                               validator: (time) {

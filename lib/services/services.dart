@@ -757,8 +757,9 @@ Future<String> updateDesg(desg, sts, did) async {
 Future<List<Emp>> getEmployee() async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
-//  print('getEmp called');
-  final response = await http.get(globals.path + 'getUsersMobile?refno=$orgid');
+  String empid = prefs.getString('empid')?? '0';
+    print('getEmp called');
+  final response = await http.get(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
 //  print(response.body);
 //  print('fun end here1');
   List responseJson = json.decode(response.body.toString());
@@ -991,9 +992,9 @@ Future<int> resetMyPassword(username) async {
 Future<List<Attn>> getTodaysAttn(listType) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
   final response = await http.get(globals.path +
-      'getAttendances_n'
-          'ew?refno=$orgdir&datafor=$listType');
+      'getAttendances_new?refno=$orgdir&datafor=$listType&empid=$empid');
   final res = json.decode(response.body);
   // print(res);
   List responseJson;
@@ -1188,8 +1189,10 @@ class SyncNotification {
 Future<List<Attn>> getCDateAttn(listType, date) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
+  print(globals.path + 'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
   final response = await http.get(globals.path +
-      'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType');
+      'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
   final res = json.decode(response.body);
   // print(res);
   List responseJson;
@@ -1573,8 +1576,9 @@ List<EmpListTimeOff> createTimeOFfDataList(List data) {
     String from = data[i]["TimeFrom"];
     String name = data[i]["name"];
     String date = data[i]["tod"];
+    String ApprovalSts = data[i]["ApprovalSts"];
     EmpListTimeOff row = new EmpListTimeOff(
-        diff: diff, to: to, from: from, name: name, date: date);
+        diff: diff, to: to, from: from, name: name, date: date,ApprovalSts:ApprovalSts);
     list.add(row);
   }
   return list;
@@ -1586,8 +1590,9 @@ class EmpListTimeOff {
   String from;
   String name;
   String date;
+  String ApprovalSts;
 
-  EmpListTimeOff({this.diff, this.to, this.from, this.name, this.date});
+  EmpListTimeOff({this.diff, this.to, this.from, this.name, this.date,this.ApprovalSts});
 }
 //********************************************************************************************//
 // ////////////////////////////////////////////////////////////////
@@ -1701,6 +1706,7 @@ class grpattemp {
 Future<List<grpattemp>> getDeptEmp(value) async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid')?? '0';
   print(value);
 
   String formattedDate;
@@ -1722,9 +1728,9 @@ Future<List<grpattemp>> getDeptEmp(value) async {
   }
   //print(globals.path + 'getDeptEmp?orgid=$orgid&dept=13');
   final response =
-      await http.get(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
+      await http.get(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value&empid=$empid');
 
-  print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value');
+  print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value&empid=$empid');
   List responseJson = json.decode(response.body.toString());
   print("))))))))))");
   // print(responseJson);
@@ -2344,6 +2350,8 @@ Future<List<OutsideAttendance>> getOutsidegeoReport(date, emp) async {
   print('getSummaryPunch called--1');
   print('getSummaryPunch called--2');
   return userList;
+
+
 }
 
 
@@ -2393,3 +2401,71 @@ List<OutsideAttendance> createListOutsidefance(List data) {
   }
   return list;
 }
+
+/************************************************************************
+****************************Start Holiday functions*********************
+************************************************************************/
+
+
+Future<List<Holiday>> getHolidays() async {
+  print('holidays called');
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+  print(globals.path + 'getAllHoliday?orgid=$orgid');
+  final response = await http.get(globals.path + 'getAllHoliday?orgid=$orgid');
+  List responseJson = json.decode(response.body.toString());
+  print(responseJson);
+  List<Holiday> holidayList = createHolidayList(responseJson);
+//  print(shiftList);
+  return holidayList;
+}
+
+List<Holiday> createHolidayList(List data) {
+  List<Holiday> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String name = data[i]["Name"];
+    String from = Formatdate(data[i]["fromDate"]);
+    String to = Formatdate(data[i]["DateTo"]);
+    String days = data[i]["DiffDate"];
+    Holiday holiday = new Holiday(
+        Name: name,
+        From: from,
+        To: to,
+        Days: days
+    );
+    list.add(holiday);
+  }
+  return list;
+}
+
+
+
+class Holiday {
+  //String Id;
+  String Name;
+  String From;
+  String To;
+  String Days;
+
+  Holiday(
+      {this.Name, this.From, this.To, this.Days});
+}
+
+
+Future<int> createHoliday(name, from, to, description) async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+  print(globals.path +
+      'addHoliday?name=$name&org_id=$orgdir&from=$from&to=$to&description=$description&empid=$empid');
+  final response = await http.get(globals.path +
+      'addHoliday?name=$name&org_id=$orgdir&from=$from&to=$to&description=$description&empid=$empid');
+  int res = int.parse(response.body);
+  print(response.body);
+  return res;
+}
+
+
+/************************************************************************
+ ****************************End Holiday functions*********************
+ ************************************************************************/

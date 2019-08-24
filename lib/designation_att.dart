@@ -63,10 +63,19 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
             child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
           ),
           Container(
-            child: DateTimePickerFormField(
-              dateOnly: true,
+            child: DateTimeField(
+             // dateOnly: true,
               format: formatter,
               controller: today,
+              onShowPicker: (context, currentValue) {
+                return showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime(2100));
+
+              },
+              readOnly: true,
               decoration: InputDecoration(
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(0.0),

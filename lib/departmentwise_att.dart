@@ -11,6 +11,7 @@ import 'drawer.dart';
 import 'department_att.dart';
 import 'generatepdf.dart';
 import 'package:simple_share/simple_share.dart';
+import 'Bottomnavigationbar.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class Departmentwise_att extends StatefulWidget {
@@ -94,10 +95,19 @@ class _Departmentwise_att extends State<Departmentwise_att>
                 ),
               ),
               Container(
-                child: DateTimePickerFormField(
-                  dateOnly: true,
+                child: DateTimeField(
+                  //dateOnly: true,
                   format: formatter,
                   controller: today,
+                  onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+
+                },
+                  readOnly: true,
                   decoration: InputDecoration(
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(0.0),

@@ -14,6 +14,7 @@ import 'package:Shrine/services/newservices.dart';
 import 'home.dart';
 import 'settings.dart';
 import 'reports.dart';
+import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -229,75 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.pop(context);}),
             backgroundColor: Colors.teal,
           ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          if(newIndex==1){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }else if (newIndex == 0) {
-            (admin_sts == '1')
-                ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-          /*else if(newIndex == 3){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Notifications()),
-            );
-
-          }*/
-          setState((){_currentIndex = newIndex;});
-
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.library_books,
-            ),
-            title: new Text('Reports'),
-          )
-              : BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.person,color: Colors.black54,
-            ),
-            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings,color: Colors.black54,),
-              title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          ),
-          /*BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications
-                ,color: Colors.black54,
-              ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-        ],
-      ),
+      bottomNavigationBar: Bottomnavigationbar(),
 
           endDrawer: new AppDrawer(),
           body: (act1=='') ? Center(child : loader()) : checkalreadylogin(),
@@ -495,6 +428,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             controller: _phone,
                             keyboardType: TextInputType.phone,
+                         validator: (date) {
+                           if (_phone.text==null||_phone.text.trim()==''){
+                             return 'Please enter Phone Number';
+                           }
+                         },
                           ),
                       ButtonBar(
                         children: <Widget>[
@@ -514,10 +452,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () {
                               if(_isButtonDisabled)
                                 return null;
+                              if(_phone.text.trim()==''){
+                                showInSnackBar('Please enter Phone no.');
+                                return null;
+                              }
+
                               setState(() {
                                 _isButtonDisabled=true;
                               });
-                              updateProfile(_phone.text,'');
+                              updateProfile(_phone.text.trim(),'');
                             },
                           ),
                         ],

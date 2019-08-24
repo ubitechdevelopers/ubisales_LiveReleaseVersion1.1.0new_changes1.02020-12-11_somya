@@ -10,7 +10,6 @@ import 'package:Shrine/services/gethome.dart';
 import 'drawer.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/model/model.dart' as TimeOffModal;
 import 'package:Shrine/services/newservices.dart';
 import 'timeoff_summary.dart';
@@ -19,6 +18,7 @@ import 'home.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'package:Shrine/services/services.dart';
+import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -58,13 +58,13 @@ class _TimeOffPageState extends State<TimeOffPage> {
   String fname="", lname="", empid="", email="", status="", orgid="", orgdir="", sstatus="", org_name="", desination="", profile,latit="",longi="";
   String aid="";
   String shiftId="";
+  DateTime caldate = DateTime.now();
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
     appResumedFromBackground(context);
     initPlatformState();
-
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
@@ -99,13 +99,6 @@ class _TimeOffPageState extends State<TimeOffPage> {
         profileimage = new NetworkImage(profile);
         print("1-"+profile);
         _checkLoaded = false;
-        /*profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
-          if (mounted) {
-            setState(() {
-              _checkLoaded = false;
-            });
-          }
-        });*/
         print("2-"+_checkLoaded.toString());
         latit = prefs.getString('latit') ?? '';
         longi = prefs.getString('longi') ?? '';
@@ -158,75 +151,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
         },),
         backgroundColor: Colors.teal,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          if(newIndex==1){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }else if (newIndex == 0) {
-            (admin_sts == '1')
-                ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-          /*else if(newIndex == 3){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Notifications()),
-            );
-
-          }*/
-          setState((){_currentIndex = newIndex;});
-
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.library_books,
-            ),
-            title: new Text('Reports'),
-          )
-              : BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.person,color: Colors.black54,
-            ),
-            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings,color: Colors.black54,),
-              title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          ),
-          /*BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications
-                ,color: Colors.black54,
-              ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-        ],
-      ),
+      bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
       body: (act1=='') ? Center(child : loader()) : checkalreadylogin(),
     ),
@@ -290,12 +215,21 @@ class _TimeOffPageState extends State<TimeOffPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: 20.0),
-                  DateTimePickerFormField(
-                    firstDate: new DateTime.now(),
-                    initialDate: new DateTime.now(),
-                    dateOnly: true,
+                  DateTimeField(
+                    //firstDate: new DateTime.now(),
+                    //initialDate: new DateTime.now(),
+                    //dateOnly: true,
                     format: dateFormat,
                     controller: _dateController,
+                    onShowPicker: (context, currentValue) {
+                      return showDatePicker(
+                          context: context,
+                          firstDate: DateTime.now().subtract(Duration(days: 1)),
+                          initialDate: currentValue ?? DateTime.now(),
+                          lastDate: DateTime(2100));
+
+                    },
+                    readOnly: true,
                     decoration: InputDecoration(
                       prefixIcon: Padding(
                         padding: EdgeInsets.all(0.0),
@@ -316,10 +250,18 @@ class _TimeOffPageState extends State<TimeOffPage> {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        child:TimePickerFormField(
-                          initialTime: new TimeOfDay.now(),
+                        child:DateTimeField(
+                          //initialTime: new TimeOfDay.now(),
                           format: timeFormat,
                           controller: _starttimeController,
+                            onShowPicker: (context, currentValue) async {
+                              final time = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                              );
+                              return DateTimeField.convert(time);
+                            },
+                            readOnly: true,
                           decoration: InputDecoration(
                             labelText: 'From',
                             prefixIcon: Padding(
@@ -337,7 +279,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
                           },
                             onChanged: (dt) {
                               setState(() {
-                                starttime = dt;
+                                starttime = TimeOfDay.fromDateTime(dt);
                               });
                               print("----->Changed Time------> "+starttime.toString());
                             }
@@ -345,10 +287,18 @@ class _TimeOffPageState extends State<TimeOffPage> {
                       ),
                       SizedBox(width: 10.0),
                       Expanded(
-                        child:TimePickerFormField(
-                          initialTime: new TimeOfDay.now(),
+                        child:DateTimeField(
+                          //initialTime: new TimeOfDay.now(),
                           format: timeFormat,
                           controller: _endtimeController,
+                          onShowPicker: (context, currentValue) async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                            );
+                            return DateTimeField.convert(time);
+                          },
+                          readOnly: true,
                           decoration: InputDecoration(
                             labelText: 'To',
                             prefixIcon: Padding(
@@ -361,7 +311,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
                           ),
                           onChanged: (dt) {
                             setState(() {
-                              endtime = dt;
+                              endtime = TimeOfDay.fromDateTime(dt);
                             });
 
                             print("------> End Time"+_endtimeController.text);
@@ -399,7 +349,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
                         )
                     ),
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value.trim().isEmpty) {
                         return 'Please enter reason';
                       }
                     },

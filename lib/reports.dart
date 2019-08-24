@@ -23,7 +23,7 @@ import 'package:Shrine/services/services.dart';
 import 'flexi_report.dart';
 import 'notifications.dart';
 import 'Outsidegeofance.dart';
-
+import 'Bottomnavigationbar.dart';
 
 class Reports extends StatefulWidget {
   @override
@@ -85,76 +85,7 @@ class _Reports extends State<Reports> {
         backgroundColor: Colors.teal,
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          if(newIndex==1){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-            return;
-          }else if (newIndex == 0) {
-            (admin_sts == '1')
-                ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Reports()),
-            )
-                : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
-            );
-            return;
-          }
-          if(newIndex==2){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-            return;
-          }
-          /*else if(newIndex == 3){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Notifications()),
-            );
-
-          }*/
-          setState((){_currentIndex = newIndex;});
-
-        }, // this will be set when a new tab is tapped
-        items: [
-          (admin_sts == '1')
-              ? BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.library_books,
-            ),
-            title: new Text('Reports'),
-          )
-              : BottomNavigationBarItem(
-            icon: new Icon(
-              Icons.person,color: Colors.black54,
-            ),
-            title: new Text('Profile',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home,color: Colors.black54,),
-            title: new Text('Home',style: TextStyle(color: Colors.black54)),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings,color: Colors.black54,),
-              title: Text('Settings',style: TextStyle(color: Colors.black54),)
-          ),
-          /*BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications
-                ,color: Colors.black54,
-              ),
-              title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-        ],
-      ),
-
+      bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
       body:
       Container(
@@ -235,7 +166,8 @@ class _Reports extends State<Reports> {
       ListView(
           padding: EdgeInsets.only(left: 5.0,right: 5.0),
           children: <Widget>[
-            new RaisedButton(
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -271,9 +203,10 @@ class _Reports extends State<Reports> {
                   MaterialPageRoute(builder: (context) => TodayAttendance()),
                 );
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -313,9 +246,10 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -355,9 +289,9 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -397,9 +331,9 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -439,10 +373,10 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
+            ):Center(),
 
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -482,11 +416,11 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
+            ):Center(),
 
 
-            flexi_permission ==1 ? SizedBox(height: 6.0):Center(),
-            flexi_permission ==1 ? new RaisedButton(
+            (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 6.0):Center(),
+            (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -528,8 +462,8 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            flexi_permission ==1 ? SizedBox(height: 6.0):Center(),
-            flexi_permission ==1 ? new RaisedButton(
+            (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 6.0):Center(),
+            (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -572,8 +506,8 @@ class _Reports extends State<Reports> {
             ):Center(),
 
 
-            visitpunch==1?SizedBox(height: 6.0):Center(),
-            visitpunch==1?
+      (visitpunch==1 && admin_sts=='1')?SizedBox(height: 6.0):Center(),
+            (visitpunch==1 && admin_sts=='1')?
             new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
@@ -615,9 +549,9 @@ class _Reports extends State<Reports> {
                 }
               },
             ):Center(),
-            timeOff==1?SizedBox(height: 6.0):Center(),
-            timeOff==1?
-            new RaisedButton(
+
+            (timeOff==1 && admin_sts=='1')?SizedBox(height: 6.0):Center(),
+            (timeOff==1 && admin_sts=='1')? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -658,8 +592,9 @@ class _Reports extends State<Reports> {
                 }
               },
             ):Center(),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+
+            (admin_sts =='1' ||  admin_sts =='2') ? SizedBox(height: 6.0):Center(),
+            (admin_sts =='1'||  admin_sts =='2') ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -700,9 +635,10 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+
+            admin_sts =='1'  ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -738,9 +674,9 @@ class _Reports extends State<Reports> {
                   MaterialPageRoute(builder: (context) => YesAttendance()),
                 );
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -780,9 +716,10 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-            SizedBox(height: 6.0),
-            new RaisedButton(
+            ):Center(),
+
+            admin_sts =='1' ? SizedBox(height: 6.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
                 child: Row(
@@ -822,10 +759,7 @@ class _Reports extends State<Reports> {
                   );
                 }
               },
-            ),
-
-
-
+            ):Center(),
 
           ]),
     );
