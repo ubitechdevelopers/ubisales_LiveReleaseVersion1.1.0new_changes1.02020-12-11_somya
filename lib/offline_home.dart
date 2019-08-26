@@ -107,7 +107,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         if(call.arguments["internet"].toString()=="Internet Available")
         {
           internetAvailable=false;
@@ -1062,7 +1065,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 Latitude,
                 Longitude,
                 Time,
-                FakeLocationStatus
+                FakeLocationStatus,
+                timeSpoofed?1:0
             );
             attendanceOffline.save();
             timeInPressedTime=null;
@@ -1134,7 +1138,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             Latitude,
             Longitude,
             Time,
-            FakeLocationStatus
+            FakeLocationStatus,
+            timeSpoofed?1:0
         );
         attendanceOffline.save();
 

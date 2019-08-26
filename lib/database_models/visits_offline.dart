@@ -28,8 +28,8 @@ class VisitsOffline{
   String VisitOutImage;
   int FakeLocationStatusVisitIn;
   int FakeLocationStatusVisitOut;
-
-
+  int FakeVisitInTimeStatus;
+int FakeVisitOutTimeStatus;
  VisitsOffline(
   this.Id,
 
@@ -52,7 +52,9 @@ class VisitsOffline{
   this.VisitInImage,
   this.VisitOutImage,
   this.FakeLocationStatusVisitIn,
-  this.FakeLocationStatusVisitOut
+  this.FakeLocationStatusVisitOut,
+  this.FakeVisitInTimeStatus,
+     this.FakeVisitOutTimeStatus
      );
 
 
@@ -82,8 +84,9 @@ class VisitsOffline{
       'VisitInImage':VisitInImage,
       'VisitOutImage':VisitOutImage,
       'FakeLocationStatusVisitIn':FakeLocationStatusVisitIn,
-      'FakeLocationStatusVisitOut':FakeLocationStatusVisitOut
-
+      'FakeLocationStatusVisitOut':FakeLocationStatusVisitOut,
+      'FakeVisitInTimeStatus':FakeVisitInTimeStatus,
+      'FakeVisitOutTimeStatus':FakeVisitOutTimeStatus
     };
     return map;
   }
@@ -111,6 +114,8 @@ class VisitsOffline{
     VisitOutImage=map["VisitOutImage"];
     FakeLocationStatusVisitIn=map["FakeLocationStatusVisitIn"];
     FakeLocationStatusVisitOut=map["FakeLocationStatusVisitOut"];
+    FakeVisitInTimeStatus=map['FakeVisitInTimeStatus'];
+    FakeVisitOutTimeStatus=map['FakeVisitOutTimeStatus'];
   }
 
 
@@ -129,8 +134,9 @@ class VisitsOffline{
     UPDATE VisitsOffline 
     SET 
     VisitOutTime = VisitInTime, 
-    Skipped = 1 ,
-    VisitOutDescription='Visit out not punched'
+    Skipped = 1,
+    VisitOutDescription='Visit out not punched',
+    FakeVisitOutTimeStatus=0
     
     WHERE EmployeeId = ? and VisitOutTime='00:00:00'
     """,
@@ -141,7 +147,7 @@ class VisitsOffline{
     return id ;
 
   }
-  Future<VisitsOffline> saveVisitOut(int idToUpdate,String visitOutLatitude,String visitOutLongitude,String visitOutTime,String visitOutDate,String visitOutDescription,String visitOutImage,int FakeLocationStatus) async{
+  Future<VisitsOffline> saveVisitOut(int idToUpdate,String visitOutLatitude,String visitOutLongitude,String visitOutTime,String visitOutDate,String visitOutDescription,String visitOutImage,int FakeLocationStatus,int FakeVisitOutTimeStatus) async{
     DbHelper dbHelper=new DbHelper();
     var dbClient = await dbHelper.db;
     dbClient.rawUpdate('''
@@ -154,11 +160,12 @@ class VisitsOffline{
     VisitOutDescription = ?, 
     VisitOutImage = ?, 
     FakeLocationStatusVisitOut = ?, 
+    FakeVisitOutTimeStatus = ?,
     Skipped = ? 
     
     WHERE Id = ?
     ''',
-        [visitOutLatitude, visitOutLongitude, visitOutTime,visitOutDate,visitOutDescription,visitOutImage,FakeLocationStatus,0,idToUpdate]);
+        [visitOutLatitude, visitOutLongitude, visitOutTime,visitOutDate,visitOutDescription,visitOutImage,FakeLocationStatus,FakeVisitOutTimeStatus,0,idToUpdate]);
     print("---------------------Visit Out Saved------------------------ ");
     return this;
 

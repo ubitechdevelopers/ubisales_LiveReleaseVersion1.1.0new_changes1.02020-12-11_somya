@@ -99,6 +99,7 @@ class _TimeOff_New extends State<TimeOff_New> {
 
   }
   Future<dynamic> _handleMethod(MethodCall call) async {
+    /*
     switch(call.method) {
       case "message":
         if(call.arguments=="Location is mocked"){
@@ -110,7 +111,7 @@ class _TimeOff_New extends State<TimeOff_New> {
 
         debugPrint(call.arguments);
         return new Future.value("");
-    }
+    }*/
   }
 
   @override

@@ -42,3 +42,4 @@ var timeWhenButtonPressed;
 const cameraChannel = const MethodChannel('update.camera.status');
 bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
+bool timeSpoofed=false;

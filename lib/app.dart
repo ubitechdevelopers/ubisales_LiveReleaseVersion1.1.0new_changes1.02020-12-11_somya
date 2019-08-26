@@ -72,7 +72,10 @@ class _ShrineAppState extends State<ShrineApp> {
 
         globalstreamlocationaddr=address;
 
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
 
 
         break;

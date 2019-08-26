@@ -17,6 +17,7 @@ class AttendanceOffline{
   String Longitude;
   String Time;
   int FakeLocationStatus;
+  int FakeTimeStatus;
 
 
 
@@ -30,7 +31,8 @@ class AttendanceOffline{
   this.Latitude,
   this.Longitude,
   this.Time,
-  this.FakeLocationStatus
+  this.FakeLocationStatus,
+      this.FakeTimeStatus
   );
 
 
@@ -48,7 +50,8 @@ class AttendanceOffline{
       'Latitude':Latitude,
       'Longitude':Longitude,
       'Time':Time,
-      'FakeLocationStatus':FakeLocationStatus
+      'FakeLocationStatus':FakeLocationStatus,
+      'FakeTimeStatus':FakeTimeStatus
 
     };
     return map;
@@ -66,6 +69,7 @@ class AttendanceOffline{
     Longitude=map['Longitude'];
     Time=map['Time'];
     FakeLocationStatus=map['FakeLocationStatus'];
+    FakeTimeStatus=map['FakeTimeStatus'];
   }
 
 
@@ -104,6 +108,7 @@ class AttendanceOffline{
         'Latitude',
         'Longitude',
         'Time',
+        'FakeTimeStatus',
         'FakeLocationStatus'
 
       ],orderBy: "Id desc");
@@ -132,6 +137,7 @@ class AttendanceOffline{
       'Latitude',
       'Longitude',
       'Time',
+      'FakeTimeStatus',
       'FakeLocationStatus'
 
     ],orderBy: "Id desc");
@@ -154,6 +160,7 @@ class AttendanceOffline{
       'Latitude',
       'Longitude',
       'Time',
+      'FakeTimeStatus',
       'FakeLocationStatus'
 
     ],where: "Id=?",whereArgs: [Id]);
@@ -183,6 +190,7 @@ class AttendanceOffline{
       'Latitude',
       'Longitude',
       'Time',
+      'FakeTimeStatus',
       'FakeLocationStatus'
 
     ],where: "UserId=? and Date=? and Action=0",whereArgs: [Id,today]);
@@ -199,6 +207,7 @@ class AttendanceOffline{
         'Latitude',
         'Longitude',
         'Time',
+        'FakeTimeStatus',
         'FakeLocationStatus'
 
       ],where: "UserId=? and Date=? and Action=1",whereArgs: [Id,today]);
@@ -221,6 +230,7 @@ class AttendanceOffline{
         'Latitude',
         'Longitude',
         'Time',
+        'FakeTimeStatus',
         'FakeLocationStatus'
 
       ],where: "UserId=? and Date=? and Action=1",whereArgs: [Id,today]);

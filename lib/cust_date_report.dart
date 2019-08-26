@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/services.dart';
+import 'globals.dart';
 import 'offline_home.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,7 +57,10 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
 

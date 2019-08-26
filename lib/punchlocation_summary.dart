@@ -70,7 +70,10 @@ String address="";
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
 
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);

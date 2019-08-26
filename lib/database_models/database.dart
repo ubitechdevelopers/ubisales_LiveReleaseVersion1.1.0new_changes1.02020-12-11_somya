@@ -26,7 +26,7 @@ class DbHelper{
     String path =
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
-    var db = await openDatabase(path, version: 22, onCreate: _onCreate,onUpgrade: _onUpgrade);
+    var db = await openDatabase(path, version: 23, onCreate: _onCreate,onUpgrade: _onUpgrade);
     return db;
     //}
   }
@@ -63,6 +63,7 @@ class DbHelper{
         'Latitude TEXT,'
         'Longitude TEXT,'
         'Time TEXT,'
+        'FakeTimeStatus INTEGER,'
         'FakeLocationStatus INTEGER'
         ")");
     await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
@@ -86,7 +87,10 @@ class DbHelper{
         'VisitInImage TEXT,'
         'VisitOutImage TEXT,'
         'FakeLocationStatusVisitIn INTEGER,'
+        'FakeVisitInTimeStatus INTEGER,'
+        'FakeVisitOutTimeStatus INTEGER,'
         'FakeLocationStatusVisitOut INTEGER'
+
         ")");
 
 
@@ -133,6 +137,7 @@ await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
           'Latitude TEXT,'
           'Longitude TEXT,'
           'Time TEXT,'
+          'FakeTimeStatus INTEGER,'
           'FakeLocationStatus INTEGER'
           ")");
 await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
@@ -156,6 +161,8 @@ await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
     'VisitInImage TEXT,'
     'VisitOutImage TEXT,'
     'FakeLocationStatusVisitIn INTEGER,'
+    'FakeVisitInTimeStatus INTEGER,'
+    'FakeVisitOutTimeStatus INTEGER,'
     'FakeLocationStatusVisitOut INTEGER'
     ")");
 

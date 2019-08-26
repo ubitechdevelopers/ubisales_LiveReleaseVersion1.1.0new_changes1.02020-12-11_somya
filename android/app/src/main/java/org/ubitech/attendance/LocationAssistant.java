@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 
 import android.net.Uri;
@@ -201,6 +202,8 @@ public class LocationAssistant
     private boolean cameraStatus=false;
     private boolean forceStart=false;
     private Context ctx;
+    private long previousTime=0,currentTime=0;
+    boolean timeSpoofed=false;
     /**
      * Constructs a LocationAssistant instance that will listen for valid location updates.
      *
@@ -288,6 +291,7 @@ public class LocationAssistant
                 locationStatusOk = false;
                 updatesRequested = false;
                 assistantStarted=false;
+                timeSpoofed=false;
 
             }
 
@@ -297,6 +301,7 @@ public class LocationAssistant
                googleApiClient.connect();
                assistantStarted=true;
                forceStart=false;
+
            }catch (Exception e){
                Log.i("shashank","error connecting to client");
            }
@@ -846,6 +851,20 @@ try {
 
 
         // Add keys and values (Country, City)
+        Log.i("TimeFromLocation",bestLocation.getTime()+"");
+        if (String.valueOf(bestLocation.getTime()) != null){
+            currentTime= TimeUnit.MILLISECONDS.toMinutes(bestLocation.getTime());
+            if(previousTime!=0&&!timeSpoofed){
+                if((currentTime-previousTime)>10||(currentTime-previousTime)<-10){
+                    timeSpoofed=true;
+                    Log.i("TimeSpoofed","detected");
+                }
+
+            }
+            previousTime=currentTime;
+
+        }
+
         if (String.valueOf(bestLocation.getLatitude()) != null)
             responseMap.put("latitude", String.valueOf(bestLocation.getLatitude()));
         if (String.valueOf(bestLocation.getLongitude()) != null)
@@ -860,6 +879,7 @@ try {
             ifMocked = "Yes";
         }
         responseMap.put("mocked", ifMocked);
+        responseMap.put("TimeSpoofed", timeSpoofed?"Yes":"No");
 
 
         methodChannel.invokeMethod("locationAndInternet", responseMap);

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'employee_list.dart';
+import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
 import 'settings.dart';
@@ -100,7 +101,10 @@ class _AddEmployee extends State<AddEmployee> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
           //internetAvailable=false;

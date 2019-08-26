@@ -82,7 +82,10 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         if(call.arguments["internet"].toString()=="Internet Available")
         {
           internetAvailable=false;
@@ -399,7 +402,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           if (fakeLocationDetected)
             FakeLocationStatus = 1;
           VisitsOffline visit = VisitsOffline.empty();
-          visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, PictureBase64, FakeLocationStatus);
+          visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, PictureBase64, FakeLocationStatus,timeSpoofed?1:0);
 
           print("---------------Visit in saved offline---------------");
           cameraChannel.invokeMethod("cameraClosed");
@@ -433,7 +436,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           if (fakeLocationDetected)
             FakeLocationStatus = 1;
           VisitsOffline visit = VisitsOffline.empty();
-          visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, defaultUserImage, FakeLocationStatus);
+          visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, defaultUserImage, FakeLocationStatus,timeSpoofed?1:0);
 
           print("---------------Visit in saved offline---------------");
          

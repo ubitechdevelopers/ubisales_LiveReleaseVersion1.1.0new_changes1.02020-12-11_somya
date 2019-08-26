@@ -121,7 +121,10 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
         if(call.arguments["internet"].toString()=="Internet Available")
         {
           internetAvailable=false;
@@ -756,7 +759,9 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
               PictureBase64,
               defaultUserImage,
               FakeLocationStatus,
-              0
+              0,
+            timeSpoofed?1:0,
+            0
           );
           int savedVisitId = await visitIn.save();
           prefs.setInt("savedVisitId", savedVisitId);
@@ -818,7 +823,9 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
               defaultUserImage,
               defaultUserImage,
               FakeLocationStatus,
-              0
+              0,
+              timeSpoofed?1:0,
+            0
           );
           int savedVisitId= await visitIn.save();
           prefs.setInt("savedVisitId",savedVisitId);

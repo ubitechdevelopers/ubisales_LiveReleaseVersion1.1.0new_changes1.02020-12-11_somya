@@ -58,7 +58,10 @@ class _LoginPageState extends State<LoginPage> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
 
         String long=call.arguments["longitude"].toString();
         String lat=call.arguments["latitude"].toString();
@@ -158,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                             print("******************** QR value **************************");
                             //return false;
                             if(onValue!='error') {
-                              checkLocationEnabled(context);
+
                               markAttByQR(onValue, context);
                             }else {
                               setState(() {

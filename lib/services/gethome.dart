@@ -166,10 +166,15 @@ class Home{
         Map location = await lock.fetchlatilongi();*/
         String lat="",long="";
         String streamlocationaddr = "";
-        if(globals.list!=null && globals.list.length>0) {
+        if(globals.assign_lat!=null ||globals.assign_lat!=0.0 ) {
           lat = globals.assign_lat.toString();
           long = globals.assign_long.toString();
           streamlocationaddr = globals.globalstreamlocationaddr;
+
+          print("--------------------------- Location detection for qr-----------------------------------");
+          print(lat+""+long);
+
+          print("--------------------------- Location detection for qr-----------------------------------");
           timeinoutMap.putIfAbsent('latit', ()=> lat );
           timeinoutMap.putIfAbsent('longi', ()=> long );
         }else{

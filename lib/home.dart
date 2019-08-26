@@ -120,6 +120,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
    platform.setMethodCallHandler(_handleMethod);
   }
 
+
+
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
 
@@ -164,6 +166,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           }
           else{
             fakeLocationDetected=false;
+          }
+          if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+            timeSpoofed=true;
+
           }
 
           long=call.arguments["longitude"].toString();
@@ -216,7 +222,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         'VisitOutAddress': VisitOutaddress,
 
         'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
-        'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut
+        'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut,
+      'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,
+      'FakeVisitOutTimeStatus': visits[i].FakeVisitOutTimeStatus
       });
 
       var jsonList1 = json.encode(jsonList);
@@ -230,12 +238,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           .then((responseAfterSavingOfflineData) async {
         var response = json.decode(responseAfterSavingOfflineData.toString());
 
-        print(
-            '--------------------- Data Syncing Response--------------------------------');
-        print(responseAfterSavingOfflineData);
+        print('--------------------- Visit Syncing Response--------------------------------');
+        LogPrint(responseAfterSavingOfflineData);
 
-        print(
-            '--------------------- Data Syncing Response--------------------------------');
+        print('--------------------- Visit Syncing Response--------------------------------');
         for (int i = 0; i < response.length; i++) {
           var map = response[i];
           map.forEach((localDbId, status) {
@@ -289,6 +295,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             "Longitude":attendances[i].Longitude,
             "Time":attendances[i].Time,
             "FakeLocationStatus":attendances[i].FakeLocationStatus,
+            "FakeTimeStatus":attendances[i].FakeTimeStatus,
             "Address":address
           });
         }

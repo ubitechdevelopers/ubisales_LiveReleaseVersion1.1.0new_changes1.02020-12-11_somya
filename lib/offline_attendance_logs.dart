@@ -97,7 +97,10 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+        if(call.arguments["TimeSpoofed"].toString()=="Yes"){
+          timeSpoofed=true;
 
+        }
 
         var long=call.arguments["longitude"].toString();
         var lat=call.arguments["latitude"].toString();
