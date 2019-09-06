@@ -159,7 +159,7 @@ class QROffline{
 
   Future<QROffline> getSingleQR(int Id) async{
     DbHelper dbHelper=new DbHelper();
-    var dbClient = await dbHelper.db;
+    var dbClient = await dbHelper.db;  
 
     List<Map> map= await dbClient.query('QROffline',columns: [
       'Id',
