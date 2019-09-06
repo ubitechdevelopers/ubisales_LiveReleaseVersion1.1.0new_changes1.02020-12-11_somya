@@ -11,6 +11,7 @@ import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/model/timeinout.dart';
 import 'attendance_summary.dart';
+import 'database_models/qr_offline.dart';
 import 'punchlocation.dart';
 import 'drawer.dart';
 import 'timeoff_summary.dart';
@@ -120,6 +121,82 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
    platform.setMethodCallHandler(_handleMethod);
   }
 
+  syncOfflineQRData() async{
+
+
+
+    int serverAvailable=await checkConnectionToServer ();
+    if(serverAvailable==1){
+      /*****************************For Attendances***********************************************/
+
+      QROffline qrOffline=new QROffline.empty();
+
+      List<QROffline> qrs= await qrOffline.select();
+
+      List<Map> jsonList=[];
+      if(qrs.isNotEmpty){
+        for(int i=0;i<qrs.length;i++){
+
+          var address= await getAddressFromLati(qrs[i].Latitude,qrs[i].Longitude);
+          print(address);
+          jsonList.add({
+            "Id":qrs[i].Id,
+            "SupervisorId":qrs[i].SupervisorId,
+            "Action":qrs[i].Action, // 0 for time in and 1 for time out
+            "Date":qrs[i].Date,
+            "OrganizationId":qrs[i].OrganizationId,
+            "PictureBase64":qrs[i].PictureBase64,
+            "Latitude":qrs[i].Latitude,
+            "Longitude":qrs[i].Longitude,
+            "Time":qrs[i].Time,
+            "UserName":qrs[i].UserName,
+            "Password":qrs[i].Password,
+            "FakeLocationStatus":qrs[i].FakeLocationStatus,
+            "FakeTimeStatus":qrs[i].FakeTimeStatus,
+            "Address":address
+          });
+        }
+        var jsonList1=json.encode(jsonList);
+        //LogPrint('response1: ' + jsonList1.toString());
+        //LogPrint(attendances);
+        FormData formData = new FormData.from({"data":jsonList1});
+
+        Dio dioForSavingOfflineAttendance=new Dio();
+        dioForSavingOfflineAttendance.post(path + "saveOfflineQRData", data: formData)
+            .then((responseAfterSavingOfflineData) async {
+          var response=json.decode(responseAfterSavingOfflineData.toString());
+
+          print('--------------------- Data Syncing Response--------------------------------');
+          print(responseAfterSavingOfflineData);
+
+          print('--------------------- Data Syncing Response--------------------------------');
+          for(int i=0;i<response.length;i++){
+            var map=response[i];
+            map.forEach((localDbId,status){
+              QROffline qrOffline=QROffline.empty();
+              print(status);
+              qrOffline.delete(int.parse(localDbId));
+
+
+            } );
+          }
+
+
+        });
+      }
+      else{
+        setState(() {
+          //  offlineDataSaved=true;
+        });
+      }
+
+    }
+
+
+    /*****************************For Attendances***********************************************/
+
+
+  }
 
 
   Future<dynamic> _handleMethod(MethodCall call) async {
@@ -133,11 +210,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         {
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-/*
+
           Navigator
               .of(context)
               .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-*/
+
         }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
@@ -264,6 +341,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     int serverAvailable=await checkConnectionToServer ();
     if(serverAvailable==1){
       /*****************************For Attendances***********************************************/
+      await syncOfflineQRData();
 
       AttendanceOffline attendanceOffline=new AttendanceOffline.empty();
       VisitsOffline visitsOffline=VisitsOffline.empty();
@@ -423,7 +501,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       }
     });*/
   }
-
+/*
   startTimer() {
     const fiveSec = const Duration(seconds: 2);
     int count = 0;
@@ -489,7 +567,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       });
     }
   }
-
+*/
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
     if (await canLaunch(url)) {
@@ -1407,6 +1485,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus=0;
+
     if(fakeLocationDetected){
       FakeLocationStatus=1;
     }
@@ -1515,7 +1594,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       });
     }*/
   }
-
+/*
   saveImage_old() async {
    // sl.startStreaming(5);
 var FakeLocationStatus=0;
@@ -1610,7 +1689,7 @@ var FakeLocationStatus=0;
       });
     }*/
   }
-
+*/
 /*  saveImage() async {
 
       Navigator.push(
@@ -1684,14 +1763,16 @@ var FakeLocationStatus=0;
                 ]))));
   }
   //////////////////////////////////////////////////////////////////
+
+
   Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
     String base64Image;
     String base64Image1;
     print('saveTimeInOutImagePicker_new CALLED');
     String location = globalstreamlocationaddr;
-    LocationData _currentLocation = globals.list[list.length - 1];
-    String lat = _currentLocation.latitude.toString();
-    String long = _currentLocation.longitude.toString();
+
+    String lat = assign_lat.toString();
+    String long = assign_long.toString();
     try {
       ///////////////////////////
       StreamLocation sl = new StreamLocation();

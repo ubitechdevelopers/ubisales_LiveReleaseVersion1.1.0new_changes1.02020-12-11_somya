@@ -119,6 +119,7 @@ class _TimeOff_New extends State<TimeOff_New> {
     super.dispose();
     timer.cancel();
   }
+  /*
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
@@ -162,7 +163,7 @@ class _TimeOff_New extends State<TimeOff_New> {
       //print(stopstreamingstatus.toString());
     });
   }
-
+*/
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
     if (await canLaunch(url)) {

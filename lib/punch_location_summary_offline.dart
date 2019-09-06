@@ -140,6 +140,8 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
       visits=VisitsOffline.empty();
     });
   }
+
+  /*
   setLocationAddress() async {
     //print('called');
     if (mounted) {
@@ -179,7 +181,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
         //print("timer canceled");
       }
     });
-  }
+  }*/
   // This widget is the root of your application.
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -302,9 +304,9 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
   _showDialog(visit_id) async {
    // sl.startStreaming(2);
     setState(() {
-      if(list!=null && list.length>0) {
-        latit = list[list.length - 1].latitude.toString();
-        longi = list[list.length - 1].longitude.toString();
+      if(assign_lat!=null ) {
+        latit = assign_lat.toString();
+        longi = assign_long.toString();
         location_addr1 = globalstreamlocationaddr;
       }else{
         latit = "0.0";
@@ -376,18 +378,14 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           List<int> imageBytes = await img.readAsBytes();
           PictureBase64 = base64.encode(imageBytes);
           //sl.startStreaming(5);
-          if (list != null && list.length > 0) {
-            lat = list[list.length - 1].latitude.toString();
-            long = list[list.length - 1].longitude.toString();
-            if (streamlocationaddr == '') {
-              streamlocationaddr = lat + ", " + long;
+          if (assign_long != null ) {
+            lat = assign_lat.toString();
+            long = assign_long.toString();
+            if (globalstreamlocationaddr == '') {
+              globalstreamlocationaddr = lat + ", " + long;
             }
           }
-          if (streamlocationaddr == '' && varCheckNet == 0) {
-            print('again');
-          //  sl.startStreaming(5);
-          //  startTimer();
-          }
+
           print("--------------------Image---------------------------");
           print(PictureBase64);
 

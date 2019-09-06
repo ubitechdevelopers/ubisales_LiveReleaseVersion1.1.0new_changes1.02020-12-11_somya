@@ -159,10 +159,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                   text: 'Absent', //\n ('+countA+')
                 ),
                 new Tab(
-                  text: 'Late ', //\n ('+countL+')
+                  text: 'Late\nComers', //\n ('+countL+')
                 ),
                 new Tab(
-                  text: 'Early ', //\n ('+countE+')
+                  text: 'Early\nLeavers', //\n ('+countE+')
                 ),
               ],
             ),

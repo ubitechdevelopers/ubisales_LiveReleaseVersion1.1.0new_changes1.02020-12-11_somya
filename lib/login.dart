@@ -12,8 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // this is testing
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'globals.dart';
 import 'home.dart';
@@ -26,6 +32,7 @@ import 'askregister.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/offline_home.dart';
+import 'package:Shrine/database_models/qr_offline.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -92,9 +99,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+
+
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
-
+   // syncOfflineQRData();
     var isAlreadyLoggedIn=prefs.getInt("response");
     var isConnected=await checkConnectionToServer ();
 
@@ -155,20 +164,29 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() {
                             loader = true;
                           });
-                          scan().then((onValue){
-                            print("******************** QR value **************************");
-                            print(onValue);
-                            print("******************** QR value **************************");
-                            //return false;
-                            if(onValue!='error') {
+                          /*var internetAvailable= checkConnectionToServer().then((connected){
 
-                              markAttByQR(onValue, context);
-                            }else {
-                              setState(() {
-                                loader = false;
-                              });
-                            }
-                          });
+                            if(connected==0){
+                                 markAttByQROffline(context);
+                               }
+                               else{
+                              */   scan().then((onValue){
+                                   print("******************** QR value **************************");
+                                   print(onValue);
+                                   print("******************** QR value **************************");
+                                   //return false;
+                                   if(onValue!='error') {
+
+                                     markAttByQR(onValue, context);
+                                   }else {
+                                     setState(() {
+                                       loader = false;
+                                     });
+                                   }
+                                 });
+                           /*    }
+                          });*/
+
                         },
                         child:  Image.asset(
                           'assets/qr.png', height: 45.0, width: 45.0,
@@ -295,6 +313,246 @@ class _LoginPageState extends State<LoginPage> {
 
   }
 
+  markAttByQROffline(BuildContext context){
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+
+            content: Container(
+                height: MediaQuery.of(context).size.height * 0.18,
+                child: Column(children: <Widget>[
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                          "")),
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ButtonBar(
+                          children: <Widget>[
+                            FlatButton(
+                              child: Text('Time In' ,style: TextStyle(color: Colors.green),),
+                              shape: Border.all(color: Colors.green),
+                              onPressed: () {
+                                timeInPressedTime=DateTime.now();
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                saveOfflineQr(0);
+
+                              },
+                            ),
+                            new RaisedButton(
+                              child: new Text(
+                                "Time Out",
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              color: Colors.redAccent,
+                              onPressed: () {
+                                timeOutPressedTime=DateTime.now();
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                                saveOfflineQr(1);
+                              },
+                            ),
+                          ],
+                        ),
+                      ])
+                ]))));
+  }
+
+  saveOfflineQr(int action) async{
+    final prefs = await SharedPreferences.getInstance();
+    int UserId = int.parse(prefs.getString("empid")??"0") ?? 0;
+    int Action = action; // 0 for time in and 1 for time out
+    String Date;
+    int OrganizationId = int.parse(prefs.getString("orgid")??"0") ?? 0;
+    String PictureBase64;
+    int IsSynced;
+    String Latitude;
+    String Longitude;
+    String Time;
+    String actionString=(action==0)?"Time In":"Time Out";
+    File img = null;
+    imageCache.clear();
+    scan().then((onValue){
+      print("******************** QR value **************************");
+      print(onValue);
+      print("******************** QR value **************************");
+      //return false;
+      if(onValue!='error') {
+        List splitstring = onValue.split("ykks==");
+        var UserName=splitstring[0];
+        var Password=splitstring[1];
+
+        var imageRequired = prefs.getInt("ImageRequired");
+        if (imageRequired == 1) {
+
+          cameraChannel.invokeMethod("cameraOpened");
+          ImagePicker.pickImage(
+              source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+              .then((img) async {
+            if (img != null) {
+              List<int> imageBytes = await img.readAsBytes();
+              PictureBase64 = base64.encode(imageBytes);
+
+              print("--------------------Image---------------------------");
+              print(PictureBase64);
+
+              print("--------------------Image---------------------------");
+
+              var now;
+              if(action==0){
+                now=timeInPressedTime;
+              }
+              else{
+                now=timeOutPressedTime;
+              }
+              var formatter = new DateFormat('yyyy-MM-dd');
+
+              Date = formatter.format(now);
+              Time = DateFormat("H:mm:ss").format(now);
+
+
+              print("--------------------Date Time---------------------------");
+              print(Date + " " + Time);
+
+              print("--------------------Date Time---------------------------");
+
+              Latitude = await assign_lat.toString();
+              Longitude = await assign_long.toString();
+              var FakeLocationStatus=0;
+              if(fakeLocationDetected)
+                FakeLocationStatus=1;
+
+              // print(lat+"lalalal"+long+location_addr);
+
+              IsSynced = 0;
+
+
+              QROffline qrOffline = new QROffline(
+                  null,
+                  UserId,
+                  Action,
+                  Date,
+                  OrganizationId,
+                  PictureBase64,
+                  IsSynced,
+                  Latitude,
+                  Longitude,
+                  Time,
+                  UserName,
+                  Password,
+                  FakeLocationStatus,
+                  timeSpoofed?1:0
+              );
+              qrOffline.save();
+              timeInPressedTime=null;
+              timeOutPressedTime=null;
+              cameraChannel.invokeMethod("cameraClosed");
+              img.deleteSync();
+              imageCache.clear();
+
+              showDialog(context: context, child:
+              new AlertDialog(
+                content: new Text(
+                    actionString+" is marked. It will be synced when you are online"),
+              )
+              );
+              print("-----------------------Context-----------------------");
+              print(context);
+              Navigator
+                  .of(context)
+                  .push(
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+              Navigator.of(context, rootNavigator: true)
+                  .pop();
+            }
+            else {
+              setState(() {
+               // timeInClicked = false;
+               // timeOutClicked = false;
+              });
+            }
+          });
+        }
+        else {
+          var now;
+          if(action==0){
+            now=timeInPressedTime;
+          }
+          else{
+            now=timeOutPressedTime;
+          }
+          var formatter = new DateFormat('yyyy-MM-dd');
+
+          Date = formatter.format(now);
+          Time = DateFormat("H:mm:ss").format(now);
+
+
+          print("--------------------Date Time---------------------------");
+          print(Date + " " + Time);
+
+          print("--------------------Date Time---------------------------");
+
+          Latitude = assign_lat.toString();
+          Longitude = assign_long.toString();
+
+          // print(lat+"lalalal"+long+location_addr);
+
+          IsSynced = 0;
+          var FakeLocationStatus=0;
+          if(fakeLocationDetected)
+            FakeLocationStatus=1;
+
+
+          QROffline qrOffline = new QROffline(
+              null,
+              UserId,
+              Action,
+              Date,
+              OrganizationId,
+              '',
+              IsSynced,
+              Latitude,
+              Longitude,
+              Time,
+              UserName,
+              Password,
+              FakeLocationStatus,
+              timeSpoofed?1:0
+          );
+          qrOffline.save();
+
+          timeInPressedTime=null;
+          timeOutPressedTime=null;
+
+          showDialog(context: context, child:
+          new AlertDialog(
+            content: new Text(
+                "Attendance marked successfully and will be synced when you get connected!"),
+          )
+          );
+          print("-----------------------Context-----------------------");
+          print(context);
+          Navigator
+              .of(context)
+              .push(
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
+        }
+
+      }else {
+        setState(() {
+          loader = false;
+        });
+      }
+    });
+
+  }
   markAttByQR(var qr, BuildContext context) async{
     Login dologin = Login();
     setState(() {

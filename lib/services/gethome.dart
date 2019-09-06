@@ -50,8 +50,10 @@ class Home{
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
         globals.attImage=int.parse(timeinoutMap['attImage']);
         globals.areaId=int.parse(timeinoutMap['areaId']);
+
         print("Area Id :"+globals.areaId.toString()+" geofence :"+globals.geoFence.toString());
 
+        prefs.setString("nextWorkingDay", timeinoutMap['nextWorkingDay']);
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
         prefs.setInt("VisitImageRequired", int.parse(timeinoutMap['visitImage']));
@@ -72,6 +74,7 @@ class Home{
         prefs.setString('shiftId', timeinoutMap['shiftId']);
         prefs.setString('leavetypeid', timeinoutMap['leavetypeid']);
         prefs.setString('ShiftTimeOut', timeinoutMap['ShiftTimeOut']);
+        prefs.setString('ShiftTimeIn', timeinoutMap['ShiftTimeIn']);
 
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));

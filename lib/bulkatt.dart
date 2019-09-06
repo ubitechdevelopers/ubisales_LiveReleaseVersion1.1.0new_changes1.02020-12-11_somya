@@ -455,6 +455,8 @@ bool fakeLocationDetected=false;
                           });
                           //    print(_saved);
                           //  return false;
+
+                          print("---------------before add bulk att");
                           addBulkAtt(_saved)
                               .then((res) {
                             //showInSnackBar(res.toString());

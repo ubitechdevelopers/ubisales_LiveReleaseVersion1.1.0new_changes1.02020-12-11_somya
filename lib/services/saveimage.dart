@@ -98,6 +98,12 @@ class SaveImage {
 
     globals.cameraChannel.invokeMethod("startTimeOutNotificationWorker",{"ShiftTimeOut":ShiftTimeOut});
   }
+  startTimeInNotificationWorker() async{
+    final prefs = await SharedPreferences.getInstance();
+    String ShiftTimeIn=await prefs.getString("ShiftTimeIn")??"10:00:00";
+    String nextWorkingDay=await prefs.getString("nextWorkingDay");
+    globals.cameraChannel.invokeMethod("startTimeInNotificationWorker",{"ShiftTimeIn":ShiftTimeIn,"nextWorkingDay":nextWorkingDay});
+  }
 
 
   Future<bool> saveTimeInOutImagePicker(MarkTime mk) async {
@@ -106,6 +112,9 @@ class SaveImage {
 
     try{
       File imagei = null;
+      var isNextDayAWorkingDay=0;
+      var prefs=await SharedPreferences.getInstance();
+      isNextDayAWorkingDay=prefs.getInt("isNextDayAWorkingDay")??0;
 
       imageCache.clear();
       if (globals.attImage == 1) {
@@ -118,6 +127,11 @@ class SaveImage {
         //print("---------------actionb   ----->"+mk.act);
           if(mk.act=="TimeIn"&&globals.showTimeOutNotification){
             startTimeOutNotificationWorker();  
+          }
+          else{
+            if(globals.showTimeInNotification){
+              startTimeInNotificationWorker();
+            }
           }
           
           var currentTime=DateTime.now();
@@ -200,10 +214,9 @@ class SaveImage {
 
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-        LocationData _currentLocation = globals.list[globals.list
-            .length - 1];
-        String lat = _currentLocation.latitude.toString();
-        String long = _currentLocation.longitude.toString();
+
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
         print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
             mk.aid + "&act=" + mk.act + "&shiftid=" + mk.shiftid + "&refid=" +
             mk.refid + "&latit=" + lat + "&longi=" + long);

@@ -7,16 +7,18 @@ import 'package:location/location.dart';
 Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
+/*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services/";
+*/
 /*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
-/*
+
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
-*/
+
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
 
 MarkTime mk1;
@@ -42,4 +44,5 @@ var timeWhenButtonPressed;
 const cameraChannel = const MethodChannel('update.camera.status');
 bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
+bool showTimeInNotification=true;
 bool timeSpoofed=false;

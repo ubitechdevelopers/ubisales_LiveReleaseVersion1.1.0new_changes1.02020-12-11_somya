@@ -173,6 +173,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     super.dispose();
   //  timer.cancel();
   }
+  /*
   startTimer() {
     const fiveSec = const Duration(seconds: 2);
     int count = 0;
@@ -226,7 +227,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       });
     }
   }
-
+*/
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
     if (await canLaunch(url)) {

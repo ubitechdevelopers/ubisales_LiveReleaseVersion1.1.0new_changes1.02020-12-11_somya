@@ -74,6 +74,16 @@ String address="";
           timeSpoofed=true;
 
         }
+        if(call.arguments["internet"].toString()=="Internet Not Available")
+        {
+          internetAvailable=false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+
+          Navigator
+              .of(context)
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+
+        }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);
@@ -119,6 +129,7 @@ String address="";
       empid = prefs.getString('empid') ?? '';
     });
   }
+  /*
   setLocationAddress() async {
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
@@ -154,7 +165,7 @@ String address="";
         //print("timer canceled");
       }
     });
-  }
+  }*/
   // This widget is the root of your application.
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -217,9 +228,9 @@ String address="";
   _showDialog(visit_id) async {
    // sl.startStreaming(2);
     setState(() {
-      if(list!=null && list.length>0) {
-        latit = list[list.length - 1].latitude.toString();
-        longi = list[list.length - 1].longitude.toString();
+      if(assign_long!=null) {
+        latit = assign_lat.toString();
+        longi = assign_long.toString();
         location_addr1 = globalstreamlocationaddr;
       }else{
         latit = "0.0";

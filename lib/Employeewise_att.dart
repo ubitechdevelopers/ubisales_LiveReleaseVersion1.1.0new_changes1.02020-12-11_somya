@@ -84,10 +84,10 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                   text: 'Absent ', //('+countA+')
                 ),
                 new Tab(
-                  text: 'Late ', //('+countL+')
+                  text: 'Late\nComers', //('+countL+')
                 ),
                 new Tab(
-                  text: 'Early ', //('+countE+')
+                  text: 'Early\nLeavers', //('+countE+')
                 ),
               ],
             ),

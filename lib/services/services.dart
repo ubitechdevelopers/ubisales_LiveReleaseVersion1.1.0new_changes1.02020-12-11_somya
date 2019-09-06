@@ -1359,7 +1359,7 @@ Future<List<Attn>> getYesAttn(listType) async {
 Future<List<Attn>> getAttnDataLast(days, listType) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
-  // print(globals.path + 'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
+   print(globals.path + 'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
   final response = await http.get(globals.path +
       'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
   final res = json.decode(response.body);
@@ -1855,9 +1855,9 @@ List<grpattemp> createDeptempList(List data) {
 addBulkAtt(List<grpattemp> data) async {
   var dio = new Dio();
   String location = globals.globalstreamlocationaddr;
-  LocationData _currentLocation = globals.list[globals.list.length - 1];
-  String lat = _currentLocation.latitude.toString();
-  String long = _currentLocation.longitude.toString();
+
+  String lat = globals.assign_lat.toString();
+  String long = globals.assign_long.toString();
   print("global Address: " + location);
   print("global lat" + lat);
   print("global long" + long);
@@ -1906,7 +1906,7 @@ addBulkAtt(List<grpattemp> data) async {
     //print(response.data.toString());
     //Map permissionMap = json.decode(response.data.toString());
     if (response.statusCode == 200) {
-      //print("successfully");
+      print("successfully");
       return "success";
     } else {
       //print("failed");

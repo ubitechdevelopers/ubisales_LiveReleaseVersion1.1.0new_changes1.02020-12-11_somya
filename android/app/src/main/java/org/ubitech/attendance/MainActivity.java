@@ -50,6 +50,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import android.hardware.Camera;
 
 import androidx.core.app.ActivityCompat;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -73,7 +74,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       StrictMode.setThreadPolicy(policy);
     }
       ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
     channel=new MethodChannel(getFlutterView(), CHANNEL);
     GeneratedPluginRegistrant.registerWith(this);
@@ -103,10 +104,17 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                   manuallyStartAssistant();
                 }
                 if (call.method.equals("startTimeOutNotificationWorker")) {
-                 // Log.i("Assistant","Assistant Start Called");
+                  // Log.i("Assistant","Assistant Start Called");
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
-                 startTimeOutNotificationWorker(ShiftTimeOut);
+                  startTimeOutNotificationWorker(ShiftTimeOut);
+                }
+                if (call.method.equals("startTimeInNotificationWorker")) {
+                  // Log.i("Assistant","Assistant Start Called");
+                  String ShiftTimeIn = call.argument("ShiftTimeIn");
+                    String nextWorkingday = call.argument("nextWorkingday");
+                  Log.i("ShiftTimeout",ShiftTimeIn);
+                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingday);
                 }
 
               }
@@ -116,30 +124,32 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 
   }
 
-public void startTimeOutNotificationWorker(String ShiftTimeOut){
-  Calendar cal = Calendar.getInstance();
-  SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-  String currentTime=sdf.format(cal.getTime());
-  Log.i("DateShashank",currentTime+"");
 
-  SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-  Date date1 = null,date2=null;
-  long minutes=0;
-  try {
-    date1 = format.parse(ShiftTimeOut);
-    date2 = format.parse(currentTime);
-    long differenceinMilli =  date1.getTime()-date2.getTime();
-    minutes = TimeUnit.MILLISECONDS.toMinutes(differenceinMilli);
-    if(minutes<0){
-      minutes=0;
+  public void startTimeOutNotificationWorker(String ShiftTimeOut){
+    Calendar cal = Calendar.getInstance();
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    String currentTime=sdf.format(cal.getTime());
+    Log.i("DateShashank",currentTime+"");
+
+    SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    Date date1 = null,date2=null;
+    long minutes=0;
+    try {
+      date1 = format.parse(ShiftTimeOut);
+      date2 = format.parse(currentTime);
+      long differenceinMilli =  date1.getTime()-date2.getTime();
+      minutes = TimeUnit.MILLISECONDS.toMinutes(differenceinMilli);
+      if(minutes<0){
+        minutes=0;
+      }
+      else{
+        minutes=minutes+5;
+      }
+    } catch (ParseException e) {
+      Log.i("TimeError","Time not correct when calculating worker interval");
+      e.printStackTrace();
     }
-    else{
-      minutes=minutes+5;
-    }
-  } catch (ParseException e) {
-    Log.i("TimeError","Time not correct when calculating worker interval");
-    e.printStackTrace();
-  }
+
 
 Log.i("WorkerMinutes",minutes+"");
   final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeOutNotificationWork.class)
@@ -147,6 +157,65 @@ Log.i("WorkerMinutes",minutes+"");
           .build();
   WorkManager.getInstance().enqueue(workRequest);
 }
+
+
+  public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
+    Calendar cal = Calendar.getInstance();
+
+      String dateStart = nextWorkingDay+" "+ShiftTimeIn;
+      String dateStop = "01/15/2012 10:31:48";
+
+      //HH converts hour in 24 hours format (0-23), day calculation
+      SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+      Date d1 = null;
+      Date d2 = null;
+      long diffMinutes=0;
+      try {
+          d1 = format.parse(dateStart);
+          d2 =  new Date(System.currentTimeMillis());
+
+          //in milliseconds
+          long diff = d2.getTime() - d1.getTime();
+
+          long diffSeconds = diff / 1000 % 60;
+          diffMinutes = diff / (60 * 1000) % 60;
+          long diffHours = diff / (60 * 60 * 1000) % 24;
+          long diffDays = diff / (24 * 60 * 60 * 1000);
+
+
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Log.i("WorkerMinutes",diffMinutes+"");
+    final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
+            .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
+
+            .build()
+            ;
+
+
+
+      WorkManager w=WorkManager.getInstance();
+      w.enqueueUniqueWork("TimeInNotificationWork", ExistingWorkPolicy.KEEP,workRequest);
+
+  }
+
 
   public void manuallyStartAssistant(){
     if(listenerExecuter!=null)
@@ -184,9 +253,21 @@ Log.i("WorkerMinutes",minutes+"");
 
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    if(permissions!=null&&permissions.length>0)
-   Log.i("Perrrrr",permissions[0]+grantResults);
-         if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults));
+    if(permissions!=null&&permissions.length>0) {
+      for (int i = 0; i < permissions.length; i++) {
+
+
+        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+          Log.i("Peeeerrrr", requestCode + "detected");
+          if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
+
+        }
+
+
+      }
+    }
+
+  // Log.i("Perrrrr",permissions[1]+grantResults);
 
   }
 /*

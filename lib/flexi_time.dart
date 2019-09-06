@@ -100,8 +100,8 @@ class _Flexitime extends State<Flexitime> {
     checkNetForOfflineMode(context);
     appResumedFromBackground(context);
     initPlatformState();
-    setLocationAddress();
-    startTimer();
+    //setLocationAddress();
+    //startTimer();
 
     platform.setMethodCallHandler(_handleMethod);
   }
@@ -163,8 +163,9 @@ class _Flexitime extends State<Flexitime> {
   @override
   void dispose() {
     super.dispose();
-    timer.cancel();
+    //timer.cancel();
   }
+  /*
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
@@ -187,7 +188,8 @@ class _Flexitime extends State<Flexitime> {
       print("timmer is running");
     });
   }
-
+  */
+/*
   setLocationAddress() async {
     setState(() {
       streamlocationaddr = globalstreamlocationaddr;
@@ -208,7 +210,7 @@ class _Flexitime extends State<Flexitime> {
       //print(stopstreamingstatus.toString());
     });
   }
-
+*/
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
     if (await canLaunch(url)) {

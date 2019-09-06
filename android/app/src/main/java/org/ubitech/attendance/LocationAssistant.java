@@ -432,7 +432,7 @@ public class LocationAssistant
                   return;
         }
         ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_LOCATION_PERMISSION);
 
     }
     public void requestCameraPermission() {
@@ -450,22 +450,12 @@ public class LocationAssistant
      * @return {@code true} if the location permission was granted, {@code false} otherwise
      */
     public boolean onPermissionsUpdated(int requestCode, int[] grantResults) {
-        if (requestCode != REQUEST_LOCATION_PERMISSION) return false;
+
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             acquireLocation();
-            return true;
-        } else {
-            numTimesPermissionDeclined++;
-            if (!quiet) {
 
-                Log.i(getClass().getSimpleName(), "Location permission request denied.");
-                stop();
-            }
-            if (numTimesPermissionDeclined >= 2 && listener != null)
-                listener.onLocationPermissionPermanentlyDeclined(onGoToAppSettingsFromView,
-                        onGoToAppSettingsFromDialog);
-            return false;
         }
+        return true;
     }
 
     /**

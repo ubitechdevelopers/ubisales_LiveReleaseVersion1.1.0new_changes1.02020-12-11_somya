@@ -83,7 +83,7 @@ class _Designation extends State<Designation> {
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
                 Container(
-                  padding: EdgeInsets.only(left: 30.0,right: 30.0),
+                  padding: EdgeInsets.only(left: 25.0,right: 25.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,7 +142,7 @@ class _Designation extends State<Designation> {
           if (snapshot.hasData) {
             return new ListView.builder(
                 itemCount: snapshot.data.length,
-                padding: EdgeInsets.only(left: 30.0,right: 30.0),
+                padding: EdgeInsets.only(left: 10.0,right: 10.0),
                 itemBuilder: (BuildContext context, int index) {
                   return new Column(
                       children: <Widget>[

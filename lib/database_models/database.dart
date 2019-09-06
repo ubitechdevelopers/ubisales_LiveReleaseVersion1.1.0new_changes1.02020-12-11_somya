@@ -26,7 +26,7 @@ class DbHelper{
     String path =
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
-    var db = await openDatabase(path, version: 23, onCreate: _onCreate,onUpgrade: _onUpgrade);
+    var db = await openDatabase(path, version: 25, onCreate: _onCreate,onUpgrade: _onUpgrade);
     return db;
     //}
   }
@@ -66,6 +66,25 @@ class DbHelper{
         'FakeTimeStatus INTEGER,'
         'FakeLocationStatus INTEGER'
         ")");
+
+    await db.execute("CREATE TABLE QROffline (Id INTEGER PRIMARY KEY,"
+
+
+        'SupervisorId INTEGER,'
+        'Action INTEGER,' // 0 for time in and 1 for time out
+        'Date TEXT,'
+        'OrganizationId INTEGER,'
+        'PictureBase64 TEXT,'
+        'IsSynced INTEGER,'
+        'Latitude TEXT,'
+        'Longitude TEXT,'
+        'Time TEXT,'
+        'UserName TEXT,'
+        'Password TEXT,'
+        'FakeTimeStatus INTEGER,'
+        'FakeLocationStatus INTEGER'
+        ")");
+
     await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
 
 
@@ -102,7 +121,7 @@ class DbHelper{
 print("database upgraded");
       final prefs= await SharedPreferences.getInstance();
       prefs.setInt('offline_db_saved',0);
-
+await db.execute('DROP TABLE IF EXISTS QROffline;');
       await db.execute('DROP TABLE IF EXISTS LoginOffline;');
       await db.execute('DROP TABLE IF EXISTS AttendanceOffline;');
       await db.execute('DROP TABLE IF EXISTS VisitsOffline;');
@@ -123,7 +142,23 @@ await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
           "SentForSyncDate TEXT,"
           "FakeLocationStatus INTEGER"
           ")");
+await db.execute("CREATE TABLE QROffline (Id INTEGER PRIMARY KEY,"
 
+
+    'SupervisorId INTEGER,'
+    'Action INTEGER,' // 0 for time in and 1 for time out
+    'Date TEXT,'
+    'OrganizationId INTEGER,'
+    'PictureBase64 TEXT,'
+    'IsSynced INTEGER,'
+    'Latitude TEXT,'
+    'Longitude TEXT,'
+    'Time TEXT,'
+    'UserName TEXT,'
+    'Password TEXT,'
+    'FakeTimeStatus INTEGER,'
+    'FakeLocationStatus INTEGER'
+    ")");
 
       await db.execute("CREATE TABLE AttendanceOffline (Id INTEGER PRIMARY KEY,"
 

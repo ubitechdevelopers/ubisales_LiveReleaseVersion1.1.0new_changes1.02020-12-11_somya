@@ -119,7 +119,7 @@ var FakeLocationStatus=0;
 
           Navigator
               .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => PunchLocationOffline()));
+              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
 
         }
         long=call.arguments["longitude"].toString();
@@ -160,6 +160,8 @@ var FakeLocationStatus=0;
     super.dispose();
     timer.cancel();
   }
+
+  /*
   startTimer() {
     const fiveSec = const Duration(seconds: 5);
     int count = 0;
@@ -203,7 +205,7 @@ var FakeLocationStatus=0;
       //print(stopstreamingstatus.toString());
     });
   }
-
+*/
   launchMap(String lat, String long) async {
     String url = "https://maps.google.com/?q=" + lat + "," + long;
     if (await canLaunch(url)) {

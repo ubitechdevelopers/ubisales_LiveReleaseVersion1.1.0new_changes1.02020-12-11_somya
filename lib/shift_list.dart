@@ -34,6 +34,14 @@ class _ShiftList extends State<ShiftList> {
     // f_dept = FocusNode();
     getOrgName();
   }
+  formatTime(String time){
+    if(time.contains(":")){
+      var a=time.split(":");
+      return a[0]+":"+a[1];
+    }
+    else return time;
+
+  }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -179,11 +187,11 @@ class _ShiftList extends State<ShiftList> {
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.22,
-                                child: new Text(snapshot.data[index].TimeIn.toString(),),
+                                child: new Text(formatTime(snapshot.data[index].TimeIn.toString()),),
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.22,
-                                child: new Text(snapshot.data[index].TimeOut.toString(),),
+                                child: new Text(formatTime(snapshot.data[index].TimeOut.toString()),),
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.16,
