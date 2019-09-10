@@ -25,7 +25,7 @@ import 'package:Shrine/services/services.dart';
 
 import 'offline_home.dart';
 
-class ShrineApp extends StatefulWidget {
+class ShrineApp extends StatefulWidget { 
   @override
   _ShrineAppState createState() => _ShrineAppState();
 }
