@@ -385,10 +385,15 @@ class _addHoliday extends State<addHoliday> {
                             });
                             createHoliday(_holidayName.text,startdate,enddate,_description.text).then((res){
                               if(res.toString()=='1') {
-                                showInSnackBar('Holiday added successfully');
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => HolidayList()),
+                                );
+                                showDialog(context: context, child:
+                                new AlertDialog(
+                                  content: new Text("Holiday added successfully"),
+                                )
                                 );
                               }
                               else if(res.toString()=='-1')

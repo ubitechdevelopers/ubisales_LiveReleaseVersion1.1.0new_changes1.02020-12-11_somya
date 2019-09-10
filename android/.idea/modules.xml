@@ -3,7 +3,28 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/android-app.iml" filepath="$PROJECT_DIR$/app/android-app.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/barcode_scan-1.0.0/android/android-barcode_scan.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/barcode_scan-1.0.0/android/android-barcode_scan.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/camera-0.5.2+2/android/android-camera.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/camera-0.5.2+2/android/android-camera.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/connectivity-0.3.2/android/android-connectivity.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/connectivity-0.3.2/android/android-connectivity.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/git/flutter_native_image-426996b810c8ff3899a6109b65bdab143652e875/android/android-flutter_native_image.iml" filepath="$USER_HOME$/.pub-cache/git/flutter_native_image-426996b810c8ff3899a6109b65bdab143652e875/android/android-flutter_native_image.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geocoder-0.2.1/android/android-geocoder.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geocoder-0.2.1/android/android-geocoder.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geolocator-5.1.2/android/android-geolocator.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/geolocator-5.1.2/android/android-geolocator.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/google_api_availability-2.0.1/android/android-google_api_availability.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/google_api_availability-2.0.1/android/android-google_api_availability.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.0+17/android/android-image_picker.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.0+17/android/android-image_picker.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/launch_review-1.0.1/android/android-launch_review.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/launch_review-1.0.1/android/android-launch_review.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location-2.3.5/android/android-location.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location-2.3.5/android/android-location.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location_permissions-2.0.2/android/android-location_permissions.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/location_permissions-2.0.2/android/android-location_permissions.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/native_device_orientation-0.0.4/android/android-native_device_orientation.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/native_device_orientation-0.0.4/android/android-native_device_orientation.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1/android/android-path_provider.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1/android/android-path_provider.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/permission_handler-3.2.1+1/android/android-permission_handler.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/permission_handler-3.2.1+1/android/android-permission_handler.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/share-0.5.3/android/android-share.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/share-0.5.3/android/android-share.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/android-shared_preferences.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/android-shared_preferences.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/simple_share-0.0.1+4/android/android-simple_share.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/simple_share-0.0.1+4/android/android-simple_share.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.0/android/android-sqflite.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.0/android/android-sqflite.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/url_launcher-5.1.1/android/android-url_launcher.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/url_launcher-5.1.1/android/android-url_launcher.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.2/android/android_intent.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.2/android/android_intent.iml" />
+      <module fileurl="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.2/android/android_intent-0.3.2-android_intent.iml" filepath="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.2/android/android_intent-0.3.2-android_intent.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/barcode_scan-1.0.0/android/barcode_scan.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/barcode_scan-1.0.0/android/barcode_scan.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.5.2+2/android/camera.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.5.2+2/android/camera.iml" />
@@ -23,6 +44,7 @@
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/shared_preferences.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/android/shared_preferences.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/simple_share-0.0.1+4/android/simple_share.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/simple_share-0.0.1+4/android/simple_share.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.0/android/sqflite.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.0/android/sqflite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ubiattendance_2019_09_06-android.iml" filepath="$PROJECT_DIR$/ubiattendance_2019_09_06-android.iml" />
       <module fileurl="file://C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-5.1.1/android/url_launcher.iml" filepath="C:/src/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-5.1.1/android/url_launcher.iml" />
     </modules>
   </component>

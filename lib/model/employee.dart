@@ -12,9 +12,10 @@ class Employee {
   final String desination;
   final String desinationId;
   final String profile;
+  final String imgstatus;
   final String org_perm;
 
-  Employee(this.response,this.fname,this.lname,this.empid,this.email,this.status,this.orgid,this.orgdir,this.sstatus,this.org_name,this.desination,this.profile,this.org_perm,this.desinationId);
+  Employee(this.response,this.fname,this.lname,this.empid,this.email,this.status,this.orgid,this.orgdir,this.sstatus,this.org_name,this.desination,this.profile,this.imgstatus,this.org_perm,this.desinationId);
 
   Employee.fromJson(Map<String, dynamic> json)
       : response = json['response'],
@@ -30,6 +31,7 @@ class Employee {
         desination = json['desination'],
         desinationId = json['desinationId'],
         profile = json['profile'],
+        imgstatus = json['imgstatus'],
         org_perm = json['org_perm'];
 
   Map<String, dynamic> toJson() =>
@@ -47,6 +49,7 @@ class Employee {
         'desination': desination,
         'desinationId': desinationId,
         'profile': profile,
+        'imgstatus': imgstatus,
         'org_perm': org_perm,
       };
 

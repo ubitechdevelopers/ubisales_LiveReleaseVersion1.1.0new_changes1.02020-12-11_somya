@@ -75,7 +75,8 @@ class Home{
         prefs.setString('leavetypeid', timeinoutMap['leavetypeid']);
         prefs.setString('ShiftTimeOut', timeinoutMap['ShiftTimeOut']);
         prefs.setString('ShiftTimeIn', timeinoutMap['ShiftTimeIn']);
-
+        prefs.setString('nextWorkingDay', timeinoutMap['nextWorkingDay']);
+        print("Next working day"+timeinoutMap['nextWorkingDay']);
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));
 
@@ -176,6 +177,7 @@ class Home{
 
           print("--------------------------- Location detection for qr-----------------------------------");
           print(lat+""+long);
+          print(streamlocationaddr);
 
           print("--------------------------- Location detection for qr-----------------------------------");
           timeinoutMap.putIfAbsent('latit', ()=> lat );

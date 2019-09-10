@@ -1274,7 +1274,7 @@ Future<List<Attn>> getCDateAttn(listType, date) async {
 Future<List<Attn>> getCDateAttnDeptWise(listType, date, dept) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
-//print( globals.path + 'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
+print( globals.path + 'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
   final response = await http.get(globals.path +
       'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
   // print('================='+dept+'===================');
@@ -1314,7 +1314,8 @@ Future<List<Attn>> getEmpdataDepartmentWise(date) async {
 Future<List<Attn>> getCDateAttnDesgWise(listType, date, desg) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
-//print( globals.path + 'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
+   print(globals.path +
+       'getCDateAttnDesgWise_new?refno=$orgdir&date=$date&datafor=$listType&desg=$desg');
   final response = await http.get(globals.path +
       'getCDateAttnDesgWise_new?refno=$orgdir&date=$date&datafor=$listType&desg=$desg');
   // print('================='+dept+'===================');
@@ -1947,7 +1948,7 @@ Future<int> checkNet() async {
 
 getAddressFromLati( String Latitude,String Longitude) async{
   try {
-    ////print(_currentLocation);
+    ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
     if (Latitude != null||Latitude !='') {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(

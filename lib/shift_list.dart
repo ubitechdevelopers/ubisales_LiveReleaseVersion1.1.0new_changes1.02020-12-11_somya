@@ -59,9 +59,19 @@ class _ShiftList extends State<ShiftList> {
         content: Text(value, textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+  Future<bool> sendToHome() async{
 
+    print("-------> back button pressed");
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Settings()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
   getmainhomewidget() {
-    return new Scaffold(
+    return new WillPopScope(
+        onWillPop: ()=> sendToHome(),
+    child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
             title: Row(
@@ -140,6 +150,7 @@ class _ShiftList extends State<ShiftList> {
             },
             tooltip: 'Add Shift',
             child: new Icon(Icons.add),
+          ),
           ),
         );
 

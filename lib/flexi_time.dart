@@ -770,12 +770,22 @@ class _Flexitime extends State<Flexitime> {
 
              });
            });
-           showDialog(context: context, child:
-           new AlertDialog(
-             content: new Text("Attendance marked successfully!"),
-           )
-           );
-
+           if(res) {
+             showDialog(context: context, child:
+             new AlertDialog(
+               content: new Text("Attendance marked successfully!"),
+             )
+             );
+           }
+           else
+             {
+               showDialog(context: context, child:
+               new AlertDialog(
+                 title: new Text("Warning!"),
+                 content: new Text("Problem while punching Attendance, try again."),
+               )
+               );
+             }
 
            Navigator.push(
              context,

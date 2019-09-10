@@ -112,9 +112,10 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
                   String ShiftTimeIn = call.argument("ShiftTimeIn");
-                    String nextWorkingday = call.argument("nextWorkingday");
-                  Log.i("ShiftTimeout",ShiftTimeIn);
-                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingday);
+                    String nextWorkingDay = call.argument("nextWorkingDay");
+                  Log.i("nextWorkingDay",nextWorkingDay);
+                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+
                 }
 
               }
@@ -137,8 +138,10 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
     try {
       date1 = format.parse(ShiftTimeOut);
       date2 = format.parse(currentTime);
-      long differenceinMilli =  date1.getTime()-date2.getTime();
+      long differenceinMilli = date1.getTime()- date2.getTime();
       minutes = TimeUnit.MILLISECONDS.toMinutes(differenceinMilli);
+      Log.i("differenceinMilli",differenceinMilli+"");
+      Log.i("minutes",minutes+"");
       if(minutes<0){
         minutes=0;
       }
@@ -151,7 +154,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
     }
 
 
-Log.i("WorkerMinutes",minutes+"");
+Log.i("WorkerMinutesForTimeOut",minutes+"");
   final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeOutNotificationWork.class)
           .setInitialDelay(minutes, TimeUnit.MINUTES)
           .build();
@@ -161,7 +164,7 @@ Log.i("WorkerMinutes",minutes+"");
 
   public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
     Calendar cal = Calendar.getInstance();
-
+    Log.i("nextWorkingday",nextWorkingDay);
       String dateStart = nextWorkingDay+" "+ShiftTimeIn;
       String dateStop = "01/15/2012 10:31:48";
 
@@ -176,14 +179,19 @@ Log.i("WorkerMinutes",minutes+"");
           d2 =  new Date(System.currentTimeMillis());
 
           //in milliseconds
-          long diff = d2.getTime() - d1.getTime();
-
+          long diff =  d1.getTime()-d2.getTime() ;
+           Log.i("diff",diff+"");
           long diffSeconds = diff / 1000 % 60;
           diffMinutes = diff / (60 * 1000) % 60;
           long diffHours = diff / (60 * 60 * 1000) % 24;
           long diffDays = diff / (24 * 60 * 60 * 1000);
-
-
+         diffMinutes = diffMinutes+diffDays*1440+diffHours*60;
+          if(diffMinutes<0){
+            diffMinutes=0;
+          }
+          else{
+            diffMinutes=diffMinutes+5;
+          }
 
       } catch (Exception e) {
           e.printStackTrace();
@@ -202,7 +210,7 @@ Log.i("WorkerMinutes",minutes+"");
 
 
 
-    Log.i("WorkerMinutes",diffMinutes+"");
+    Log.i("WorkerMinutesForTimeIn",diffMinutes+"");
     final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
             .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
 

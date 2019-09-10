@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     checknetonpage(context);
     lat=assign_lat.toString();
     long=assign_long.toString();
-    streamlocationaddr=globalstreamlocationaddr;
+    streamlocationaddr = globalstreamlocationaddr;
     initPlatformState();
     //setLocationAddress();
    // startTimer();
@@ -136,7 +136,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       List<Map> jsonList=[];
       if(qrs.isNotEmpty){
         for(int i=0;i<qrs.length;i++){
-
           var address= await getAddressFromLati(qrs[i].Latitude,qrs[i].Longitude);
           print(address);
           jsonList.add({
@@ -218,6 +217,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
+        //lat=assign_lat.toString();
+        //long=assign_long.toString();
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
@@ -1770,6 +1771,7 @@ var FakeLocationStatus=0;
     String base64Image1;
     print('saveTimeInOutImagePicker_new CALLED');
     String location = globalstreamlocationaddr;
+
 
     String lat = assign_lat.toString();
     String long = assign_long.toString();

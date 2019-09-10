@@ -111,13 +111,14 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
         if (employeeMap["response"] == 1) {
           var user = new Employee.fromJson(employeeMap);
           print(user.fname + " " + user.lname);
+          globals.attImage = int.parse(user.imgstatus);
           print(user.org_perm);
           prefs.setString('empid', user.empid);
           Home ho = new Home();
 
           Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
           print(timeinout);
-          if(timeinout["latit"]==0.0 && timeinout["longi"]==0.0){
+          if(timeinout["latit"]=='0.0' && timeinout["longi"]=='0.0'){
             print("Location not fetched...");
             return "nolocation";
           }else {
@@ -135,7 +136,11 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
               SaveImage mark = new SaveImage();
               bool res = await mark.saveTimeInOutQR(marktimeinout);
               if (res)
-                return "success";
+                if(timeinout["aid"].toString() != '0')
+                  return "success1";
+                else
+                  return "success";
+
               else
                 return "poor network";
             } else {

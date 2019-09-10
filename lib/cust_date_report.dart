@@ -25,6 +25,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
   String admin_sts = "0";
+  var Hightvar = 0.0;
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -36,6 +37,10 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
     setState(() {
       _orgName= prefs.getString('org_name') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
+      if(admin_sts == '2')
+        Hightvar =  MediaQuery.of(context).size.height*0.56;
+      else
+        Hightvar =  MediaQuery.of(context).size.height*0.26;
     });
   }
   @override
@@ -98,12 +103,12 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               controller: today,
               //editable: false,
               onShowPicker: (context, currentValue) {
-                  return showDatePicker(
-                      context: context,
-                      firstDate: DateTime(1900),
-                      initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime(2100));
-                },
+                return showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime(2100));
+              },
               readOnly: true,
               decoration: InputDecoration(
                 prefixIcon: Padding(
@@ -154,10 +159,10 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                 width: MediaQuery.of(context).size.width*1.0,),
             ),
           ): admin_sts=='1'?Container(
-              height: MediaQuery.of(context).size.height*0.25,
-              child: Center(
+            height: MediaQuery.of(context).size.height*0.25,
+            child: Center(
               child:Text('No Chart Available'),
-              ),
+            ),
 
           ):Center(),
           (res==true && admin_sts=='1')?new Row(
@@ -216,16 +221,16 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
           ),
           new Divider(height: 1.0,),
           res==true?new Container(
-            height: MediaQuery.of(context).size.height*0.56,
+            height: Hightvar,
             child: new TabBarView(
               controller: _controller,
               children: <Widget>[
                 new Container(
-                  height: MediaQuery.of(context).size.height*0.56,
+                  height: Hightvar,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.56,
+                    Container( height: Hightvar,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -313,26 +318,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -353,26 +358,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -386,21 +391,21 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                               );
                             }else{
                               return new Container(
-                                height: MediaQuery.of(context).size.height*0.30,
-                                child:Center(
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width*1,
-                                    color: Colors.teal.withOpacity(0.1),
-                                    padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                                    child:Text("No one is present on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
-                                  ),
-                                )
+                                  height: MediaQuery.of(context).size.height*0.30,
+                                  child:Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width*1,
+                                      color: Colors.teal.withOpacity(0.1),
+                                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                                      child:Text("No one is present on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                    ),
+                                  )
                               );
                             }
                           }
                           else if (snapshot.hasError) {
-						   return new Text("Unable to connect server");
-                          //  return new Text("${snapshot.error}");
+                            return new Text("Unable to connect server");
+                            //  return new Text("${snapshot.error}");
                           }
 
                           // By default, show a loading spinner
@@ -414,11 +419,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                 //////////////TABB 2 Start
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.56,
+                  height: Hightvar,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.56,
+                    Container( height: Hightvar,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -435,7 +440,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                       children: <Widget>[
-                                        SizedBox(height: 40.0,),
+                                        SizedBox(height: 30.0,),
                                         Container(
                                           width: MediaQuery
                                               .of(context)
@@ -504,8 +509,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                             }
                           }
                           else if (snapshot.hasError) {
-						   return new Text("Unable to connect server");
-                           // return new Text("${snapshot.error}");
+                            return new Text("Unable to connect server");
+                            // return new Text("${snapshot.error}");
                           }
 
                           // By default, show a loading spinner
@@ -526,11 +531,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                 new Container(
 
-                  height: MediaQuery.of(context).size.height*0.56,
+                  height: Hightvar,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.56,
+                    Container( height: Hightvar,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -618,26 +623,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -658,26 +663,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -723,11 +728,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                 new Container(
 
 
-                  height: MediaQuery.of(context).size.height*0.56,
+                  height: Hightvar,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
                     title:
-                    Container( height: MediaQuery.of(context).size.height*.56,
+                    Container( height: Hightvar,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -815,26 +820,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -855,26 +860,26 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -901,7 +906,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                             }
                           }
                           else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -916,11 +921,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               ],
             ),
           ):Container(
-      height: MediaQuery.of(context).size.height*0.25,
-      child:Center(
-        child: Text('No Data Available'),
-      ),
-    ),
+            height: MediaQuery.of(context).size.height*0.25,
+            child:Center(
+              child: Text('No Data Available'),
+            ),
+          ),
         ],
       ),
     );

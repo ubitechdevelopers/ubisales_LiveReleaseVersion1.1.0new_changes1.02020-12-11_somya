@@ -562,13 +562,26 @@ class _LoginPageState extends State<LoginPage> {
 
     var islogin = await dologin.markAttByQR(qr,fakeLocationDetected?1:0);
     print(islogin);
-    if(islogin=="success"){
+    if(islogin=="success" || islogin=="success1" ){
       setState(() {
         loader = false;
       });
-      Scaffold.of(context)
+      if(islogin=="success" )
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              content: new Text("TimeIn marked successfully"),
+            ));
+      /*Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text("Attendance marked successfully.")));
+          SnackBar(content: Text("TimeIn marked successfully.")));*/
+      else
+        showDialog(
+            context: context,
+            child: new AlertDialog(
+              content: new Text("TimeOut marked successfully"),
+            ));
+
     }else if(islogin=="failure"){
       setState(() {
         loader = false;
@@ -587,9 +600,14 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loader = false;
       });
-      Scaffold.of(context)
+     /* Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text("Location not fetched...")));
+          SnackBar(content: Text("Problem Getting Location! Please turn on GPS and try again")));*/
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text("Problem Getting Location! Please turn on GPS and try again"),
+          ));
     }else{
       setState(() {
         loader = false;

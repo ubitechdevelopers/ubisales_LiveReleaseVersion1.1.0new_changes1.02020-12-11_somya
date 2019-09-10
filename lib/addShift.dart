@@ -477,7 +477,8 @@ class _addShift extends State<addShift> {
                       RaisedButton(
                         child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('ADD',style: TextStyle(color: Colors.white),),
                         color: Colors.orangeAccent,
-                        onPressed: () {
+                        onPressed: () async {
+
                           if (_formKey.currentState.validate()) {
                             if(_isButtonDisabled)
                               return null;
@@ -552,12 +553,20 @@ class _addShift extends State<addShift> {
                             setState(() {
                               _isButtonDisabled=true;
                             });
+
                             createShift(_shiftName.text,shifttype,_from.text,_to.text,_from_b.text,_to_b.text).then((res){
                               if(res.toString()=='1') {
-                                showInSnackBar('Shift added successfully');
+                               // showInSnackBar('Shift added successfully');
+
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => ShiftList()),
+                                );
+                                showDialog(context: context, child:
+                                new AlertDialog(
+                                  content: new Text("Shift added successfully"),
+                                )
                                 );
                               }
                               else if(res.toString()=='-1')

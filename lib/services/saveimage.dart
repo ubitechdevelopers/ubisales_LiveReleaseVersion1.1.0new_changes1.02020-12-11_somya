@@ -102,13 +102,12 @@ class SaveImage {
     final prefs = await SharedPreferences.getInstance();
     String ShiftTimeIn=await prefs.getString("ShiftTimeIn")??"10:00:00";
     String nextWorkingDay=await prefs.getString("nextWorkingDay");
+    print("nextWorkingDay"+nextWorkingDay);
     globals.cameraChannel.invokeMethod("startTimeInNotificationWorker",{"ShiftTimeIn":ShiftTimeIn,"nextWorkingDay":nextWorkingDay});
   }
 
 
   Future<bool> saveTimeInOutImagePicker(MarkTime mk) async {
-
-
 
     try{
       File imagei = null;
@@ -121,7 +120,7 @@ class SaveImage {
 
         globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
         if (imagei != null) {
         //print("---------------actionb   ----->"+mk.act);
@@ -280,7 +279,7 @@ class SaveImage {
       imageCache.clear();
       if (globals.attImage == 1) {
         ImagePicker.pickImage(
-                source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+                source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
             .then((imagei) {
           if (imagei != null) {
             _location.getLocation().then((res) {
@@ -432,34 +431,68 @@ class SaveImage {
   }
 
   Future<bool> saveTimeInOutQR(MarkTime mk) async {
+
     try {
       File imagei = null;
       imageCache.clear();
-      globals.cameraChannel.invokeMethod("cameraOpened");
-      imagei = await ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0);
+      print("Testing of attendance");
+      print(globals.attImage);
+      if (globals.attImage == 1)
+      {
+        print("Testing of attendance123");
+        globals.cameraChannel.invokeMethod("cameraOpened");
+        imagei = await ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        if (imagei != null) {
+          //// sending this base64image string +to rest api
+          Dio dio = new Dio();
+          print(mk.uid);
+          print(mk.location);
+          print(mk.aid);
+          print(mk.act);
+          print(mk.shiftid);
+          print(mk.refid);
+          print(mk.latit);
+          print(mk.longi);
+          print(imagei.path);
+          FormData formData = new FormData.from({
+            "uid": mk.uid,
+            "location": mk.location,
+            "aid": mk.aid,
+            "act": mk.act,
+            "shiftid": mk.shiftid,
+            "refid": mk.refid,
+            "latit": mk.latit,
+            "longi": mk.longi,
+            "file": new UploadFileInfo(imagei, "image.png"),
+            "FakeLocationStatus": mk.FakeLocationStatus
+          });
+          print("5");
+          print(globals.path + "saveImage");
+          Response<String> response1 =
+          await dio.post(globals.path + "saveImage", data: formData);
+          //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
+          //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
+          //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
+          globals.cameraChannel.invokeMethod("cameraClosed");
+          imagei.deleteSync();
+          imageCache.clear();
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print(MarkAttMap["status"].toString());
+          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2)
+            return true;
+          else
+            return false;
+        } else {
+          print("6");
+          return false;
+        }
+      }
+      else
+      {
 
-      if (imagei != null) {
-        /*
-      final tempDir = await getTemporaryDirectory();
-      String path = tempDir.path;
-      int rand = new Math.Random().nextInt(10000);
-      im.Image image1 = im.decodeImage(imagei.readAsBytesSync());
-      imagei.deleteSync();
-      im.Image smallerImage = im.copyResize(image1, 500); // choose the size here, it will maintain aspect ratio
-      File compressedImage = new File('$path/img_$rand.jpg')..writeAsBytesSync(im.encodeJpg(smallerImage, quality: 50));
-    */
-        //// sending this base64image string +to rest api
         Dio dio = new Dio();
-        print(mk.uid);
-        print(mk.location);
-        print(mk.aid);
-        print(mk.act);
-        print(mk.shiftid);
-        print(mk.refid);
-        print(mk.latit);
-        print(mk.longi);
-        print(imagei.path);
         FormData formData = new FormData.from({
           "uid": mk.uid,
           "location": mk.location,
@@ -469,19 +502,17 @@ class SaveImage {
           "refid": mk.refid,
           "latit": mk.latit,
           "longi": mk.longi,
-          "file": new UploadFileInfo(imagei, "image.png"),
-          "FakeLocationStatus":mk.FakeLocationStatus
+          "FakeLocationStatus": mk.FakeLocationStatus
         });
-        print("5");
-        print(globals.path + "saveImage");
+
         Response<String> response1 =
-            await dio.post(globals.path + "saveImage", data: formData);
+        await dio.post(globals.path + "saveImage", data: formData);
         //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
         //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
         //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
         globals.cameraChannel.invokeMethod("cameraClosed");
-        imagei.deleteSync();
-        imageCache.clear();
+        //imagei.deleteSync();
+        // imageCache.clear();
         /*getTempImageDirectory();*/
         Map MarkAttMap = json.decode(response1.data);
         print(MarkAttMap["status"].toString());
@@ -489,9 +520,7 @@ class SaveImage {
           return true;
         else
           return false;
-      } else {
-        print("6");
-        return false;
+
       }
     } catch (e) {
       print(e.toString());
@@ -507,7 +536,7 @@ class SaveImage {
       globals.cameraChannel.invokeMethod("cameraOpened");
       if (globals.visitImage == 1) {
         imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -617,7 +646,7 @@ class SaveImage {
       if (globals.visitImage == 1) {
         globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -722,7 +751,7 @@ class SaveImage {
       //   if (globals.FlexiImage != 1) {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
       if (imagei != null) {
         print('------------**vvxxbb');
         //// sending this base64image string +to rest api
@@ -837,7 +866,7 @@ class SaveImage {
       globals.cameraChannel.invokeMethod("cameraOpened");
       // if (globals.FlexiImage != 1) {
       imagei = await ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 350.0, maxHeight: 350.0);
+          source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
       print(imagei);
       if (imagei != null)
       {

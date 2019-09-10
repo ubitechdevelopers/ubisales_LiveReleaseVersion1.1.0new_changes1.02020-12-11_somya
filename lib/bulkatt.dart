@@ -126,17 +126,14 @@ bool fakeLocationDetected=false;
         }
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
-
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-
           Navigator
               .of(context)
               .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-
         }
 
-        assign_lat=double.parse(call.arguments["longitude"].toString());
-        assign_long=double.parse(call.arguments["latitude"].toString());
+        assign_lat=double.parse(call.arguments["latitude"].toString());
+        assign_long=double.parse(call.arguments["longitude"].toString());
         address=await getAddressFromLati(assign_lat.toString(), assign_long.toString());
         print(call.arguments["mocked"].toString());
         getAreaStatus().then((res) {
@@ -360,10 +357,14 @@ bool fakeLocationDetected=false;
                       shape: Border.all(color: Colors.black54),
                       child: Text('CANCEL'),
                       onPressed: () {
-                        Navigator.push(
+                      /*  Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomePage()),
+                        );*/
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
                         );
                       },
                     ),
@@ -424,24 +425,10 @@ bool fakeLocationDetected=false;
                                 print(_saved[i].timeout);
                                 if(_saved[i].timeout!='0:0' && _saved[i].timeout!='00:00:00') {
                                   var arr = _saved[i].timein.split(':');
-                                  from = new DateTime(
-                                      2001,
-                                      01,
-                                      01,
-                                      int.parse(arr[0]),
-                                      int.parse(arr[1]),
-                                      00,
-                                      00);
+                                  from = new DateTime(2001, 01, 01, int.parse(arr[0]), int.parse(arr[1]), 00, 00);
                                   var arr1 = _saved[i].timeout.split(':');
-                                  to = new DateTime(
-                                      2001,
-                                      01,
-                                      01,
-                                      int.parse(arr1[0]),
-                                      int.parse(arr1[1]),
-                                      00,
-                                      00);
-                                  if (!to.isBefore(from)) {
+                                  to = new DateTime(2001, 01, 01, int.parse(arr1[0]), int.parse(arr1[1]), 00, 00);
+                                  if (to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
                                         "'s timein is greater than timeout...");
                                     return null;
