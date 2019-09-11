@@ -25,7 +25,7 @@ import 'package:Shrine/services/services.dart';
 
 import 'offline_home.dart';
 
-class ShrineApp extends StatefulWidget { 
+class ShrineApp extends StatefulWidget {
   @override
   _ShrineAppState createState() => _ShrineAppState();
 }
@@ -39,7 +39,7 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='4.0.8',new_ver='4.0.8';
+  String cur_ver='5.0.0',new_ver='5.0.0';
   Widget _defaultHome = new LoginPage();
   @override
   void initState() {

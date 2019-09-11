@@ -429,8 +429,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
 
     Home ho = new Home();
-
-
     act = await ho.checkTimeIn(empid, orgdir);
     print("Action from check time in");
     ho.managePermission(empid, orgdir, desinationId);

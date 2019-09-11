@@ -820,6 +820,7 @@ Future<List<Emp>> getEmployee() async {
   String orgid = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid')?? '0';
     print('getEmp called');
+    print(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
   final response = await http.get(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
 //  print(response.body);
 //  print('fun end here1');
@@ -827,21 +828,20 @@ Future<List<Emp>> getEmployee() async {
   // print('fun end here2');
   print(responseJson);
   List<Emp> empList = createEmpList(responseJson);
-  // print('fun end here3');
-//  print(empList);
+   print('fun end here3');
+  print(empList);
   return empList;
 }
 
 List<Emp> createEmpList(List data) {
   List<Emp> list = new List();
   for (int i = 0; i < data.length; i++) {
+
     String name = data[i]["name"];
-    String dept = data[i]["Department"].length > 20
-        ? data[i]["Department"].substring(0, 15) + '..'
-        : data[i]["Department"];
-    String desg = data[i]["Designation"].length > 20
-        ? data[i]["Designation"].substring(0, 15) + '..'
-        : data[i]["Designation"];
+
+    String dept = data[i]["Department"].length > 20 ? data[i]["Department"].substring(0, 15) + '..' : data[i]["Department"];
+    String desg = data[i]["Designation"].length > 20 ? data[i]["Designation"].substring(0, 15) + '..' : data[i]["Designation"];
+    print("This is testing line");
     String shift = data[i]["Shift"];
     String status = data[i]["archive"] == '1' ? 'Active' : 'Inactive';
     String id = data[i]["Id"];

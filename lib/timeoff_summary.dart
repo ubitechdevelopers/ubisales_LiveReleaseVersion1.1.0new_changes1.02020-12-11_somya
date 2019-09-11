@@ -161,7 +161,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
   }
 
   confirmWithdrawl(String timeoffid) async{
-    showDialog(context: context, child:
+    showDialog(context: context, barrierDismissible: false, child:
     new AlertDialog(
       title: new Text("Are you sure?",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 18.0),),
       content:  ButtonBar(

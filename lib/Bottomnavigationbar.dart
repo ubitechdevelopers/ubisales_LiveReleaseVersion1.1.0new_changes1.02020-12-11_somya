@@ -38,25 +38,25 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
       type: BottomNavigationBarType.fixed,
       onTap: (newIndex) {
         if(newIndex==1){
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
           return;
         }else if (newIndex == 0) {
           (admin_sts == '1' || admin_sts == '2')
-              ? Navigator.pushReplacement(
+              ? Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Reports()),
           )
-              : Navigator.pushReplacement(
+              : Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ProfilePage()),
           );
           return;
         }
         if(newIndex==2){
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Settings()),
           );

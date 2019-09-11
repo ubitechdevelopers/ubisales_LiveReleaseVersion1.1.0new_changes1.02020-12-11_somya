@@ -535,7 +535,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                             fontSize: 16.0),),
 
                                         InkWell(
-                                          child: Text('Time In: ' +
+                                          child: Text('Visit In: ' +
                                               snapshot.data[index]
                                                   .VisitInLatitude+','+snapshot.data[index].VisitInLongitude,
                                               style: TextStyle(
@@ -573,7 +573,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                             },),
                                         ):Container(
                                           child:InkWell(
-                                            child: Text('Time Out: ' +
+                                            child: Text('Visit Out: ' +
                         snapshot.data[index]
                             .VisitOutLatitude+','+snapshot.data[index].VisitOutLongitude,
                                               style: TextStyle(

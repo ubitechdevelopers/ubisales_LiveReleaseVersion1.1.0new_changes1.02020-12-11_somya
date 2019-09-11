@@ -398,7 +398,7 @@ print('visit out called for visit id:'+visit_id);
                                             fontSize: 16.0),),
 
                                         InkWell(
-                                          child: Text('Time In: ' +
+                                          child: Text('Visit In: ' +
                                               snapshot.data[index]
                                                   .pi_loc.toString(),
                                               style: TextStyle(
@@ -414,7 +414,7 @@ print('visit out called for visit id:'+visit_id);
                                         ),
                                         SizedBox(height:2.0),
                                         InkWell(
-                                          child: Text('Time Out: ' +
+                                          child: Text('Visit Out: ' +
                                               snapshot.data[index]
                                                   .po_loc.toString(),
                                             style: TextStyle(
@@ -531,8 +531,6 @@ print('visit out called for visit id:'+visit_id);
 
                                   ),
                                 ],
-
-
                               ),//
                               snapshot.data[index].desc==''?Container():snapshot.data[index].desc!='Visit out not punched'?
                               Row(
