@@ -105,7 +105,7 @@ class _HolidayList extends State<HolidayList> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                    width: MediaQuery.of(context).size.width*0.30,
+                    width: MediaQuery.of(context).size.width*0.35,
                     child: Text('Holidays', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
                   ),
                   Container(
@@ -113,12 +113,12 @@ class _HolidayList extends State<HolidayList> {
                     child: Text('From', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width*0.22,
-                    child: Text('To', style: TextStyle( color: Colors.orange),textAlign: TextAlign.left),
+                    width: MediaQuery.of(context).size.width*0.16,
+                    child: Text('To', style: TextStyle( color: Colors.orange),textAlign: TextAlign.center),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width*0.16,
-                    child: Text('Total days', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left),
+                    width: MediaQuery.of(context).size.width*0.10,
+                    child: Text('days', style: TextStyle(color: Colors.orange),textAlign: TextAlign.right),
                   ),
 
                 ],
@@ -198,7 +198,7 @@ class _HolidayList extends State<HolidayList> {
                                 child: new Text(snapshot.data[index].To.toString(),),
                               ),
                               new Container(
-                                width: MediaQuery.of(context).size.width*0.16,
+                                width: MediaQuery.of(context).size.width*0.05,
                                 child: new Text(snapshot.data[index].Days.toString()),
                               ),
                             ],
