@@ -43,9 +43,8 @@ class _Bulkatt extends State<Bulkatt> {
       sstatus = "",
       desination = "",
       desinationId = "",
-      profile,
-      latit = "",
-      longi = "";
+      profile;
+
   String sts = '0';
   String aid = "";
   String shiftId = "";

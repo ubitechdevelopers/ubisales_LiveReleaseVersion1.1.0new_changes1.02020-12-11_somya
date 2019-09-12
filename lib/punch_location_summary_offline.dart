@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
-import 'globals.dart' as globals;
+
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'offline_attendance_logs.dart';
@@ -49,11 +49,11 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
   String empid="";
   String admin_sts='0';
   int _currentIndex = 1;
-  String streamlocationaddr = "";
+
   //StreamLocation sl = new StreamLocation();
   bool _isButtonDisabled= false;
   final _comments=TextEditingController();
-  String latit,longi,location_addr1;
+
   Timer timer;
 
   var FakeLocationStatus=0;
@@ -65,7 +65,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
   void initState() {
 
     super.initState();
-    streamlocationaddr=globalstreamlocationaddr;
+
     checkLocationEnabled(context);
     initPlatformState();
 
@@ -100,8 +100,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
         lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
-        address=await getAddressFromLati(lat, long);
-        globalstreamlocationaddr=address;
+
         print(call.arguments["mocked"].toString());
         setState(() {
 
@@ -114,11 +113,10 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
           long=call.arguments["longitude"].toString();
           lat=call.arguments["latitude"].toString();
-          latit=lat;
-          longi=long;
-          streamlocationaddr=address;
 
-          location_addr1=streamlocationaddr;
+
+
+
 
 
         });
@@ -133,7 +131,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     final prefs = await SharedPreferences.getInstance();
     visits=VisitsOffline.empty();
     setState(() {
-      streamlocationaddr = globalstreamlocationaddr;
+
       orgid = prefs.getString('orgid') ?? '';
       empid = prefs.getString('empid') ?? '';
       org_name = prefs.getString('org_name') ?? '';
@@ -305,13 +303,13 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
    // sl.startStreaming(2);
     setState(() {
       if(assign_lat!=null ) {
-        latit = assign_lat.toString();
-        longi = assign_long.toString();
-        location_addr1 = globalstreamlocationaddr;
+      //  latit = assign_lat.toString();
+       // longi = assign_long.toString();
+       // location_addr1 = globalstreamlocationaddr;
       }else{
-        latit = "0.0";
-        longi = "0.0";
-        location_addr1 = "";
+       // latit = "0.0";
+       // longi = "0.0";
+       // location_addr1 = "";
       }
     });
     await showDialog<String>(
@@ -378,11 +376,11 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           List<int> imageBytes = await img.readAsBytes();
           PictureBase64 = base64.encode(imageBytes);
           //sl.startStreaming(5);
-          if (assign_long != null ) {
+          if (assign_long != null && !assign_long.isNaN ) {
             lat = assign_lat.toString();
             long = assign_long.toString();
-            if (globalstreamlocationaddr == '') {
-              globalstreamlocationaddr = lat + ", " + long;
+            if (globalstreamlocationaddr.isEmpty) {
+              globalstreamlocationaddr = lat + "," + long;
             }
           }
 

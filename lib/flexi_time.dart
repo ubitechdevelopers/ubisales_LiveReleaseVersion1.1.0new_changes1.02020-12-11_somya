@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -54,13 +55,9 @@ class _Flexitime extends State<Flexitime> {
   String newpwd = "new";
   int Is_Delete=0;
   bool _visible = true;
-  String location_addr = "";
-  String location_addr1 = "";
-  String streamlocationaddr = "";
   String admin_sts = '0';
   String mail_varified = '1';
-  String lat = "";
-  String long = "";
+
   String act = "";
   String act1 = "";
   int alertdialogcount = 0;
@@ -80,9 +77,7 @@ class _Flexitime extends State<Flexitime> {
       org_name = "",
       desination = "",
       desinationId = "",
-      profile,
-      latit = "",
-      longi = "";
+      profile;
   String aid = "";
   String client='0';
   String shiftId = "";
@@ -127,8 +122,8 @@ class _Flexitime extends State<Flexitime> {
               .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
 
         }
-        long=call.arguments["longitude"].toString();
-        lat=call.arguments["latitude"].toString();
+        var long=call.arguments["longitude"].toString();
+        var lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
@@ -144,12 +139,6 @@ class _Flexitime extends State<Flexitime> {
             fakeLocationDetected=false;
           }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          streamlocationaddr=address;
-
-          location_addr=streamlocationaddr;
-          location_addr1=streamlocationaddr;
 
 
         });
@@ -250,7 +239,7 @@ class _Flexitime extends State<Flexitime> {
 
     if (response == 1) {
       Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir);
       ho.managePermission(empid, orgdir, desinationId);
@@ -262,7 +251,6 @@ class _Flexitime extends State<Flexitime> {
         newpwd = prefs.getString('newpwd') ?? "";
         userpwd = prefs.getString('usrpwd') ?? "";
         print("New pwd"+newpwd+"  User ped"+userpwd);
-        location_addr1 = location_addr;
         admin_sts = prefs.getString('sstatus').toString() ?? '0';
         mail_varified = prefs.getString('mail_varified').toString() ?? '0';
         alertdialogcount = globalalertcount;
@@ -286,14 +274,11 @@ class _Flexitime extends State<Flexitime> {
           }
         }));
         // //print("2-"+_checkLoaded.toString());
-        latit = prefs.getString('latit') ?? '';
-        longi = prefs.getString('longi') ?? '';
         aid = prefs.getString('aid') ?? "";
         shiftId = prefs.getString('shiftId') ?? "";
         ////print("this is set state "+location_addr1);
         act1 = act;
         // //print(act1);
-        streamlocationaddr = globalstreamlocationaddr;
 
       });
 
@@ -350,7 +335,7 @@ class _Flexitime extends State<Flexitime> {
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+          (globalstreamlocationaddr != ''||prefix0.globalstreamlocationaddr.isNotEmpty||prefix0.globalstreamlocationaddr!=null) ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -365,7 +350,7 @@ class _Flexitime extends State<Flexitime> {
   }
 
   refreshPageWidgit() {
-    if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
+    if (globalstreamlocationaddr != ''||prefix0.globalstreamlocationaddr.isNotEmpty||prefix0.globalstreamlocationaddr!=null) {
       return new Container(
         child: Center(
           child: new Column(
@@ -602,7 +587,7 @@ class _Flexitime extends State<Flexitime> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 20.0),
-            getwidget(location_addr1),
+            getwidget(prefix0.globalstreamlocationaddr),
           ]),
     );
 
@@ -622,11 +607,11 @@ class _Flexitime extends State<Flexitime> {
             child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + streamlocationaddr,
+                child: new Text('You are at: ' + prefix0.globalstreamlocationaddr,
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
-                  launchMap(lat, long);
+                  launchMap(prefix0.assign_lat.toString(), prefix0.assign_long.toString());
 
                 },
               ),
@@ -743,17 +728,17 @@ class _Flexitime extends State<Flexitime> {
             act1 = "";
           });
           print('****************************>>');
-          print(streamlocationaddr.toString());
+
          // print(visit_id.toString());
           print('00000000000');
          // print(_comments.text);
           print('111111111111111');
-          print(lat+' '+long);
+          //print(lat+' '+long);
           print('22222222222222');
           print('<<****************************');
 
          // Navigator.of(context, rootNavigator: true).pop();
-         saveImage.saveFlexiOut(empid,streamlocationaddr.toString(),fid.toString(),lat,long,orgid,FakeLocationStatus)
+         saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus)
              .then((res){
 
            print(res);
@@ -848,7 +833,7 @@ print('visit out called for visit id:'+visit_id);
    // client = _clientname.text;
     client ="";
     MarkVisit mk = new MarkVisit(
-        empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
+        empid,client, prefix0.globalstreamlocationaddr, orgdir, prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus);
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());

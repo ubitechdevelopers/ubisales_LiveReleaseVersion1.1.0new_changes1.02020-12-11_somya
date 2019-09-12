@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -51,11 +52,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
   String attendanceFound='Time In Not Marked';
   bool _visible = true;
-  String location_addr = "";
-  String location_addr1 = "";
-  String streamlocationaddr = "";
-  String lat = "";
-  String long = "";
+
   String act = "";
   String act1 = "";
   Timer timer;
@@ -90,7 +87,6 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     print("-----------------------Context-----------------------");
     print(context);
     _context1=context;
-    streamlocationaddr=globalstreamlocationaddr;
     checkLocationEnabled(context);
     // WidgetsBinding.instance.addObserver(this);
      //checknetonpage(context);
@@ -123,12 +119,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               .push(new MaterialPageRoute(builder: (BuildContext context) => HomePage()));
 
         }
-        long=call.arguments["longitude"].toString();
-        lat=call.arguments["latitude"].toString();
+        var long=call.arguments["longitude"].toString();
+        var lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
-        address=await getAddressFromLati(lat, long);
-        globalstreamlocationaddr=address;
         print(call.arguments["mocked"].toString());
         getAreaStatus().then((res) {
           // print('called again');
@@ -151,12 +145,6 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             fakeLocationDetected=false;
           }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          streamlocationaddr=address;
-
-          location_addr=streamlocationaddr;
-          location_addr1=streamlocationaddr;
 
 
         });
@@ -818,7 +806,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   }
   getOfflineWidgit() {
 
-    if (location_addr != "PermissionStatus.deniedNeverAsk") {
+    if (assign_long!=null||!assign_long.isNaN) {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -836,7 +824,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
              children: [
                 FlatButton(
-                  child: new Text('You are at: ' + globalstreamlocationaddr,
+                  child: new Text('You are at: ' + assigned_lat.toString()+','+assign_long.toString(),
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontSize: 14.0)),
                   onPressed: () {

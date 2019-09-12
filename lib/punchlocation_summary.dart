@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
-import 'globals.dart' as globals;
+
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'punchlocation.dart';
@@ -45,7 +45,7 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
  // StreamLocation sl = new StreamLocation();
   bool _isButtonDisabled= false;
   final _comments=TextEditingController();
-  String latit,longi,location_addr1;
+
   Timer timer;
 
   var FakeLocationStatus=0;
@@ -101,11 +101,8 @@ String address="";
             fakeLocationDetected=false;
           }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          streamlocationaddr=address;
 
-          location_addr1=streamlocationaddr;
+
 
 
         });
@@ -228,6 +225,7 @@ String address="";
   _showDialog(visit_id) async {
    // sl.startStreaming(2);
     setState(() {
+      /*
       if(assign_long!=null) {
         latit = assign_lat.toString();
         longi = assign_long.toString();
@@ -236,7 +234,7 @@ String address="";
         latit = "0.0";
         longi = "0.0";
         location_addr1 = "";
-      }
+      }*/
     });
     await showDialog<String>(
       context: context,
@@ -280,11 +278,11 @@ String address="";
                 print('00000000000');
                 print(_comments.text);
                 print('111111111111111');
-                print(latit+' '+longi);
+
                 print('22222222222222');
                 print('<<****************************');
                 Navigator.of(context, rootNavigator: true).pop();
-                saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),latit,longi,_comments.text,orgid,FakeLocationStatus).then((res){
+                saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),assign_lat.toString(),assign_long.toString(),_comments.text,orgid,FakeLocationStatus).then((res){
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PunchLocationSummary()),

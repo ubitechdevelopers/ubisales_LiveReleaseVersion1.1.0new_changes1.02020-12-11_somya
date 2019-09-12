@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/punchlocation.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
@@ -93,9 +94,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       org_name = "",
       desination = "",
       desinationId = "",
-      profile,
-      latit = "",
-      longi = "";
+      profile
+      ;
   String aid = "";
   String client='0';
   String shiftId = "";
@@ -137,8 +137,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
         lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
-        address=await getAddressFromLati(lat, long);
-        globalstreamlocationaddr=address;
+
         print(call.arguments["mocked"].toString());
 
 
@@ -153,8 +152,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
           long=call.arguments["longitude"].toString();
           lat=call.arguments["latitude"].toString();
-          latit=lat;
-          longi=long;
+
           streamlocationaddr=address;
 
           location_addr=streamlocationaddr;
@@ -293,15 +291,13 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       setState(() {
-        location_addr1 = location_addr;
         // //print("1-"+profile);
         // //print("2-"+_checkLoaded.toString());
-        latit = prefs.getString('latit') ?? '';
-        longi = prefs.getString('longi') ?? '';
+
         shiftId = prefs.getString('shiftId') ?? "";
         ////print("this is set state "+location_addr1);
         // //print(act1);
-        streamlocationaddr = globalstreamlocationaddr;
+
       });
     }
   }
@@ -617,7 +613,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
             child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + streamlocationaddr,
+                child: new Text('You are at: ' + assign_lat.toString()+','+assign_long.toString(),
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
@@ -748,15 +744,15 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
               Time,
               Date,
 
-              Latitude,
-              Longitude,
+              "",
+              "",
               '00:00:00',
-              Date,
+              "",
               client,
               "",
               "",
               OrganizationId,
-              1,
+              0,
               PictureBase64,
               defaultUserImage,
               FakeLocationStatus,

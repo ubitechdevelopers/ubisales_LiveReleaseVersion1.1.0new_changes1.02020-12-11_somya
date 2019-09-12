@@ -66,13 +66,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   String newpwd = "new";
   int Is_Delete = 0;
   bool _visible = true;
-  String location_addr = "";
-  String location_addr1 = "";
-  String streamlocationaddr = "";
+
+
   String admin_sts = '0';
   String mail_varified = '1';
-  String lat = "";
-  String long = "";
+
   String act = "";
   String act1 = "";
   int alertdialogcount = 0;
@@ -93,9 +91,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       org_name = "",
       desination = "",
       desinationId = "",
-      profile,
-      latit = "",
-      longi = "";
+      profile;
   bool issave = false;
   String areaStatus = '0';
   String aid = "";
@@ -112,9 +108,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
-    lat=assign_lat.toString();
-    long=assign_long.toString();
-    streamlocationaddr = globalstreamlocationaddr;
     initPlatformState();
     //setLocationAddress();
    // startTimer();
@@ -215,8 +208,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
 
         }
-        long=call.arguments["longitude"].toString();
-        lat=call.arguments["latitude"].toString();
+        var long=call.arguments["longitude"].toString();
+        var lat=call.arguments["latitude"].toString();
         //lat=assign_lat.toString();
         //long=assign_long.toString();
         assign_lat=double.parse(lat);
@@ -250,12 +243,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
           }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          streamlocationaddr=address;
-
-          location_addr=streamlocationaddr;
-          location_addr1=streamlocationaddr;
 
 
         });
@@ -602,7 +589,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     });
     if (response == 1) {
       Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+
       await syncOfflineData();
       // //print(act);
       ////print("this is-----> "+act);
@@ -614,7 +601,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           newpwd = prefs.getString('newpwd') ?? "";
           userpwd = prefs.getString('usrpwd') ?? "";
           print("New pwd" + newpwd + "  User ped" + userpwd);
-          location_addr1 = location_addr;
+
           admin_sts = prefs.getString('sstatus').toString() ?? '0';
           mail_varified = prefs.getString('mail_varified').toString() ?? '0';
           alertdialogcount = globalalertcount;
@@ -632,6 +619,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
           profileimage = new NetworkImage(profile);
+          globalstreamlocationaddr=getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
          // _checkLoaded = false;
           // //print("1-"+profile);
           profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
@@ -642,8 +630,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             }
           }));
           // //print("2-"+_checkLoaded.toString());
-          latit = prefs.getString('latit') ?? '';
-          longi = prefs.getString('longi') ?? '';
           shiftId = prefs.getString('shiftId') ?? "";
           aid = prefs.getString('aid') ?? "";
           print('aid again' + aid);
@@ -651,7 +637,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           ////print("this is set state "+location_addr1);
           act1 = act;
           print(act1);
-          streamlocationaddr = globalstreamlocationaddr;
+
         });
       }
     }
@@ -715,7 +701,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (streamlocationaddr != '') ? mainbodyWidget() : refreshPageWidgit(),
+          (globalstreamlocationaddr != ''||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -738,7 +724,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   refreshPageWidgit() {
-    if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
+    if (globals.globalstreamlocationaddr.isNotEmpty) {
 
 
 
@@ -1009,7 +995,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               /* Text('Mark Attendance',
                 style: new TextStyle(fontSize: 30.0, color: Colors.teal)),
             SizedBox(height: 10.0),*/
-              getwidget(location_addr1),
+              getwidget(globals.globalstreamlocationaddr),
               //    SizedBox(height: MediaQuery.of(context).size.height*.1),
               /*      Container(
             //foregroundDecoration: BoxDecoration(color:Colors.green ),
@@ -1336,11 +1322,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + streamlocationaddr,
+                child: new Text('You are at: ' + globalstreamlocationaddr,
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
-                  launchMap(lat, long);
+                  launchMap(globals.assign_lat.toString(), globals.assign_long.toString());
                   /* Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -1489,7 +1475,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       FakeLocationStatus=1;
     }
     MarkTime mk = new MarkTime(
-        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long,FakeLocationStatus);
+        empid, globals.globalstreamlocationaddr, aid, act1, shiftId, orgdir, globals.assign_lat.toString(), assign_long.toString(),FakeLocationStatus);
     /* mk1 = mk;*/
     print("inside saveImage Home");
     var connectivityResult = await (new Connectivity().checkConnectivity());

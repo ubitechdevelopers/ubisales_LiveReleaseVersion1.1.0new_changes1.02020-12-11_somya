@@ -1950,10 +1950,10 @@ getAddressFromLati( String Latitude,String Longitude) async{
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-    if (Latitude != null||Latitude !='') {
+    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(
-              double.parse(Latitude), double.parse(Longitude)));
+              globals.assign_lat, globals.assign_long));
       var first = addresses.first;
       //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
       var streamlocationaddr = "${first.addressLine}";
@@ -1963,7 +1963,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
     }
   }catch(e){
     print(e.toString());
-    if (Latitude != null||Latitude!='') {
+    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
       globalstreamlocationaddr = "${Latitude},${Longitude}";
     }
     return globals.globalstreamlocationaddr;

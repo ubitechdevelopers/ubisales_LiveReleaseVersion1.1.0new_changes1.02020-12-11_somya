@@ -79,9 +79,8 @@ class _PunchLocation extends State<PunchLocation> {
       org_name = "",
       desination = "",
       desinationId = "",
-      profile,
-      latit = "",
-      longi = "";
+      profile;
+
   String aid = "";
   String client='0';
   String shiftId = "";
@@ -140,12 +139,8 @@ var FakeLocationStatus=0;
             fakeLocationDetected=false;
           }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          streamlocationaddr=address;
 
-          location_addr=streamlocationaddr;
-          location_addr1=streamlocationaddr;
+
 
 
         });
@@ -265,8 +260,7 @@ var FakeLocationStatus=0;
           }
         }));
         // //print("2-"+_checkLoaded.toString());
-        latit = prefs.getString('latit') ?? '';
-        longi = prefs.getString('longi') ?? '';
+
         aid = prefs.getString('aid') ?? "";
         shiftId = prefs.getString('shiftId') ?? "";
         ////print("this is set state "+location_addr1);
@@ -546,7 +540,7 @@ var FakeLocationStatus=0;
             child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + streamlocationaddr,
+                child: new Text('You are at: ' + globalstreamlocationaddr,
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
