@@ -562,7 +562,7 @@ List<Map> createEMpListDD(List data, int label) {
 Future<List<Attn>> getEmpHistoryOf30(listType, emp) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
-//print( globals.path + 'getCDateAttnDeptWise_new?refno=$orgdir&date=$date&datafor=$listType&dept=$dept');
+  print( globals.path + 'getEmpHistoryOf30?refno=$orgdir&datafor=$listType&emp=$emp');
   final response = await http.get(globals.path +
       'getEmpHistoryOf30?refno=$orgdir&datafor=$listType&emp=$emp');
   // print('================='+dept+'===================');
@@ -2489,8 +2489,8 @@ List<Holiday> createHolidayList(List data) {
   List<Holiday> list = new List();
   for (int i = 0; i < data.length; i++) {
     String name = data[i]["Name"];
-    String from = Formatdate(data[i]["fromDate"]);
-    String to = Formatdate(data[i]["DateTo"]);
+    String from = (data[i]["fromDate"]);
+    String to =   (data[i]["DateTo"]);
     String days = data[i]["DiffDate"];
     Holiday holiday = new Holiday(
         Name: name,

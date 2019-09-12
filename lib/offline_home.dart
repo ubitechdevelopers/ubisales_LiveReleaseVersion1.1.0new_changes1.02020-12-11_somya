@@ -836,7 +836,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
              children: [
                 FlatButton(
-                  child: new Text('You are at: ' + globalstreamlocationaddr,
+                  child: new Text('You are at: ' + assign_lat.toString()+','+assign_long.toString(),
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontSize: 14.0)),
                   onPressed: () {
