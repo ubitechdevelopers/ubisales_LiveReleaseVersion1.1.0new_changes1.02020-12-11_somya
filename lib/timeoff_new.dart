@@ -262,7 +262,7 @@ class _TimeOff_New extends State<TimeOff_New> {
               ],
             ),
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
             // backgroundColor: Color.fromARGB(255,63,163,128),
           ),
 
@@ -376,11 +376,11 @@ class _TimeOff_New extends State<TimeOff_New> {
                     SizedBox(width: 20.0,),
                     Icon(
                       Icons.all_inclusive,
-                      color: Colors.teal,
+                      color: appcolor,
                     ),
                     Text(
                       " Fetching location, please wait..",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.teal),
+                      style: new TextStyle(fontSize: 20.0, color: appcolor),
                     )
                   ]),
               SizedBox(height: 15.0),
@@ -408,7 +408,7 @@ class _TimeOff_New extends State<TimeOff_New> {
                 child: new Text(
                   "Fetch Location now",
                   style: new TextStyle(
-                      color: Colors.teal, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
               //    sl.startStreaming(5);
@@ -461,11 +461,11 @@ class _TimeOff_New extends State<TimeOff_New> {
             children: <Widget>[
               Icon(
                 Icons.android,
-                color: Colors.teal,
+                color: appcolor,
               ),
               Text(
                 "Under development",
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal),
+                style: new TextStyle(fontSize: 30.0, color: appcolor),
               )
             ]),
       ),
@@ -483,11 +483,11 @@ class _TimeOff_New extends State<TimeOff_New> {
                   children: <Widget>[
                     Icon(
                       Icons.error,
-                      color: Colors.teal,
+                      color: appcolor,
                     ),
                     Text(
                       "Poor network connection.",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.teal),
+                      style: new TextStyle(fontSize: 20.0, color: appcolor),
                     ),
                   ]),
               SizedBox(height: 5.0),
@@ -495,7 +495,7 @@ class _TimeOff_New extends State<TimeOff_New> {
                 child: new Text(
                   "Refresh location",
                   style: new TextStyle(
-                      color: Colors.teal, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
                  // sl.startStreaming(5);
@@ -567,7 +567,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
         Container(
-            color: Colors.teal.withOpacity(0.1),
+            color: appcolor.withOpacity(0.1),
             height: MediaQuery.of(context).size.height * .15,
             child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -584,13 +584,13 @@ class _TimeOff_New extends State<TimeOff_New> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Text('Location not correct? ',style: TextStyle(color: Colors.teal),),
+                    new Text('Location not correct? ',style: TextStyle(color: appcolor),),
                     SizedBox(width: 5.0,),
                     new InkWell(
                       child: new Text(
                         "Refresh location",
                         style: new TextStyle(
-                            color: Colors.teal,
+                            color: appcolor,
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
@@ -628,7 +628,7 @@ class _TimeOff_New extends State<TimeOff_New> {
     return RaisedButton(
       child: Text('START TIME OFF',
           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-      color: Colors.orangeAccent,
+      color: buttoncolor,
       onPressed: () {
         if(_clientname.text=='') {
           showInSnackBar('Please insert client name first');

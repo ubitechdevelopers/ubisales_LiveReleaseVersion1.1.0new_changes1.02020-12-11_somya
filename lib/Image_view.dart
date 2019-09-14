@@ -2,10 +2,12 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'globals.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 void main() => runApp(new ImageView());
@@ -40,7 +42,7 @@ Widget build(BuildContext context) {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       body: Center(
         child:

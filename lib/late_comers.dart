@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
@@ -10,7 +11,7 @@ import 'reports.dart';
 import 'profile.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 
 class LateComers extends StatefulWidget {
   @override
@@ -76,7 +77,7 @@ class _LateComers extends State<LateComers> {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
 
 
@@ -185,7 +186,7 @@ class _LateComers extends State<LateComers> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -193,20 +194,20 @@ class _LateComers extends State<LateComers> {
                     width: MediaQuery.of(context).size.width * 0.20,
                     child: Text(
                       'Shift',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.20,
                     child: Text('Time In',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.12,
                     child: Text('Late By',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],

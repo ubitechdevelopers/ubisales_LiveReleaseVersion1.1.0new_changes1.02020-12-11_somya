@@ -27,7 +27,7 @@ import 'reports.dart';
 import 'profile.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PermissionPage extends StatefulWidget {
   @override
@@ -196,7 +196,7 @@ class _PermissionPageState extends State<PermissionPage> {
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.of(context).pop();
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
         bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -274,7 +274,7 @@ class _PermissionPageState extends State<PermissionPage> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -288,7 +288,7 @@ class _PermissionPageState extends State<PermissionPage> {
             child: Column( children: <Widget>[
               SizedBox(height: 20.0),
               Text('Permissions',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
+                  style: new TextStyle(fontSize: 22.0, color: appcolor)),
               new Divider(color: Colors.black54,height: 1.5,),
               new Expanded(child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 24.0),

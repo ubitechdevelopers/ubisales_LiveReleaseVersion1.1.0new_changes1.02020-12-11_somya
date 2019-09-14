@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +14,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'holidays.dart';
-
+import 'globals.dart';
 class addHoliday extends StatefulWidget {
   @override
   _addHoliday createState() => _addHoliday();
@@ -97,7 +98,7 @@ class _addHoliday extends State<addHoliday> {
            MaterialPageRoute(builder: (context) => TimeoffSummary()),
           );*/
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -208,7 +209,7 @@ class _addHoliday extends State<addHoliday> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color:appcolor),)
             ]),
       ),
     );
@@ -228,7 +229,7 @@ class _addHoliday extends State<addHoliday> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Add Holiday",style: new TextStyle(fontSize: 22.0,color: Colors.teal)),
+                    child:Text("Add Holiday",style: new TextStyle(fontSize: 22.0,color: appcolor)),
                   ),
                   SizedBox(height: 30.0),
 
@@ -263,7 +264,7 @@ class _addHoliday extends State<addHoliday> {
                     onShowPicker: (context, currentValue) {
                       return showDatePicker(
                           context: context,
-                          firstDate: DateTime(1900),
+                          firstDate: DateTime.now().subtract(Duration(days: 1)),
                           initialDate: currentValue ?? DateTime.now(),
                           lastDate: DateTime(2100));
 
@@ -301,7 +302,7 @@ class _addHoliday extends State<addHoliday> {
                     onShowPicker: (context, currentValue) {
                       return showDatePicker(
                           context: context,
-                          firstDate: DateTime(1900),
+                          firstDate: DateTime.now().subtract(Duration(days: 1)),
                           initialDate: currentValue ?? DateTime.now(),
                           lastDate: DateTime(2100));
                     },
@@ -373,7 +374,7 @@ class _addHoliday extends State<addHoliday> {
                       ),
                       RaisedButton(
                         child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('ADD',style: TextStyle(color: Colors.white),),
-                        color: Colors.orangeAccent,
+                        color: buttoncolor,
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             if(_isButtonDisabled)
@@ -383,6 +384,7 @@ class _addHoliday extends State<addHoliday> {
                             setState(() {
                               _isButtonDisabled=true;
                             });
+
                             createHoliday(_holidayName.text,startdate,enddate,_description.text).then((res){
                               if(res.toString()=='1') {
 

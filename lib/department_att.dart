@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,7 @@ import 'drawer.dart';
 import 'Image_view.dart';
 import 'generatepdf.dart';
 import 'package:simple_share/simple_share.dart';
-
+import 'globals.dart';
 import 'offline_home.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -80,7 +81,7 @@ class _Department_att extends State<Department_att>
       key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       endDrawer: new AppDrawer(),
       body: (filests == true)
@@ -193,7 +194,7 @@ class _Department_att extends State<Department_att>
                   decoration: new BoxDecoration(color: Colors.black54),
                   child: new TabBar(
                     indicator: BoxDecoration(
-                      color: Colors.orangeAccent,
+                      color: buttoncolor,
                     ),
                     controller: _controller,
                     tabs: [
@@ -224,7 +225,7 @@ class _Department_att extends State<Department_att>
                       child: Text(
                         '  Name',
                         style: TextStyle(
-                            color: Colors.teal,
+                            color:appcolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -237,7 +238,7 @@ class _Department_att extends State<Department_att>
                       child: Text(
                         'Time In',
                         style: TextStyle(
-                            color: Colors.teal,
+                            color: appcolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -250,7 +251,7 @@ class _Department_att extends State<Department_att>
                       child: Text(
                         'Time Out',
                         style: TextStyle(
-                            color: Colors.teal,
+                            color: appcolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -614,7 +615,7 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: Colors.teal
+                                                  color:appcolor
                                                       .withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
@@ -872,7 +873,7 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: Colors.teal
+                                                  color: appcolor
                                                       .withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
@@ -1252,7 +1253,7 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: Colors.teal
+                                                  color: appcolor
                                                       .withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
@@ -1631,7 +1632,7 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: Colors.teal
+                                                  color: appcolor
                                                       .withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
@@ -1777,7 +1778,7 @@ class _Department_att extends State<Department_att>
                 'Share File',
                 style: TextStyle(color: Colors.white),
               ),
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
                 final uri = Uri.file(filename);

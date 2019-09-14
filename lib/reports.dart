@@ -94,7 +94,7 @@ class _Reports extends State<Reports> {
           children: <Widget>[
             SizedBox(height: 8.0),
             Text('Reports',
-              style: new TextStyle(fontSize: 22.0, color: Colors.teal,),),
+              style: new TextStyle(fontSize: 22.0, color: appcolor,),),
             SizedBox(height: 5.0),
             new Expanded(
               child: getReportsWidget(),

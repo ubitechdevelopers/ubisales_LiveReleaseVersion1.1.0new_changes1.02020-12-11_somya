@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -16,7 +17,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class ProfilePage extends StatefulWidget {
   @override
@@ -120,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
     controller = _scaffoldKey.currentState
         .showBottomSheet<Null>((BuildContext context) {
       return new Container(
-          color: Colors.teal.withOpacity(0.1),
+          color: appcolor.withOpacity(0.1),
           child: new Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -199,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 20.0,),
               Divider(color: Colors.black,height: 3.0,),
               Container(
-                color: Colors.teal.withOpacity(0.15),
+                color: appcolor.withOpacity(0.15),
               child:Column(
                 children: <Widget>[
                   Center(
@@ -228,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
               Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
       bottomNavigationBar: Bottomnavigationbar(),
 
@@ -273,7 +274,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -288,8 +289,8 @@ class _ProfilePageState extends State<ProfilePage> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.error,color: Colors.teal,),
-                    Text("Poor network connection.",style: new TextStyle(fontSize: 20.0,color: Colors.teal),),
+                    Icon(Icons.error,color: appcolor,),
+                    Text("Poor network connection.",style: new TextStyle(fontSize: 20.0,color: appcolor),),
                   ]),
               SizedBox(height: 5.0),
               FlatButton(
@@ -359,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       shape: new CircleBorder(),
                       elevation: 0.5,
-                      fillColor: Colors.teal,
+                      fillColor: appcolor,
                       padding: const EdgeInsets.all(1.0),
                     ),
                   ),
@@ -448,7 +449,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           RaisedButton(
                             child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('SAVE',style: TextStyle(color: Colors.white),),
-                            color: Colors.orangeAccent,
+                            color: buttoncolor,
                             onPressed: () {
                               if(_isButtonDisabled)
                                 return null;

@@ -12,7 +12,7 @@ import 'Image_view.dart';
 import 'notifications.dart';
 import 'Bottomnavigationbar.dart';
 import 'package:flutter/services.dart';
-
+import 'globals.dart';
 class FlexiList extends StatefulWidget {
   @override
   _FlexiList createState() => _FlexiList();
@@ -80,7 +80,7 @@ class _FlexiList extends State<FlexiList> {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -159,7 +159,7 @@ class _FlexiList extends State<FlexiList> {
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -167,20 +167,20 @@ class _FlexiList extends State<FlexiList> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Location',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('In',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -353,7 +353,7 @@ class _FlexiList extends State<FlexiList> {
                   });
             } else {
               return new Center(
-                child: Text("No Attendance ", style: TextStyle(color: Colors.orangeAccent,fontSize: 18.0),),
+                child: Text("No Attendance ", style: TextStyle(color: buttoncolor,fontSize: 18.0),),
               );
             }
           } else if (snapshot.hasError) {

@@ -9,7 +9,7 @@ import 'package:Shrine/services/checklogin.dart';
 import 'home.dart';
 import 'services/services.dart';
 import 'package:Shrine/model/user.dart';
-
+import 'globals.dart';
 
 class SelfRegister extends StatefulWidget {
   SelfRegister({Key key, this.title}) : super(key: key);
@@ -77,7 +77,7 @@ class _SelfRegister extends State<SelfRegister> {
             MaterialPageRoute(builder: (context) => AskRegisterationPage()),
           );
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       body: new SafeArea(
           top: false,
@@ -178,13 +178,13 @@ class _SelfRegister extends State<SelfRegister> {
                   new Container(
                       padding: const EdgeInsets.only(left: 0.0, top: 20.0),
                       child: _isButtonDisabled?new RaisedButton(
-                          color: Colors.orange,
+                          color: buttoncolor,
                           textColor: Colors.white,
                           padding: EdgeInsets.all(20.0),
                           child: const Text('Please wait...',style: TextStyle(fontSize: 18.0),),
                           onPressed: (){}
                       ):new RaisedButton(
-                        color: Colors.orange,
+                        color: buttoncolor,
                         textColor: Colors.white,
                         padding: EdgeInsets.all(20.0),
                         child: const Text('Register',style: TextStyle(fontSize: 18.0),),

@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +15,7 @@ import 'department_att.dart';
 import 'generatepdf.dart';
 import 'package:simple_share/simple_share.dart';
 import 'Bottomnavigationbar.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class Departmentwise_att extends StatefulWidget {
   @override
@@ -71,7 +72,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
       key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       endDrawer: new AppDrawer(),
       body: getMainWidget(),
@@ -394,7 +395,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                             decoration:
                                                                 TextDecoration
                                                                     .underline,
-                                                            color: Colors.teal,
+                                                            color: appcolor,
                                                           )),
                                                       onTap: () {
                                                         Navigator.push(
@@ -426,7 +427,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                             child:  Text(snapshot.data[index].Name.toString(),),
                                             color: Colors.white,
                                             elevation: 0.0, // remove
-                                            textColor: Colors.teal,
+                                            textColor: appcolor,
                                             splashColor: Colors.green[200],
                                             onPressed: () {
                                               Navigator.push(
@@ -507,7 +508,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                   .size
                                                   .width *
                                               1,
-                                          color: Colors.teal.withOpacity(0.1),
+                                          color: appcolor.withOpacity(0.1),
                                           padding: EdgeInsets.only(
                                               top: 5.0, bottom: 5.0),
                                           child: Text(
@@ -568,7 +569,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                 'Share File',
                 style: TextStyle(color: Colors.white),
               ),
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
                 final uri = Uri.file(filename);

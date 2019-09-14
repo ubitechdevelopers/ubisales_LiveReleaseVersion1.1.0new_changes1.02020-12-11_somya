@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -20,7 +21,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class LeaveSummary extends StatefulWidget {
@@ -159,7 +160,7 @@ class _LeaveSummary extends State<LeaveSummary> {
           ),
           RaisedButton(
             child: Text('Withdraw'),
-            color: Colors.teal,
+            color: appcolor,
             onPressed: () {
               Navigator.of(context, rootNavigator: true).pop();
               withdrawlLeave(leaveid);
@@ -200,7 +201,7 @@ class _LeaveSummary extends State<LeaveSummary> {
             MaterialPageRoute(builder: (context) => HomePage()),
           );
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -324,9 +325,9 @@ class _LeaveSummary extends State<LeaveSummary> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android, color: Colors.teal,),
+              Icon(Icons.android, color: appcolor,),
               Text("Under development",
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal),)
+                style: new TextStyle(fontSize: 30.0, color: appcolor),)
             ]),
       ),
     );
@@ -373,22 +374,22 @@ class _LeaveSummary extends State<LeaveSummary> {
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.30,
-                child:Text('Details',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Details',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('From',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('From',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.24,
-                child:Text('To',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('To',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Status',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Status',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -443,7 +444,7 @@ class _LeaveSummary extends State<LeaveSummary> {
                                                height: 18.5,
                                                child: new FlatButton(
                                                  padding: EdgeInsets.all(1.0),
-                                                 color: Colors.orangeAccent,
+                                                 color: buttoncolor,
                                                  onPressed: () {
                                                    confirmWithdrawl(
                                                        snapshot.data[index]
@@ -496,7 +497,7 @@ class _LeaveSummary extends State<LeaveSummary> {
                                            .red.withOpacity(0.65) : snapshot
                                            .data[index].approverstatus
                                            .toString().startsWith('Pending')
-                                           ? Colors.orangeAccent
+                                           ? buttoncolor
                                            : Colors.black12,
                                      ),
 

@@ -8,6 +8,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'Bottomnavigationbar.dart';
+import 'globals.dart';
 
 class HolidayList extends StatefulWidget {
   @override
@@ -106,19 +107,19 @@ class _HolidayList extends State<HolidayList> {
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width*0.35,
-                    child: Text('Holidays', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
+                    child: Text('Holidays', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width*0.22,
-                    child: Text('From', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
+                    child: Text('From', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width*0.16,
-                    child: Text('To', style: TextStyle( color: Colors.orange),textAlign: TextAlign.center),
+                    child: Text('To', style: TextStyle( color: headingcolor),textAlign: TextAlign.center),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width*0.10,
-                    child: Text('days', style: TextStyle(color: Colors.orange),textAlign: TextAlign.right),
+                    child: Text('days', style: TextStyle(color: headingcolor),textAlign: TextAlign.right),
                   ),
 
                 ],

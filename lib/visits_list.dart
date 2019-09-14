@@ -13,7 +13,7 @@ import 'reports.dart';
 import 'Image_view.dart';
 import 'notifications.dart';
 import 'Bottomnavigationbar.dart';
-
+import 'globals.dart';
 class VisitList extends StatefulWidget {
   @override
   _VisitList createState() => _VisitList();
@@ -81,7 +81,7 @@ class _VisitList extends State<VisitList> {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar:Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -156,7 +156,7 @@ class _VisitList extends State<VisitList> {
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -164,20 +164,20 @@ class _VisitList extends State<VisitList> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Client',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('In',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -418,7 +418,7 @@ class _VisitList extends State<VisitList> {
                   });
             } else {
               return new Center(
-                child: Text("No Visits ", style: TextStyle(color: Colors.orangeAccent,fontSize: 18.0),),
+                child: Text("No Visits ", style: TextStyle(color: headingcolor,fontSize: 18.0),),
               );
             }
           } else if (snapshot.hasError) {

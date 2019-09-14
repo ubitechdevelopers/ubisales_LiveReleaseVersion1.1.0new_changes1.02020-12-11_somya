@@ -25,7 +25,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'profile.dart';
 import 'reports.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PaymentPage extends StatefulWidget {
   @override
@@ -149,7 +149,7 @@ class _PaymentPageState extends State<PaymentPage> {
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.of(context).pop();
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -260,7 +260,7 @@ class _PaymentPageState extends State<PaymentPage> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color:appcolor),)
             ]),
       ),
     );
@@ -282,7 +282,7 @@ class _PaymentPageState extends State<PaymentPage> {
             child: Column( children: <Widget>[
               SizedBox(height: 20.0),
               Text('Pricing',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
+                  style: new TextStyle(fontSize: 22.0, color: appcolor)),
               new Divider(color: Colors.black54,height: 1.5,),
               new Expanded(child: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -323,7 +323,7 @@ class _PaymentPageState extends State<PaymentPage> {
               new Divider(color: Colors.black54,height: 1.5,),
               RaisedButton(
                 child: Text("Buy"),
-                color: Colors.orangeAccent,
+                color: buttoncolor,
                 onPressed: (){
                   if(buystatus=="1" && trialstatus=="2") {
                     launchMap("https://ubiattendance.ubihrm.com/");

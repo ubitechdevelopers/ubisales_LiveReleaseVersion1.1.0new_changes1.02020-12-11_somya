@@ -10,7 +10,7 @@ import 'home.dart';
 import 'package:Shrine/model/user.dart';
 import 'services/services.dart';
 import 'dart:convert';
-
+import 'globals.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -327,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
             MaterialPageRoute(builder: (context) => AskRegisterationPage()),
           );
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       body: new SafeArea(
           top: false,
@@ -344,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
                     child: new Text('Register Your Company',
                       textAlign: TextAlign.center,
-                      style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: Colors.teal ),
+                      style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: appcolor ),
                     ),
                   ),
 
@@ -567,13 +567,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   new Container(
                       padding: const EdgeInsets.only(left: 0.0, top: 20.0),
                       child: _isButtonDisabled?new RaisedButton(
-                          color: Colors.orange,
+                          color: buttoncolor,
                           textColor: Colors.white,
                           padding: EdgeInsets.all(20.0),
                           child: const Text('Please wait...',style: TextStyle(fontSize: 18.0),),
                           onPressed: (){}
                       ):new RaisedButton(
-                        color: Colors.orange,
+                        color: buttoncolor,
                         textColor: Colors.white,
                         padding: EdgeInsets.all(20.0),
                         child: const Text('Register Company',style: TextStyle(fontSize: 18.0),),

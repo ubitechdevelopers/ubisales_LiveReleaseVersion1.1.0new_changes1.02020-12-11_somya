@@ -5,7 +5,7 @@ import 'home.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'globals.dart';
 
 
 

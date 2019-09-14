@@ -25,7 +25,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'globals.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class LoggedOut extends StatefulWidget {
@@ -139,7 +139,7 @@ class _LoggedOutState extends State<LoggedOut> {
             MaterialPageRoute(builder: (context) => LoggedOut()),
           );
         }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -227,7 +227,7 @@ class _LoggedOutState extends State<LoggedOut> {
             child: new Text(
               "Refresh Page",
               style: new TextStyle(
-                  color: Colors.teal, decoration: TextDecoration.underline),
+                  color: appcolor, decoration: TextDecoration.underline),
             ),
             onPressed: () {
               checknetonpage();

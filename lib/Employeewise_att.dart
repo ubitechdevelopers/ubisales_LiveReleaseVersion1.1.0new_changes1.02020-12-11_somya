@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'outside_label.dart';
@@ -9,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
+import 'globals.dart';
 import 'package:flutter/scheduler.dart';
 // This app is a stateful, it tracks the user's current choice.
 class EmployeeWise_att extends StatefulWidget {
@@ -59,7 +61,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
       key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       endDrawer: new AppDrawer(),
       body: new ListView(
@@ -74,7 +76,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
-              indicator: BoxDecoration(color: Colors.orangeAccent,),
+              indicator: BoxDecoration(color: buttoncolor,),
               controller: _controller,
               tabs: [
                 new Tab(
@@ -99,18 +101,18 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.50,
-                child:Text('        Date',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('        Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.20,
-                child:Text('Time In',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.24,
-                child:Text('Time Out',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -154,7 +156,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                     SizedBox(height: 25.0,),
                                                     Container(
                                                       padding: EdgeInsets.only(left: 11.0),
-                                                      child: Text("Total Present: ${countP}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                      child: Text("Total Present: ${countP}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                     ),
                                                    ]
                                                ):new Center(),
@@ -316,7 +318,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No present in last 30 days ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -371,7 +373,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                  SizedBox(height: 25.0,),
                                                  Container(
                                                    padding: EdgeInsets.only(left: 5.0),
-                                                   child: Text("Total Absent: ${countA}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                   child: Text("Total Absent: ${countA}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                  ),
                                                ]
                                            ):new Center(),
@@ -443,7 +445,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No absent in last 30 days ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -502,7 +504,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                   SizedBox(height: 25.0,),
                                                   Container(
                                                     padding: EdgeInsets.only(left: 5.0),
-                                                    child: Text("Total Late Coming: ${countL}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                    child: Text("Total Late Coming: ${countL}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                   ),
                                                 ]
                                             ):new Center(),
@@ -660,7 +662,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No late comings in last 30 days ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -717,7 +719,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                   SizedBox(height: 25.0,),
                                                   Container(
                                                     padding: EdgeInsets.only(left: 11.0),
-                                                    child: Text("Total Early Leaving: ${countE}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                                    child: Text("Total Early Leaving: ${countE}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                                                   ),
                                                 ]
                                             ):new Center(),
@@ -873,7 +875,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No early leavings in last 30 days",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),

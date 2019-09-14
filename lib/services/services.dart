@@ -1959,7 +1959,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
       var streamlocationaddr = "${first.addressLine}";
 
       globalstreamlocationaddr = streamlocationaddr;
-      return streamlocationaddr;
+      return streamlocationaddr.toString();
     }
   }catch(e){
     print(e.toString());

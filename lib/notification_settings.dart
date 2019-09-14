@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
 import 'package:flutter/services.dart';
@@ -121,7 +122,7 @@ class _NotificationSettings extends State<NotificationSettings> {
            MaterialPageRoute(builder: (context) => TimeoffSummary()),
           );*/
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -232,7 +233,7 @@ class _NotificationSettings extends State<NotificationSettings> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -252,7 +253,7 @@ bool isSwitched=true;
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Modify your Notification Settings",style: new TextStyle(fontSize: 22.0,color: Colors.orangeAccent)),
+                    child:Text("Modify your Notification Settings",style: new TextStyle(fontSize: 22.0,color: buttoncolor)),
                   ),
                   SizedBox(height: 30.0),
                   Container(

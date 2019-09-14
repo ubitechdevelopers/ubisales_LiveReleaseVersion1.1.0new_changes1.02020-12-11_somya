@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -24,7 +25,7 @@ import 'home.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class LeavePage extends StatefulWidget {
   @override
@@ -164,7 +165,7 @@ class _LeavePageState extends State<LeavePage> {
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.of(context).pop();
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -275,7 +276,7 @@ class _LeavePageState extends State<LeavePage> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -289,7 +290,7 @@ class _LeavePageState extends State<LeavePage> {
             child: Column( children: <Widget>[
               SizedBox(height: 20.0),
               Text('Request Leave',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
+                  style: new TextStyle(fontSize: 22.0, color: appcolor)),
               new Divider(color: Colors.black54,height: 1.5,),
               new Expanded(child: ListView(
                 //padding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -533,7 +534,7 @@ class _LeavePageState extends State<LeavePage> {
                           ),
                           RaisedButton(
                             child: Text('SAVE',style: TextStyle(color: Colors.white),),
-                            color: Colors.orangeAccent,
+                            color: buttoncolor,
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
                                 requestleave(_dateController.text, _dateController1.text ,leavetimevalue, leavetimevalue1, _radioValue, _radioValue1, _reasonController.text);

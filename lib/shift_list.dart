@@ -10,7 +10,7 @@ import 'reports.dart';
 import 'profile.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 class ShiftList extends StatefulWidget {
   @override
   _ShiftList createState() => _ShiftList();
@@ -86,7 +86,7 @@ class _ShiftList extends State<ShiftList> {
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
               Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
       bottomNavigationBar:Bottomnavigationbar(),
 
@@ -99,7 +99,7 @@ class _ShiftList extends State<ShiftList> {
                 SizedBox(height: 8.0),
                 Center(
                   child: Text('Shifts',
-                    style: new TextStyle(fontSize: 22.0, color: Colors.orangeAccent,),),
+                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
                 ),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
@@ -112,19 +112,19 @@ class _ShiftList extends State<ShiftList> {
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width*0.30,
-                        child: Text('Shifts', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
+                        child: Text('Shifts', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time in', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left,),
+                        child: Text('Time in', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time out', style: TextStyle( color: Colors.orange),textAlign: TextAlign.left),
+                        child: Text('Time out', style: TextStyle( color: headingcolor),textAlign: TextAlign.left),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.16,
-                        child: Text('Status', style: TextStyle(color: Colors.orange),textAlign: TextAlign.left),
+                        child: Text('Status', style: TextStyle(color: headingcolor),textAlign: TextAlign.left),
                       ),
 
                     ],

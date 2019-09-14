@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'drawer.dart';
@@ -10,7 +11,7 @@ import 'profile.dart';
 import 'reports.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 class Designation extends StatefulWidget {
   @override
   _Designation createState() => _Designation();
@@ -66,7 +67,7 @@ class _Designation extends State<Designation> {
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
               Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
       bottomNavigationBar: Bottomnavigationbar(),
           endDrawer: new AppDrawer(),
@@ -78,7 +79,7 @@ class _Designation extends State<Designation> {
                 SizedBox(height: 8.0),
                 Center(
                   child: Text('Designations',
-                    style: new TextStyle(fontSize: 22.0, color: Colors.orangeAccent,),),
+                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
                 ),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
@@ -241,7 +242,7 @@ class _Designation extends State<Designation> {
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               }),
           new RaisedButton(
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
               onPressed: ()
               {
@@ -358,7 +359,7 @@ class _Designation extends State<Designation> {
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               }),
           new RaisedButton(
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               child: const Text('UPDATE', style: TextStyle(color: Colors.white)),
               onPressed: ()
               {

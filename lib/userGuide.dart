@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
 import 'package:Shrine/services/services.dart';
+import 'globals.dart';
 void main() => runApp(new UserGuide());
 
 class UserGuide extends StatefulWidget {
@@ -67,7 +68,7 @@ class _UserGuide extends State<UserGuide> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },),
-          backgroundColor: Colors.teal,
+          backgroundColor: appcolor,
         ),
         endDrawer: new AppDrawer(),
         body: userWidget()
@@ -85,7 +86,7 @@ class _UserGuide extends State<UserGuide> {
 
           Center(
             child:Text('Explore ubiAttendance (User)',
-              style: new TextStyle(fontSize: 25.0, color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
+              style: new TextStyle(fontSize: 25.0, color: buttoncolor, fontWeight: FontWeight.bold)),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
 
@@ -297,7 +298,7 @@ class _UserGuide extends State<UserGuide> {
         ),
         SizedBox(height: 30.0,),
 
-          Text('Explore ubiAttendance (Admin)',style: TextStyle(fontSize: 25.0,color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
+          Text('Explore ubiAttendance (Admin)',style: TextStyle(fontSize: 25.0,color: buttoncolor, fontWeight: FontWeight.bold)),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
         /******************************* How to check Attendance Reports***********************************/
         Image.asset(

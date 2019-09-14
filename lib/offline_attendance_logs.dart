@@ -197,10 +197,11 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                 icon: new Icon(Icons.home,color: Colors.white,),
                 title: new Text('Home',style: TextStyle(color: Colors.white)),
               ),
-              BottomNavigationBarItem(
+
+             /* BottomNavigationBarItem(
                   icon: Icon(Icons.location_on,color: Colors.white,),
                   title: Text('Visits',style: TextStyle(color: Colors.white),)
-              ),
+              ),*/
               /*  BottomNavigationBarItem(
                   icon: Icon(
                     Icons.notifications
@@ -225,7 +226,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
           padding: EdgeInsets.only(top:12.0,bottom: 2.0),
           child:Center(
             child:Text('Unsynced Attendance Log',
-                style: new TextStyle(fontSize: 22.0, color: Colors.teal,)),
+                style: new TextStyle(fontSize: 22.0, color: appcolor,)),
           ),
         ),
         Divider(color: Colors.black54,height: 1.5,),

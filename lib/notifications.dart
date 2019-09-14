@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,8 @@ import 'reports.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'Bottomnavigationbar.dart';
+import 'globals.dart';
+
 // This app is a stateful, it tracks the user's current choice.
 class Notifications extends StatefulWidget {
   @override
@@ -106,7 +109,7 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
             },),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
           bottomNavigationBar: Bottomnavigationbar(),
           endDrawer: new AppDrawer(),
@@ -125,7 +128,7 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
           padding: EdgeInsets.only(top:12.0,bottom: 2.0),
           child:Center(
             child:Text('Rejected Attendance Log',
-                style: new TextStyle(fontSize: 22.0, color: Colors.teal,)),
+                style: new TextStyle(fontSize: 22.0, color: appcolor,)),
           ),
         ),
         Divider(color: Colors.black54,height: 1.5,),

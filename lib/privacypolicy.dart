@@ -3,6 +3,7 @@ import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
+import 'globals.dart';
 void main() => runApp(new MyAppPolicy());
 
 class MyAppPolicy extends StatefulWidget {
@@ -59,7 +60,7 @@ class _MyAppPolicy extends State<MyAppPolicy> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },),
-          backgroundColor: Colors.teal,
+          backgroundColor: appcolor,
 
         ),
         endDrawer: new AppDrawer(),

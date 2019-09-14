@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // this is testing
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'login.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/services.dart';
+import 'globals.dart';
 class CheckUpdate extends StatefulWidget {
   @override
 
@@ -95,7 +97,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                             },
                           ):SizedBox(width: 150.0,),
                           RaisedButton(
-                              color: Colors.orangeAccent,
+                              color: buttoncolor,
                               child: Text('Update now',style: TextStyle(color: Colors.white),),
                             onPressed: (){
                               LaunchReview.launch(

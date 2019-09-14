@@ -10,6 +10,7 @@ import 'settings.dart';
 import 'home.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
+import 'globals.dart';
 
 class TimeOffList extends StatefulWidget {
   @override
@@ -76,7 +77,7 @@ class _TimeOffList extends State<TimeOffList> {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -148,7 +149,7 @@ class _TimeOffList extends State<TimeOffList> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -156,20 +157,20 @@ class _TimeOffList extends State<TimeOffList> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text(
                       'From',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text('To',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.12,
                     child: Text('Total Time',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -254,7 +255,7 @@ class _TimeOffList extends State<TimeOffList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Text(" Status: "),
-                      new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                      new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
                     ]),
                       SizedBox(height: MediaQuery.of(context).size.height*.005,),
                       Divider(
@@ -267,7 +268,7 @@ class _TimeOffList extends State<TimeOffList> {
               return new Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width*1,
-                  color: Colors.teal.withOpacity(0.1),
+                  color: appcolor.withOpacity(0.1),
                   padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                   child:Text("No one is on Time Off ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                 ),

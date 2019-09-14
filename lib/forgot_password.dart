@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,7 @@ import 'package:Shrine/services/services.dart';
 import 'package:intl/intl.dart';
 import 'home.dart';
 import 'login.dart';
-
+import 'globals.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -70,12 +71,12 @@ class _ForgotPassword extends State<ForgotPassword> {
            MaterialPageRoute(builder: (context) => TimeoffSummary()),
           );*/
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       body:  mainbodyWidget(),
     );
-
   }
+
   loader(){
     return new Container(
       child: Center(
@@ -152,7 +153,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                       ),
                       RaisedButton(
                         child: _isButtonDisabled==false?Text('SUBMIT',style: TextStyle(color: Colors.white),):Text('WAIT...',style: TextStyle(color: Colors.white),),
-                        color: Colors.orangeAccent,
+                        color: buttoncolor,
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             if (_username.text == ''||_username.text == null) {
@@ -189,7 +190,6 @@ class _ForgotPassword extends State<ForgotPassword> {
                                     title: new Text("Alert"),
                                     content: new Text("Please check your mail for the Password reset link."),
                                   ));
-
                                 }
                                 else {
                                   showInSnackBar("Email Not Found.");
@@ -220,7 +220,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                   err==true?Text('Invalid Email.',style: TextStyle(color: Colors.red,fontSize: 16.0),):Center(),
                   succ==true?Text('Please check your mail for the Password reset link. After you have reset the password, please click below link to login.',style: TextStyle(fontSize: 16.0),):Center(),
                   login==true?InkWell(
-                    child: Text('\nClick here to Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0,color: Colors.teal),),
+                    child: Text('\nClick here to Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0,color: appcolor),),
                     onTap:() async{
                       final prefs = await SharedPreferences.getInstance();
                       prefs.setString('username', username);

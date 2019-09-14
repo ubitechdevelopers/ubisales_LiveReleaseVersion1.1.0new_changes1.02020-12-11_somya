@@ -113,7 +113,7 @@ class _MyApp extends State<MyApp> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },),
-          backgroundColor: Colors.teal,
+          backgroundColor: globals.appcolor,
         ),
       bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
@@ -158,7 +158,7 @@ getWidgets(context){
           padding: EdgeInsets.only(top:12.0,bottom: 2.0),
           child:Center(
             child:Text('My Attendance Log',
-                style: new TextStyle(fontSize: 22.0, color: Colors.teal,)),
+                style: new TextStyle(fontSize: 22.0, color: globals.appcolor,)),
           ),
         ),
         Divider(color: Colors.black54,height: 1.5,),
@@ -170,18 +170,18 @@ getWidgets(context){
             SizedBox(width: MediaQuery.of(context).size.width*0.02),
             Container(
               width: MediaQuery.of(context).size.width*0.50,
-              child:Text('Date',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Date',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
 
             SizedBox(height: 50.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.2,
-              child:Text('Time In',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Time In',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 50.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.2,
-              child:Text('Time Out',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Time Out',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
           ],
         ),
@@ -258,7 +258,7 @@ getWidgets(context){
                                         ),
                                         snapshot.data[index]
                                             .bhour.toString()!=''?Container(
-                                          color:Colors.orangeAccent,
+                                          color:globals.buttoncolor,
                                           child:Text(""+snapshot.data[index]
                                               .bhour.toString()+" Hr(s)",style: TextStyle(),),
                                         ):SizedBox(height: 10.0,),

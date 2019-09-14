@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -487,10 +488,12 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 icon: new Icon(Icons.home,color: Colors.white,),
                 title: new Text('Home',style: TextStyle(color: Colors.white)),
               ),
+
               BottomNavigationBarItem(
                   icon: Icon(Icons.location_on,color: Colors.white,),
                   title: Text('Visits',style: TextStyle(color: Colors.white),)
               ),
+
 
               /*  BottomNavigationBarItem(
                   icon: Icon(
@@ -789,7 +792,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
                 //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
                 // SizedBox(height: 5.0),
-                Text("Offline Attendance", style: new TextStyle(fontSize: 26.0,color: Color(0xff028181), )),
+                Text("Offline Attendance", style: new TextStyle(fontSize: 26.0,color: appcolor, )),
                 SizedBox(height: MediaQuery.of(context).size.height * .03),
                 Text("Hi " + fname, style: new TextStyle(fontSize: 22.0)),
 
@@ -816,7 +819,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         SizedBox(height: MediaQuery.of(context).size.height * .06),
         if(attendanceFound!='Both Marked')
     Container(
-    color: Colors.teal.withOpacity(0.1),
+    color: appcolor.withOpacity(0.1),
     height: MediaQuery.of(context).size.height * .15,
     child:
               Column(
@@ -845,7 +848,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                         child: new Text(
                           "Go Online", // main  widget
                           style: new TextStyle(
-                              color: Colors.teal,
+                              color: appcolor,
                               decoration: TextDecoration.underline),
                         ),
 
@@ -934,7 +937,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           child: RaisedButton(
             child: Text('TIME IN',
                 style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-            color: timeInClicked?Colors.grey:Colors.orangeAccent,
+            color: timeInClicked?Colors.grey:buttoncolor,
             onPressed: () {
               timeInPressedTime=DateTime.now();
               if(!timeInClicked){
@@ -972,7 +975,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                     child: RaisedButton(
                       child: Text('TIME OUT',
                           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-                      color: timeOutClicked?Colors.grey:Colors.orangeAccent,
+                      color: timeOutClicked?Colors.grey:buttoncolor,
                       onPressed: () {
                         timeOutPressedTime=DateTime.now();
                         if(!timeOutClicked){
@@ -1447,7 +1450,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         decoration: new ShapeDecoration(
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(13.0)),
-            color: Colors.teal),
+            color: appcolor),
         child: Text(
           '\nToday\'s attendance has been marked!',
           textAlign: TextAlign.center,
@@ -1468,7 +1471,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             child: new Text(
               "Go Online", // main  widget
               style: new TextStyle(
-                  color: Colors.teal,
+                  color: appcolor,
                   decoration: TextDecoration.underline),
             ),
 

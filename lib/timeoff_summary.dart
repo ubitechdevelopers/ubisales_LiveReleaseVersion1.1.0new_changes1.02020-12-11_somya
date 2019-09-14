@@ -20,7 +20,7 @@ import 'profile.dart';
 import 'reports.dart';
 import 'Bottomnavigationbar.dart';
 import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeoffSummary extends StatefulWidget {
   @override
@@ -178,7 +178,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
           ),
           RaisedButton(
             child: Text('Withdraw',style: TextStyle(color: Colors.white),),
-            color: Colors.orangeAccent,
+            color: buttoncolor,
             onPressed: () {
               Navigator.of(context, rootNavigator: true).pop();
               withdrawlTimeOff(timeoffid);
@@ -233,7 +233,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
             MaterialPageRoute(builder: (context) => HomePage()),
           );
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -290,9 +290,9 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android, color: Colors.teal,),
+              Icon(Icons.android, color: appcolor,),
               Text("Under development",
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal),)
+                style: new TextStyle(fontSize: 30.0, color: appcolor),)
             ]),
       ),
     );
@@ -327,7 +327,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text('My Time Off History',
-              style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
+              style: new TextStyle(fontSize: 22.0, color: appcolor)),
           //SizedBox(height: 10.0),
 
           new Divider(color: Colors.black54,height: 1.5,),
@@ -339,22 +339,22 @@ class _TimeoffSummary extends State<TimeoffSummary> {
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.30,
-                child:Text('Date',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Date',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Start',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Start',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.24,
-                child:Text('End',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('End',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Status',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Status',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -429,7 +429,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                 child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: Colors.white, fontSize: 14.0,),textAlign: TextAlign.center, ),*/
                                 child:Column(
                                   children: <Widget>[
-                                    new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                    new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
   SizedBox(height: 7.0,),
                                     (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?InkWell(
@@ -498,7 +498,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                     return new Center(
                       child: Container(
                         width: MediaQuery.of(context).size.width*1,
-                        color: Colors.teal.withOpacity(0.1),
+                        color: buttoncolor.withOpacity(0.1),
                         padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                         child:Text("you have not taken any time off  ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                       ),

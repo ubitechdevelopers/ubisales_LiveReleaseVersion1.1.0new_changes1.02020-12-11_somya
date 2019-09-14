@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
@@ -11,7 +12,7 @@ import 'profile.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Image_view.dart';
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'globals.dart';
 
 class EmployeeList extends StatefulWidget {
   @override
@@ -78,7 +79,7 @@ class _EmployeeList extends State<EmployeeList> {
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
               Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
       bottomNavigationBar: Bottomnavigationbar(),
 
@@ -91,7 +92,7 @@ class _EmployeeList extends State<EmployeeList> {
                 SizedBox(height: 8.0),
                 Center(
                   child: Text('Employee Directory',
-                    style: new TextStyle(fontSize: 22.0, color: Colors.orangeAccent,),),
+                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
                 ),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
@@ -185,7 +186,7 @@ class _EmployeeList extends State<EmployeeList> {
                                    children: <Widget>[
                                      Container(
                                        width: MediaQuery.of(context).size.width*0.55,
-                                       child: new Text(snapshot.data[index].Name.toString(),style: TextStyle(color: Colors.teal,fontSize: 18.0,fontWeight: FontWeight.w500),),
+                                       child: new Text(snapshot.data[index].Name.toString(),style: TextStyle(color: appcolor,fontSize: 18.0,fontWeight: FontWeight.w500),),
                                      ),
 
 

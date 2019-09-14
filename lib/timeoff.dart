@@ -19,8 +19,7 @@ import 'reports.dart';
 import 'profile.dart';
 import 'package:Shrine/services/services.dart';
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeOffPage extends StatefulWidget {
   @override
@@ -146,7 +145,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.of(context).pop();
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -189,7 +188,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -203,7 +202,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
           child: Column( children: <Widget>[
             SizedBox(height: 20.0),
             Text('Mark Time Off',
-                style: new TextStyle(fontSize: 22.0, color: Colors.teal)),
+                style: new TextStyle(fontSize: 22.0, color: appcolor)),
             new Divider(color: Colors.black54,height: 1.5,),
           new Expanded(child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -372,7 +371,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
                       RaisedButton(
                        /* child: _isButtonDisabled?Row(children: <Widget>[Text('Processing ',style: TextStyle(color: Colors.white),),SizedBox(width: 10.0,), SizedBox(child:CircularProgressIndicator(),height: 20.0,width: 20.0,),],):Text('SAVE',style: TextStyle(color: Colors.white),),*/
                         child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('SAVE',style: TextStyle(color: Colors.white),),
-                        color: Colors.orangeAccent,
+                        color: buttoncolor,
                         onPressed: () {
 
                           if (_formKey.currentState.validate()) {

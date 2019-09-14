@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
@@ -13,7 +14,7 @@ import 'reports.dart';
 import 'Image_view.dart';
 import 'notifications.dart';
 import 'Bottomnavigationbar.dart';
-
+import 'globals.dart';
 class Outsidegeofance extends StatefulWidget {
   @override
   _Outsidegeofance createState() => _Outsidegeofance();
@@ -78,7 +79,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.pop(context);}),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
      //   automaticallyImplyLeading: false,
         /*  leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -161,7 +162,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                     child:  Container(
                       child: Text(
                         '  Name',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left,
                       ),
                     ),
@@ -172,7 +173,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       '    In',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                    ),
@@ -183,7 +184,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                   child:Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('    Out',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   ),
@@ -445,7 +446,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
             else
             {
               return new Center(
-                child: Text("No Attendance",style: TextStyle(color: Colors.orangeAccent,fontSize: 18.0),),
+                child: Text("No Attendance",style: TextStyle(color: buttoncolor,fontSize: 18.0),),
               );
             }
           }

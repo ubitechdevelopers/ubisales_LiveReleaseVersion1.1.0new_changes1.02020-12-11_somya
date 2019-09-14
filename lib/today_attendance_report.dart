@@ -7,7 +7,7 @@ import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TodayAttendance extends StatefulWidget {
   @override
@@ -57,7 +57,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
       key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       endDrawer: new AppDrawer(),
       body: new ListView(
@@ -106,7 +106,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
 
-              indicator: BoxDecoration(color: Colors.orangeAccent,),
+              indicator: BoxDecoration(color: buttoncolor,),
               controller: _controller,
               tabs: [
                 new Tab(
@@ -131,17 +131,17 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.46,
-                child:Text('  Name',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Name',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time Out',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),

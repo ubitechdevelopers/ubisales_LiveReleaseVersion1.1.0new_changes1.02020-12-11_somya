@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
 import 'package:flutter/services.dart';
@@ -120,7 +121,7 @@ class _changePassword extends State<changePassword> {
            MaterialPageRoute(builder: (context) => TimeoffSummary()),
           );*/
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -163,7 +164,7 @@ class _changePassword extends State<changePassword> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: appcolor),)
             ]),
       ),
     );
@@ -183,7 +184,7 @@ class _changePassword extends State<changePassword> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Change your login Password",style: new TextStyle(fontSize: 22.0,color: Colors.orangeAccent)),
+                    child:Text("Change your login Password",style: new TextStyle(fontSize: 22.0,color: prefix0.buttoncolor)),
                   ),
                   SizedBox(height: 30.0),
                   Container(
@@ -256,7 +257,7 @@ class _changePassword extends State<changePassword> {
                                 if (value.isEmpty || value==null || value.length<6 ) {
                                   __oldPass.notifyListeners();
  //                                 FocusScope.of(context).requestFocus(__newPass);
-                                  return 'Password must be at least 8 characters';
+                                  return 'Password must be at least 6 characters';
                                 }
                               },
                             ),
@@ -288,7 +289,7 @@ class _changePassword extends State<changePassword> {
                       ),
                       RaisedButton(
                         child: Text('SUBMIT',style: TextStyle(color: Colors.white),),
-                        color: Colors.orangeAccent,
+                        color: buttoncolor,
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             if (_oldPass.text == _newPass.text) {

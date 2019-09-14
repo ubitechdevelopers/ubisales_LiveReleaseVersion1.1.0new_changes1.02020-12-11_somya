@@ -76,7 +76,7 @@ class _Settings extends State<Settings> {
             ),
             RaisedButton(
               child: Text('Pay Now', style: TextStyle(color: Colors.white),),
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
                 Navigator.push(
@@ -108,7 +108,7 @@ class _Settings extends State<Settings> {
               RaisedButton(
                 child: Text(
                   'Login Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
-                color: Colors.orangeAccent,
+                color: buttoncolor,
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop();
                   launchMap("https://ubiattendance.ubihrm.com/");
@@ -147,7 +147,7 @@ class _Settings extends State<Settings> {
             ),
             leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
               Navigator.pop(context);}),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
       bottomNavigationBar: Bottomnavigationbar(),
           endDrawer: new AppDrawer(),
@@ -158,7 +158,7 @@ class _Settings extends State<Settings> {
             children: <Widget>[
               SizedBox(height: 8.0),
               Text('Settings',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal,),),
+                  style: new TextStyle(fontSize: 22.0, color: appcolor,),),
               SizedBox(height: 5.0),
               new Expanded(
               child: getSettingsWidget(),

@@ -12,6 +12,7 @@ import 'reports.dart';
 import 'profile.dart';
 import 'notifications.dart';
 import 'Bottomnavigationbar.dart';
+import 'globals.dart';
 class EarlyLeavers extends StatefulWidget {
   @override
   _EarlyLeavers createState() => _EarlyLeavers();
@@ -79,7 +80,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
             onPressed: () {
               Navigator.pop(context);
             }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       bottomNavigationBar:Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -152,7 +153,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -160,20 +161,20 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text(
                       'Shift',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text('Time Out',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.12,
                     child: Text('Early By',
-                        style: TextStyle(color: Colors.orange),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],

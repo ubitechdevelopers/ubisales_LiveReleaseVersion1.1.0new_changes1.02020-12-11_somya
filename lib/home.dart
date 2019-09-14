@@ -619,16 +619,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
           profileimage = new NetworkImage(profile);
-          globalstreamlocationaddr=getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
-         // _checkLoaded = false;
-          // //print("1-"+profile);
+          print("this is false block123");
           profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
+                print("this is false block");
               });
             }
           }));
+
+            getlocation() async {
+              globalstreamlocationaddr = await getAddressFromLati(
+                  globals.assign_lat.toString(),
+                  globals.assign_long.toString());
+            }
+          getlocation();
+         // _checkLoaded = false;
+          // //print("1-"+profile);
+
+
           // //print("2-"+_checkLoaded.toString());
           shiftId = prefs.getString('shiftId') ?? "";
           aid = prefs.getString('aid') ?? "";
@@ -679,7 +689,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ],
             ),
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
             // backgroundColor: Color.fromARGB(255,63,163,128),
           ),
           //bottomSheet: getQuickLinksWidget(),
@@ -898,6 +908,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 onPressed: () {
                  // sl.startStreaming(5);
                  // startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -941,9 +952,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image: _checkLoaded
-                                    ? AssetImage('assets/avatar.png')
-                                    : profileimage,
+                                image: _checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
                                 //image: AssetImage('assets/avatar.png')
                               ))),
                       /*new Positioned(
@@ -1017,7 +1026,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   Widget quickLinkList1() {
     return Container(
-      color: Colors.teal.withOpacity(0.8),
+      color: appcolor,
 
       width: MediaQuery.of(context).size.width * 0.95,
       // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
@@ -1284,7 +1293,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         decoration: new ShapeDecoration(
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(13.0)),
-            color: Colors.teal),
+            color: appcolor),
         child: Text(
           '\nToday\'s attendance has been marked. Thank You!',
           textAlign: TextAlign.center,
@@ -1317,7 +1326,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
         Container(
-            color: Colors.teal.withOpacity(0.1),
+            color: appcolor.withOpacity(0.1),
             height: MediaQuery.of(context).size.height * .15,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -1339,7 +1348,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   children: <Widget>[
                     new Text(
                       'Location not correct? ',
-                      style: TextStyle(color: Colors.teal),
+                      style: TextStyle(color: appcolor),
                     ),
                     SizedBox(
                       width: 5.0,
@@ -1348,12 +1357,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       child: new Text(
                         "Refresh location", // main  widget
                         style: new TextStyle(
-                            color: Colors.teal,
+                            color: appcolor,
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
                       //  startTimer();
                       //  sl.startStreaming(5);
+                        cameraChannel.invokeMethod("startAssistant");
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
@@ -1430,7 +1440,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       return RaisedButton(
         child: Text('TIME IN',
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-        color: Colors.orangeAccent,
+        color: globals.buttoncolor,
         onPressed: () {
           // //print("Time out button pressed");
 
@@ -1442,7 +1452,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       return RaisedButton(
         child: Text('TIME OUT',
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-        color: Colors.orangeAccent,
+        color: globals.buttoncolor,
         onPressed: () {
           // //print("Time out button pressed");
           saveImage();
@@ -1735,7 +1745,7 @@ var FakeLocationStatus=0;
                                   color: Colors.white,
                                 ),
                               ),
-                              color: Colors.orangeAccent,
+                              color: globals.buttoncolor,
                               onPressed: () {
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();

@@ -20,7 +20,7 @@ import 'package:flutter/services.dart';
 import 'offline_home.dart';
 import 'Bottomnavigationbar.dart';
 //import 'package:intl/intl.dart';
-
+import 'globals.dart';
 
 void main() => runApp(new PunchLocationSummary());
 
@@ -200,7 +200,7 @@ String address="";
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },),
-          backgroundColor: Colors.teal,
+          backgroundColor: appcolor,
         ),
         bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
@@ -268,7 +268,7 @@ String address="";
               }),
           new RaisedButton(
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               onPressed: () {
               //  sl.startStreaming(5);
                 SaveImage saveImage = new SaveImage();
@@ -329,7 +329,7 @@ print('visit out called for visit id:'+visit_id);
             padding: EdgeInsets.only(top:12.0,bottom: 2.0),
             child:Center(
               child:Text("My Today's Visits",
-                  style: new TextStyle(fontSize: 22.0, color: Colors.teal,)),
+                  style: new TextStyle(fontSize: 22.0, color: appcolor,)),
             ),
           ),
           Divider(color: Colors.black54,height: 1.5,),
@@ -341,18 +341,18 @@ print('visit out called for visit id:'+visit_id);
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.55,
-                child:Text(' Client',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' Client',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text(' Visit In',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' Visit In',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.2,
-                child:Text(' Visit Out',style: TextStyle(color: Colors.orangeAccent,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' Visit Out',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -434,7 +434,7 @@ print('visit out called for visit id:'+visit_id);
                                               //width: 100.0,
                                               height: 25.0,
                                               decoration: new BoxDecoration(
-                                                color: Colors.orangeAccent,
+                                                color: buttoncolor,
                                                 border: new Border.all(color: Colors.white, width: 2.0),
                                                 borderRadius: new BorderRadius.circular(10.0),
                                               ),

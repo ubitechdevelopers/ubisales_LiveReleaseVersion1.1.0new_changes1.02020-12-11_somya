@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +215,7 @@ bool fakeLocationDetected=false;
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },),
-          backgroundColor: Colors.teal,
+          backgroundColor: appcolor,
         ),
         bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
@@ -290,7 +291,7 @@ bool fakeLocationDetected=false;
                       child: Text(
                         'Name',
                         style: TextStyle(
-                            color: Colors.orangeAccent,
+                            color: buttoncolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -303,7 +304,7 @@ bool fakeLocationDetected=false;
                       child: Text(
                         'Time In',
                         style: TextStyle(
-                            color: Colors.orangeAccent,
+                            color: buttoncolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -317,7 +318,7 @@ bool fakeLocationDetected=false;
                       child: Text(
                         'Time Out',
                         style: TextStyle(
-                            color: Colors.orangeAccent,
+                            color: buttoncolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -333,7 +334,7 @@ bool fakeLocationDetected=false;
                           checkall == 1
                               ? Icons.check_box
                               : Icons.check_box_outline_blank,
-                          color: checkall == 1 ? Colors.orangeAccent : null,
+                          color: checkall == 1 ? buttoncolor : null,
                         ),
                         onPressed: () =>
                             checkbulkall(),
@@ -377,7 +378,7 @@ bool fakeLocationDetected=false;
                         'SAVE',
                         style: TextStyle(color: Colors.white),
                       ),
-                      color: Colors.orangeAccent,
+                      color: buttoncolor,
                       onPressed: (){
                         if (_formKey.currentState.validate()){
                           if (_isButtonDisabled) return null;
@@ -737,7 +738,7 @@ bool fakeLocationDetected=false;
                                   ? Icons.check_box
                                   : Icons.check_box_outline_blank,
                               color:
-                              alreadySaved == 1 ? Colors.orangeAccent : null,
+                              alreadySaved == 1 ? buttoncolor   : null,
                             ),
                             onPressed: () {
                               setState(() {
@@ -793,11 +794,11 @@ bool fakeLocationDetected=false;
             children: <Widget>[
               Icon(
                 Icons.android,
-                color: Colors.teal,
+                color: appcolor,
               ),
               Text(
                 "Under development",
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal),
+                style: new TextStyle(fontSize: 30.0, color:appcolor),
               )
             ]),
       ),

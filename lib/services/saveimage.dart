@@ -872,13 +872,15 @@ class SaveImage {
       {
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
-        String location = globals.globalstreamlocationaddr;
+
+      /*  String location = globals.globalstreamlocationaddr;
         String lat = globals.assign_lat.toString();
-        String long = globals.assign_long.toString();
+        String long = globals.assign_long.toString();*/
         /*print('-------------------------------');
       print(mk.uid+" "+mk.cid);
       print('-------------------------------');
       return false;*/
+        print("Ubi attendance1");
         FormData formData = new FormData.from({
           "empid": empid,
           "visit_id": visit_id,
@@ -889,7 +891,7 @@ class SaveImage {
           "file": new UploadFileInfo(imagei, "image.png"),
           "FakeLocationStatus":FakeLocationStatus
         });
-        print("5"+empid+"--"+visit_id+"--"+addr+"--"+latit+"--"+longi+"--"+refid+"--");
+        print("Ubi attendance2");
         Response<String> response1;
         try {
           print('------------visit out----11');

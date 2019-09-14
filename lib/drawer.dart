@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -102,7 +103,7 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             RaisedButton(
               child: Text('Pay Now', style: TextStyle(color: Colors.white),),
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
                 Navigator.push(
@@ -135,7 +136,7 @@ class _AppDrawerState extends State<AppDrawer> {
               RaisedButton(
                 child: Text(
                   'Login Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
-                color: Colors.orangeAccent,
+                color: buttoncolor,
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop();
                   launchMap("https://ubiattendance.ubihrm.com/");
@@ -157,7 +158,7 @@ class _AppDrawerState extends State<AppDrawer> {
       child:new ListView(
         children: <Widget>[
           new Container(
-            color: Colors.teal,
+            color: appcolor,
             height: sstatus==''?160.0:172.0,
             child: new DrawerHeader(
               child: Row(
@@ -191,7 +192,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     ),
                     shape: new CircleBorder(),
                     elevation: 0.5,
-                    fillColor: Colors.orangeAccent,
+                    fillColor: buttoncolor,
                     padding: const EdgeInsets.all(1.0),
                   ),
                 ),
@@ -212,7 +213,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     height: 30.0,
                     child:RaisedButton(
                       child: Row(children:<Widget>[Text("Buy Now")]),
-                      color: Colors.orangeAccent,
+                      color: buttoncolor,
                       onPressed: (){
                         Navigator.push(
                         context,

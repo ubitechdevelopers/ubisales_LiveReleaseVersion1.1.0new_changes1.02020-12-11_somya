@@ -15,6 +15,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -252,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
                             minWidth: MediaQuery.of(context).size.width*0.25,
                             child:RaisedButton(
                               child: Text('LOGIN',style: TextStyle(color: Colors.white),),
-                              color: Colors.orangeAccent,
+                              color: buttoncolor,
                               onPressed: () {
                                 if (_formKey.currentState.validate()) {
                                   login(_usernameController.text,_passwordController.text,context);
@@ -289,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       InkWell(
                         child: new Text("Forgot Password?", style: new TextStyle(
-                            color: Colors.teal,
+                            color: appcolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 13.0,
                             decoration: TextDecoration.underline),),

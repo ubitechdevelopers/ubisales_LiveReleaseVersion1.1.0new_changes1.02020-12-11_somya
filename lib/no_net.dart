@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -10,7 +11,7 @@ import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'globals.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class NoNet extends StatefulWidget {
@@ -125,7 +126,7 @@ class _NoNetState extends State<NoNet> {
             MaterialPageRoute(builder: (context) => NoNet()),
           );
         }),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -213,7 +214,7 @@ class _NoNetState extends State<NoNet> {
             child: new Text(
               "Refresh Page",
               style: new TextStyle(
-                  color: Colors.teal, decoration: TextDecoration.underline),
+                  color: appcolor, decoration: TextDecoration.underline),
             ),
             onPressed: () {
               checknetonpage();

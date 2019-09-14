@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'outside_label.dart';
@@ -10,7 +11,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class Designation_att extends StatefulWidget {
   @override
@@ -52,7 +53,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
       key: _scaffoldKey,
       appBar: new AppBar(
         title: new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       endDrawer: new AppDrawer(),
       body: new ListView(
@@ -149,7 +150,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
-              indicator: BoxDecoration(color: Colors.orangeAccent,),
+              indicator: BoxDecoration(color: buttoncolor,),
               controller: _controller,
               tabs: [
                 new Tab(
@@ -174,17 +175,17 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.46,
-                child:Text('  Name',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Name',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time Out',style: TextStyle(color: Colors.teal,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -381,7 +382,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No one is present on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -506,7 +507,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No one is absent on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -722,7 +723,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No late comers on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
@@ -935,7 +936,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   child:Center(
                                     child: Container(
                                       width: MediaQuery.of(context).size.width*1,
-                                      color: Colors.teal.withOpacity(0.1),
+                                      color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                                       child:Text("No early leavers on this date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),

@@ -12,6 +12,7 @@ import 'globals.dart' as global;
 //import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:exifdart/exifdart_io.dart';
 import 'package:image/image.dart' as rotatingImage;
+import 'globals.dart';
 //import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 /*import 'package:video_player/video_player.dart';*/
@@ -74,7 +75,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Mark Attendance'),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.push(
             context,
@@ -90,7 +91,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
                 child: Center(
-                  child: isprocessed?Center(child : new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.orangeAccent))):_cameraPreviewWidget(),
+                  child: isprocessed?Center(child : new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(buttoncolor))):_cameraPreviewWidget(),
                 ),
               ),
               decoration: BoxDecoration(

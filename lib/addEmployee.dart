@@ -154,7 +154,7 @@ class _AddEmployee extends State<AddEmployee> {
            MaterialPageRoute(builder: (context) => TimeoffSummary()),
           );*/
         },),
-        backgroundColor: Colors.teal,
+        backgroundColor: globals.appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
 
@@ -200,7 +200,7 @@ class _AddEmployee extends State<AddEmployee> {
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Icon(Icons.android,color: Colors.teal,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: Colors.teal),)
+              Icon(Icons.android,color: globals.appcolor,),Text("Under development",style: new TextStyle(fontSize: 30.0,color: globals.appcolor),)
             ]),
       ),
     );
@@ -218,7 +218,7 @@ class _AddEmployee extends State<AddEmployee> {
             child: Column( children: <Widget>[
               SizedBox(height: 20.0),
               Text('Add Employee',
-                  style: new TextStyle(fontSize: 22.0, color: Colors.orangeAccent)),
+                  style: new TextStyle(fontSize: 22.0, color: globals.buttoncolor)),
               new Divider(color: Colors.black54,height: 1.5,),
 
               new Expanded(
@@ -485,7 +485,7 @@ class _AddEmployee extends State<AddEmployee> {
                           ),
                           RaisedButton(
                             child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('ADD',style: TextStyle(color: Colors.white),),
-                            color: Colors.orangeAccent,
+                            color: globals.buttoncolor,
                             onPressed: () {
                               if(admin_sts =='2')
                               {
