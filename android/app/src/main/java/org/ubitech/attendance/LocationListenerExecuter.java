@@ -17,7 +17,8 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
         return assistant.onPermissionsUpdated(requestCode, grantResults);
     }
     public void requestLocationPermission(){
-        assistant.requestLocationPermission();
+    if(assistant!=null)
+    assistant.requestLocationPermission();
     }
     public void onDestroy(){
         assistant.stop();

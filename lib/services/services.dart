@@ -1950,7 +1950,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
+    if (globals.assign_lat.compareTo(0.0) != 0&&globals.assign_lat!=null) {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(
               globals.assign_lat, globals.assign_long));
@@ -1959,17 +1959,27 @@ getAddressFromLati( String Latitude,String Longitude) async{
       var streamlocationaddr = "${first.addressLine}";
 
       globalstreamlocationaddr = streamlocationaddr;
-      return streamlocationaddr.toString();
+      return streamlocationaddr;
     }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+
+      return globalstreamlocationaddr;
+    }
+
   }catch(e){
     print(e.toString());
-    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
+    if (globals.assign_lat.compareTo(0.0) != 0&&globals.assign_lat!=null) {
       globalstreamlocationaddr = "${Latitude},${Longitude}";
+      print("inside iffffffffffffffffffffffffffffffffffffffffffffff"+globals.assign_lat.toString());
     }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+    }
+
     return globals.globalstreamlocationaddr;
   }
 }
-
 
 
 

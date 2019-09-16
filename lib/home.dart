@@ -595,6 +595,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       prefs = await SharedPreferences.getInstance();
+      var connected=await checkConnectionToServer();
+      if(connected==1)
       if (mounted) {
         setState(() {
           Is_Delete = prefs.getInt('Is_Delete') ?? 0;
@@ -629,12 +631,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             }
           }));
 
-            getlocation() async {
-              globalstreamlocationaddr = await getAddressFromLati(
-                  globals.assign_lat.toString(),
-                  globals.assign_long.toString());
-            }
-          getlocation();
+          setaddress();
          // _checkLoaded = false;
           // //print("1-"+profile);
 
@@ -652,6 +649,57 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       }
     }
   }
+
+  setaddress () async{
+    globalstreamlocationaddr= await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+    if(globals.globalstreamlocationaddr=="Location not fetched."){
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return WillPopScope(
+                onWillPop: () {},
+                child: new AlertDialog(
+                  title: new Text(""),
+                  content: new Text("Sorry we can't continue without GPS"),
+                  actions: <Widget>[
+                    RaisedButton(
+                      child: new Text(
+                        "Turn On",
+                        style: new TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      color: Colors.orangeAccent,
+                      onPressed: () {
+                        openLocationSetting();
+                      },
+                    ),
+                    RaisedButton(
+                      child: new Text(
+                        "Done",
+                        style: new TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      color: Colors.orangeAccent,
+                      onPressed: () {
+                        cameraChannel.invokeMethod("startAssistant");
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                        /*
+                  Navigator.of(context, rootNavigator: true)
+                      .pop();
+*/
+                      },
+                    ),
+                  ],
+                ));});
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -711,7 +759,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (globalstreamlocationaddr != ''||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
+          (globalstreamlocationaddr != "Location not fetched."||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -1317,7 +1365,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   getwidget(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
+    if (addrloc != "Location not fetched.") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -1331,7 +1379,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + globalstreamlocationaddr,
+                child: new Text(globals.globalstreamlocationaddr!=null?'You are at: ' +globals.globalstreamlocationaddr:"Location not fetched",
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {

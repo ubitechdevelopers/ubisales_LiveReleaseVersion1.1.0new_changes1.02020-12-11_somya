@@ -149,6 +149,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
             backgroundColor: appcolor,
           ),
           bottomNavigationBar:
+          (assign_lat!=0.0&&assign_lat!=null)?
     Hero(
     tag: "bottom",
     child:BottomNavigationBar(
@@ -210,7 +211,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                   ),
                   title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
             ],
-          )),
+          )):Container(),
 
 
           body: getWidgets(context),

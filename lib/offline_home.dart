@@ -347,9 +347,147 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
   }
 
+  noLocationWidget(){
+    return new WillPopScope(
+        onWillPop: ()async => true,
+        child: new Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              actions: [
+
+                RaisedButton.icon(
+                    color:Colors.teal,
+                    onPressed: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
+                      );
+                    },
+                    icon: Icon(Icons.assignment,color: Colors.white,),
+
+                    label: Text('Logs',style: new TextStyle(color: Colors.white))),
+                /*
+            RaisedButton.icon(
+            color:Colors.teal,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocationSummaryOffline()),
+              );
+            },
+            icon: Icon(Icons.assignment,color: Colors.white,),
+
+            label: Text('Visits',style: new TextStyle(color: Colors.white)))
+*/
+              ],
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+                ],
+              ),
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.teal,
+              // backgroundColor: Color.fromARGB(255,63,163,128),
+            ),
+            //bottomSheet: getQuickLinksWidget(),
+
+
+
+
+
+            /* endDrawer: new AppDrawer(),*/
+            body: Scaffold(
+                body: new Container(
+                  decoration: new BoxDecoration(),
+                  child: new Center(
+                      child: MergeSemantics(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Card(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+
+                                    Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 10.0, 20.0, 20.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 20.0,
+                                            ),
+                                            Text(
+                                              "Sorry We can't continue without GPS."
+                                              ,style: TextStyle(color: Colors.red,fontSize: 18,),
+                                              textAlign: TextAlign.center,
+
+                                            ),
+                                            SizedBox(
+                                              height: 20.0,
+                                            ),
+                                            Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  ButtonBar(
+                                                    children: <Widget>[
+                                                      FlatButton(
+                                                        child: Text('Turn On' ,style: TextStyle(color: Colors.green),),
+                                                        shape: Border.all(color: Colors.green),
+                                                        onPressed: () {
+                                                          openLocationSetting();
+
+                                                        },
+                                                      ),
+                                                      new RaisedButton(
+                                                        child: new Text(
+                                                          "Done",
+                                                          style: new TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        color: Colors.orangeAccent,
+                                                        onPressed: () {
+                                                          cameraChannel.invokeMethod("startAssistant");
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ]),
+
+
+                                          ],
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )),
+                ))
+        ));
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    return  getmainhomewidget();
+    if(prefix0.assign_long==0.0||prefix0.assign_long==null){
+      return noLocationWidget();
+    }
+    else
+      return  getmainhomewidget();
     /*return Scaffold(
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by

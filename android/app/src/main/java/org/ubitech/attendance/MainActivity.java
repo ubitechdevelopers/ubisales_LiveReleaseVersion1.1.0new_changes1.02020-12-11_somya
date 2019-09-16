@@ -89,12 +89,14 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 if (call.method.equals("cameraOpened")) {
                   cameraOpened=true;
                   Log.i("camera","camera opened true");
+                  if(listenerExecuter!=null)
                  listenerExecuter.updateCameraStatus(true);
                 }
                 else
                 if (call.method.equals("cameraClosed")) {
                   Log.i("camera","camera opened false");
                   cameraOpened=false;
+                  if(listenerExecuter!=null)
                   listenerExecuter.updateCameraStatus(false);
                 }
                 else
@@ -237,7 +239,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   }
   @Override
   public void onDestroy() {
-
+    if(listenerExecuter!=null)
     listenerExecuter.onDestroy();
 
     super.onDestroy();
@@ -247,7 +249,11 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onResume() {
     super.onResume();
    if(!cameraOpened)
-    listenerExecuter.startAssistant();
+   {
+     if(listenerExecuter!=null)
+       listenerExecuter.startAssistant();
+   }
+
    // assistant.start();
   }
 
@@ -255,6 +261,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onPause() {
    // assistant.stop();
   //if(!cameraOpened)
+    if(listenerExecuter!=null)
     listenerExecuter.stopAssistant();
     super.onPause();
   }
@@ -265,7 +272,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       for (int i = 0; i < permissions.length; i++) {
 
 
-        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&listenerExecuter!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
           if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
 
@@ -292,7 +299,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
             public void onClick(View view) {
                 assistant.requestLocationPermission();
         });*/
+    if(listenerExecuter!=null)
    listenerExecuter.requestLocationPermission();
+    if(listenerExecuter!=null)
     listenerExecuter.requestAndPossiblyExplainLocationPermission();
   }
 
