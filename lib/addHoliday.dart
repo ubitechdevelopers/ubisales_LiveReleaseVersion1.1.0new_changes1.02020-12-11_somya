@@ -43,7 +43,7 @@ class _addHoliday extends State<addHoliday> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? '0';

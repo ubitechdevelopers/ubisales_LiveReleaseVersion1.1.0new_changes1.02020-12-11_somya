@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
    // setLocationAddress();
    // startTimer();
     platform.setMethodCallHandler(_handleMethod);
+
   }
   static const platform = const MethodChannel('location.spoofing.check');
 
@@ -105,6 +107,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+    prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -268,6 +271,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
   //  StreamLocation sl = new StreamLocation();
 
@@ -286,6 +290,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
 
     int serverConnected;
+    /*
     SystemChannels.lifecycle.setMessageHandler((msg)async{
       if(msg=='AppLifecycleState.resumed' )
       {
@@ -308,14 +313,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         appAlreadyResumed=false;
       }
 
-    });
+    });*/
     serverConnected= await checkConnectionToServer();
     //if(isAlreadyLoggedIn==1)
     if(serverConnected==1){
       Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     }
     AttendanceOffline ao = AttendanceOffline.empty();
-    int Id = int.parse(prefs.getString("empid"))??0;
+    int Id = int.parse(prefs.getString("empid")??"0");
     if(Id==0){
       Navigator.push(
         context,
@@ -344,10 +349,17 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       print(onError);
     });
 
+
+
+
   }
 
   @override
   Widget build(BuildContext context) {
+    if(prefix0.assign_long==0.0||prefix0.assign_long==null){
+      return noLocationWidget();
+    }
+    else
     return  getmainhomewidget();
     /*return Scaffold(
         appBar: AppBar(
@@ -386,6 +398,137 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     /* if(timerrefresh.isActive){
       timerrefresh.cancel();
     }*/
+  }
+
+  noLocationWidget(){
+    return new WillPopScope(
+        onWillPop: ()async => true,
+        child: new Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            actions: [
+
+              RaisedButton.icon(
+                  color:Colors.teal,
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
+                    );
+                  },
+                  icon: Icon(Icons.assignment,color: Colors.white,),
+
+                  label: Text('Logs',style: new TextStyle(color: Colors.white))),
+              /*
+            RaisedButton.icon(
+            color:Colors.teal,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocationSummaryOffline()),
+              );
+            },
+            icon: Icon(Icons.assignment,color: Colors.white,),
+
+            label: Text('Visits',style: new TextStyle(color: Colors.white)))
+*/
+            ],
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+              ],
+            ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.teal,
+            // backgroundColor: Color.fromARGB(255,63,163,128),
+          ),
+          //bottomSheet: getQuickLinksWidget(),
+
+
+
+
+
+          /* endDrawer: new AppDrawer(),*/
+          body: Scaffold(
+              body: new Container(
+                decoration: new BoxDecoration(),
+                child: new Center(
+                    child: MergeSemantics(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Card(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+
+                                  Padding(
+                                      padding: EdgeInsets.fromLTRB(20, 10.0, 20.0, 20.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          Text(
+                                            "Sorry We can't continue without GPS."
+                                             ,style: TextStyle(color: Colors.red,fontSize: 18,),
+                                            textAlign: TextAlign.center,
+
+                                          ),
+                                          SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                ButtonBar(
+                                                  children: <Widget>[
+                                                    FlatButton(
+                                                      child: Text('Turn On' ,style: TextStyle(color: Colors.green),),
+                                                      shape: Border.all(color: Colors.green),
+                                                      onPressed: () {
+                                                        openLocationSetting();
+
+                                                      },
+                                                    ),
+                                                    new RaisedButton(
+                                                      child: new Text(
+                                                        "Done",
+                                                        style: new TextStyle(
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      color: Colors.orangeAccent,
+                                                      onPressed: () {
+                                                        cameraChannel.invokeMethod("startAssistant");
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                            ]),
+
+
+                                        ],
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
+              ))
+        ));
   }
 
   getmainhomewidget() {
@@ -529,9 +672,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               child: Text('Time In' ,style: TextStyle(color: Colors.green),),
                               shape: Border.all(color: Colors.green),
                               onPressed: () {
+                                prefix0.globalCameraOpenedStatus=true;
                                 timeInPressedTime=DateTime.now();
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
+
                                 saveOfflineQr(0);
 
                               },
@@ -545,6 +690,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               ),
                               color: Colors.redAccent,
                               onPressed: () {
+                                prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
@@ -588,6 +734,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           ImagePicker.pickImage(
               source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
               .then((img) async {
+            prefix0.globalCameraOpenedStatus=false;
             if (img != null) {
               List<int> imageBytes = await img.readAsBytes();
               PictureBase64 = base64.encode(imageBytes);
@@ -824,7 +971,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
              children: [
                 FlatButton(
-                  child: new Text('You are at: ' + assigned_lat.toString()+','+assign_long.toString(),
+                  child: new Text('You are at: ' + assign_lat.toString()+','+assign_long.toString(),
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontSize: 14.0)),
                   onPressed: () {
@@ -936,6 +1083,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 style: new TextStyle(fontSize: 22.0, color: Colors.white)),
             color: timeInClicked?Colors.grey:Colors.orangeAccent,
             onPressed: () {
+              globalCameraOpenedStatus=true;
               timeInPressedTime=DateTime.now();
               if(!timeInClicked){
                 saveOfflineAttendance(0);
@@ -974,6 +1122,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
                       color: timeOutClicked?Colors.grey:Colors.orangeAccent,
                       onPressed: () {
+                        prefix0.globalCameraOpenedStatus=true;
                         timeOutPressedTime=DateTime.now();
                         if(!timeOutClicked){
                           saveOfflineAttendance(1);
@@ -1264,7 +1413,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
             .then((img) async {
+          prefix0.globalCameraOpenedStatus=false;
           if (img != null) {
+
             List<int> imageBytes = await img.readAsBytes();
             PictureBase64 = base64.encode(imageBytes);
            /* sl.startStreaming(5);

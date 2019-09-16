@@ -16,7 +16,7 @@ class _ThisMonth extends State<ThisMonth> with SingleTickerProviderStateMixin {
 
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _orgName;
+  String _orgName = "";
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -33,7 +33,7 @@ class _ThisMonth extends State<ThisMonth> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
   }

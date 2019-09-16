@@ -13,7 +13,7 @@ class TodayAttendance extends StatefulWidget {
   @override
   _TodayAttendance createState() => _TodayAttendance();
 }
-String _orgName;
+String _orgName = "";
 class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -45,7 +45,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
 

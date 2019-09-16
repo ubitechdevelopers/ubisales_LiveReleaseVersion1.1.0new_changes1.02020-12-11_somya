@@ -57,10 +57,11 @@ class _changePassword extends State<changePassword> {
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+/*
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -78,6 +79,8 @@ class _changePassword extends State<changePassword> {
         break;
 
         return new Future.value("");
+
+ */
     }
   }
 

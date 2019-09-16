@@ -102,6 +102,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   bool offlineDataSaved=false;
   bool internetAvailable=true;
   String address='';
+
   @override
   void initState() {
     print('aintitstate');
@@ -112,10 +113,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     //setLocationAddress();
    // startTimer();
    platform.setMethodCallHandler(_handleMethod);
-  }
+    }
 
   syncOfflineQRData() async{
 
+    address=await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+    print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
 
     int serverAvailable=await checkConnectionToServer ();
@@ -195,6 +198,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     switch(call.method) {
 
       case "locationAndInternet":
+        locationThreadUpdatedLocation=true;
        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
        // Map<String,String> responseMap=call.arguments;
 
@@ -215,6 +219,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
+        print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
         globalstreamlocationaddr=address;
         print(call.arguments["mocked"].toString());
         getAreaStatus().then((res) {
@@ -567,7 +572,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   initPlatformState() async {
     /*await availableCameras();*/
     checknetonpage(context);
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
+    appResumedPausedLogic(context);
     SystemChannels.lifecycle.setMessageHandler((msg)async{
 
     });
@@ -595,7 +601,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       prefs = await SharedPreferences.getInstance();
-      if (mounted) {
+      var netAvailable=0;
+      netAvailable=await checkNet();
+      if (mounted && netAvailable==1) {
         setState(() {
           Is_Delete = prefs.getInt('Is_Delete') ?? 0;
           newpwd = prefs.getString('newpwd') ?? "";
@@ -618,8 +626,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
-          profileimage = new NetworkImage(profile);
-          globalstreamlocationaddr=getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+         profileimage = new NetworkImage(profile);
+          setaddress();
          // _checkLoaded = false;
           // //print("1-"+profile);
           profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
@@ -640,6 +648,61 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
         });
       }
+    }
+
+  appResumedPausedLogic(context);
+
+
+
+  }
+
+  setaddress () async{
+    globalstreamlocationaddr= await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+    if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation){
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return WillPopScope(
+                onWillPop: () {},
+                child: new AlertDialog(
+            title: new Text(""),
+            content: new Text("Sorry we can't continue without GPS"),
+            actions: <Widget>[
+              RaisedButton(
+                child: new Text(
+                  "Turn On",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  openLocationSetting();
+                },
+              ),
+              RaisedButton(
+                child: new Text(
+                  "Done",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  cameraChannel.invokeMethod("startAssistant");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                 /*
+                  Navigator.of(context, rootNavigator: true)
+                      .pop();
+*/
+                },
+              ),
+            ],
+          ));});
     }
   }
 
@@ -701,7 +764,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (globalstreamlocationaddr != ''||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
+          (globalstreamlocationaddr != "Location not fetched."||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -824,7 +887,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Sorry we can not continue with out location.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -898,6 +961,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 onPressed: () {
                  // sl.startStreaming(5);
                  // startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -1308,7 +1372,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   getwidget(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
+    if (addrloc != "Location not fetched.") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -1322,7 +1386,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               FlatButton(
-                child: new Text('You are at: ' + globalstreamlocationaddr,
+                child: new Text(globals.globalstreamlocationaddr!=null?'You are at: ' +globals.globalstreamlocationaddr:"Location not fetched",
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 14.0)),
                 onPressed: () {
@@ -1354,6 +1418,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       onTap: () {
                       //  startTimer();
                       //  sl.startStreaming(5);
+                        cameraChannel.invokeMethod("startAssistant");
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
@@ -1411,7 +1476,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       return Column(children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Sorry we can not continue without location',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -1432,6 +1497,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
         color: Colors.orangeAccent,
         onPressed: () {
+          globals.globalCameraOpenedStatus=true;
           // //print("Time out button pressed");
 
           saveImage();
@@ -1444,6 +1510,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
         color: Colors.orangeAccent,
         onPressed: () {
+          globals.globalCameraOpenedStatus=true;
           // //print("Time out button pressed");
           saveImage();
         },

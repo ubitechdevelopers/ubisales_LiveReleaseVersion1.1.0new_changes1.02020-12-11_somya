@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/punch_location_summary_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
@@ -25,7 +26,7 @@ class OfflineAttendanceLogs extends StatefulWidget {
   @override
   _OfflineAttendanceLogs createState() => _OfflineAttendanceLogs();
 }
-String _orgName;
+String _orgName = "";
 String org_name="";
 class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTickerProviderStateMixin {
   TabController _controller;
@@ -77,6 +78,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
   initPlatformState() async {
     //checkNetForOfflineMode(context);
     //appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
 
 
@@ -97,6 +99,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+    prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -147,8 +150,10 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
             },),
             backgroundColor: Colors.teal,
           ),
+
           bottomNavigationBar:
-    Hero(
+            (assign_lat!=0.0&&assign_lat!=null)?
+          Hero(
     tag: "bottom",
     child:BottomNavigationBar(
 
@@ -208,7 +213,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                   ),
                   title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
             ],
-          )),
+          )):Container(),
 
 
           body: getWidgets(context),

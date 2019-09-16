@@ -55,7 +55,7 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     initPlatformState();
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
@@ -63,8 +63,9 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
   }
 
   initPlatformState() async {
+    appResumedPausedLogic(context);
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {

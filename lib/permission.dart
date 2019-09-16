@@ -77,6 +77,7 @@ class _PermissionPageState extends State<PermissionPage> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';

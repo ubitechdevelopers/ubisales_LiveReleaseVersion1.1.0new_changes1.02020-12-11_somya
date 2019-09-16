@@ -43,6 +43,7 @@ class _NotificationSettings extends State<NotificationSettings> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? '0';
@@ -58,7 +59,7 @@ class _NotificationSettings extends State<NotificationSettings> {
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+/*
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
@@ -78,7 +79,7 @@ class _NotificationSettings extends State<NotificationSettings> {
         }
         break;
 
-        return new Future.value("");
+        return new Future.value("");*/
     }
   }
 

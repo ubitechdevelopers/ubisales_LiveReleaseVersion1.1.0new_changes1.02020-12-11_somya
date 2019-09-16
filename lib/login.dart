@@ -15,6 +15,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
     switch(call.method) {
 
       case "locationAndInternet":
+    prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){

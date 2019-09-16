@@ -25,7 +25,7 @@ class _EmployeeList extends State<EmployeeList> {
   String _sts = 'Active';
   String _sts1 = 'Active';
   String admin_sts='0';
-  String _orgName;
+  String _orgName = "";
 
   _launchURL(url) async {
   //  const url = 'https://flutter.io';
@@ -39,7 +39,7 @@ class _EmployeeList extends State<EmployeeList> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     dept = new TextEditingController();
     // f_dept = FocusNode();
     getOrgName();

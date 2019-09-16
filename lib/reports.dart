@@ -42,7 +42,7 @@ class _Reports extends State<Reports> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     checknetonpage(context);
 
     getOrgName();

@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,7 +75,7 @@ bool fakeLocationDetected=false;
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
 /*    StreamLocation ns=new StreamLocation();
     ns.stopStreaming();*/
     final prefs = await SharedPreferences.getInstance();
@@ -119,6 +120,7 @@ bool fakeLocationDetected=false;
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+      prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 

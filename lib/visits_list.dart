@@ -20,7 +20,7 @@ class VisitList extends StatefulWidget {
 }
 
 TextEditingController today;
-String _orgName;
+String _orgName = "";
 //FocusNode f_dept ;
 class _VisitList extends State<VisitList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -34,7 +34,7 @@ class _VisitList extends State<VisitList> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();

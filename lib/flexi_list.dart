@@ -19,7 +19,7 @@ class FlexiList extends StatefulWidget {
 }
 
 TextEditingController today;
-String _orgName;
+String _orgName = "";
 //FocusNode f_dept ;
 class _FlexiList extends State<FlexiList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -32,7 +32,7 @@ class _FlexiList extends State<FlexiList> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();

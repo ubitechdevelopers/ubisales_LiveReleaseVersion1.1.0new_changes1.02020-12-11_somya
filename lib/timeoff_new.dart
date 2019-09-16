@@ -90,7 +90,7 @@ class _TimeOff_New extends State<TimeOff_New> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     initPlatformState();
   //  setLocationAddress();
    // startTimer();
@@ -175,7 +175,7 @@ class _TimeOff_New extends State<TimeOff_New> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-
+    appResumedPausedLogic(context);
     /*await availableCameras();*/
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/punch_location_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
@@ -92,7 +93,7 @@ var FakeLocationStatus=0;
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
   //  setLocationAddress();
@@ -105,6 +106,7 @@ var FakeLocationStatus=0;
     switch(call.method) {
 
       case "locationAndInternet":
+        prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
@@ -212,7 +214,7 @@ var FakeLocationStatus=0;
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-
+    appResumedPausedLogic(context);
     /*await availableCameras();*/
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
@@ -598,6 +600,7 @@ var FakeLocationStatus=0;
           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
       color: Colors.orangeAccent,
       onPressed: () {
+       globalCameraOpenedStatus=true;
         if(_clientname.text.trim()=='') {
           showInSnackBar('Please insert client name first');
           return false;

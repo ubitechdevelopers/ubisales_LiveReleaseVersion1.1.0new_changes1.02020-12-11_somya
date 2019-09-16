@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/punchlocation_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -80,6 +81,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     switch(call.method) {
 
       case "locationAndInternet":
+    prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
@@ -128,6 +130,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     visits=VisitsOffline.empty();
     setState(() {
@@ -368,10 +371,12 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     imageCache.clear();
     var imageRequired = prefs.getInt("VisitImageRequired")??0;
     if (imageRequired == 1) {
+      prefix0.globalCameraOpenedStatus=true;
       cameraChannel.invokeMethod("cameraOpened");
       ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
           .then((img) async {
+            prefix0.globalCameraOpenedStatus=false;
         if (img != null) {
           List<int> imageBytes = await img.readAsBytes();
           PictureBase64 = base64.encode(imageBytes);

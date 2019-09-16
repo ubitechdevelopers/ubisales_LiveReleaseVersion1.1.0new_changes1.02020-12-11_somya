@@ -53,7 +53,30 @@ import androidx.core.app.ActivityCompat;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import io.flutter.Log;
+import io.flutter.app.FlutterActivity;
+import io.flutter.plugins.GeneratedPluginRegistrant;
 public class MainActivity extends FlutterActivity implements LocationAssistant.Listener{
 
   private LocationAssistant assistant;
@@ -61,12 +84,19 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   private static final String CAMERA_CHANNEL = "update.camera.status";
   private boolean cameraOpened=false;
 
+
+  private SettingsClient mSettingsClient;
+  private LocationSettingsRequest mLocationSettingsRequest;
+  private static final int REQUEST_CHECK_SETTINGS = 214;
+  private static final int REQUEST_ENABLE_GPS = 516;
+
+
   MethodChannel channel;
   LocationListenerExecuter listenerExecuter;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
+  showLocationDialog();
     if (android.os.Build.VERSION.SDK_INT > 9)
     {
       StrictMode.ThreadPolicy policy = new
@@ -89,12 +119,14 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 if (call.method.equals("cameraOpened")) {
                   cameraOpened=true;
                   Log.i("camera","camera opened true");
+                  if(listenerExecuter!=null)
                  listenerExecuter.updateCameraStatus(true);
                 }
                 else
                 if (call.method.equals("cameraClosed")) {
                   Log.i("camera","camera opened false");
                   cameraOpened=false;
+                  if(listenerExecuter!=null)
                   listenerExecuter.updateCameraStatus(false);
                 }
                 else
@@ -126,6 +158,80 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   }
 
 
+  public void showLocationDialog(){
+    Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+    //builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
+    builder.setAlwaysShow(true);
+    mLocationSettingsRequest = builder.build();
+
+    mSettingsClient = LocationServices.getSettingsClient(MainActivity.this);
+
+    mSettingsClient
+            .checkLocationSettings(mLocationSettingsRequest)
+            .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+              @Override
+              public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                //Success Perform Task Here
+              }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                int statusCode = ((ApiException) e).getStatusCode();
+                switch (statusCode) {
+                  case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    try {
+                      ResolvableApiException rae = (ResolvableApiException) e;
+                      rae.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sie) {
+                      Log.e("GPS","Unable to execute request.");
+                    }
+                    break;
+                  case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.e("GPS","Location settings are inadequate, and cannot be fixed here. Fix in Settings.");
+                }
+              }
+            })
+            .addOnCanceledListener(new OnCanceledListener() {
+              @Override
+              public void onCanceled() {
+                Log.e("GPS","checkLocationSettings -> onCanceled");
+              }
+            });
+    GeneratedPluginRegistrant.registerWith(this);
+  }
+/*
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == REQUEST_CHECK_SETTINGS) {
+      switch (resultCode) {
+        case Activity.RESULT_OK:
+          //Success Perform Task Here
+          break;
+        case Activity.RESULT_CANCELED:
+          Log.e("GPS","User denied to access location");
+          openGpsEnableSetting();
+          break;
+      }
+    } else if (requestCode == REQUEST_ENABLE_GPS) {
+      LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+      boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+      if (!isGpsEnabled) {
+        openGpsEnableSetting();
+      } else {
+        // navigateToUser();
+      }
+    }
+  }
+  private void openGpsEnableSetting() {
+    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    startActivityForResult(intent, REQUEST_ENABLE_GPS);
+  }
+*/
   public void startTimeOutNotificationWorker(String ShiftTimeOut){
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -161,6 +267,10 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   WorkManager.getInstance().enqueue(workRequest);
 }
 
+  private void openGpsEnableSetting() {
+    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    startActivityForResult(intent, REQUEST_ENABLE_GPS);
+  }
 
   public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
     Calendar cal = Calendar.getInstance();
@@ -237,7 +347,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   }
   @Override
   public void onDestroy() {
-
+    if(listenerExecuter!=null)
     listenerExecuter.onDestroy();
 
     super.onDestroy();
@@ -247,6 +357,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onResume() {
     super.onResume();
    if(!cameraOpened)
+     if(listenerExecuter!=null)
     listenerExecuter.startAssistant();
    // assistant.start();
   }
@@ -255,6 +366,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onPause() {
    // assistant.stop();
   //if(!cameraOpened)
+    if(listenerExecuter!=null)
     listenerExecuter.stopAssistant();
     super.onPause();
   }
@@ -265,7 +377,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       for (int i = 0; i < permissions.length; i++) {
 
 
-        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&listenerExecuter!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
           if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
 
@@ -292,7 +404,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
             public void onClick(View view) {
                 assistant.requestLocationPermission();
         });*/
+    if(listenerExecuter!=null)
    listenerExecuter.requestLocationPermission();
+    if(listenerExecuter!=null)
     listenerExecuter.requestAndPossiblyExplainLocationPermission();
   }
 

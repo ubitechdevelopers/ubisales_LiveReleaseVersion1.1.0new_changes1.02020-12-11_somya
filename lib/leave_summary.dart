@@ -20,6 +20,7 @@ import 'settings.dart';
 import 'reports.dart';
 import 'profile.dart';
 import 'notifications.dart';
+import 'services/services.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -67,6 +68,7 @@ class _LeaveSummary extends State<LeaveSummary> {
   @override
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';

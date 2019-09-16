@@ -25,7 +25,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
 
     public void manuallyStartAssistant(){
     if(assistant!=null){
-        assistant.forceStart();;
+        assistant.forceStart();
     }
 
     }

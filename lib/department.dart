@@ -23,14 +23,14 @@ class _Department extends State<Department> {
   String _sts = 'Active';
   String _sts1 = 'Active';
 
-  String _orgName='';
+  String _orgName="";
   String admin_sts='0';
   bool _isButtonDisabled= false;
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     dept = new TextEditingController();
    // f_dept = FocusNode();
     getOrgName();

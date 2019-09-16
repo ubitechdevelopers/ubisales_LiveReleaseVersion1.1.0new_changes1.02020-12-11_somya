@@ -63,8 +63,10 @@ class _AddEmployee extends State<AddEmployee> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
+
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
     _pass.text='123456';
@@ -96,11 +98,13 @@ class _AddEmployee extends State<AddEmployee> {
 
   static const platform = const MethodChannel('location.spoofing.check');
   Future<dynamic> _handleMethod(MethodCall call) async {
+   /*
     switch(call.method) {
 
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -118,7 +122,7 @@ class _AddEmployee extends State<AddEmployee> {
         break;
 
         return new Future.value("");
-    }
+    }*/
   }
   void _toggle() {
     setState(() {

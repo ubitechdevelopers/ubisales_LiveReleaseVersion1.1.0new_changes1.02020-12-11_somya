@@ -63,11 +63,12 @@ class _TimeOffPageState extends State<TimeOffPage> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     initPlatformState();
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';

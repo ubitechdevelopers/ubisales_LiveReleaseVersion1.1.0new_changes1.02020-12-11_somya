@@ -48,8 +48,9 @@ class _addShift extends State<addShift> {
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    //appResumedFromBackground(context);
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? '0';
@@ -78,6 +79,7 @@ class _addShift extends State<addShift> {
   static const platform = const MethodChannel('location.spoofing.check');
 
   Future<dynamic> _handleMethod(MethodCall call) async {
+/*
     switch(call.method) {
 
       case "locationAndInternet":
@@ -101,7 +103,7 @@ class _addShift extends State<addShift> {
 
         return new Future.value("");
     }
-  }
+  */}
 
   @override
   Widget build(BuildContext context) {

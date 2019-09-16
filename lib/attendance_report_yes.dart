@@ -15,7 +15,7 @@ class YesAttendance extends StatefulWidget {
   @override
   _YesAttendance createState() => _YesAttendance();
 }
-String _orgName;
+String _orgName = "";
 class _YesAttendance extends State<YesAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -35,7 +35,7 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
   @override
   void initState() {
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     super.initState();
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
@@ -49,6 +49,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+      /*
+
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -66,6 +68,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
         break;
 
         return new Future.value("");
+
+       */
     }
   } @override
   Widget build(BuildContext context) {

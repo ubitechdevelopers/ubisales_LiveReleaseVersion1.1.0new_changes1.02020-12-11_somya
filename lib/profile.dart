@@ -52,13 +52,13 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     checknetonpage(context);
     initPlatformState();
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';

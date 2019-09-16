@@ -33,6 +33,33 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 
+appResumedPausedLogic(context){
+  SystemChannels.lifecycle.setMessageHandler((msg)async{
+    if(msg=='AppLifecycleState.resumed' )
+    {
+      print("------------------------------------ App Resumed-----------------------------");
+
+      var serverConnected= await checkConnectionToServer();
+      if(globals.globalCameraOpenedStatus==false)
+        if(serverConnected!=1){
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
+
+        }
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        }
+
+
+
+    }
+    if(msg=='AppLifecycleState.paused' ){
+      locationThreadUpdatedLocation=false;
+    }
+
+  });
+}
+
 checkLocationEnabled(context) async{
   print("checkLocationEnabled function");
 
@@ -45,6 +72,7 @@ checkLocationEnabled(context) async{
   if(!isLocationEnabled){
     showDialog(
         context: context,
+        barrierDismissible: false,
         child: new AlertDialog(
           title: new Text(""),
           content: new Text("Sorry we can't continue without GPS"),
@@ -1950,7 +1978,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
+    if (globals.assign_lat.compareTo(0.0) != 0&&globals.assign_lat!=null) {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(
               globals.assign_lat, globals.assign_long));
@@ -1961,11 +1989,22 @@ getAddressFromLati( String Latitude,String Longitude) async{
       globalstreamlocationaddr = streamlocationaddr;
       return streamlocationaddr;
     }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+
+      return globalstreamlocationaddr;
+    }
+
   }catch(e){
     print(e.toString());
-    if (globals.assign_lat != null||!globals.assign_lat.isNaN||globals.assign_lat.isNaN.toString().isNotEmpty) {
+    if (globals.assign_lat.compareTo(0.0) != 0&&globals.assign_lat!=null) {
       globalstreamlocationaddr = "${Latitude},${Longitude}";
+      print("inside iffffffffffffffffffffffffffffffffffffffffffffff"+globals.assign_lat.toString());
     }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+    }
+
     return globals.globalstreamlocationaddr;
   }
 }
@@ -1998,21 +2037,7 @@ checkNetForOfflineMode(context) {
 
 
 appResumedFromBackground(context){
-  SystemChannels.lifecycle.setMessageHandler((msg)async{
-    if(msg=='AppLifecycleState.resumed' )
-    {
-      print("------------------------------------ App Resumed-----------------------------");
-      serverConnected= await checkConnectionToServer();
-
-      if(serverConnected==0){
-        Navigator
-            .of(context)
-            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-      }
-
-    }
-
-  });
+appResumedPausedLogic(context);
 }
 
 
