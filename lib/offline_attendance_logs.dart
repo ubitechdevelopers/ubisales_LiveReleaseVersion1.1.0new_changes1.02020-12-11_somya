@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/punch_location_summary_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
@@ -145,7 +146,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                 MaterialPageRoute(builder: (context) => OfflineHomePage()),
               );
             },),
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
           ),
           bottomNavigationBar:
     Hero(
@@ -154,7 +155,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
 
     currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
       onTap: (newIndex) {
         if(newIndex==0){
           Navigator.pushReplacement(

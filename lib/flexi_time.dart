@@ -548,7 +548,7 @@ class _Flexitime extends State<Flexitime> {
                       ),
                       shape: new CircleBorder(),
                       elevation: 0.5,
-                      fillColor: Colors.teal,
+                      fillColor: appcolor,
                       padding: const EdgeInsets.all(1.0),
                     ),
                   ),*/

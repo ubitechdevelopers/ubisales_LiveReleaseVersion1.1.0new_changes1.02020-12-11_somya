@@ -28,7 +28,6 @@ void main(){
   ));
 }
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
@@ -62,9 +61,6 @@ class _MyAppState extends State<MyApp> {
         print(call.arguments["mocked"].toString());
 
           globalstreamlocationaddr=address;
-
-
-
 
         break;
 

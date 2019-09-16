@@ -398,7 +398,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             actions: [
 
               RaisedButton.icon(
-                  color:Colors.teal,
+                  color:appcolor,
                   onPressed: (){
                     Navigator.push(
                       context,
@@ -410,7 +410,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                   label: Text('Logs',style: new TextStyle(color: Colors.white))),
             /*
             RaisedButton.icon(
-            color:Colors.teal,
+            color:appcolor,
             onPressed: (){
               Navigator.push(
                 context,
@@ -429,7 +429,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               ],
             ),
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
             // backgroundColor: Color.fromARGB(255,63,163,128),
           ),
           //bottomSheet: getQuickLinksWidget(),
@@ -440,7 +440,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               child:BottomNavigationBar(
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.teal,
+            backgroundColor: appcolor,
                 onTap: (newIndex) {
               /*
                   if(newIndex==0){

@@ -82,7 +82,7 @@ class _Reports extends State<Reports> {
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.pop(context);}),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
 
       bottomNavigationBar: Bottomnavigationbar(),

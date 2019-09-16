@@ -41,7 +41,7 @@ import 'package:Shrine/database_models/visits_offline.dart';
 import "package:Shrine/notifications.dart";
 import "offline_home.dart";
 import 'Bottomnavigationbar.dart';
-
+import 'login.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
@@ -660,7 +660,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         : "";
 
     return (response == 0 || userpwd != newpwd || Is_Delete != 0)
-        ? new AskRegisterationPage()
+        ? new LoginPage()
         : getmainhomewidget();
     /* return MaterialApp(
       home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
@@ -719,7 +719,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
         (Route<dynamic> route) => false,
       );
     }
@@ -815,7 +815,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 child: new Text(
                   "Try now",
                   style: new TextStyle(
-                      color: Colors.teal, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
                 //  sl.startStreaming(5);
@@ -867,11 +867,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             children: <Widget>[
               Icon(
                 Icons.android,
-                color: Colors.teal,
+                color: appcolor,
               ),
               Text(
                 "Under development",
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal),
+                style: new TextStyle(fontSize: 30.0, color: appcolor),
               )
             ]),
       ),
@@ -891,11 +891,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   children: <Widget>[
                     Icon(
                       Icons.error,
-                      color: Colors.teal,
+                      color: appcolor,
                     ),
                     Text(
                       " Poor network connection.",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.teal),
+                      style: new TextStyle(fontSize: 20.0, color: appcolor),
                     ),
                   ]),
               SizedBox(height: 5.0),
@@ -903,7 +903,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 child: new Text(
                   "Refresh Page",
                   style: new TextStyle(
-                      color: Colors.teal, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
                  // sl.startStreaming(5);

@@ -49,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   bool loader = false;
+  bool imageloder = false;
   FocusNode textSecondFocusNode = new FocusNode();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -126,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     setState(() {
+      imageloder = true;
       loginuser = prefs.getString('username') ?? "";
       _usernameController.text=loginuser;
     });
@@ -135,7 +137,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body:new Builder(
+      body:
+      //imageloder?
+      new Stack(
+
+          children: <Widget>[
+            new Container(
+              decoration: new BoxDecoration(
+                image: new DecorationImage(image: new AssetImage("assets/background.jpg"), fit: BoxFit.cover,),
+              ),
+            ),
+            imageloder?
+      new Builder(
         builder: (BuildContext context) {
           return new Center(
           child: Form(
@@ -150,10 +163,10 @@ class _LoginPageState extends State<LoginPage> {
                       Image.asset(
                           'assets/logo.png', height: 150.0, width: 150.0,),
                       (loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 2.0),
-                      /*Text('Log In', style: new TextStyle(fontSize: 20.0)),*/
+
                     ],
                   ),
-                  /*SizedBox(height: 10.0),*/
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -165,13 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() {
                             loader = true;
                           });
-                          /*var internetAvailable= checkConnectionToServer().then((connected){
-
-                            if(connected==0){
-                                 markAttByQROffline(context);
-                               }
-                               else{
-                              */   scan().then((onValue){
+                            scan().then((onValue){
                                    print("******************** QR value **************************");
                                    print(onValue);
                                    print("******************** QR value **************************");
@@ -239,18 +246,9 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       ButtonBar(
                         children: <Widget>[
-                          FlatButton(
-                            shape: Border.all(color: Colors.black54),
-                            child: Text('CANCEL'),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-                              );
-                            },
-                          ),
+
                           ButtonTheme(
-                            minWidth: MediaQuery.of(context).size.width*0.25,
+                            minWidth: MediaQuery.of(context).size.width*0.30,
                             child:RaisedButton(
                               child: Text('LOGIN',style: TextStyle(color: Colors.white),),
                               color: buttoncolor,
@@ -267,24 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
 
-                 /* Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ButtonTheme(
-                        minWidth: MediaQuery.of(context).size.width*0.3,
-                        child:RaisedButton(
-                        child: Text('Scan QR code'),
-                        color: Colors.orangeAccent,
-                        onPressed: () {
-                         scan().then((onValue){
-                            print(onValue);
-                            markAttByQR(onValue,context);
-                         });
-                        },
-                      ),
-                      ),
-                    ],
-                  ),*/
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -309,9 +290,10 @@ class _LoginPageState extends State<LoginPage> {
           ,
           );
         },
-      ),
+      ):Center(child : Center(child : new CircularProgressIndicator())),
+          ],
+      )
     );
-
   }
 
   markAttByQROffline(BuildContext context){

@@ -3,6 +3,7 @@ import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
+import 'globals.dart';
 void main() => runApp(new MyAppAbout());
 
 class MyAppAbout extends StatefulWidget {
@@ -50,7 +51,7 @@ class _MyAppAbout extends State<MyAppAbout> {
     MaterialPageRoute(builder: (context) => HomePage()),
     );
     },),
-          backgroundColor: Colors.teal,
+          backgroundColor: appcolor,
         ),
         endDrawer: new AppDrawer(),
         body: new SingleChildScrollView(

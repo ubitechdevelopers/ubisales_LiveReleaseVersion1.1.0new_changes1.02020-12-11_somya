@@ -189,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           shape: new CircleBorder(),
                           elevation: 0.5,
-                          fillColor: Colors.teal[100],
+                          fillColor: appcolor,
                           padding: const EdgeInsets.all(1.0),
                         ),
                         Text("Remove\n photo")

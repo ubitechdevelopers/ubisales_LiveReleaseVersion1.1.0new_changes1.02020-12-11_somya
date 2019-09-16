@@ -8,9 +8,10 @@ Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
 
-Color appcolor =  Colors.teal;
-Color buttoncolor =  Colors.orangeAccent;
-Color headingcolor =  Colors.orange;
+
+Color appcolor =  Colors.lightBlue;
+Color buttoncolor =  Colors.lightBlue[800];
+Color headingcolor =  Colors.lightBlue[800];
 
 /*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";

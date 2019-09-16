@@ -4,7 +4,7 @@ import 'askregister.dart';
 import 'services/services.dart';
 import 'self_register_emp.dart';
 import 'register_org.dart';
-
+import 'globals.dart';
 class AskRegisteration extends StatefulWidget {
   AskRegisteration({Key key, this.title}) : super(key: key);
   final String title;
@@ -63,7 +63,7 @@ class _AskRegisteration extends State<AskRegisteration> {
             );
           },
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: appcolor,
       ),
       body: new SafeArea(
           top: false,
@@ -87,7 +87,7 @@ class _AskRegisteration extends State<AskRegisteration> {
                           new Row(
                             children: <Widget>[
                               new Radio(
-                                activeColor: Colors.teal,
+                                activeColor: appcolor,
                                 value: 2,
                                 groupValue: val,
                                 onChanged: (newValue) {
@@ -134,7 +134,7 @@ class _AskRegisteration extends State<AskRegisteration> {
                                         context, MaterialPageRoute(builder: (context) => MyApp()),
                                       );
                                     },
-                                    color: Colors.orangeAccent,
+                                    color: buttoncolor,
                                   ),
                                 ),
                               ),
@@ -149,7 +149,7 @@ class _AskRegisteration extends State<AskRegisteration> {
                           new Row(
                             children: <Widget>[
                               new Radio(
-                                activeColor: Colors.teal,
+                                activeColor:appcolor,
                                 value: 1,
                                 groupValue: val,
                                 onChanged: (newValue) {
@@ -294,7 +294,7 @@ class _AskRegisteration extends State<AskRegisteration> {
 
                                       }
                                     },
-                                    color: Colors.orangeAccent,
+                                    color: buttoncolor,
                                   ),
                                 ),
                               ),
