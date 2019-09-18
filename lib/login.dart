@@ -49,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
 
 
   bool loader = false;
-  bool imageloder = false;
   FocusNode textSecondFocusNode = new FocusNode();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -65,8 +64,9 @@ class _LoginPageState extends State<LoginPage> {
     switch(call.method) {
 
       case "locationAndInternet":
-      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-      // Map<String,String> responseMap=call.arguments;
+        prefix0.locationThreadUpdatedLocation=true;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -81,16 +81,16 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-          if(call.arguments["mocked"].toString()=="Yes"){
-            fakeLocationDetected=true;
-          }
-          else{
-            fakeLocationDetected=false;
-          }
+        if(call.arguments["mocked"].toString()=="Yes"){
+          fakeLocationDetected=true;
+        }
+        else{
+          fakeLocationDetected=false;
+        }
 
-          long=call.arguments["longitude"].toString();
-          lat=call.arguments["latitude"].toString();
-          globalstreamlocationaddr=address;
+        long=call.arguments["longitude"].toString();
+        lat=call.arguments["latitude"].toString();
+        globalstreamlocationaddr=address;
 
 
 
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
 
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
-   // syncOfflineQRData();
+    // syncOfflineQRData();
     var isAlreadyLoggedIn=prefs.getInt("response");
     var isConnected=await checkConnectionToServer ();
 
@@ -127,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     setState(() {
-      imageloder = true;
       loginuser = prefs.getString('username') ?? "";
       _usernameController.text=loginuser;
     });
@@ -137,163 +136,183 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body:
-      //imageloder?
-      new Stack(
-
-          children: <Widget>[
-            new Container(
-              decoration: new BoxDecoration(
-                image: new DecorationImage(image: new AssetImage("assets/background.jpg"), fit: BoxFit.cover,),
-              ),
-            ),
-            imageloder?
-      new Builder(
+      body:new Builder(
         builder: (BuildContext context) {
           return new Center(
-          child: Form(
-            key: _formKey,
-            child: SafeArea(
-              child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
-                children: <Widget>[
-                  SizedBox(height: 50.0),
-                  Column(
-                    children: <Widget>[
-                      Image.asset(
+            child: Form(
+              key: _formKey,
+              child: SafeArea(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                  children: <Widget>[
+                    SizedBox(height: 50.0),
+                    Column(
+                      children: <Widget>[
+                        Image.asset(
                           'assets/logo.png', height: 150.0, width: 150.0,),
-                      (loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 2.0),
+                        (loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 2.0),
+                        /*Text('Log In', style: new TextStyle(fontSize: 20.0)),*/
+                      ],
+                    ),
+                    /*SizedBox(height: 10.0),*/
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            if(loader)
+                              return null;
 
-                    ],
-                  ),
+                            setState(() {
+                              loader = true;
+                            });
+                            /*var internetAvailable= checkConnectionToServer().then((connected){
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          if(loader)
-                            return null;
+                            if(connected==0){
+                                 markAttByQROffline(context);
+                               }
+                               else{
+                              */   scan().then((onValue){
+                              print("******************** QR value **************************");
+                              print(onValue);
+                              print("******************** QR value **************************");
+                              //return false;
+                              if(onValue!='error') {
 
-                          setState(() {
-                            loader = true;
-                          });
-                            scan().then((onValue){
-                                   print("******************** QR value **************************");
-                                   print(onValue);
-                                   print("******************** QR value **************************");
-                                   //return false;
-                                   if(onValue!='error') {
-
-                                     markAttByQR(onValue, context);
-                                   }else {
-                                     setState(() {
-                                       loader = false;
-                                     });
-                                   }
-                                 });
-                           /*    }
+                                markAttByQR(onValue, context);
+                              }else {
+                                setState(() {
+                                  loader = false;
+                                });
+                              }
+                            });
+                            /*    }
                           });*/
 
-                        },
-                        child:  Image.asset(
-                          'assets/qr.png', height: 45.0, width: 45.0,
+                          },
+                          child:  Image.asset(
+                            'assets/qr.png', height: 45.0, width: 45.0,
+                          ),
                         ),
+                      ],
+                    ),
+
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Username',
                       ),
-                    ],
-                  ),
-
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Username',
+                      onFieldSubmitted: (String value) {
+                        FocusScope.of(context).requestFocus(textSecondFocusNode);
+                      },
+                      controller: _usernameController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter the Username';
+                        }
+                      },
                     ),
-                    onFieldSubmitted: (String value) {
-                      FocusScope.of(context).requestFocus(textSecondFocusNode);
-                    },
-                    controller: _usernameController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter the Username';
-                      }
-                    },
-                  ),
-                  // spacer
-                  SizedBox(height: 12.0),
-                  // [Password]
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Password',
+                    // spacer
+                    SizedBox(height: 12.0),
+                    // [Password]
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                      ),
+                      obscureText: true,
+                      focusNode: textSecondFocusNode,
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter password';
+                        }
+                      },
+                      onFieldSubmitted: (String value) {
+                        if (_formKey.currentState.validate()) {
+                          login(_usernameController.text,_passwordController.text,context);
+                        }
+                      },
                     ),
-                    obscureText: true,
-                    focusNode: textSecondFocusNode,
-                    controller: _passwordController,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter password';
-                      }
-                    },
-                    onFieldSubmitted: (String value) {
-                      if (_formKey.currentState.validate()) {
-                        login(_usernameController.text,_passwordController.text,context);
-                      }
-                    },
-                  ),
 
-                  SizedBox(height: 5.0),
-                  Row(
+                    SizedBox(height: 5.0),
+                    Row(
 
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      ButtonBar(
-                        children: <Widget>[
-
-                          ButtonTheme(
-                            minWidth: MediaQuery.of(context).size.width*0.30,
-                            child:RaisedButton(
-                              child: Text('LOGIN',style: TextStyle(color: Colors.white),),
-                              color: buttoncolor,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        ButtonBar(
+                          children: <Widget>[
+                            FlatButton(
+                              shape: Border.all(color: Colors.black54),
+                              child: Text('CANCEL'),
                               onPressed: () {
-                                if (_formKey.currentState.validate()) {
-                                  login(_usernameController.text,_passwordController.text,context);
-                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => AskRegisterationPage()),
+                                );
                               },
                             ),
-                          ),
-                        ],
-                      ),
+                            ButtonTheme(
+                              minWidth: MediaQuery.of(context).size.width*0.25,
+                              child:RaisedButton(
+                                child: Text('LOGIN',style: TextStyle(color: Colors.white),),
+                                color: buttoncolor,
+                                onPressed: () {
+                                  if (_formKey.currentState.validate()) {
+                                    login(_usernameController.text,_passwordController.text,context);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
 
-                    ],
-                  ),
+                      ],
+                    ),
 
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    /* Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      InkWell(
-                        child: new Text("Forgot Password?", style: new TextStyle(
-                            color: appcolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13.0,
-                            decoration: TextDecoration.underline),),
-                        onTap: () {
-                          Navigator.push(
-                              context, new MaterialPageRoute(builder: (BuildContext context) => ForgotPassword()));
+                      ButtonTheme(
+                        minWidth: MediaQuery.of(context).size.width*0.3,
+                        child:RaisedButton(
+                        child: Text('Scan QR code'),
+                        color: Colors.orangeAccent,
+                        onPressed: () {
+                         scan().then((onValue){
+                            print(onValue);
+                            markAttByQR(onValue,context);
+                         });
                         },
                       ),
-                      SizedBox(width: 19.0,)
+                      ),
                     ],
-                  )
-                ],
+                  ),*/
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        InkWell(
+                          child: new Text("Forgot Password?", style: new TextStyle(
+                              color: appcolor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.0,
+                              decoration: TextDecoration.underline),),
+                          onTap: () {
+                            Navigator.push(
+                                context, new MaterialPageRoute(builder: (BuildContext context) => ForgotPassword()));
+                          },
+                        ),
+                        SizedBox(width: 19.0,)
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          )
-          ,
+            )
+            ,
           );
         },
-      ):Center(child : Center(child : new CircularProgressIndicator())),
-          ],
-      )
+      ),
     );
+
   }
 
   markAttByQROffline(BuildContext context){
@@ -456,8 +475,8 @@ class _LoginPageState extends State<LoginPage> {
             }
             else {
               setState(() {
-               // timeInClicked = false;
-               // timeOutClicked = false;
+                // timeInClicked = false;
+                // timeOutClicked = false;
               });
             }
           });
@@ -583,7 +602,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loader = false;
       });
-     /* Scaffold.of(context)
+      /* Scaffold.of(context)
           .showSnackBar(
           SnackBar(content: Text("Problem Getting Location! Please turn on GPS and try again")));*/
       showDialog(
@@ -673,5 +692,4 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 }
-
 

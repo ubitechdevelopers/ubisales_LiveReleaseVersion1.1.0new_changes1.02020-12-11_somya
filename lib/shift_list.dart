@@ -29,7 +29,7 @@ class _ShiftList extends State<ShiftList> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     dept = new TextEditingController();
     // f_dept = FocusNode();
     getOrgName();

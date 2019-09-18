@@ -31,7 +31,7 @@ class _LateComers extends State<LateComers> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();

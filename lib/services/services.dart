@@ -33,6 +33,42 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 
+appResumedPausedLogic(context,[bool isVisitPage]){
+  SystemChannels.lifecycle.setMessageHandler((msg)async{
+    if(msg=='AppLifecycleState.resumed' )
+    {
+      print("------------------------------------ App Resumed-----------------------------");
+
+
+
+      var serverConnected= await checkConnectionToServer();
+      if(globals.globalCameraOpenedStatus==false)
+        {
+          (context as Element).reassemble();
+          if(serverConnected!=1){
+
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
+
+          }
+          else{
+            //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation)
+              cameraChannel.invokeMethod("openLocationDialog");
+          }
+        }
+
+
+
+
+    }
+    if(msg=='AppLifecycleState.paused' ){
+      if(globals.globalCameraOpenedStatus==false)
+      locationThreadUpdatedLocation=false;
+    }
+
+  });
+}
+
 checkLocationEnabled(context) async{
   print("checkLocationEnabled function");
 
@@ -45,6 +81,7 @@ checkLocationEnabled(context) async{
   if(!isLocationEnabled){
     showDialog(
         context: context,
+        barrierDismissible: false,
         child: new AlertDialog(
           title: new Text(""),
           content: new Text("Sorry we can't continue without GPS"),
@@ -2008,21 +2045,7 @@ checkNetForOfflineMode(context) {
 
 
 appResumedFromBackground(context){
-  SystemChannels.lifecycle.setMessageHandler((msg)async{
-    if(msg=='AppLifecycleState.resumed' )
-    {
-      print("------------------------------------ App Resumed-----------------------------");
-      serverConnected= await checkConnectionToServer();
-
-      if(serverConnected==0){
-        Navigator
-            .of(context)
-            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-      }
-
-    }
-
-  });
+appResumedPausedLogic(context);
 }
 
 

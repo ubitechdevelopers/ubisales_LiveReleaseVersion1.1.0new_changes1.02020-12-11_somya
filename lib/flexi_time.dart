@@ -93,7 +93,7 @@ class _Flexitime extends State<Flexitime> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     initPlatformState();
     //setLocationAddress();
     //startTimer();
@@ -106,6 +106,7 @@ class _Flexitime extends State<Flexitime> {
     switch(call.method) {
 
       case "locationAndInternet":
+        locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
@@ -705,10 +706,11 @@ class _Flexitime extends State<Flexitime> {
   }
   getVisitInButton() {
     return RaisedButton(
-      child: Text('TIME IN',
+      child: Text('FLEXI TIME IN',
           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () {
+        prefix0.globalCameraOpenedStatus=true;
        // if(_clientname.text=='') {
        //   showInSnackBar('Please insert client name first');
         //  return false;
@@ -721,10 +723,13 @@ class _Flexitime extends State<Flexitime> {
 
   getVisitoutButton() {
     return  RaisedButton(
-        child: const Text('TIME OUT',style: TextStyle(color: Colors.white,fontSize: 18),),
+
         color: buttoncolor,
+        child: const Text('FLEXI TIME OUT',style: TextStyle(color: Colors.white,fontSize: 18),),
+
         onPressed: () {
-          sl.startStreaming(5);
+          prefix0.globalCameraOpenedStatus=true;
+
           SaveImage saveImage = new SaveImage();
           setState(() {
             act1 = "";

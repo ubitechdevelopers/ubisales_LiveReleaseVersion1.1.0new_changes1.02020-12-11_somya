@@ -52,7 +52,7 @@ class _NoNetState extends State<NoNet> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';

@@ -56,7 +56,7 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
     streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
    // setLocationAddress();
     platform.setMethodCallHandler(_handleMethod);
 
@@ -69,7 +69,7 @@ String address="";
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
-
+        locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -114,6 +114,7 @@ String address="";
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -270,6 +271,7 @@ String address="";
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
               color: buttoncolor,
               onPressed: () {
+                globalCameraOpenedStatus=true;
               //  sl.startStreaming(5);
                 SaveImage saveImage = new SaveImage();
                 print('****************************>>');

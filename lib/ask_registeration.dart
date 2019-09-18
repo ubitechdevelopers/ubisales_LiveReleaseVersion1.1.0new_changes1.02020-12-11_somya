@@ -31,7 +31,7 @@ class _AskRegisteration extends State<AskRegisteration> {
     _crn = new TextEditingController();
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
   }
 
   void showInSnackBar(String value) {

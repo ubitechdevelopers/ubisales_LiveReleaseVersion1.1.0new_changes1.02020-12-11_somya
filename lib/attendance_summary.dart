@@ -42,7 +42,7 @@ class _MyApp extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -59,6 +59,7 @@ class _MyApp extends State<MyApp> {
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
+      /*
 
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
@@ -80,6 +81,8 @@ class _MyApp extends State<MyApp> {
         break;
 
         return new Future.value("");
+
+       */
     }
   } // This widget is the root of your application.
   Future<bool> sendToHome() async{

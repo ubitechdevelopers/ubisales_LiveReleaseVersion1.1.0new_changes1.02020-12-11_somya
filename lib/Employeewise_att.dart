@@ -17,7 +17,7 @@ class EmployeeWise_att extends StatefulWidget {
   @override
   _EmployeeWise_att createState() => _EmployeeWise_att();
 }
-String _orgName;
+String _orgName = "";
 //TextEditingController today;
 class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProviderStateMixin {
   TabController _controller;
@@ -42,7 +42,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
  //   today = new TextEditingController();

@@ -9,15 +9,17 @@ Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
 
 
-Color appcolor =  Colors.lightBlue;
-Color buttoncolor =  Colors.lightBlue[800];
-Color headingcolor =  Colors.lightBlue[800];
+Color appcolor =  Colors.teal;
+Color buttoncolor =  Colors.orangeAccent;
+Color headingcolor =  Colors.orange;
 
+/*
 /*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services";
 */
 
+*/
 /*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
@@ -54,3 +56,5 @@ bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
 bool showTimeInNotification=true;
 bool timeSpoofed=false;
+bool globalCameraOpenedStatus=false;
+bool locationThreadUpdatedLocation=false;

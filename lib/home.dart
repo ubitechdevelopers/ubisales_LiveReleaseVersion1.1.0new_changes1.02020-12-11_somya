@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/saveimage.dart';
@@ -102,6 +103,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   bool offlineDataSaved=false;
   bool internetAvailable=true;
   String address='';
+
   @override
   void initState() {
     print('aintitstate');
@@ -112,10 +114,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     //setLocationAddress();
    // startTimer();
    platform.setMethodCallHandler(_handleMethod);
-  }
+    }
 
   syncOfflineQRData() async{
 
+    address=await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+    print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
 
     int serverAvailable=await checkConnectionToServer ();
@@ -195,6 +199,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     switch(call.method) {
 
       case "locationAndInternet":
+        locationThreadUpdatedLocation=true;
        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
        // Map<String,String> responseMap=call.arguments;
 
@@ -215,6 +220,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
+        print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
         globalstreamlocationaddr=address;
         print(call.arguments["mocked"].toString());
         getAreaStatus().then((res) {
@@ -567,7 +573,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   initPlatformState() async {
     /*await availableCameras();*/
     checknetonpage(context);
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
+    appResumedPausedLogic(context);
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
+
+// Here you can write your code
+      if(mounted)
+        setState(() {
+          locationThreadUpdatedLocation=locationThreadUpdatedLocation;
+        });
+
+    });
+
     SystemChannels.lifecycle.setMessageHandler((msg)async{
 
     });
@@ -595,9 +613,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       prefs = await SharedPreferences.getInstance();
-      var connected=await checkConnectionToServer();
-      if(connected==1)
-      if (mounted) {
+      var netAvailable=0;
+      netAvailable=await checkNet();
+      if (mounted && netAvailable==1) {
         setState(() {
           Is_Delete = prefs.getInt('Is_Delete') ?? 0;
           newpwd = prefs.getString('newpwd') ?? "";
@@ -620,22 +638,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
           print("Profile Image"+profile);
-          profileimage = new NetworkImage(profile);
-          print("this is false block123");
+         profileimage = new NetworkImage(profile);
+          setaddress();
+         // _checkLoaded = false;
+          // //print("1-"+profile);
           profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
-                print("this is false block");
               });
             }
           }));
-
-          setaddress();
-         // _checkLoaded = false;
-          // //print("1-"+profile);
-
-
           // //print("2-"+_checkLoaded.toString());
           shiftId = prefs.getString('shiftId') ?? "";
           aid = prefs.getString('aid') ?? "";
@@ -648,11 +661,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         });
       }
     }
+
+  appResumedPausedLogic(context);
+
+
+
   }
 
   setaddress () async{
     globalstreamlocationaddr= await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
-    if(globals.globalstreamlocationaddr=="Location not fetched."){
+    var serverConnected=await checkConnectionToServer();
+    if(serverConnected!=0)
+    if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation){
+      cameraChannel.invokeMethod("openLocationDialog");
+      /*
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -660,46 +682,48 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             return WillPopScope(
                 onWillPop: () {},
                 child: new AlertDialog(
-                  title: new Text(""),
-                  content: new Text("Sorry we can't continue without GPS"),
-                  actions: <Widget>[
-                    RaisedButton(
-                      child: new Text(
-                        "Turn On",
-                        style: new TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      color: Colors.orangeAccent,
-                      onPressed: () {
-                        openLocationSetting();
-                      },
-                    ),
-                    RaisedButton(
-                      child: new Text(
-                        "Done",
-                        style: new TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      color: Colors.orangeAccent,
-                      onPressed: () {
-                        cameraChannel.invokeMethod("startAssistant");
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                        /*
+            title: new Text(""),
+            content: new Text("Sorry we can't continue without GPS"),
+            actions: <Widget>[
+              RaisedButton(
+                child: new Text(
+                  "Turn On",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () async{
+                  cameraChannel.invokeMethod("openLocationDialog");
+                  //openLocationSetting();
+                },
+              ),
+              RaisedButton(
+                child: new Text(
+                  "Done",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  cameraChannel.invokeMethod("startAssistant");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                 /*
                   Navigator.of(context, rootNavigator: true)
                       .pop();
 */
-                      },
-                    ),
-                  ],
-                ));});
+                },
+              ),
+            ],
+          ));});
+
+       */
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -708,7 +732,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         : "";
 
     return (response == 0 || userpwd != newpwd || Is_Delete != 0)
-        ? new LoginPage()
+        ? new AskRegisterationPage()
         : getmainhomewidget();
     /* return MaterialApp(
       home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
@@ -767,7 +791,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
         (Route<dynamic> route) => false,
       );
     }
@@ -882,7 +906,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Sorry we can not continue with out location.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -1000,7 +1024,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image: _checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                image: _checkLoaded
+                                    ? AssetImage('assets/avatar.png')
+                                    : profileimage,
                                 //image: AssetImage('assets/avatar.png')
                               ))),
                       /*new Positioned(
@@ -1469,7 +1495,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     } else {
       return Column(children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Sorry we can not continue without location',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -1490,6 +1516,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
         color: globals.buttoncolor,
         onPressed: () {
+          globals.globalCameraOpenedStatus=true;
           // //print("Time out button pressed");
 
           saveImage();
@@ -1502,6 +1529,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             style: new TextStyle(fontSize: 22.0, color: Colors.white)),
         color: globals.buttoncolor,
         onPressed: () {
+          globals.globalCameraOpenedStatus=true;
           // //print("Time out button pressed");
           saveImage();
         },

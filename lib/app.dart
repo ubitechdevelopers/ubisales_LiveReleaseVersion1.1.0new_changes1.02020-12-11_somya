@@ -39,12 +39,11 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='5.0.0',new_ver='5.0.0';
+  String cur_ver='5.0.4',new_ver='5.0.4';
   Widget _defaultHome = new LoginPage();
   @override
   void initState() {
     super.initState();
-
     getShared();
     checkNow().then((res){
       setState(() {
@@ -61,7 +60,7 @@ class _ShrineAppState extends State<ShrineApp> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
-
+        locationThreadUpdatedLocation=true;
 
         String long=call.arguments["longitude"].toString();
         String lat=call.arguments["latitude"].toString();

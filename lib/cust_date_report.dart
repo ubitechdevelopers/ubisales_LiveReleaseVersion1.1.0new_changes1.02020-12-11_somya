@@ -48,7 +48,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
     today = new TextEditingController();
@@ -59,7 +59,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+/*
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
@@ -80,6 +80,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
         break;
 
         return new Future.value("");
+
+ */
     }
   } @override
   Widget build(BuildContext context) {

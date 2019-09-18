@@ -34,7 +34,7 @@ class _UserGuide extends State<UserGuide> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     initPlatformState();
 
   }

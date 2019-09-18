@@ -21,7 +21,7 @@ class Outsidegeofance extends StatefulWidget {
 }
 
 TextEditingController today;
-String _orgName;
+String _orgName = "";
 //FocusNode f_dept ;
 class _Outsidegeofance extends State<Outsidegeofance> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -35,7 +35,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();

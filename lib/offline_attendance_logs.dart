@@ -26,7 +26,7 @@ class OfflineAttendanceLogs extends StatefulWidget {
   @override
   _OfflineAttendanceLogs createState() => _OfflineAttendanceLogs();
 }
-String _orgName;
+String _orgName = "";
 String org_name="";
 class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTickerProviderStateMixin {
   TabController _controller;
@@ -78,6 +78,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
   initPlatformState() async {
     //checkNetForOfflineMode(context);
     //appResumedFromBackground(context);
+    appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
 
 
@@ -98,6 +99,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
+    prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -148,9 +150,10 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
             },),
             backgroundColor: appcolor,
           ),
+
           bottomNavigationBar:
-          (assign_lat!=0.0&&assign_lat!=null)?
-    Hero(
+            (assign_lat!=0.0&&assign_lat!=null)?
+          Hero(
     tag: "bottom",
     child:BottomNavigationBar(
 
@@ -199,11 +202,10 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                 icon: new Icon(Icons.home,color: Colors.white,),
                 title: new Text('Home',style: TextStyle(color: Colors.white)),
               ),
-
-             /* BottomNavigationBarItem(
+              BottomNavigationBarItem(
                   icon: Icon(Icons.location_on,color: Colors.white,),
                   title: Text('Visits',style: TextStyle(color: Colors.white),)
-              ),*/
+              ),
               /*  BottomNavigationBarItem(
                   icon: Icon(
                     Icons.notifications

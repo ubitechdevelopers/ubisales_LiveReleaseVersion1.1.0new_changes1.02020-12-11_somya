@@ -36,7 +36,7 @@ class _Settings extends State<Settings> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     checknetonpage(context);
     getOrgName();
   }

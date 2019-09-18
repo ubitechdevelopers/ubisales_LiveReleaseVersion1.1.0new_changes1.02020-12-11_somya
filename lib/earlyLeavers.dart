@@ -24,7 +24,7 @@ TextEditingController today;
 class _EarlyLeavers extends State<EarlyLeavers> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-  String _orgName;
+  String _orgName = "";
   String admin_sts='0';
   bool res = true;
   var formatter = new DateFormat('dd-MMM-yyyy');
@@ -33,7 +33,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-    appResumedFromBackground(context);
+
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();

@@ -106,7 +106,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
   void initState() {
     super.initState();
     streamlocationaddr=globalstreamlocationaddr;
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
     initPlatformState();
    // setLocationAddress();
    // startTimer();
@@ -119,6 +119,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     switch(call.method) {
 
       case "locationAndInternet":
+        prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
@@ -237,7 +238,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-
+    appResumedPausedLogic(context);
     /*await availableCameras();*/
     final prefs = await SharedPreferences.getInstance();
 
@@ -257,6 +258,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       }
 
       int serverConnected;
+      /*
       SystemChannels.lifecycle.setMessageHandler((msg)async{
         if(msg=='AppLifecycleState.resumed' )
         {
@@ -274,7 +276,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           appAlreadyResumed=false;
         }
 
-      });
+      });*/
       serverConnected= await checkConnectionToServer();
       if(serverConnected==1){
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -409,7 +411,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
 
   refreshPageWidgit() {
-    if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
+    if (prefix0.assign_lat!=0.0) {
       return new Container(
         child: Center(
           child: new Column(
@@ -577,7 +579,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
                   SizedBox(height: 35.0),
                   SizedBox(height: MediaQuery.of(context).size.height * .01),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
-                  (location_addr == '') ? loader() : getMarkAttendanceWidgit(),
+                  (prefix0.assign_lat == 0.0) ? loader() : getMarkAttendanceWidgit(),
                 ],
               ),
             ),
@@ -599,7 +601,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
   }
   getwidget(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
+    if (addrloc != "Location not fetched.") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -711,9 +713,11 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     var imageRequired = prefs.getInt("VisitImageRequired")??0;
     if (imageRequired == 1) {
       cameraChannel.invokeMethod("cameraOpened");
+      prefix0.globalCameraOpenedStatus=true;
       ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
           .then((img) async {
+            prefix0.globalCameraOpenedStatus=false;
         if (img != null) {
           List<int> imageBytes = await img.readAsBytes();
           PictureBase64 = base64.encode(imageBytes);

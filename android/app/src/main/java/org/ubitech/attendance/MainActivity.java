@@ -2,6 +2,7 @@ package org.ubitech.attendance;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -53,7 +54,30 @@ import androidx.core.app.ActivityCompat;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.provider.Settings;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import io.flutter.Log;
+import io.flutter.app.FlutterActivity;
+import io.flutter.plugins.GeneratedPluginRegistrant;
 public class MainActivity extends FlutterActivity implements LocationAssistant.Listener{
 
   private LocationAssistant assistant;
@@ -61,11 +85,22 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   private static final String CAMERA_CHANNEL = "update.camera.status";
   private boolean cameraOpened=false;
 
+
+  private SettingsClient mSettingsClient;
+  private LocationSettingsRequest mLocationSettingsRequest;
+  private static final int REQUEST_CHECK_SETTINGS = 214;
+  private static final int REQUEST_ENABLE_GPS = 516;
+
+
   MethodChannel channel;
   LocationListenerExecuter listenerExecuter;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+  //showLocationDialog();
+
+
 
     if (android.os.Build.VERSION.SDK_INT > 9)
     {
@@ -107,16 +142,22 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 }
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
                   startTimeOutNotificationWorker(ShiftTimeOut);
                 }
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
                   String ShiftTimeIn = call.argument("ShiftTimeIn");
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
                   startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+
+                }
+                if (call.method.equals("openLocationDialog")) {
+                  openLocationDialog();
 
                 }
 
@@ -126,6 +167,88 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 
 
   }
+
+
+  public void openLocationDialog(){
+
+
+    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+    builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
+    builder.setAlwaysShow(true);
+    mLocationSettingsRequest = builder.build();
+
+    mSettingsClient = LocationServices.getSettingsClient(MainActivity.this);
+
+    mSettingsClient
+            .checkLocationSettings(mLocationSettingsRequest)
+            .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+              @Override
+              public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                //Success Perform Task Here
+              }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                int statusCode = ((ApiException) e).getStatusCode();
+                switch (statusCode) {
+                  case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    try {
+                      ResolvableApiException rae = (ResolvableApiException) e;
+                      rae.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sie) {
+                      Log.e("GPS","Unable to execute request.");
+                    }
+                    break;
+                  case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    Log.e("GPS","Location settings are inadequate, and cannot be fixed here. Fix in Settings.");
+                }
+              }
+            })
+            .addOnCanceledListener(new OnCanceledListener() {
+              @Override
+              public void onCanceled() {
+                Log.e("GPS","checkLocationSettings -> onCanceled");
+              }
+            });
+
+
+
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == REQUEST_CHECK_SETTINGS) {
+      switch (resultCode) {
+        case Activity.RESULT_OK:
+          //Success Perform Task Here
+          manuallyStartAssistant();
+          break;
+        case Activity.RESULT_CANCELED:
+          Log.e("GPS","User denied to access location");
+          openLocationDialog();
+          break;
+      }
+    } else if (requestCode == REQUEST_ENABLE_GPS) {
+      LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+      boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+      if (!isGpsEnabled) {
+        openLocationDialog();
+      } else {
+        //navigateToUser();
+       // manuallyStartAssistant();
+      }
+    }
+  }
+
+  private void openGpsEnableSetting() {
+    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    startActivityForResult(intent, REQUEST_ENABLE_GPS);
+  }
+
 
 
   public void startTimeOutNotificationWorker(String ShiftTimeOut){
@@ -159,6 +282,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 Log.i("WorkerMinutesForTimeOut",minutes+"");
   final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeOutNotificationWork.class)
           .setInitialDelay(minutes, TimeUnit.MINUTES)
+          .addTag("TimeOutWork")
           .build();
   WorkManager.getInstance().enqueue(workRequest);
 }
@@ -215,7 +339,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
     Log.i("WorkerMinutesForTimeIn",diffMinutes+"");
     final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
             .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
-
+            .addTag("TimeInWork")
             .build()
             ;
 
@@ -249,11 +373,8 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onResume() {
     super.onResume();
    if(!cameraOpened)
-   {
      if(listenerExecuter!=null)
-       listenerExecuter.startAssistant();
-   }
-
+    listenerExecuter.startAssistant();
    // assistant.start();
   }
 

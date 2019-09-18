@@ -122,6 +122,8 @@ class SaveImage {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
+        globals.globalCameraOpenedStatus=false;
+
         if (imagei != null) {
         //print("---------------actionb   ----->"+mk.act);
           if(mk.act=="TimeIn"&&globals.showTimeOutNotification){
@@ -255,6 +257,7 @@ class SaveImage {
       }
     } catch (e) {
       print(e.toString());
+      globals.globalCameraOpenedStatus=false;
       return false;
     }
   }
@@ -281,6 +284,7 @@ class SaveImage {
         ImagePicker.pickImage(
                 source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
             .then((imagei) {
+          globals.globalCameraOpenedStatus=false;
           if (imagei != null) {
             _location.getLocation().then((res) {
               if (res.latitude != '') {
@@ -537,6 +541,7 @@ class SaveImage {
       if (globals.visitImage == 1) {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        globals.globalCameraOpenedStatus=false;
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -632,6 +637,7 @@ class SaveImage {
       }
     } catch (e) {
       print('7');
+      globals.globalCameraOpenedStatus=false;
       print(e.toString());
       return false;
     }
@@ -647,6 +653,7 @@ class SaveImage {
         globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        globals.globalCameraOpenedStatus=false;
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -734,6 +741,7 @@ class SaveImage {
       }
     } catch (e) {
       print('7');
+      globals.globalCameraOpenedStatus=false;
       print(e.toString());
       return false;
     }
@@ -752,6 +760,7 @@ class SaveImage {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
       imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      globals.globalCameraOpenedStatus=false;
       if (imagei != null) {
         print('------------**vvxxbb');
         //// sending this base64image string +to rest api
@@ -848,6 +857,7 @@ class SaveImage {
     }*/
     } catch (e) {
       print('7--');
+      globals.globalCameraOpenedStatus=false;
       print(e.toString());
       return false;
     }
@@ -867,19 +877,20 @@ class SaveImage {
       // if (globals.FlexiImage != 1) {
       imagei = await ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      globals.globalCameraOpenedStatus=false;
       print(imagei);
       if (imagei != null)
       {
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
 
-      /*  String location = globals.globalstreamlocationaddr;
-        String lat = globals.assign_lat.toString();
-        String long = globals.assign_long.toString();*/
+        /*  String location = globals.globalstreamlocationaddr;
+      String lat = globals.assign_lat.toString();
+      String long = globals.assign_long.toString();*/
         /*print('-------------------------------');
-      print(mk.uid+" "+mk.cid);
-      print('-------------------------------');
-      return false;*/
+    print(mk.uid+" "+mk.cid);
+    print('-------------------------------');
+    return false;*/
         print("Ubi attendance1");
         FormData formData = new FormData.from({
           "empid": empid,
@@ -891,7 +902,7 @@ class SaveImage {
           "file": new UploadFileInfo(imagei, "image.png"),
           "FakeLocationStatus":FakeLocationStatus
         });
-        print("Ubi attendance2");
+        print("5"+empid+"--"+visit_id+"--"+addr+"--"+latit+"--"+longi+"--"+refid+"--");
         Response<String> response1;
         try {
           print('------------visit out----11');
@@ -921,45 +932,46 @@ class SaveImage {
       }
       //   }
       /*else {
-      // if image is notmandatory while marking punchout
-      Dio dio = new Dio();
-      String location = globals.globalstreamlocationaddr;
-      Map<String, double> _currentLocation =
-      globals.list[globals.list.length - 1];
-      String lat = _currentLocation["latitude"].toString();
-      String long = _currentLocation["longitude"].toString();
-      FormData formData = new FormData.from({
-        "empid": empid,
-        "visit_id": visit_id,
-        "addr": addr,
-        "latit": latit,
-        "longi": longi,
-       // "remark": remark,
-        "refid": refid
-      });
-      print("5");
-      Response<String> response1;
-      try {
-        print('------------visit out----11');
-        response1 =
-        await dio.post(globals.path + "saveFlexiOut", data: formData);
-      } catch (e) {
-        print('------------visit out--1');
-        print(e.toString());
-        print('------------visit out--2');
-      }
-      /*getTempImageDirectory();*/
-      Map MarkAttMap = json.decode(response1.data);
-      print('visit out------------1');
-      print(MarkAttMap["res"].toString());
-      print('visit out------------2');
-      if (MarkAttMap["res"].toString() == '1')
-        return true;
-      else
-        return false;
-    }*/
+    // if image is notmandatory while marking punchout
+    Dio dio = new Dio();
+    String location = globals.globalstreamlocationaddr;
+    Map<String, double> _currentLocation =
+    globals.list[globals.list.length - 1];
+    String lat = _currentLocation["latitude"].toString();
+    String long = _currentLocation["longitude"].toString();
+    FormData formData = new FormData.from({
+      "empid": empid,
+      "visit_id": visit_id,
+      "addr": addr,
+      "latit": latit,
+      "longi": longi,
+     // "remark": remark,
+      "refid": refid
+    });
+    print("5");
+    Response<String> response1;
+    try {
+      print('------------visit out----11');
+      response1 =
+      await dio.post(globals.path + "saveFlexiOut", data: formData);
+    } catch (e) {
+      print('------------visit out--1');
+      print(e.toString());
+      print('------------visit out--2');
+    }
+    /*getTempImageDirectory();*/
+    Map MarkAttMap = json.decode(response1.data);
+    print('visit out------------1');
+    print(MarkAttMap["res"].toString());
+    print('visit out------------2');
+    if (MarkAttMap["res"].toString() == '1')
+      return true;
+    else
+      return false;
+  }*/
     } catch (e) {
       print('7');
+      globals.globalCameraOpenedStatus=false;
       print(e.toString());
       return false;
     }
