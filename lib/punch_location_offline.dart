@@ -106,7 +106,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
   void initState() {
     super.initState();
     streamlocationaddr=globalstreamlocationaddr;
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
     initPlatformState();
    // setLocationAddress();
    // startTimer();
@@ -411,7 +411,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
 
   refreshPageWidgit() {
-    if (location_addr1 != "PermissionStatus.deniedNeverAsk") {
+    if (prefix0.assign_lat!=0.0) {
       return new Container(
         child: Center(
           child: new Column(
@@ -579,7 +579,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
                   SizedBox(height: 35.0),
                   SizedBox(height: MediaQuery.of(context).size.height * .01),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
-                  (location_addr == '') ? loader() : getMarkAttendanceWidgit(),
+                  (prefix0.assign_lat == 0.0) ? loader() : getMarkAttendanceWidgit(),
                 ],
               ),
             ),
@@ -601,7 +601,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
   }
   getwidget(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
+    if (addrloc != "Location not fetched.") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,

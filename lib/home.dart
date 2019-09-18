@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/saveimage.dart';
@@ -574,6 +575,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     checknetonpage(context);
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
+
+// Here you can write your code
+      if(mounted)
+        setState(() {
+          locationThreadUpdatedLocation=locationThreadUpdatedLocation;
+        });
+
+    });
+
     SystemChannels.lifecycle.setMessageHandler((msg)async{
 
     });
@@ -658,7 +670,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   setaddress () async{
     globalstreamlocationaddr= await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+    var serverConnected=await checkConnectionToServer();
+    if(serverConnected!=0)
     if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation){
+      cameraChannel.invokeMethod("openLocationDialog");
+      /*
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -677,8 +693,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   ),
                 ),
                 color: Colors.orangeAccent,
-                onPressed: () {
-                  openLocationSetting();
+                onPressed: () async{
+                  cameraChannel.invokeMethod("openLocationDialog");
+                  //openLocationSetting();
                 },
               ),
               RaisedButton(
@@ -703,6 +720,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ),
             ],
           ));});
+
+       */
     }
   }
 

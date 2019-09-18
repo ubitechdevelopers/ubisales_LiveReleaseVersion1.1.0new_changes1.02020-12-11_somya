@@ -73,7 +73,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       longi = "";
   bool appAlreadyResumed=false;
   String areaStatus='0';
-
+  bool locationFetchedLocal=false;
   bool issave = false;
   List<Widget> widgets;
   bool refreshsts=false;
@@ -88,7 +88,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     print("-----------------------Context-----------------------");
     print(context);
     _context1=context;
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
     // WidgetsBinding.instance.addObserver(this);
      //checknetonpage(context);
 
@@ -275,6 +275,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     final prefs = await SharedPreferences.getInstance();
   //  StreamLocation sl = new StreamLocation();
 
+    Future.delayed(const Duration(milliseconds: 3000), () {
+
+// Here you can write your code
+      if(mounted)
+      setState(() {
+        prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+      });
+
+    });
+
     Loc lock = new Loc();
     String location_addr111 = await lock.initPlatformState();
     int off= prefs.getInt("OfflineModePermission")??0;
@@ -356,7 +366,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
   @override
   Widget build(BuildContext context) {
-    if(prefix0.assign_long==0.0||prefix0.assign_long==null){
+    if(prefix0.assign_long==0.0||prefix0.assign_long==null||!prefix0.locationThreadUpdatedLocation){
       return noLocationWidget();
     }
     else
@@ -401,6 +411,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   }
 
   noLocationWidget(){
+    cameraChannel.invokeMethod("openLocationDialog");
     return new WillPopScope(
         onWillPop: ()async => true,
         child: new Scaffold(
@@ -493,7 +504,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                                                       child: Text('Turn On' ,style: TextStyle(color: Colors.green),),
                                                       shape: Border.all(color: Colors.green),
                                                       onPressed: () {
-                                                        openLocationSetting();
+                                                        cameraChannel.invokeMethod("openLocationDialog");
+                                                        //openLocationSetting();
 
                                                       },
                                                     ),

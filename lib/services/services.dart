@@ -33,27 +33,36 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 
-appResumedPausedLogic(context){
+appResumedPausedLogic(context,[bool isVisitPage]){
   SystemChannels.lifecycle.setMessageHandler((msg)async{
     if(msg=='AppLifecycleState.resumed' )
     {
       print("------------------------------------ App Resumed-----------------------------");
 
+
+
       var serverConnected= await checkConnectionToServer();
       if(globals.globalCameraOpenedStatus==false)
-        if(serverConnected!=1){
+        {
+          (context as Element).reassemble();
+          if(serverConnected!=1){
 
-          Navigator.push(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
 
+          }
+          else{
+            //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation)
+              cameraChannel.invokeMethod("openLocationDialog");
+          }
         }
-        else{
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-        }
+
 
 
 
     }
     if(msg=='AppLifecycleState.paused' ){
+      if(globals.globalCameraOpenedStatus==false)
       locationThreadUpdatedLocation=false;
     }
 

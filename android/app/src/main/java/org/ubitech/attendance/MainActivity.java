@@ -2,6 +2,7 @@ package org.ubitech.attendance;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
@@ -96,7 +97,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-  showLocationDialog();
+    Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+  //showLocationDialog();
+
+
+
     if (android.os.Build.VERSION.SDK_INT > 9)
     {
       StrictMode.ThreadPolicy policy = new
@@ -137,16 +142,22 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 }
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
                   startTimeOutNotificationWorker(ShiftTimeOut);
                 }
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
                   String ShiftTimeIn = call.argument("ShiftTimeIn");
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
                   startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+
+                }
+                if (call.method.equals("openLocationDialog")) {
+                  openLocationDialog();
 
                 }
 
@@ -158,10 +169,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   }
 
 
-  public void showLocationDialog(){
-    Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+  public void openLocationDialog(){
+
+
     LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-    //builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
+    builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
     builder.setAlwaysShow(true);
     mLocationSettingsRequest = builder.build();
 
@@ -199,9 +211,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 Log.e("GPS","checkLocationSettings -> onCanceled");
               }
             });
-    GeneratedPluginRegistrant.registerWith(this);
+
+
+
   }
-/*
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -210,10 +224,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       switch (resultCode) {
         case Activity.RESULT_OK:
           //Success Perform Task Here
+          manuallyStartAssistant();
           break;
         case Activity.RESULT_CANCELED:
           Log.e("GPS","User denied to access location");
-          openGpsEnableSetting();
+          openLocationDialog();
           break;
       }
     } else if (requestCode == REQUEST_ENABLE_GPS) {
@@ -221,17 +236,21 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
       if (!isGpsEnabled) {
-        openGpsEnableSetting();
+        openLocationDialog();
       } else {
-        // navigateToUser();
+        //navigateToUser();
+       // manuallyStartAssistant();
       }
     }
   }
+
   private void openGpsEnableSetting() {
     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
     startActivityForResult(intent, REQUEST_ENABLE_GPS);
   }
-*/
+
+
+
   public void startTimeOutNotificationWorker(String ShiftTimeOut){
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -263,14 +282,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 Log.i("WorkerMinutesForTimeOut",minutes+"");
   final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeOutNotificationWork.class)
           .setInitialDelay(minutes, TimeUnit.MINUTES)
+          .addTag("TimeOutWork")
           .build();
   WorkManager.getInstance().enqueue(workRequest);
 }
 
-  private void openGpsEnableSetting() {
-    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-    startActivityForResult(intent, REQUEST_ENABLE_GPS);
-  }
 
   public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
     Calendar cal = Calendar.getInstance();
@@ -323,7 +339,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
     Log.i("WorkerMinutesForTimeIn",diffMinutes+"");
     final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
             .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
-
+            .addTag("TimeInWork")
             .build()
             ;
 

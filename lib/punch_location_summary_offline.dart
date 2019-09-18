@@ -67,7 +67,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
     super.initState();
 
-    checkLocationEnabled(context);
+    //checkLocationEnabled(context);
     initPlatformState();
 
 
