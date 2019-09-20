@@ -54,6 +54,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       profile = "",
       latit = "",
       longi = "";
+  bool isWithdrawPopupOpen=false;
   String lid = "";
   String shiftId = "";
   TextEditingController client_name,comments;
@@ -162,6 +163,46 @@ class _TimeoffSummary extends State<TimeoffSummary> {
   }
 
   confirmWithdrawl(String timeoffid) async{
+    setState(() {
+      isWithdrawPopupOpen=true;
+    });
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () {},
+            child: new AlertDialog(
+              title: new Text("Are you sure?",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 18.0),),
+              content:  ButtonBar(
+                children: <Widget>[
+                  FlatButton(
+                    child: Text('CANCEL'),
+                    shape: Border.all(color: Colors.black54),
+                    onPressed: () {
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('Withdraw',style: TextStyle(color: Colors.white),),
+                    color: buttoncolor,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      withdrawlTimeOff(timeoffid);
+                    },
+                  ),
+                ],
+              ),
+            )
+          );
+        });
+
+    /*
+
     showDialog(context: context, barrierDismissible: false, child:
     new AlertDialog(
       title: new Text("Are you sure?",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 18.0),),
@@ -188,7 +229,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         ],
       ),
     )
-    );
+    );*/
   }
 
   @override

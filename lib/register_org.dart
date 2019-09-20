@@ -303,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
   setLocal(var fname, var empid, var  orgid) async {
     prefs = await SharedPreferences.getInstance();
     await prefs.setString('fname',fname);
-    await prefs.setString('empid',empid);
+    await prefs.setString('empid',empid.toString());
     await prefs.setString('orgid',orgid);
   }
   void _toggle() {
@@ -685,6 +685,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 res = json.decode(response.body);
                                 if (res['sts'] == 'true') {
                                   setLocal(res['f_name'],res['id'],res['org_id']);
+                                  setState(() {
+                                    _name.text="";
+                                    _city.text="";
+                                    _cname.text="";
+                                    _email.text="";
+                                    _pass.text="";
+                                    _cont.text="";
+                                    _contcode.text="";
+                                    _phone.text="";
+
+                                  });
+
 
                                   showDialog(context: context,
                                       barrierDismissible: false,
@@ -781,7 +793,7 @@ class _MyHomePageState extends State<MyHomePage> {
       loader = true;
     });
     var islogin = await dologin.checkLogin(user);
-    print(islogin);
+    print("islogin  " +islogin);
     if(islogin=="success"){
       /*Navigator.push(
         context,

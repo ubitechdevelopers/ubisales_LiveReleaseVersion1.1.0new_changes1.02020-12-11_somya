@@ -902,7 +902,7 @@ class SaveImage {
           "file": new UploadFileInfo(imagei, "image.png"),
           "FakeLocationStatus":FakeLocationStatus
         });
-        print("5"+empid+"--"+visit_id+"--"+addr+"--"+latit+"--"+longi+"--"+refid+"--");
+       // print("5"+empid+"--"+visit_id+"--"+addr+"--"+latit+"--"+longi+"--"+refid+"--");
         Response<String> response1;
         try {
           print('------------visit out----11');

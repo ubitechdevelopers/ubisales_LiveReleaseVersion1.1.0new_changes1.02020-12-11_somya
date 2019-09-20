@@ -667,7 +667,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   markAttByQROffline(BuildContext context){
     showDialog(
         context: context,
-        barrierDismissible: false,
+
         builder: (context) => AlertDialog(
 
             content: Container(

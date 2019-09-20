@@ -555,7 +555,7 @@ print('visit out called for visit id:'+visit_id);
                       }
                   );
                 } else if (snapshot.hasError) {
-                  return new Text("Unable to connect server");
+                  return new Text("     You are not connected.");
                 }
 
                 // By default, show a loading spinner

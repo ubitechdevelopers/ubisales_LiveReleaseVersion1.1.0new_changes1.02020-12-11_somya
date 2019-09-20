@@ -699,12 +699,22 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
                               ),
 
+                              Row(
+                                children: <Widget>[
+                                  SizedBox(width: 16.0,),
+                                  Text('Date: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+                                  Text(snapshot.data[index].VisitInDate,style: TextStyle(color: Colors.black),)
+                                ],
+
+                              ),
+
+
                               Divider(color: Colors.black26,),
                             ]);
                       }
                   );
                 } else if (snapshot.hasError) {
-                  return new Text("Unable to connect server");
+                  return new Text("You are not connected to internet.");
                 }
 
                 // By default, show a loading spinner
