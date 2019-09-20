@@ -332,6 +332,18 @@ setPunchPrefs(lid) async {
       prefs.getString('lid').toString());*/
 }
 
+Future UpdateStatus() async {
+  try{
+    final res = await http.get(globals.path + 'UpdateStatus?platform=Android1');
+    return ((json.decode(res.body.toString()))[0]['status']).toString();
+  }
+  catch(e){
+    print("Error finding current version of the app");
+    return"error";
+  }
+
+}
+
 ////////////////////////////////////////////////-----
 Future<List<Punch>> getSummaryPunch() async {
   final prefs = await SharedPreferences.getInstance();

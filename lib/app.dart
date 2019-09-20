@@ -39,7 +39,8 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='5.0.4',new_ver='5.0.4';
+  String cur_ver='5.0.5',new_ver='5.0.5';
+  String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override
   void initState() {
@@ -48,6 +49,11 @@ class _ShrineAppState extends State<ShrineApp> {
     checkNow().then((res){
       setState(() {
         new_ver=res;
+      });
+    });
+    UpdateStatus().then((res){
+      setState(() {
+        updatestatus = res;
       });
     });
     platform.setMethodCallHandler(_handleMethod);
@@ -97,7 +103,7 @@ class _ShrineAppState extends State<ShrineApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ubiAttendance',
-      home: (cur_ver == new_ver||new_ver=="error")?HomePage():CheckUpdate(),
+      home: ((cur_ver == new_ver||new_ver=="error") || updatestatus=='0')?HomePage():CheckUpdate(),
       //home: (true)?HomePage():CheckUpdate(),
       routes: {
         // When we navigate to the "/" route, build the FirstScreen Widget

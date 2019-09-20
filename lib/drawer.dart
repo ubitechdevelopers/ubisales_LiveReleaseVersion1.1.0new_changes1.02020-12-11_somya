@@ -468,10 +468,35 @@ class _AppDrawerState extends State<AppDrawer> {
               logout();
             },
           ),
+          new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.lock_open,size: 20.0),SizedBox(width: 5.0),
+                new Text("Help", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              openWhatsApp();
+            },
+          ),
         ],
       ),
     );
   }
+
+  openWhatsApp() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var name=prefs.getString("fname")??"";
+    var org_name= prefs.getString('org_name') ?? '';
+    var message="Hello%20I%20am%20"+name+"%20from%20"+org_name+"%0AI%20need%20some%20help%20regarding%20ubiAttendance%20app";
+    var url = "https://wa.me/917067822132?text="+message;
+    if (await canLaunch(url)) {
+    await launch(url);
+    } else {
+    throw 'Could not launch Maps';
+    }
+  }
+
   logout() async{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('response');
