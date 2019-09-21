@@ -136,14 +136,14 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
         }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
-        assign_lat=double.parse(lat);
-        assign_long=double.parse(long);
+
 
         print(call.arguments["mocked"].toString());
 
 
         setState(() {
-
+          assign_lat=double.parse(lat);
+          assign_long=double.parse(long);
           if(call.arguments["mocked"].toString()=="Yes"){
             fakeLocationDetected=true;
           }

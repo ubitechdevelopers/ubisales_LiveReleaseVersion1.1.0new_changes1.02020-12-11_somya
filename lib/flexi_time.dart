@@ -836,7 +836,7 @@ print('visit out called for visit id:'+visit_id);
 
   saveVisitImage() async {
     print('------------*11');
-    sl.startStreaming(5);
+
    // client = _clientname.text;
     client ="";
     MarkVisit mk = new MarkVisit(

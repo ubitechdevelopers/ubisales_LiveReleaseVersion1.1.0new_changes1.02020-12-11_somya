@@ -213,7 +213,7 @@ String address="";
               MaterialPageRoute(builder: (context) => PunchLocation()),
             );
           },
-          tooltip: 'Request TimeOff',
+          tooltip: 'Mark New Visit',
           child: new Icon(Icons.add),
         ),
 

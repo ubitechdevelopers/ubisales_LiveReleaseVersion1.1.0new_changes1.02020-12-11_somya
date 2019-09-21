@@ -288,7 +288,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
             MaterialPageRoute(builder: (context) => TimeOffPage()),
           );
         },
-        tooltip: 'Mark TimeOff',
+        tooltip: 'Request TimeOff',
         child: new Icon(Icons.add),
       ),
     ),

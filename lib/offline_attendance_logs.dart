@@ -6,6 +6,7 @@ import 'package:Shrine/punch_location_summary_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'globals.dart';
 import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -345,8 +346,8 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Text(snapshot.data[index].Date
-                                              .toString(), style: TextStyle(
+                                          Text(DateFormat("dd-MM-yyyy").format(DateTime.parse(snapshot.data[index].Date
+                                              .toString())).toString(), style: TextStyle(
                                             color: Colors.black87,
 
                                           ),),

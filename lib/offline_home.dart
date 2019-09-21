@@ -131,6 +131,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           // print('called again');
           if (mounted) {
             setState(() {
+              assign_lat=double.parse(lat);
+              assign_long=double.parse(long);
               areaStatus = res.toString();
             });
           }
@@ -731,12 +733,15 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     String actionString=(action==0)?"Time In":"Time Out";
     File img = null;
     imageCache.clear();
+    prefix0.globalCameraOpenedStatus=true;
     scan().then((onValue){
+
       print("******************** QR value **************************");
       print(onValue);
       print("******************** QR value **************************");
       //return false;
       if(onValue!='error') {
+        prefix0.globalCameraOpenedStatus=false;
         List splitstring = onValue.split("ykks==");
         var UserName=splitstring[0];
         var Password=splitstring[1];
@@ -748,8 +753,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           ImagePicker.pickImage(
               source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
               .then((img) async {
-            prefix0.globalCameraOpenedStatus=false;
+
             if (img != null) {
+              prefix0.globalCameraOpenedStatus=false;
               List<int> imageBytes = await img.readAsBytes();
               PictureBase64 = base64.encode(imageBytes);
 
@@ -810,6 +816,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               img.deleteSync();
               imageCache.clear();
 
+              /*
+              SimpleDialog(
+                children: <Widget>[
+                  Text( actionString+" is marked. It will be synced when you are online"),
+                ],
+              );*/
+              Scaffold.of(context)
+                  .showSnackBar(
+                  SnackBar(content: Text("Attendance marked")));
+              /*
               showDialog(context: context, child:
               new AlertDialog(
                 content: new Text(
@@ -818,15 +834,20 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               );
               print("-----------------------Context-----------------------");
               print(context);
+
               Navigator
                   .of(context)
                   .push(
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
+                MaterialPageRoute(builder: (context) => OfflineHomePage()),
+              );*/
+
               Navigator.of(context, rootNavigator: true)
                   .pop();
+
+
             }
             else {
+              prefix0.globalCameraOpenedStatus=false;
               setState(() {
                 // timeInClicked = false;
                 // timeOutClicked = false;
@@ -884,23 +905,30 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
           timeInPressedTime=null;
           timeOutPressedTime=null;
+          Scaffold.of(context)
+              .showSnackBar(
+              SnackBar(content: Text("Attendance marked")));
 
+/*
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
                 "Attendance marked successfully and will be synced when you get connected!"),
           )
           );
+
+
           print("-----------------------Context-----------------------");
           print(context);
           Navigator
               .of(context)
               .push(
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
           );
-        }
+  */      }
 
       }else {
+        prefix0.globalCameraOpenedStatus=false;
         setState(() {
          // loader = false;
         });

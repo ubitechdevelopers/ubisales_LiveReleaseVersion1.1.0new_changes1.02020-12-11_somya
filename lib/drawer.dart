@@ -460,6 +460,17 @@ class _AppDrawerState extends State<AppDrawer> {
           new ListTile(
             title: Row(
               children: <Widget>[
+                Icon(Icons.help,size: 20.0),SizedBox(width: 5.0),
+                new Text("Help", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              openWhatsApp();
+            },
+          ),
+          new ListTile(
+            title: Row(
+              children: <Widget>[
                 Icon(Icons.lock_open,size: 20.0),SizedBox(width: 5.0),
                 new Text("Log out", style: new TextStyle(fontSize: 15.0)),
               ],
@@ -468,17 +479,7 @@ class _AppDrawerState extends State<AppDrawer> {
               logout();
             },
           ),
-          new ListTile(
-            title: Row(
-              children: <Widget>[
-                Icon(Icons.lock_open,size: 20.0),SizedBox(width: 5.0),
-                new Text("Help", style: new TextStyle(fontSize: 15.0)),
-              ],
-            ),
-            onTap: () {
-              openWhatsApp();
-            },
-          ),
+
         ],
       ),
     );

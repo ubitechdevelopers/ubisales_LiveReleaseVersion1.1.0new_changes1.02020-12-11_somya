@@ -100,12 +100,12 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
         }
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
-        assign_lat=double.parse(lat);
-        assign_long=double.parse(long);
+
 
         print(call.arguments["mocked"].toString());
         setState(() {
-
+          assign_lat=double.parse(lat);
+          assign_long=double.parse(long);
           if(call.arguments["mocked"].toString()=="Yes"){
             fakeLocationDetected=true;
           }
@@ -703,7 +703,8 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                 children: <Widget>[
                                   SizedBox(width: 16.0,),
                                   Text('Date: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
-                                  Text(snapshot.data[index].VisitInDate,style: TextStyle(color: Colors.black),)
+                                  Text(DateFormat("dd-MM-yyyy").format(DateTime.parse(snapshot.data[index].VisitInDate
+                                      .toString())).toString(),style: TextStyle(color: Colors.black),)
                                 ],
 
                               ),

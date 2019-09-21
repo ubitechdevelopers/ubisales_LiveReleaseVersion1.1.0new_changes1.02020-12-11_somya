@@ -44,16 +44,21 @@ appResumedPausedLogic(context,[bool isVisitPage]){
       var serverConnected= await checkConnectionToServer();
       if(globals.globalCameraOpenedStatus==false)
         {
-          (context as Element).reassemble();
-          if(serverConnected!=1){
 
+          if(serverConnected!=1){
+            print("inside condition");
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OfflineHomePage()));
 
           }
           else{
             //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            (context as Element).reassemble();
             if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation)
-              cameraChannel.invokeMethod("openLocationDialog");
+              {
+                cameraChannel.invokeMethod("openLocationDialog");
+                print("dialog opened");
+              }
+
           }
         }
 

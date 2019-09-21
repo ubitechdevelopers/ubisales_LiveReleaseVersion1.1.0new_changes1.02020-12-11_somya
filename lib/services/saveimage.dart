@@ -122,10 +122,11 @@ class SaveImage {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
-        globals.globalCameraOpenedStatus=false;
+
 
         if (imagei != null) {
         //print("---------------actionb   ----->"+mk.act);
+          globals.globalCameraOpenedStatus=false;
           if(mk.act=="TimeIn"&&globals.showTimeOutNotification){
             startTimeOutNotificationWorker();  
           }
@@ -201,6 +202,7 @@ class SaveImage {
             return false;
         }
         else {
+          globals.globalCameraOpenedStatus=false;
           print("6");
           return false;
         }
@@ -284,8 +286,9 @@ class SaveImage {
         ImagePicker.pickImage(
                 source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
             .then((imagei) {
-          globals.globalCameraOpenedStatus=false;
+
           if (imagei != null) {
+            globals.globalCameraOpenedStatus=false;
             _location.getLocation().then((res) {
               if (res.latitude != '') {
                 var addresses = '';
@@ -361,6 +364,7 @@ class SaveImage {
             });
             //*****
           } else {
+            globals.globalCameraOpenedStatus=false;
             print("6");
             return false;
           }
@@ -541,8 +545,9 @@ class SaveImage {
       if (globals.visitImage == 1) {
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
-        globals.globalCameraOpenedStatus=false;
+
         if (imagei != null) {
+          globals.globalCameraOpenedStatus=false;
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
@@ -589,6 +594,7 @@ class SaveImage {
           else
             return false;
         } else {
+          globals.globalCameraOpenedStatus=false;
           print("6*");
           return false;
         }
@@ -653,8 +659,9 @@ class SaveImage {
         globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(
             source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
-        globals.globalCameraOpenedStatus=false;
+
         if (imagei != null) {
+          globals.globalCameraOpenedStatus=false;
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
@@ -700,6 +707,7 @@ class SaveImage {
             return false;
         } else {
           print("6");
+          globals.globalCameraOpenedStatus=false;
           return false;
         }
       } else {
@@ -760,8 +768,9 @@ class SaveImage {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
       imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
-      globals.globalCameraOpenedStatus=false;
+
       if (imagei != null) {
+        globals.globalCameraOpenedStatus=false;
         print('------------**vvxxbb');
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
@@ -808,6 +817,7 @@ class SaveImage {
           return false;
       } else {
         print("6*");
+        globals.globalCameraOpenedStatus=false;
         return false;
       }
 //    }
@@ -877,10 +887,11 @@ class SaveImage {
       // if (globals.FlexiImage != 1) {
       imagei = await ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
-      globals.globalCameraOpenedStatus=false;
+
       print(imagei);
       if (imagei != null)
       {
+        globals.globalCameraOpenedStatus=false;
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
 
@@ -927,6 +938,7 @@ class SaveImage {
         else
           return false;
       } else {
+        globals.globalCameraOpenedStatus=false;
         print("6");
         return false;
       }
