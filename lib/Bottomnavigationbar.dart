@@ -7,17 +7,13 @@ import 'profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'globals.dart';
 
-
-
 class Bottomnavigationbar extends StatefulWidget {
   @override
   _Bottomnavigationbar createState() => new _Bottomnavigationbar();
 }
-
 class _Bottomnavigationbar extends State<Bottomnavigationbar> {
   String admin_sts='0';
   var _currentIndex=1;
-
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
@@ -34,7 +30,9 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
   @override
   Widget build(BuildContext context) {
     return new BottomNavigationBar(
+      backgroundColor: Colors.teal,
       currentIndex: _currentIndex,
+//      fixedColor: Colors.yellowAccent,
       type: BottomNavigationBarType.fixed,
       onTap: (newIndex) {
         if(newIndex==1){
@@ -72,27 +70,24 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
         setState((){_currentIndex = newIndex;});
 
       }, // this will be set when a new tab is tapped
-      items: [
+      items:  [
         (admin_sts == '1' || admin_sts == '2' )
             ? BottomNavigationBarItem(
-          icon: new Icon(
-            Icons.library_books,
-          ),
-          title: new Text('Reports'),
+          icon:new Icon(Icons.library_books,color: Colors.white,size: 30.0),
+          title: new Text('Reports',style: TextStyle(color: Colors.white,)),
         )
             : BottomNavigationBarItem(
           icon: new Icon(
-            Icons.person,color: Colors.black54,
-          ),
-          title: new Text('Profile',style: TextStyle(color: Colors.black54)),
+              Icons.person, color: Colors.black,size: 30.0),
+          title: new Text('Profile',style: TextStyle(color: Colors.white,)),
         ),
         BottomNavigationBarItem(
-          icon: new Icon(Icons.home,color: Colors.black54,),
-          title: new Text('Home',style: TextStyle(color: Colors.black54)),
+          icon: new Icon(Icons.home,color: Colors.white,size: 30.0,),
+          title: new Text('Home', textAlign: TextAlign.center,style: TextStyle(color: Colors.white,)),
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.settings,color: Colors.black54,),
-            title: Text('Settings',style: TextStyle(color: Colors.black54),)
+            icon: Icon(Icons.settings,color: Colors.white,size: 30.0),
+            title: Text('Settings',style: TextStyle(color: Colors.white,))
         ),
         /* BottomNavigationBarItem(
               icon: Icon(
@@ -107,3 +102,4 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
 
 
 }
+

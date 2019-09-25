@@ -4,6 +4,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
+import 'package:pdf/widgets.dart' as prefix0;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,21 +44,19 @@ import "package:Shrine/notifications.dart";
 import "offline_home.dart";
 import 'Bottomnavigationbar.dart';
 import 'login.dart';
+import 'package:Shrine/addEmployee.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   static const platform = const MethodChannel('location.spoofing.check');
-
   AppLifecycleState state;
  // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
@@ -731,7 +730,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         ? Future.delayed(Duration.zero, () => _showAlert(context))
         : "";
 
-    return (response == 0 || userpwd != newpwd || Is_Delete != 0)
+    return (response == 0 || userpwd != newpwd || Is_Delete != 0  || orgid=='10932')
         ? new AskRegisterationPage()
         : getmainhomewidget();
     /* return MaterialApp(
@@ -773,6 +772,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
           endDrawer: new AppDrawer(),
           body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
+          floatingActionButton: (admin_sts == '1' ||admin_sts == '2')?new FloatingActionButton(
+            mini: false,
+            backgroundColor: buttoncolor,
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddEmployee()),
+              );
+            },
+            tooltip: 'Add Employee',
+            child: new Icon(Icons.person_add),
+          ):new Center(),
+
         ));
   }
 
@@ -1100,7 +1112,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   Widget quickLinkList1() {
     return Container(
-      color: appcolor,
+     // color: appcolor,
 
       width: MediaQuery.of(context).size.width * 0.95,
       // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
@@ -1113,7 +1125,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     if (bulkAttn.toString() == '1' && (admin_sts == '1' ||admin_sts == '2')) {
       widList.add(Container(
-        padding: EdgeInsets.only(top: 10.0),
+        padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
           maxHeight: 60.0,
           minHeight: 20.0,
@@ -1128,19 +1140,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child: Column(
               children: [
                 Icon(
-                  Icons.group,
-                  size: 30.0,
-                  color: Colors.white,
+                  const IconData(0xe817, fontFamily: "CustomIcon"),
+                  size: 35.0,
+                  color: iconcolor,
                 ),
                 Text('Group',
                     textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
               ],
             )),
       ));
     }
     widList.add(Container(
-      padding: EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: 5.0),
       constraints: BoxConstraints(
         maxHeight: 60.0,
         minHeight: 20.0,
@@ -1155,20 +1167,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           child: Column(
             children: [
               Icon(
-                Icons.calendar_today,
-                size: 30.0,
-                color: Colors.white,
+                const IconData(0xe80f, fontFamily: "CustomIcon"),
+                size: 35.0,
+                color: iconcolor,
               ),
               Text('Log',
                   textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+                  style: new TextStyle(fontSize: 12.0, color: iconcolor)),
             ],
           )),
     ));
 
     if (visitpunch.toString() == '1') {
       widList.add(Container(
-        padding: EdgeInsets.only(top: 10.0),
+        padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
           maxHeight: 60.0,
           minHeight: 20.0,
@@ -1184,13 +1196,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child: Column(
               children: [
                 Icon(
-                  Icons.add_location,
-                  size: 30.0,
-                  color: Colors.white,
+                  const IconData(0xe819, fontFamily: "CustomIcon"),
+                  size: 35.0,
+                  color: iconcolor,
                 ),
                 Text('Visits',
                     textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
               ],
             )),
       ));
@@ -1198,7 +1210,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     if (timeOff.toString() == '1') {
       widList.add(Container(
-        padding: EdgeInsets.only(top: 10.0),
+        padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
           maxHeight: 60.0,
           minHeight: 20.0,
@@ -1222,13 +1234,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child: Column(
               children: [
                 Icon(
-                  Icons.access_alarm,
-                  size: 30.0,
-                  color: Colors.white,
+                  const IconData(0xe818, fontFamily: "CustomIcon"),
+                  size: 35.0,
+                  color: iconcolor,
                 ),
-                Text('Time Off',
+                Text(' Time Off',
                     textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 15.0, color: Colors.white)),
+                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
               ],
             )),
       ));
@@ -1389,7 +1401,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           )*/
     ]);
   }
-
   getwidget(String addrloc) {
     if (addrloc != "Location not fetched.") {
       return Column(children: [
@@ -1399,98 +1410,113 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           child: getTimeInOutButton(),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
-        Container(
-            color: appcolor.withOpacity(0.1),
-            height: MediaQuery.of(context).size.height * .15,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              FlatButton(
-                child: new Text(globals.globalstreamlocationaddr!=null?'You are at: ' +globals.globalstreamlocationaddr:"Location not fetched",
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 14.0)),
-                onPressed: () {
-                  launchMap(globals.assign_lat.toString(), globals.assign_long.toString());
-                  /* Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );*/
-                },
-              ),
-              new Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text(
-                      'Location not correct? ',
-                      style: TextStyle(color: appcolor),
-                    ),
-                    SizedBox(
-                      width: 5.0,
-                    ),
-                    new InkWell(
-                      child: new Text(
-                        "Refresh location", // main  widget
-                        style: new TextStyle(
-                            color: appcolor,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-                      //  startTimer();
-                      //  sl.startStreaming(5);
-                        cameraChannel.invokeMethod("startAssistant");
-                        Navigator.push(
+        Padding(
+          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+            ),
+            elevation: 0.0,
+
+            borderOnForeground: true ,
+            clipBehavior: Clip.antiAliasWithSaveLayer ,
+
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height * .15,
+                  child:
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    FlatButton(
+                      child: new Text(globals.globalstreamlocationaddr!=null? globals.globalstreamlocationaddr:"Location not fetched",
+                          textAlign: TextAlign.center,
+                          style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
+                      onPressed: () {
+                        launchMap(globals.assign_lat.toString(), globals.assign_long.toString());
+                        /* Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
-                        );
+                        );*/
                       },
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 5.0,
-              ),
-             if(fakeLocationDetected)
-              Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                decoration: BoxDecoration(
-                 color: Color(0xfffc6203),
-                  //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                ),
-                child: Text(
-                  'Fake Location',
-                  style:
-                  TextStyle(fontSize: 20.0, color: Colors.white),
-                ),
-              )else
-                (areaId != 0 && geoFence == 1)
-                  ? areaStatus == '0'
-                      ? Container(
-                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                          ),
-                          child: Text(
-                            'Outside fenced area',
-                            style:
-                                TextStyle(fontSize: 20.0, color: Colors.white),
-                          ),
-                        )
-                      : Container(
-                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                          ),
-                          child: Text(
-                            'Within fenced area',
-                            style:
-                                TextStyle(fontSize: 20.0, color: Colors.white),
-                          ),
-                        )
-                  : Center(),
-            ])),
+                    ),
+                    new Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: Row(
+
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                            ),
+                            new InkWell(
+                              child: new Text(
+                                "Refresh Location", // main  widget
+                                style: new TextStyle(
+                                    color: appcolor,
+                                    decoration: TextDecoration.none),
+                              ),
+                              onTap: () {
+                                //  startTimer();
+                                //  sl.startStreaming(5);
+                                cameraChannel.invokeMethod("startAssistant");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomePage()),
+                                );
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+//                    SizedBox(
+//                      height: 5.0,
+//                    ),
+                    if(fakeLocationDetected)
+                      Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xfffc6203),
+                          //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                        ),
+                        child: Text(
+                          'Fake Location',
+                          style:
+                          TextStyle(fontSize: 20.0, color: Colors.amber,fontWeight: FontWeight.w600
+                              ,letterSpacing: 1.0),
+                        ),
+                      )else
+                      (areaId != 0 && geoFence == 1)
+                          ? areaStatus == '0'
+                          ? Container(
+                        padding: EdgeInsets.only(top: 5.0, right: 5.0),
+
+                        child: Text(
+                          'Outside Fenced Area',
+                          style:
+                          TextStyle(fontSize: 20.0, color: Colors.red,fontWeight: FontWeight.w600
+                              ,letterSpacing: 1.0),
+                        ),
+                      )
+                          : Container(
+                        padding: EdgeInsets.all(5.0),
+
+                        child: Text(
+                          'Within Fenced Area',
+                          style:
+                          TextStyle(fontSize: 20.0, color: Colors.green,fontWeight: FontWeight.w600
+                              ,letterSpacing: 1.0),
+                        ),
+                      )
+                          : Center(),
+                  ])),
+            ),
+          ),
+        ),
       ]);
     } else {
       return Column(children: [

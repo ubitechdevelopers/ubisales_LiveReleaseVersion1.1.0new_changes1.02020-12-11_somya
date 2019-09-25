@@ -246,7 +246,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
-        (reportper ==1 || reportper ==2)?new ListTile(
+      /*  (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.library_books,size: 20.0),SizedBox(width: 5.0),
@@ -260,7 +260,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ):new Center(),
-
+*/
           flexi_permission ==1 ?
           new ListTile(
             title: Row(
@@ -291,7 +291,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ):new Center(),
-          (reportper ==1 || reportper ==2)&&geoFence==1?new ListTile(
+          /*(reportper ==1 || reportper ==2)&&geoFence==1?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_on,size: 20.0),SizedBox(width: 5.0),
@@ -301,7 +301,7 @@ class _AppDrawerState extends State<AppDrawer> {
             onTap: () {
               showDialogWidget("To set Geo Fence, login to the web admin panel.", "To set Geo Fence upgrade to Premium Plan.");
             },
-          ):new Center(),
+          ):new Center(),*/
     /*      reportper ==1?new ListTile(
            title: Row(
               children: <Widget>[
@@ -313,7 +313,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To Generate Payroll, Login to the web panel.", "To Generate Payroll upgrade to Premium Plan.");
             },
           ):new Center(),*/
-          (reportper ==1 || reportper ==2)?new ListTile(
+        /*  (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.camera,size: 20.0),SizedBox(width: 5.0),
@@ -323,7 +323,7 @@ class _AppDrawerState extends State<AppDrawer> {
             onTap: () {
               showDialogWidget("To Generate QR Code of Employee, Login to the web panel.", "To Generate QR Code of Employee upgrade to Premium Plan.");
             },
-          ):new Center(),
+          ):new Center(),*/
          /* new ListTile(
             title: Row(
               children: <Widget>[
@@ -373,7 +373,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-          new ListTile(
+        /*  new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.settings,size: 20.0),SizedBox(width: 5.0),
@@ -387,7 +387,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 MaterialPageRoute(builder: (context) => Settings()),
               );
             },
-          ),
+          ),*/
           new ListTile(
             title: Row(
               children: <Widget>[

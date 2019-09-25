@@ -39,6 +39,10 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           var user = new Employee.fromJson(employeeMap);
           print(user.fname + " " + user.lname);
           print(user.org_perm);
+          if(user.orgid=='10932'){
+            prefs.setInt('response', 0);
+            return "failure";
+          }
           prefs.setInt('response', user.response);
           prefs.setString('fname', user.fname);
           prefs.setString('lname', user.lname);
@@ -66,6 +70,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           //prefs.setString('profile', "http://192.168.0.200/UBIHRM/HRMINDIA/public/uploads/"+user.orgdir+"/"+user.profile);
           //prefs.setString('profile',"https://ubitech.ubihrm.com/public/uploads/" + user.orgdir + "/" +user.profile);
         //  print(user.orgdir);
+
           print(prefs.getString('profile'));
           return "success";
         } else {

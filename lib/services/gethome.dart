@@ -36,6 +36,7 @@ class Home{
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
+        String org_country = timeinoutMap['orgcountry'].toString();
         int Is_Delete = int.parse(timeinoutMap['Is_Delete']);
         globals.departmentname = timeinoutMap['departmentname'].toString();
         globals.departmentid = int.parse(timeinoutMap['departmentid']);
@@ -71,6 +72,7 @@ class Home{
         prefs.setString('mail_varified', mail_varified);
         prefs.setString('profile', profile);
         prefs.setString('newpwd', newpwd);
+        prefs.setString('org_country',org_country);
         prefs.setString('shiftId', timeinoutMap['shiftId']);
         prefs.setString('leavetypeid', timeinoutMap['leavetypeid']);
         prefs.setString('ShiftTimeOut', timeinoutMap['ShiftTimeOut']);
