@@ -154,7 +154,8 @@ class _FlexiList extends State<FlexiList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  SizedBox(width: 1.0,),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                  /*
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text(
@@ -162,9 +163,9 @@ class _FlexiList extends State<FlexiList> {
                       style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
-                  ),
+                  ),*/
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.37,
+                    width: MediaQuery.of(context).size.width * 0.38,
                     child: Text(
                       'Location',
                       style: TextStyle(color: headingcolor),
@@ -172,16 +173,16 @@ class _FlexiList extends State<FlexiList> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.30,
                     child: Text('In',
                         style: TextStyle(color: headingcolor),
-                        textAlign: TextAlign.left),
+                        textAlign: TextAlign.center),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.30,
                     child: Text('Out ',
                         style: TextStyle(color: headingcolor),
-                        textAlign: TextAlign.left),
+                        textAlign: TextAlign.center),
                   ),
                 ],
               ),
@@ -224,11 +225,13 @@ class _FlexiList extends State<FlexiList> {
                     return new Container(
                       //          width: MediaQuery.of(context).size.width * .9,
                       child:Column(children: <Widget>[
+
                         new Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            SizedBox(width: 8.0,),
+
+                            /*
                             new Container(
                                 width: MediaQuery.of(context).size.width * 0.18,
                                 child: Column(
@@ -238,8 +241,11 @@ class _FlexiList extends State<FlexiList> {
                                       snapshot.data[index].Emp.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
                                   ],
                                 )),
+
+                             */
+                            SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.37,
+                              width: MediaQuery.of(context).size.width * 0.38,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +272,7 @@ class _FlexiList extends State<FlexiList> {
                                 width: MediaQuery
                                     .of(context)
                                     .size
-                                    .width * 0.19,
+                                    .width * 0.30,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment
                                       .center,
@@ -303,7 +309,7 @@ class _FlexiList extends State<FlexiList> {
                                 width: MediaQuery
                                     .of(context)
                                     .size
-                                    .width * 0.22,
+                                    .width * 0.30,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment
                                       .center,

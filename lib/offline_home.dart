@@ -275,6 +275,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   initPlatformState() async {
     appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
+
+    DateTime myDatetime = DateTime.parse("2018-07-10 12:04:35");
+    print(myDatetime.toIso8601String());
+
   //  StreamLocation sl = new StreamLocation();
 
     Future.delayed(const Duration(milliseconds: 3000), () {
@@ -690,9 +694,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: () {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeInPressedTime=DateTime.now();
+                                /*
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-
+*/
                                 saveOfflineQr(0);
 
                               },
@@ -708,9 +713,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: () {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
+  /*
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-                                saveOfflineQr(1);
+    */                            saveOfflineQr(1);
                               },
                             ),
                           ],
@@ -748,7 +754,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
         var imageRequired = prefs.getInt("ImageRequired");
         if (imageRequired == 1) {
-
+          prefix0.globalCameraOpenedStatus=true;
           cameraChannel.invokeMethod("cameraOpened");
           ImagePicker.pickImage(
               source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
@@ -821,17 +827,25 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 children: <Widget>[
                   Text( actionString+" is marked. It will be synced when you are online"),
                 ],
-              );*/
+              );
               Scaffold.of(context)
                   .showSnackBar(
                   SnackBar(content: Text("Attendance marked")));
+              */
               /*
-              showDialog(context: context, child:
-              new AlertDialog(
-                content: new Text(
-                    actionString+" is marked. It will be synced when you are online"),
-              )
-              );
+               */
+              Future.delayed(const Duration(milliseconds: 2000), () {
+                showDialog(context: context, child:
+                new AlertDialog(
+                  content: new Text(
+                      actionString +
+                          " is marked. It will be synced when you are online"),
+                )
+                );
+                setState(() {
+                  prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+                });
+              });
               print("-----------------------Context-----------------------");
               print(context);
 
@@ -839,7 +853,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                   .of(context)
                   .push(
                 MaterialPageRoute(builder: (context) => OfflineHomePage()),
-              );*/
+              );
 
               Navigator.of(context, rootNavigator: true)
                   .pop();
@@ -905,9 +919,29 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
           timeInPressedTime=null;
           timeOutPressedTime=null;
-          Scaffold.of(context)
-              .showSnackBar(
-              SnackBar(content: Text("Attendance marked")));
+          Future.delayed(const Duration(milliseconds: 2000), () {
+            showDialog(context: context, child:
+            new AlertDialog(
+              content: new Text(
+                  actionString +
+                      " is marked. It will be synced when you are online"),
+            )
+            );
+            setState(() {
+              prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+            });
+          });
+          print("-----------------------Context-----------------------");
+          print(context);
+
+          Navigator
+              .of(context)
+              .push(
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+          );
+
+          Navigator.of(context, rootNavigator: true)
+              .pop();
 
 /*
           showDialog(context: context, child:

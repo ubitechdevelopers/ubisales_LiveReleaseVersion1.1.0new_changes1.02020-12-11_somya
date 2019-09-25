@@ -12,4 +12,6 @@
         this app needs your location. Click "OK" to change the permission
         settings.</string>
     <string name="mockLocationMessage">Sorry this app can not continue if you provide a mocked location</string>
+    <string name="facebook_app_id">846886339046222</string>
+    <string name="fb_login_protocol_scheme">fb846886339046222</string>
 </resources>

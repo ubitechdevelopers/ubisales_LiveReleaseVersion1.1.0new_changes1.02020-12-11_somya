@@ -802,6 +802,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           var FakeLocationStatus = 0;
           if (fakeLocationDetected)
             FakeLocationStatus = 1;
+
           VisitsOffline visitIn = VisitsOffline(
               null,
 
@@ -812,15 +813,15 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
               Time,
               Date,
 
-              Latitude,
-              Longitude,
-              Time,
-              Date,
+              "",
+              "",
+              '00:00:00',
+              "",
               client,
               "",
               "",
               OrganizationId,
-              1,
+              0,
               defaultUserImage,
               defaultUserImage,
               FakeLocationStatus,

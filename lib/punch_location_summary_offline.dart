@@ -437,10 +437,11 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           if (fakeLocationDetected)
             FakeLocationStatus = 1;
           VisitsOffline visit = VisitsOffline.empty();
+
           visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, defaultUserImage, FakeLocationStatus,timeSpoofed?1:0);
 
           print("---------------Visit in saved offline---------------");
-         
+          Navigator.of(context, rootNavigator: true).pop();
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -456,7 +457,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           );
         }
     _comments.text='';
-    Navigator.of(context, rootNavigator: true).pop();
+
 
   }
 

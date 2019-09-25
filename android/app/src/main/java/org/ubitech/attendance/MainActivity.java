@@ -83,6 +83,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   private LocationAssistant assistant;
   private static final String CHANNEL = "location.spoofing.check";
   private static final String CAMERA_CHANNEL = "update.camera.status";
+  private static final String FACEBOOK_CHANNEL = "log.facebook.data";
   private boolean cameraOpened=false;
 
 
@@ -99,7 +100,45 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
     super.onCreate(savedInstanceState);
     Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
   //showLocationDialog();
+    FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
+    MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
 
+    //facebookLogger.logCompleteRegistrationEvent("");
+    //facebookLogger.logContactEvent();
+    //facebookLogger.logPurchaseEvent();
+    //facebookLogger.logRateEvent("","","0",5,4);
+    //facebookLogger.logStartTrialEvent("","",0.0);
+    facebookChannel.setMethodCallHandler(
+            new MethodCallHandler() {
+              @Override
+              public void onMethodCall(MethodCall call, Result result) {
+                if (call.method.equals("logCompleteRegistrationEvent")) {
+                  if(facebookLogger!=null);
+                  facebookLogger.logCompleteRegistrationEvent("");
+                }
+                else
+                if (call.method.equals("logContactEvent")) {
+                  if(facebookLogger!=null);
+                  facebookLogger.logContactEvent();
+                }
+                else
+                if (call.method.equals("logPurchaseEvent")) {
+                  if(facebookLogger!=null);
+                 facebookLogger.logPurchaseEvent();
+                }
+                if (call.method.equals("logRateEvent")) {
+                  // Log.i("Assistant","Assistant Start Called");
+                  if(facebookLogger!=null);
+                  facebookLogger.logRateEvent("","","0",5,4);
+                }
+                if (call.method.equals("logStartTrialEvent")) {
+                  if(facebookLogger!=null);
+                 facebookLogger.logStartTrialEvent("","",0.0);
+
+                }
+
+              }
+            });
 
 
     if (android.os.Build.VERSION.SDK_INT > 9)

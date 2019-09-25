@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -409,6 +411,7 @@ class _AppDrawerState extends State<AppDrawer> {
               ],
             ),
             onTap: () {
+              prefix0.facebookChannel.invokeMethod("logRateEvent");
               LaunchReview.launch(
                   androidAppId: "org.ubitech.attendance"
                   );
@@ -486,11 +489,24 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   openWhatsApp() async{
+
+    prefix0.facebookChannel.invokeMethod("logContactEvent");
+
+    print("Language is "+window.locale.countryCode);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var name=prefs.getString("fname")??"";
     var org_name= prefs.getString('org_name') ?? '';
-    var message="Hello%20I%20am%20"+name+"%20from%20"+org_name+"%0AI%20need%20some%20help%20regarding%20ubiAttendance%20app";
-    var url = "https://wa.me/917067822132?text="+message;
+    String country=window.locale.countryCode;
+    var message;
+
+    message="Hello%20I%20am%20"+name+"%20from%20"+org_name+"%0AI%20need%20some%20help%20regarding%20ubiAttendance%20app";
+
+    var url;
+    if(country=="IN")
+    url = "https://wa.me/917067822132?text="+message;
+    else{
+      url = "https://wa.me/971555524131?text="+message;
+    }
     if (await canLaunch(url)) {
     await launch(url);
     } else {

@@ -543,7 +543,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: _toggle,
                         child: Row(
                           children: <Widget>[
-                            Icon(_obscureText ?Icons.visibility:Icons.visibility_off),
+                            Icon(_obscureText ?Icons.visibility_off:Icons.visibility),
                           ],
                         ),
                       ),
@@ -697,7 +697,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                   });
 
-
+                                  globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
+                                  globals.facebookChannel.invokeMethod("logStartTrialEvent");
                                   showDialog(context: context,
                                       barrierDismissible: false,
                                       child: new AlertDialog(

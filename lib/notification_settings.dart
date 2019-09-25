@@ -265,7 +265,7 @@ bool isSwitched=true;
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[    Container(
                           width: MediaQuery.of(context).size.width*.65,
-                          child: Text("Time Out Notification",style: TextStyle(fontSize: 22.0),
+                          child: Text("Time In Notification",style: TextStyle(fontSize: 22.0),
 
                           ),
                         ),
@@ -277,10 +277,10 @@ bool isSwitched=true;
                           children: <Widget>[    Container(
                               width: MediaQuery.of(context).size.width*.15,
                               child:Switch(
-                                  value: showTimeOutNotification,
+                                  value: showTimeInNotification,
                                   onChanged: (value) {
                                     setState(() {
-                                      showTimeOutNotification = value;
+                                      showTimeInNotification = value;
                                     });
                                   })
                           ),
@@ -292,6 +292,40 @@ bool isSwitched=true;
                       )
                   ), //Enter date
                   SizedBox(height: 12.0),
+                  Container(
+                      child: Row(
+                        children: <Widget>[
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[    Container(
+                                width: MediaQuery.of(context).size.width*.65,
+                                child: Text("Time Out Notification",style: TextStyle(fontSize: 22.0),
+
+                                ),
+                              ),
+                              ]
+                          ),
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[    Container(
+                                  width: MediaQuery.of(context).size.width*.15,
+                                  child:Switch(
+                                      value: showTimeOutNotification,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          showTimeOutNotification = value;
+                                        });
+                                      })
+                              ),
+
+                              ]
+                          )
+
+                        ],
+                      )
+                  ),
                   /*
                   Container(
                       child: Row(
