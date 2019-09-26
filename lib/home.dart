@@ -1128,7 +1128,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
           maxHeight: 60.0,
-          minHeight: 20.0,
+          minHeight: 20.0, 
         ),
         child: new GestureDetector(
             onTap: () {
