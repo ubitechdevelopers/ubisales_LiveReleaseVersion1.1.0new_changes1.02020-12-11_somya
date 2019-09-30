@@ -260,11 +260,11 @@ class _Designation extends State<Designation> {
                   addDesg(desg.text, _sts).
                   then((res) {
                     if(int.parse(res)==0) {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
+
                       showInSnackBar('Unable to add designation');
                     }
                     else if(int.parse(res)==-1) {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
+
                       showInSnackBar('Designation already exists');
                     }
                     else {

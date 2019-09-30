@@ -78,7 +78,7 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
         )
             : BottomNavigationBarItem(
           icon: new Icon(
-              Icons.person, color: Colors.black,size: 30.0),
+              Icons.person, color: Colors.white,size: 30.0),
           title: new Text('Profile',style: TextStyle(color: Colors.white,)),
         ),
         BottomNavigationBarItem(

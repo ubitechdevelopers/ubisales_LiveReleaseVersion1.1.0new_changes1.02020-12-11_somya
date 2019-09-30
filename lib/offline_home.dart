@@ -482,7 +482,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-
+                                  /*
                                   Padding(
                                       padding: EdgeInsets.fromLTRB(20, 10.0, 20.0, 20.0),
                                       child: Column(
@@ -533,11 +533,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                                                     ),
                                                   ],
                                                 ),
-                            ]),
-
+                                             ]),
 
                                         ],
-                                      )),
+                                      )),*/
                                 ],
                               ),
                             ),

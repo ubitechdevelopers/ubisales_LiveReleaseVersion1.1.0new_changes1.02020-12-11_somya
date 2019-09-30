@@ -1011,8 +1011,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
       return poorNetworkWidget();
     } else {
-      return SafeArea(
-        child: ListView(
+      return ListView(
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             Container(
@@ -1024,6 +1023,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   SizedBox(height: MediaQuery.of(context).size.height * .06),
                   new GestureDetector(
                     onTap: () {
+
                       // profile navigation
                       /* Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));*/
                     },
@@ -1072,8 +1072,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               ),
             ),
           ],
-        ),
-      );
+        );
+
     }
   }
 
@@ -1081,10 +1081,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     if (act1 == "Imposed") {
       return getAlreadyMarkedWidgit();
     } else {
-      return Container(
-        // height: MediaQuery.of(context).size.height*0.5,
-        //foregroundDecoration: BoxDecoration(color:Colors.green ),
-        child: Column(
+      return  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               /* Text('Mark Attendance',
@@ -1105,8 +1102,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   ]),
             ),
 */
-            ]),
-      );
+            ]);
+
     }
   }
 
@@ -1127,7 +1124,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       widList.add(Container(
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
-          maxHeight: 60.0,
+          maxHeight: 50.0,
           minHeight: 20.0, 
         ),
         child: new GestureDetector(
@@ -1140,8 +1137,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child: Column(
               children: [
                 Icon(
-                  const IconData(0xe817, fontFamily: "CustomIcon"),
-                  size: 35.0,
+                  const IconData(0xe81d, fontFamily: "CustomIcon"),
+                  size: 30.0,
                   color: iconcolor,
                 ),
                 Text('Group',
@@ -1154,7 +1151,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     widList.add(Container(
       padding: EdgeInsets.only(top: 5.0),
       constraints: BoxConstraints(
-        maxHeight: 60.0,
+        maxHeight: 50.0,
         minHeight: 20.0,
       ),
       child: new GestureDetector(
@@ -1167,8 +1164,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           child: Column(
             children: [
               Icon(
-                const IconData(0xe80f, fontFamily: "CustomIcon"),
-                size: 35.0,
+                const IconData(0xe81c, fontFamily: "CustomIcon"),
+                size: 30.0,
                 color: iconcolor,
               ),
               Text('Log',
@@ -1182,7 +1179,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       widList.add(Container(
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
-          maxHeight: 60.0,
+          maxHeight: 50.0,
           minHeight: 20.0,
         ),
         child: new GestureDetector(
@@ -1197,7 +1194,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               children: [
                 Icon(
                   const IconData(0xe819, fontFamily: "CustomIcon"),
-                  size: 35.0,
+                  size: 30.0,
                   color: iconcolor,
                 ),
                 Text('Visits',
@@ -1212,7 +1209,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       widList.add(Container(
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
-          maxHeight: 60.0,
+          maxHeight: 50.0,
           minHeight: 20.0,
         ),
         child: new GestureDetector(
@@ -1235,7 +1232,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               children: [
                 Icon(
                   const IconData(0xe818, fontFamily: "CustomIcon"),
-                  size: 35.0,
+                  size: 30.0,
                   color: iconcolor,
                 ),
                 Text(' Time Off',

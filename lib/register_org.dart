@@ -31,6 +31,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _name,_cname,_email,_pass,_cont,_phone,_city,_contcode;
+  var phone ="";
+  var pass = "";
   bool loader = false;
   bool _isButtonDisabled = false;
   final FocusNode __name = FocusNode();
@@ -304,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
     prefs = await SharedPreferences.getInstance();
     await prefs.setString('fname',fname);
     await prefs.setString('empid',empid.toString());
-    await prefs.setString('orgid',orgid);
+    await prefs.setString('orgid',orgid.toString());
   }
   void _toggle() {
     setState(() {
@@ -579,7 +581,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: const Text('Register Company',style: TextStyle(fontSize: 18.0),),
                         onPressed: (){
 
-/*
+
+
+
+
+
+                 /*
                           setLocal('Ubitech Solutions','0','0');
                           showDialog(context: context, child:
                           new AlertDialog(
@@ -678,14 +685,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               "countrycode": '',
                               "address": _city.text
                             }) .then((response) {
-                              if (response.statusCode == 200) {
+                              if  (response.statusCode == 200) {
 
                                 print("-----------------> After Registration ---------------->");
                                 print(response.body.toString());
                                 res = json.decode(response.body);
                                 if (res['sts'] == 'true') {
                                   setLocal(res['f_name'],res['id'],res['org_id']);
-                                  setState(() {
+                                  /*setState(() {
+                                    phone = _phone.text;
+                                    pass = _pass.text;
                                     _name.text="";
                                     _city.text="";
                                     _cname.text="";
@@ -695,11 +704,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                     _contcode.text="";
                                     _phone.text="";
 
-                                  });
+                                  });*/
 
                                   globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
                                   globals.facebookChannel.invokeMethod("logStartTrialEvent");
-                                  showDialog(context: context,
+
+
+                               gethome () async{
+                                  await new Future.delayed(const Duration(seconds: 1));
+                                  login(_phone.text, _pass.text, context);
+                                }
+                                gethome ();
+
+
+                                /*  showDialog(context: context,
                                       barrierDismissible: false,
                                       child: new AlertDialog(
                                     title: new Text("ubiAttendance"),
@@ -713,11 +731,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: new Text('Start Trial'),
                                         onPressed: () {
                                           Navigator.of(context, rootNavigator: true).pop();
-                                          login(_phone.text, _pass.text, context);
+                                          login(phone, pass, context);
                                         },
                                       ),
                                     ],
-                                  ));
+                                  ));*/
+
+
+
+
+
 
                                 } else if (res['sts'] == 'false1' ||
                                     res['sts'] == 'false3') {

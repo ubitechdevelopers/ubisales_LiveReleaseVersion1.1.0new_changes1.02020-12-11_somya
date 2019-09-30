@@ -51,11 +51,7 @@ class _HolidayList extends State<HolidayList> {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
   Future<bool> sendToHome() async{
-    /*Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );*/
-    print("-------> back button pressed");
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => Settings()), (Route<dynamic> route) => false,

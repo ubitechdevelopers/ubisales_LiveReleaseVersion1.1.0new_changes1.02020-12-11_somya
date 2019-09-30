@@ -530,8 +530,8 @@ class _Reports extends State<Reports> {
             ):Center(),
 
 
-      (visitpunch==1 && admin_sts=='1')?SizedBox(height: 0.0):Center(),
-            (visitpunch==1 && admin_sts=='1')?
+      (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?SizedBox(height: 0.0):Center(),
+            (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?
             new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 15.0,bottom: 15.0),

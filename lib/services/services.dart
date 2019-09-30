@@ -586,8 +586,11 @@ bool validateEmail(String value) {
 Future<List<Map>> getEmployeesList(int label) async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
+  var empid = prefs.getString('empid') ?? '';
+  print(empid);
+  print(globals.path + 'getEmployeesList?orgid=$orgid&empid=$empid');
   final response =
-      await http.get(globals.path + 'getEmployeesList?orgid=$orgid');
+      await http.get(globals.path + 'getEmployeesList?orgid=$orgid&empid=$empid');
   List data = json.decode(response.body.toString());
   List<Map> depts = createEMpListDD(data, label);
   // print(depts);
@@ -1725,9 +1728,9 @@ Future<List<Punch>> getVisitsDataList(date,emp) async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
-  // print(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date');
+   print(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date&uid=$emp&loginemp=$empid');
   final response =
-      await http.get(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date&uid=$emp');
+      await http.get(globals.path + 'getPunchInfo?orgid=$orgdir&date=$date&uid=$emp&loginemp=$empid');
   List responseJson = json.decode(response.body.toString());
   List<Punch> userList = createUserList(responseJson);
   // print('getSummaryPunch called--1');

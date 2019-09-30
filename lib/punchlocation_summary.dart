@@ -285,10 +285,29 @@ String address="";
                 print('<<****************************');
                 Navigator.of(context, rootNavigator: true).pop();
                 saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),assign_lat.toString(),assign_long.toString(),_comments.text,orgid,FakeLocationStatus).then((res){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PunchLocationSummary()),
-                  );
+
+                  if(res)
+                  {
+                    _comments.text = "";
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+                    );
+                    showDialog(
+                        context: context,
+                        child: new AlertDialog(
+                          content: new Text("Punch visit successfully"),
+                        ));
+                  }
+                  else
+                  {
+                    _comments.text = "";
+                    showDialog(
+                        context: context,
+                        child: new AlertDialog(
+                          content: new Text("Unable to punch visit. Please try again!"),
+                        ));
+                  }
                 }).catchError((ett){
                   showInSnackBar('Unable to punch visit');
                 });

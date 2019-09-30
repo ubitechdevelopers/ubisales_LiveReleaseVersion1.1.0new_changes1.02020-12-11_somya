@@ -46,4 +46,7 @@ class Custom {
   static const IconData time_off_home = const IconData(0xe818, fontFamily: _kFontFam);
   static const IconData visits = const IconData(0xe819, fontFamily: _kFontFam);
   static const IconData refresh = const IconData(0xe81a, fontFamily: _kFontFam);
+  static const IconData group_2 = const IconData(0xe81d, fontFamily: _kFontFam);
+  static const IconData logs_2 = const IconData(0xe81c, fontFamily: _kFontFam);
+
 }

@@ -62,9 +62,18 @@ class _EmployeeList extends State<EmployeeList> {
         content: Text(value, textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+  Future<bool> sendToHome() async{
 
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Settings()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
   getmainhomewidget() {
-    return new Scaffold(
+    return new WillPopScope(
+        onWillPop: ()=> sendToHome(),
+       child:new Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
             title: Row(
@@ -115,6 +124,7 @@ class _EmployeeList extends State<EmployeeList> {
             },
             tooltip: 'Add Employee',
             child: new Icon(Icons.add),
+          ),
           ),
         );
 
