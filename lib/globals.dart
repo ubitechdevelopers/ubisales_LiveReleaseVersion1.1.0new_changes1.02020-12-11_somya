@@ -14,8 +14,8 @@ Color appcolor =  Colors.teal;
 Color buttoncolor =  Colors.orangeAccent;
 Color headingcolor =  Colors.orange;
 Color iconcolor =  Colors.black45;
-/*
 
+/*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services";
 */

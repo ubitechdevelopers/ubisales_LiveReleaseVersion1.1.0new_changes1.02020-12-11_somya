@@ -248,9 +248,9 @@ public class LocationAssistant
         }
     }
 
-    public void updateCameraStatus(boolean cameraStatus){
+  /*public void updateCameraStatus(boolean cameraStatus){
         this.cameraStatus=cameraStatus;
-    }
+    }*/
     /**
      * Makes the LocationAssistant print info log messages.
      *

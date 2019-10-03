@@ -259,7 +259,7 @@ class _addHoliday extends State<addHoliday> {
                         });
                         print(enddate.difference(startdate).inDays);
                         if(enddate.difference(startdate).inDays<0){
-                          return 'To date can not be greater than from date';
+                          return 'To date can not be earlier than from date';
                         }
                       }
                      /* var arr=_from.text.split(':');
@@ -317,6 +317,7 @@ class _addHoliday extends State<addHoliday> {
                             setState(() {
                               _isButtonDisabled=true;
                             });
+
 
                             createHoliday(_holidayName.text,startdate,enddate,_description.text).then((res){
                               if(res.toString()=='1') {

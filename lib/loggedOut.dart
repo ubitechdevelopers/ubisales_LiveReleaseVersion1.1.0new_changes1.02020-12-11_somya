@@ -222,7 +222,7 @@ class _LoggedOutState extends State<LoggedOut> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          new Text('Sorry you are logged out!'),
+          new Text('Sorry you are not connected!'),
           FlatButton(
             child: new Text(
               "Refresh Page",

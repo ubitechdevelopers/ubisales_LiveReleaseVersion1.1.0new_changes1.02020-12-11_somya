@@ -100,7 +100,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
     super.onCreate(savedInstanceState);
     Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
   //showLocationDialog();
-    FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
+   // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
     MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
 
     //facebookLogger.logCompleteRegistrationEvent("");
@@ -113,27 +113,27 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
               @Override
               public void onMethodCall(MethodCall call, Result result) {
                 if (call.method.equals("logCompleteRegistrationEvent")) {
-                  if(facebookLogger!=null);
-                  facebookLogger.logCompleteRegistrationEvent("");
+                 // if(facebookLogger!=null);
+                 // facebookLogger.logCompleteRegistrationEvent("");
                 }
                 else
                 if (call.method.equals("logContactEvent")) {
-                  if(facebookLogger!=null);
-                  facebookLogger.logContactEvent();
+                 // if(facebookLogger!=null);
+                 // facebookLogger.logContactEvent();
                 }
                 else
                 if (call.method.equals("logPurchaseEvent")) {
-                  if(facebookLogger!=null);
-                 facebookLogger.logPurchaseEvent();
+                 // if(facebookLogger!=null);
+                // facebookLogger.logPurchaseEvent();
                 }
                 if (call.method.equals("logRateEvent")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  if(facebookLogger!=null);
-                  facebookLogger.logRateEvent("","","0",5,4);
+                 // if(facebookLogger!=null);
+                 // facebookLogger.logRateEvent("","","0",5,4);
                 }
                 if (call.method.equals("logStartTrialEvent")) {
-                  if(facebookLogger!=null);
-                 facebookLogger.logStartTrialEvent("","",0.0);
+                 // if(facebookLogger!=null);
+                // facebookLogger.logStartTrialEvent("","",0.0);
 
                 }
 
@@ -148,12 +148,19 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       StrictMode.setThreadPolicy(policy);
     }
       ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS}, 1);
 
     channel=new MethodChannel(getFlutterView(), CHANNEL);
     GeneratedPluginRegistrant.registerWith(this);
     listenerExecuter=new LocationListenerExecuter(channel,this);
+    try{
+
+
     listenerExecuter.execute("");
+    }
+    catch(Exception e){
+
+    }
       Timer timer = new Timer();
 
       new MethodChannel(getFlutterView(), CAMERA_CHANNEL).setMethodCallHandler(
@@ -163,15 +170,31 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 if (call.method.equals("cameraOpened")) {
                   cameraOpened=true;
                   Log.i("camera","camera opened true");
+                  try{
+                      /*
                   if(listenerExecuter!=null)
                  listenerExecuter.updateCameraStatus(true);
+                  */
+                  }
+
+                  catch(Exception e){
+
+                  }
                 }
                 else
                 if (call.method.equals("cameraClosed")) {
                   Log.i("camera","camera opened false");
                   cameraOpened=false;
+                  try{
+                      /*
                   if(listenerExecuter!=null)
                   listenerExecuter.updateCameraStatus(false);
+
+                       */
+                  }
+                  catch(Exception e){
+
+                  }
                 }
                 else
                 if (call.method.equals("startAssistant")) {
@@ -391,8 +414,13 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
 
   public void manuallyStartAssistant(){
+    try{
     if(listenerExecuter!=null)
     listenerExecuter.manuallyStartAssistant();
+    }
+    catch(Exception e){
+
+    }
   }
   @Override
   public void onMockLocationsDetected(View.OnClickListener fromView, DialogInterface.OnClickListener fromDialog) {
@@ -402,27 +430,41 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   }
   @Override
   public void onDestroy() {
+    try{
     if(listenerExecuter!=null)
     listenerExecuter.onDestroy();
+    }
+    catch(Exception e){
 
+    }
     super.onDestroy();
 
   }
   @Override
   protected void onResume() {
     super.onResume();
+    try{
    if(!cameraOpened)
      if(listenerExecuter!=null)
     listenerExecuter.startAssistant();
-   // assistant.start();
+    }
+    catch(Exception e){
+
+    }
+     // assistant.start();
   }
 
   @Override
   protected void onPause() {
    // assistant.stop();
   //if(!cameraOpened)
-    if(listenerExecuter!=null)
-    listenerExecuter.stopAssistant();
+    try {
+      if (listenerExecuter != null)
+        listenerExecuter.stopAssistant();
+    }
+    catch(Exception e){
+
+    }
     super.onPause();
   }
 
@@ -431,13 +473,16 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
     if(permissions!=null&&permissions.length>0) {
       for (int i = 0; i < permissions.length; i++) {
 
-
+try{
         if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&listenerExecuter!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
           if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
 
         }
+}
+catch(Exception e){
 
+}
 
       }
     }
@@ -459,10 +504,15 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
             public void onClick(View view) {
                 assistant.requestLocationPermission();
         });*/
+ try{
     if(listenerExecuter!=null)
    listenerExecuter.requestLocationPermission();
     if(listenerExecuter!=null)
     listenerExecuter.requestAndPossiblyExplainLocationPermission();
+ }
+ catch(Exception e){
+
+ }
   }
 
   @Override

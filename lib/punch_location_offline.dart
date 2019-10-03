@@ -53,7 +53,7 @@ class PunchLocationOffline extends StatefulWidget {
 
 class _PunchLocationOffline extends State<PunchLocationOffline> {
   static const platform = const MethodChannel('location.spoofing.check');
- // StreamLocation sl = new StreamLocation();
+  // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _clientname = TextEditingController();
   /*var _defaultimage =
@@ -95,7 +95,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       desination = "",
       desinationId = "",
       profile
-      ;
+  ;
   String aid = "";
   String client='0';
   String shiftId = "";
@@ -108,8 +108,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     streamlocationaddr=globalstreamlocationaddr;
     //checkLocationEnabled(context);
     initPlatformState();
-   // setLocationAddress();
-   // startTimer();
+    // setLocationAddress();
+    // startTimer();
     platform.setMethodCallHandler(_handleMethod);
   }
 
@@ -120,8 +120,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
       case "locationAndInternet":
         prefix0.locationThreadUpdatedLocation=true;
-      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-      // Map<String,String> responseMap=call.arguments;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -170,7 +170,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
   @override
   void dispose() {
     super.dispose();
-  //  timer.cancel();
+    //  timer.cancel();
   }
   /*
   startTimer() {
@@ -306,7 +306,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
   @override
   Widget build(BuildContext context) {
-     return getmainhomewidget();
+    return getmainhomewidget();
   }
 
   void showInSnackBar(String value) {
@@ -458,8 +458,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
                       color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-               //   sl.startStreaming(5);
-               //   startTimer();
+                  //   sl.startStreaming(5);
+                  //   startTimer();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => OfflineHomePage()),
@@ -546,7 +546,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
                 ),
                 onPressed: () {
                   //sl.startStreaming(5);
-               //   startTimer();
+                  //   startTimer();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => PunchLocationOffline()),
@@ -562,30 +562,30 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     ////to do check act1 for poor network connection
 
 
-      return SafeArea(
-        child: ListView(
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            Container(
-              // foregroundDecoration: BoxDecoration(color:Colors.red ),
-              height: MediaQuery.of(context).size.height * 0.80,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .06),
-                  //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
-                  // SizedBox(height: 5.0),
-                  getClients_DD(),
-                  SizedBox(height: 35.0),
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
-                  // SizedBox(height: MediaQuery.of(context).size.height*.01),
-                  (prefix0.assign_lat == 0.0) ? loader() : getMarkAttendanceWidgit(),
-                ],
-              ),
+    return SafeArea(
+      child: ListView(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          Container(
+            // foregroundDecoration: BoxDecoration(color:Colors.red ),
+            height: MediaQuery.of(context).size.height * 0.80,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: MediaQuery.of(context).size.height * .06),
+                //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
+                // SizedBox(height: 5.0),
+                getClients_DD(),
+                SizedBox(height: 35.0),
+                SizedBox(height: MediaQuery.of(context).size.height * .01),
+                // SizedBox(height: MediaQuery.of(context).size.height*.01),
+                (prefix0.assign_lat == 0.0) ? loader() : getMarkAttendanceWidgit(),
+              ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
 
   }
 
@@ -637,7 +637,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
                             decoration: TextDecoration.underline),
                       ),
                       onTap: () {
-                    //    startTimer();
+                        //    startTimer();
                         //sl.startStreaming(5);
                         Navigator.pushReplacement(
                           context,
@@ -717,7 +717,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       ImagePicker.pickImage(
           source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
           .then((img) async {
-            prefix0.globalCameraOpenedStatus=false;
+        prefix0.globalCameraOpenedStatus=false;
         if (img != null) {
           List<int> imageBytes = await img.readAsBytes();
           PictureBase64 = base64.encode(imageBytes);
@@ -761,8 +761,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
               defaultUserImage,
               FakeLocationStatus,
               0,
-            timeSpoofed?1:0,
-            0
+              timeSpoofed?1:0,
+              0
           );
           int savedVisitId = await visitIn.save();
           prefs.setInt("savedVisitId", savedVisitId);
@@ -787,68 +787,45 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
         }
       });
     }
-        else{
-         // sl.startStreaming(5);
-          print("--------------------Image---------------------------");
+    else{
+      // sl.startStreaming(5);
+      print("--------------------Image---------------------------");
 
 
-          var now = new DateTime.now();
-          var formatter = new DateFormat('yyyy-MM-dd');
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd');
 
-          Date = formatter.format(now);
-          Time = DateFormat("H:mm:ss").format(now);
-          Latitude = assign_lat.toString();
-          Longitude = assign_long.toString();
-          var FakeLocationStatus = 0;
-          if (fakeLocationDetected)
-            FakeLocationStatus = 1;
+      Date = formatter.format(now);
+      Time = DateFormat("H:mm:ss").format(now);
+      Latitude = assign_lat.toString();
+      Longitude = assign_long.toString();
+      var FakeLocationStatus = 0;
+      if (fakeLocationDetected)
+        FakeLocationStatus = 1;
 
-          VisitsOffline visitIn = VisitsOffline(
-              null,
-
-
-              UserId,
-              Latitude,
-              Longitude,
-              Time,
-              Date,
-
-              "",
-              "",
-              '00:00:00',
-              "",
-              client,
-              "",
-              "",
-              OrganizationId,
-              0,
-              defaultUserImage,
-              defaultUserImage,
-              FakeLocationStatus,
-              0,
-              timeSpoofed?1:0,
-            0
-          );
-          int savedVisitId= await visitIn.save();
-          prefs.setInt("savedVisitId",savedVisitId);
+      VisitsOffline visitIn = VisitsOffline(
+          null, UserId, Latitude, Longitude, Time, Date, "", "", '00:00:00', "", client, "", "", OrganizationId, 0, defaultUserImage, defaultUserImage, FakeLocationStatus, 0, timeSpoofed?1:0, 0
+      );
+      int savedVisitId= await visitIn.save();
+      prefs.setInt("savedVisitId",savedVisitId);
 
 
-          print("---------------Visit in saved offline---------------");
+      print("---------------Visit in saved offline---------------");
 
-          showDialog(context: context, child:
-          new AlertDialog(
-            content: new Text(
-                "Visit punched successfully. It will be synced when you are online"),
+      showDialog(context: context, child:
+      new AlertDialog(
+        content: new Text(
+            "Visit punched successfully. It will be synced when you are online"),
+      )
+      );
+      Navigator.pushReplacement(context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return new PunchLocationSummaryOffline();
+              }
           )
-          );
-          Navigator.pushReplacement(context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return new PunchLocationSummaryOffline();
-                  }
-              )
-          );
-        }
+      );
+    }
 
 
   }

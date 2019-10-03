@@ -420,21 +420,113 @@ class _addShift extends State<addShift> {
                        /*     print('Name:'+_shiftName.text);
                             print('Starts:'+_from.text);
                             print('Ends:'+_to.text);*/
+                            var diff = "";
+                            var diff1 ;
+                            var diff_b = "";
+                            var diff_b1  ;
+                            DateTime from ;
+                            DateTime to ;
+                            DateTime from_b ;
+                            DateTime to_b ;
+                            
+                            if (shifttype.toString() == '1')
+                            {
                             var arr=_from.text.split(':');
                             var arr1=_to.text.split(':');
-                            DateTime from=new DateTime(2001,01,01,int.parse(arr[0]),int.parse(arr[1]),00,00);
-                            DateTime to=new DateTime(2001,01,01,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
+                             from=new DateTime(2001,01,01,int.parse(arr[0]),int.parse(arr[1]),00,00);
+                             to=new DateTime(2001,01,01,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
+
                             var arr_b=_from_b.text.split(':');
                             var arr1_b=_to_b.text.split(':');
-                            DateTime from_b=new DateTime(2001,01,01,int.parse(arr_b[0]),int.parse(arr_b[1]),00,00);
-                            DateTime to_b=new DateTime(2001,01,01,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
-                            var diff = to.difference(from).toString();
-                            var diff_b = to_b.difference(from_b).toString();
-                            var diff_b1 = to_b.difference(from_b);
-                            //DateTime twelve=new DateTime(2001,01,01,-12,00,00,00);
-                           // print("start status: "+from.isBefore(from_b).toString());
-                          //  print("end status: "+to.isAfter(to_b).toString());
-                          //  print("eqn"+DateTime.parse(diff).difference(DateTime.parse(diff_b)).toString());
+                             from_b=new DateTime(2001,01,01,int.parse(arr_b[0]),int.parse(arr_b[1]),00,00);
+                             to_b=new DateTime(2001,01,01,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
+
+
+
+                             diff = to.difference(from).toString();
+                             diff_b = to_b.difference(from_b).toString();
+                             diff_b1 = to_b.difference(from_b);
+
+                            if(to.isAtSameMomentAs(from)){
+                              showInSnackBar("Shift's start and end time can't be same");
+                              return null;
+                            }
+                            else if(!from.isBefore(to)){
+                              showInSnackBar('Invalid Shift time');
+                              return null;
+                            }
+                            else if(!from_b.isBefore(to_b))
+                              {
+                                showInSnackBar('Invalid Break time');
+                                return null;
+                              }
+                            else if((!from.isBefore(from_b)) ||  (!to_b.isBefore(to)))
+                              {
+                                showInSnackBar('Invalid Break time');
+                                return null;
+                              }
+
+                            }
+                            else
+                              {
+                                var arr=_from.text.split(':');
+                                var arr1=_to.text.split(':');
+                                 from=new DateTime(2001,01,01,int.parse(arr[0]),int.parse(arr[1]),00,00);
+                                 to=new DateTime(2001,01,02,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
+
+                                print(from);
+                                print(to);
+
+                                var arr_b=_from_b.text.split(':');
+                                var arr1_b=_to_b.text.split(':');
+                                 from_b=new DateTime(2001,01,01,int.parse(arr_b[0]),int.parse(arr_b[1]),00,00);
+                                 to_b=new DateTime(2001,01,01,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
+
+                                if(!from_b.isBefore(to_b))
+                                {
+                                  from_b=new DateTime(2001,01,01,int.parse(arr_b[0]),int.parse(arr_b[1]),00,00);
+                                  to_b=new DateTime(2001,01,02,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
+                                }
+                                if(from_b.isBefore(from) && to_b.isBefore(to) )
+                                  {
+                                    from_b=new DateTime(2001,01,02,int.parse(arr_b[0]),int.parse(arr_b[1]),00,00);
+                                    to_b=new DateTime(2001,01,02,int.parse(arr1_b[0]),int.parse(arr1_b[1]),00,00);
+                                  }
+
+
+                                diff = to.difference(from).toString();
+                                diff1 = to.difference(from);
+                                diff_b = to_b.difference(from_b).toString();
+                                diff_b1 = to_b.difference(from_b);
+                                 print(diff1);
+                                 if(to.isAtSameMomentAs(from)){
+                                  showInSnackBar("Shift's start and end time can't be same");
+                                  return null;
+                                }
+                                 else if(diff1.inHours > 20)
+                                   {
+                                     showInSnackBar("Shift hour's should be less then 20");
+                                     return null;
+                                   }
+                                else if(!from.isBefore(to)){
+                                  showInSnackBar('Invalid Shift time');
+                                  return null;
+                                }
+                                else if(!from_b.isBefore(to_b))
+                                {
+                                  showInSnackBar('Invalid Break time');
+                                  return null;
+                                }
+                                else if((!from.isBefore(from_b)) ||  (!to_b.isBefore(to)))
+                                {
+                                  showInSnackBar('Invalid Break time');
+                                  return null;
+                                }
+
+                              }
+                            
+                            
+                        /*
                             print(diff_b1.inHours.toString());
                             if(to.isAtSameMomentAs(from)){
                               showInSnackBar("Shift's start and end time can't be same");
@@ -463,10 +555,8 @@ class _addShift extends State<addShift> {
                               showInSnackBar('Break time should be between shift hours4');
                               return null;
                             }
-                           /* else if((!to_b.isAfter(to)) && (!to.isAtSameMomentAs(to_b))){
-                              showInSnackBar('Break time should be between shift hours1' +shifttype.toString() + from.isBefore(from_b).toString() + from.isAtSameMomentAs(from_b).toString());
-                              return null;
-                            }*/else {
+
+                           else {
                               if (shifttype.toString() == '1') {
                                 if (diff.startsWith('-')) {
                                   showInSnackBar('Invalid Shift timimgs');
@@ -485,6 +575,8 @@ class _addShift extends State<addShift> {
                                 }
                               }
                             }
+                            return false;*/
+                            
                             setState(() {
                               _isButtonDisabled=true;
                             });

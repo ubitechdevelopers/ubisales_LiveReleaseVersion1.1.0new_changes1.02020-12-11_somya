@@ -1445,16 +1445,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
-                            ),
+
                             new InkWell(
-                              child: new Text(
-                                "Refresh Location", // main  widget
-                                style: new TextStyle(
-                                    color: appcolor,
-                                    decoration: TextDecoration.none),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                  Text("  "),
+                                  Text(
+                                    "Refresh Location", // main  widget
+                                    style: new TextStyle(
+                                        color: appcolor,
+                                        decoration: TextDecoration.none),
+                                  ),
+                                ],
                               ),
                               onTap: () {
                                 //  startTimer();

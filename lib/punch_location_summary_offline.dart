@@ -409,6 +409,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           cameraChannel.invokeMethod("cameraClosed");
           img.deleteSync();
           imageCache.clear();
+          Navigator.of(context, rootNavigator: true).pop('dialog');
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
