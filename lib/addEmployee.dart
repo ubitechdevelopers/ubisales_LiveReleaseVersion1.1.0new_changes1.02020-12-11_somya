@@ -778,20 +778,23 @@ class _AddEmployee extends State<AddEmployee> {
                                 if (admin_sts == '2') {
                                   dept = globals.departmentid.toString();
                                 }
-                                if (dept == '0') {
-                                  showInSnackBar("Please select the department");
-                                  return null;
-                                }
-                                if (desg == '0') {
-                                  showInSnackBar("Please select the designation");
-                                  return null;
-                                }
-                                if (shift == '0') {
-                                  showInSnackBar("Please select the shift");
-                                  return null;
-                                }
+
 
                                 if (_formKey.currentState.validate()) {
+
+                                  if (dept == '0') {
+                                    showInSnackBar("Please select the department");
+                                    return null;
+                                  }
+                                  if (desg == '0') {
+                                    showInSnackBar("Please select the designation");
+                                    return null;
+                                  }
+                                  if (shift == '0') {
+                                    showInSnackBar("Please select the shift");
+                                    return null;
+                                  }
+
                                   if (_isButtonDisabled) return null;
                                   setState(() {
                                     _isButtonDisabled = true;

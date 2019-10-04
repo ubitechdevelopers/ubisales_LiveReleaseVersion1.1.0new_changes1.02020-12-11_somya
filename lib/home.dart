@@ -329,8 +329,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   syncOfflineData() async{
 
-
-
     int serverAvailable=await checkConnectionToServer ();
     if(serverAvailable==1){
       /*****************************For Attendances***********************************************/

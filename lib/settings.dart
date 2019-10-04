@@ -133,8 +133,20 @@ class _Settings extends State<Settings> {
         content: Text(value,textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+
+  Future<bool> sendToHome() async{
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
+
   getmainhomewidget(){
-    return new Scaffold(
+    return new WillPopScope(
+        onWillPop: ()=> sendToHome(),
+    child: new Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Row(
@@ -147,7 +159,7 @@ class _Settings extends State<Settings> {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.pop(context);}),
+          sendToHome();}),
         backgroundColor: Colors.teal,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
@@ -165,6 +177,7 @@ class _Settings extends State<Settings> {
               child: getSettingsWidget(),
             )
           ],
+        ),
         ),
 
       ),

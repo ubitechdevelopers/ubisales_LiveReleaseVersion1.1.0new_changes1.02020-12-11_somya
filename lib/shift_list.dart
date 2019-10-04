@@ -61,13 +61,14 @@ class _ShiftList extends State<ShiftList> {
   }
   Future<bool> sendToHome() async{
 
-    print("-------> back button pressed");
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => Settings()), (Route<dynamic> route) => false,
     );
     return false;
   }
+
+
   getmainhomewidget() {
     return new WillPopScope(
         onWillPop: ()=> sendToHome(),
@@ -170,7 +171,6 @@ class _ShiftList extends State<ShiftList> {
   }
 
   getDeptWidget() {
-
     return new FutureBuilder<List<Shift>>(
         future: getShifts(),
         builder: (context, snapshot) {

@@ -90,7 +90,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
     protected String doInBackground(String... strings) {
     try{
     assistant = new LocationAssistant(activity, activity, LocationAssistant.Accuracy.HIGH, 1000, false,channel,10);
-        assistant.setVerbose(true);
+        //assistant.setVerbose(true);
        assistant.start();
     }
     catch(Exception e){
