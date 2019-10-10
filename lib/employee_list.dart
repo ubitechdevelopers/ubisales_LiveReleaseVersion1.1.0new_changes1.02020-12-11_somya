@@ -259,7 +259,7 @@ class _EmployeeList extends State<EmployeeList> {
                                             ),
                                           )
                                         ]
-                                    ),   
+                                    ),
                                     TableRow(
                                         children: [
                                           TableCell(
