@@ -412,7 +412,143 @@ class _AddEmployee extends State<AddEmployee> {
         ),
         backgroundColor: globals.appcolor,
       ),
-      bottomNavigationBar: Bottomnavigationbar(),
+      bottomNavigationBar: Container(
+
+        height: 70.0,
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            boxShadow: [new BoxShadow(
+              color: Colors.grey,
+              blurRadius: 3.0,
+            ),]
+        ),
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(left: 50.0),
+              child: ButtonBar(
+                children: <Widget>[
+                  FlatButton(
+                    highlightColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                    )
+                    ,
+                    child: Text('CANCEL'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(width: 10.0),
+                  RaisedButton(
+                    elevation: 2.0,
+                    highlightElevation: 5.0,
+                    highlightColor: Colors.transparent,
+                    disabledElevation: 0.0,
+                    focusColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: _isButtonDisabled
+                        ? Text(
+                      'Processing..',
+                      style: TextStyle(color: Colors.white),
+                    )
+                        : Text(
+                      'ADD',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: globals.buttoncolor,
+                    onPressed: () {
+                      // openWhatsApp('aa','+917440519273');
+                      if (admin_sts == '2') {
+                        dept = globals.departmentid.toString();
+                      }
+                      if (dept == '0') {
+                        showInSnackBar("Please select the department");
+                        return null;
+                      }
+                      if (desg == '0') {
+                        showInSnackBar("Please select the designation");
+                        return null;
+                      }
+                      if (shift == '0') {
+                        showInSnackBar("Please select the shift");
+                        return null;
+                      }
+
+                      if (_formKey.currentState.validate()) {
+                        if (_isButtonDisabled) return null;
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        updatedcontact=_contact.text.trim();
+                        print(org_country);
+                        print('org_country');
+                        if(org_country=='93') {
+                          updatedcontact =
+                              updatedcontact = updatedcontact.replaceAll('+91', '');
+                        }
+                        updatedcontact = updatedcontact.replaceAll('+', '');
+                        updatedcontact = updatedcontact.replaceAll('-', '');
+                        updatedcontact = updatedcontact.replaceAll(' ', '');
+                        print('updatedcontact');
+                        print(updatedcontact);
+                        _countryId.text = '0';
+                        _countryCode.text = '0'; // prevented by parth sir
+                        addEmployee(
+                            _firstName.text,
+                            _lastName.text,
+                            _email.text,
+                            _countryCode.text,
+                            _countryId.text,
+                            updatedcontact.trim(),
+                            _pass.text,
+                            dept,
+                            desg,
+                            shift)
+                            .then((res) {
+                          //showInSnackBar(res.toString());
+                          //   showInSnackBar('Employee registered Successfully');
+                          if (res == 1) {
+                            //   showInSnackBar('Contact Already Exist');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EmployeeList()),
+                            );
+                            dialogwidget(
+                                'Hello+'+_firstName.text+'%0A%0AI%E2%80%99ve+added+you+as+a+user+on+'+org_name+'+attendance+system.%0A%0ADownload+ubiAttendance+App+from+the+link+-+https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.ubitech.attendance%26hl%3Den_IN%0A%0ASign+In+to+the+App+with+the+details%3A-%0A%0AUser+Name+-+'+updatedcontact.trim()+'%0APassword+-+'+_pass.text+'%0A%0AMark+your+%E2%80%9CTime+In%E2%80%9D+now!%0A%0ARegards%0A'+admname,
+                                _contact.text.trim());
+                          } else if (res == 3)
+                            showInSnackBar('Contact Already Exist');
+                          else if (res == 2)
+                            showInSnackBar('Email Already Exist');
+                          else
+                            showInSnackBar('Unable to Add Employee');
+                          setState(() {
+                            _isButtonDisabled = false;
+                          });
+                          // TimeOfDay.fromDateTime(10000);
+                        }).catchError((exp) {
+                          showInSnackBar('Unable to call service');
+                          print(exp.toString());
+                          setState(() {
+                            _isButtonDisabled = false;
+                          });
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      ),
       endDrawer: new AppDrawer(),
       body: checkalreadylogin(),
     );
@@ -476,58 +612,33 @@ class _AddEmployee extends State<AddEmployee> {
         key: _formKey,
         child: SafeArea(
             child: Column(children: <Widget>[
-              SizedBox(height: 20.0),
-              Text('Add Employee',
-                  style: new TextStyle(fontSize: 22.0, color: globals.buttoncolor)),
-              new Divider(
-                color: Colors.black54,
-                height: 1.5,
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0,bottom: 20.0),
+                child: Center(
+                  child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
+                ),
               ),
-
               new Expanded(
                 // padding: EdgeInsets.only(left:10.0,right:10.0),
                 //    margin: EdgeInsets.only(top:25.0),
                 child: ListView(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: TextFormField(
-                                controller: _firstName,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    labelText: 'Name',
-                                    prefixIcon: Padding(
-                                      padding: EdgeInsets.all(0.0),
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                      ), // icon is 48px widget.
-                                    )),
-                                validator: (value) {
-                                  if (value.trim().isEmpty) {
-                                    return 'Please Enter Name';
-                                  }
-                                },
-                                onFieldSubmitted: (String value) {
-                                  if (_formKey.currentState.validate()) {
-                                    //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                                  }
-                                },
+                    Padding(
+                      padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.70,
+                        child: TextFormField(
+                          controller: _firstName,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.1,
-                              child: new MaterialButton(
-                                //color: Colors.blue,
-                                child: Icon(
-                                  Icons.contacts,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () async {
+                              prefixIcon: Icon(Icons.person),
+                              labelText: 'Name',
+                              suffixIcon: IconButton(
+                                onPressed: ()async {
                                   Contact contact =
                                   await _contactPicker.selectContact();
                                   setState(() {
@@ -536,156 +647,196 @@ class _AddEmployee extends State<AddEmployee> {
                                     _firstName.text = _contactpick.fullName;
                                   });
                                 },
-                              ),
-                            ),
-                          ],
+                                icon: Icon(
+                                  Icons.contacts,
+                                  color: Colors.grey,),
+                              )
+                          ),
+                          validator: (value) {
+                            if (value.trim().isEmpty) {
+                              return 'Please Enter Name';
+                            }
+                          },
+                          onFieldSubmitted: (String value) {
+                            if (_formKey.currentState.validate()) {
+                              //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                            }
+                          },
                         ),
-
-                        /*    Container(
+                      ),
+                    ),
+                    SizedBox(height: 15.0),
+                    /*    Container(
                       child: TextFormField(
-                        controller: _lastName,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                            labelText: 'Last Name',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.all(0.0),
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.grey,
-                              ), // icon is 48px widget.
-                            )),
-                        validator: (value) {
-                          if (value.trim().isEmpty) {
-                            return 'Please Enter Last Name';
-                          }
-                        },
-                        onFieldSubmitted: (String value) {
-                          if (_formKey.currentState.validate()) {
-                            //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                          }
-                        },
+                    controller: _lastName,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                        labelText: 'Last Name',
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(0.0),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                          ), // icon is 48px widget.
+                        )),
+                    validator: (value) {
+                      if (value.trim().isEmpty) {
+                        return 'Please Enter Last Name';
+                      }
+                    },
+                    onFieldSubmitted: (String value) {
+                      if (_formKey.currentState.validate()) {
+                        //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                      }
+                    },
                       ),
                     ),
 */
 
-                        /* Container(
-                        //    width: MediaQuery.of(context).size.width*.45,
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'Country',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.all(1.0),
-                              child: Icon(
-                                Icons.location_city,
-                                color: Colors.grey,
-                              ), // icon is 48px widget.
-                            ),
-                          ),
-
-                          child:  new DropdownButton<String>(
-                            isDense: true,
-                            style: new TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.black
-                            ),
-                            value: country,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                country =newValue;
-                                var arr=newValue.split('#');
-                                _countryCode.text=arr[1];
-                                _countryId.text=arr[0];
-                              });
-                            },
-                            items: countrylist.map((Map map) {
-                              return new DropdownMenuItem<String>(
-                                value: map["id"].toString(),
-                                child:  new SizedBox(
-                                    width: 200.0,
-                                    child: new Text(
-                                      map["name"],
-                                    )
-                                ),
-                              );
-                            }).toList(),
-
-                          ),
+                    /* Container(
+                    //    width: MediaQuery.of(context).size.width*.45,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Country',
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(1.0),
+                          child: Icon(
+                            Icons.location_city,
+                            color: Colors.grey,
+                          ), // icon is 48px widget.
                         ),
+                      ),
+
+                      child:  new DropdownButton<String>(
+                        isDense: true,
+                        style: new TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black
+                        ),
+                        value: country,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            country =newValue;
+                            var arr=newValue.split('#');
+                            _countryCode.text=arr[1];
+                            _countryId.text=arr[0];
+                          });
+                        },
+                        items: countrylist.map((Map map) {
+                          return new DropdownMenuItem<String>(
+                            value: map["id"].toString(),
+                            child:  new SizedBox(
+                                width: 200.0,
+                                child: new Text(
+                                  map["name"],
+                                )
+                            ),
+                          );
+                        }).toList(),
+
+                      ),
+                    ),
                       ),*/
-                        Container(
-                            child: Row(
-                              children: <Widget>[
-                                /* Container(
-                              width: MediaQuery.of(context).size.width*.25,
-                              child: TextFormField(
-                                controller: _countryCode,
-                                decoration: InputDecoration(
-                                    labelText: 'Code',
-                                    prefixIcon: Padding(
-                                      padding: EdgeInsets.all(0.0),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.grey,
-                                      ), // icon is 48px widget.
-                                    )
-                                ),
-                                onFieldSubmitted: (String value) {
-                                  if (_formKey.currentState.validate()) {
-                                    //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                                  }
-                                },
-                              ),
-                            ),*/
-                                //  SizedBox(width: MediaQuery.of(context).size.width*.05,),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * 1.0,
-                                  child: TextFormField(
-                                    controller: _contact,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                        labelText: 'Phone',
-                                        prefixIcon: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Icon(
-                                            Icons.phone_android,
-                                            color: Colors.grey,
-                                          ), // icon is 48px widget.
-                                        )),
-                                    validator: (value) {
-                                      if (value.isEmpty ||
-                                          value.length < 6 ||
-                                          value.length > 15) {
-                                        return 'Please Enter valid Contact';
-                                      }
-                                    },
-                                    onFieldSubmitted: (String value) {
-                                      if (_formKey.currentState.validate()) {
-                                        //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                                      }
-                                    },
+                    Container(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * .9,
+                            child: TextFormField(
+                              controller: _contact,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                                   ),
-                                ),
-                              ],
-                            )),
-                        Container(
+                                  labelText: 'Phone',
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Icon(
+                                      Icons.call,
+                                      color: Colors.grey,
+                                    ), // icon is 48px widget.
+                                  )),
+                              validator: (value) {
+                                if (value.isEmpty ||
+                                    value.length < 6 ||
+                                    value.length > 15) {
+                                  return 'Please Enter valid Contact';
+                                }
+                              },
+                              onFieldSubmitted: (String value) {
+                                if (_formKey.currentState.validate()) {
+                                  //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                                }
+                              },
+                            ),
+                          ),
+                        )),
+                    SizedBox(height: 15.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        child: TextFormField(
+                          controller: _email,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                              ),
+                              labelText: 'Email',
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Colors.grey,
+                              )),
+                          validator: (value) {
+                            Pattern pattern =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                            RegExp regex = new RegExp(pattern);
+                            if (value.isNotEmpty && !regex.hasMatch(value)) {
+                              return 'Enter valid email id';
+                            }
+                          },
+                          onFieldSubmitted: (String value) {
+                            if (_formKey.currentState.validate()) {
+                              //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.0),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * .9,
                           child: TextFormField(
-                            controller: _email,
-                            keyboardType: TextInputType.emailAddress,
+                            enabled: false,
+                            //   initialValue: '12345678',
+                            controller: _pass,
+                            keyboardType: TextInputType.text,
+                            obscureText: _obscureText,
                             decoration: InputDecoration(
-                                labelText: 'Email (Optional)',
-                                prefixIcon: Padding(
-                                  padding: EdgeInsets.all(0.0),
-                                  child: Icon(
-                                    Icons.email,
-                                    color: Colors.grey,
-                                  ), // icon is 48px widget.
-                                )),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                              ),
+                              hintText: 'Password',
+                              labelText: 'Password',
+                              prefixIcon: Icon(Icons.lock),
+//                              suffixIcon: IconButton(
+//                                onPressed: _toggle,
+//                                icon: Icon(_obscureText
+//                                    ? Icons.visibility_off
+//                                    : Icons.visibility,
+//                                    color: Colors.grey,),
+//                              )
+                            ),
                             validator: (value) {
-                              Pattern pattern =
-                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                              RegExp regex = new RegExp(pattern);
-                              if (value.isNotEmpty && !regex.hasMatch(value)) {
-                                return 'Enter valid email id';
+                              if (value.isEmpty || value.length < 6) {
+                                return 'Password is too short';
                               }
                             },
                             onFieldSubmitted: (String value) {
@@ -693,172 +844,21 @@ class _AddEmployee extends State<AddEmployee> {
                                 //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
                               }
                             },
-                          ),
-                        ),
-                        Container(
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .9,
-                                  child: TextFormField(
-                                    enabled: false,
-                                    //   initialValue: '12345678',
 
-                                    controller: _pass,
-                                    keyboardType: TextInputType.text,
-                                    obscureText: _obscureText,
+                          )),
+                    ),
+                    ////////////////////-----------------
+                    (supervisor) ? getDepartments_DD() : getDepartments_DD1(),
 
-                                    decoration: InputDecoration(
-                                        labelText: 'Password',
-                                        prefixIcon: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Icon(
-                                            Icons.lock,
-                                            color: Colors.grey,
-                                          ), // icon is 48px widget.
-                                        )),
-                                    validator: (value) {
-                                      if (value.isEmpty || value.length < 6) {
-                                        return 'Password is too short';
-                                      }
-                                    },
-                                    onFieldSubmitted: (String value) {
-                                      if (_formKey.currentState.validate()) {
-                                        //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                                      }
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .1,
-                                  child: FlatButton(
-                                    padding: EdgeInsets.only(right: 10.0),
-                                    child: Icon(
-                                      _obscureText
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: _toggle,
-                                  ),
-                                ),
-                              ],
-                            )),
-                        ////////////////////-----------------
-                        (supervisor) ? getDepartments_DD() : getDepartments_DD1(),
+                    getDesignations_DD(),
+                    getShifts_DD(),
+                    ////////////////////-----------------
 
-                        getDesignations_DD(),
-                        getShifts_DD(),
-                        ////////////////////-----------------
+                    ButtonBar(
+                      alignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
 
-                        ButtonBar(
-                          alignment: MainAxisAlignment.spaceEvenly,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            FlatButton(
-                              shape: Border.all(color: Colors.black54),
-                              child: Text('CANCEL'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            RaisedButton(
-                              child: _isButtonDisabled
-                                  ? Text(
-                                'Processing..',
-                                style: TextStyle(color: Colors.white),
-                              )
-                                  : Text(
-                                'ADD',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: globals.buttoncolor,
-                              onPressed: () {
-                                // openWhatsApp('aa','+917440519273');
-                                if (admin_sts == '2') {
-                                  dept = globals.departmentid.toString();
-                                }
-
-
-                                if (_formKey.currentState.validate()) {
-
-                                  if (dept == '0') {
-                                    showInSnackBar("Please select the department");
-                                    return null;
-                                  }
-                                  if (desg == '0') {
-                                    showInSnackBar("Please select the designation");
-                                    return null;
-                                  }
-                                  if (shift == '0') {
-                                    showInSnackBar("Please select the shift");
-                                    return null;
-                                  }
-
-                                  if (_isButtonDisabled) return null;
-                                  setState(() {
-                                    _isButtonDisabled = true;
-                                  });
-                                  updatedcontact=_contact.text.trim();
-                                  print(org_country);
-                                  print('org_country');
-                                  if(org_country=='93') {
-                                    updatedcontact =
-                                        updatedcontact = updatedcontact.replaceAll('+91', '');
-                                  }
-                                  updatedcontact = updatedcontact.replaceAll('+', '');
-                                  updatedcontact = updatedcontact.replaceAll('-', '');
-                                  updatedcontact = updatedcontact.replaceAll(' ', '');
-                                  print('updatedcontact');
-                                  print(updatedcontact);
-                                  _countryId.text = '0';
-                                  _countryCode.text = '0'; // prevented by parth sir
-                                  addEmployee(
-                                      _firstName.text,
-                                      _lastName.text,
-                                      _email.text,
-                                      _countryCode.text,
-                                      _countryId.text,
-                                      updatedcontact.trim(),
-                                      _pass.text,
-                                      dept,
-                                      desg,
-                                      shift)
-                                      .then((res) {
-                                    //showInSnackBar(res.toString());
-                                    //   showInSnackBar('Employee registered Successfully');
-                                    if (res == 1) {
-                                      //   showInSnackBar('Contact Already Exist');
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => EmployeeList()),
-                                      );
-                                      dialogwidget(
-                                          'Hello+'+_firstName.text+'%0A%0AI%E2%80%99ve+added+you+as+a+user+on+'+org_name+'+attendance+system.%0A%0ADownload+ubiAttendance+App+from+the+link+-+https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.ubitech.attendance%26hl%3Den_IN%0A%0ASign+In+to+the+App+with+the+details%3A-%0A%0AUser+Name+-+'+updatedcontact.trim()+'%0APassword+-+'+_pass.text+'%0A%0AMark+your+%E2%80%9CTime+In%E2%80%9D+now!%0A%0ARegards%0A'+admname,
-                                          _contact.text.trim());
-                                    } else if (res == 3)
-                                      showInSnackBar('Contact Already Exist');
-                                    else if (res == 2)
-                                      showInSnackBar('Email Already Exist');
-                                    else
-                                      showInSnackBar('Unable to Add Employee');
-                                    setState(() {
-                                      _isButtonDisabled = false;
-                                    });
-                                    // TimeOfDay.fromDateTime(10000);
-                                  }).catchError((exp) {
-                                    showInSnackBar('Unable to call service');
-                                    print(exp.toString());
-                                    setState(() {
-                                      _isButtonDisabled = false;
-                                    });
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ],
@@ -879,40 +879,53 @@ class _AddEmployee extends State<AddEmployee> {
         future: getDepartmentsList(0), //with -select- label
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return new Container(
-              //    width: MediaQuery.of(context).size.width*.45,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Department',
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Icon(
-                      Icons.attach_file,
-                      color: Colors.grey,
-                    ), // icon is 48px widget.
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 15.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                  child: new Container(
+                    width: MediaQuery.of(context).size.width * .9,
+                    //    width: MediaQuery.of(context).size.width*.45,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                        ),
+                        labelText: 'Department',
+                        prefixIcon: Icon(
+                          Icons.attach_file,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          child: new DropdownButton<String>(
+                            isDense: true,
+                            style: new TextStyle(fontSize: 15.0, color: Colors.black),
+                            value: dept,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                dept = newValue;
+                              });
+                            },
+                            items: snapshot.data.map((Map map) {
+                              return new DropdownMenuItem<String>(
+                                value: map["Id"].toString(),
+                                child: new SizedBox(
+                                    child: new Text(
+                                      map["Name"],
+                                    )),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: new DropdownButton<String>(
-                  isDense: true,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                  value: dept,
-                  onChanged: (String newValue) {
-                    setState(() {
-                      dept = newValue;
-                    });
-                  },
-                  items: snapshot.data.map((Map map) {
-                    return new DropdownMenuItem<String>(
-                      value: map["Id"].toString(),
-                      child: new SizedBox(
-                          width: 200.0,
-                          child: new Text(
-                            map["Name"],
-                          )),
-                    );
-                  }).toList(),
-                ),
-              ),
+              ],
             );
           } else if (snapshot.hasError) {
             return new Text("${snapshot.error}");
@@ -931,32 +944,42 @@ class _AddEmployee extends State<AddEmployee> {
   }
 
   Widget getDepartments_DD1() {
-    return Container(
-      width: MediaQuery.of(context).size.width * 1.0,
-      child: TextFormField(
-        controller: _department1,
-        enabled: false,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-            labelText: 'Department',
-            prefixIcon: Padding(
-              padding: EdgeInsets.all(0.0),
-              child: Icon(
-                Icons.phone_android,
-                color: Colors.grey,
-              ), // icon is 48px widget.
-            )),
-        /* validator: (value) {
-          if (value.isEmpty || value.length <6 || value.length >15 ) {
-            return 'Please Enter valid department';
-          }
-        },*/
-        /* onFieldSubmitted: (String value) {
-          if (_formKey.currentState.validate()) {
-            //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-          }
-        },*/
-      ),
+
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 10.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width * .9,
+            child: TextFormField(
+              controller: _department1,
+              enabled: false,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                  ),
+                  labelText: 'Department',
+                  prefixIcon: Icon(
+                    Icons.phone_android,
+                    color: Colors.grey,
+                  )),
+              /* validator: (value) {
+                if (value.isEmpty || value.length <6 || value.length >15 ) {
+                  return 'Please Enter valid department';
+                }
+              },*/
+              /* onFieldSubmitted: (String value) {
+                if (_formKey.currentState.validate()) {
+                  //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                }
+              },*/
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -967,40 +990,54 @@ class _AddEmployee extends State<AddEmployee> {
         future: getDesignationsList(0),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return new Container(
-              //    width: MediaQuery.of(context).size.width*.45,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Designation',
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Icon(
-                      Icons.desktop_windows,
-                      color: Colors.grey,
-                    ), // icon is 48px widget.
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 15.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                  child: new Container(
+                    width: MediaQuery.of(context).size.width * .9,
+                    //    width: MediaQuery.of(context).size.width*.45,
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                        ),
+                        labelText: 'Designation',
+                        prefixIcon: Icon(
+                          Icons.desktop_windows,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          child: new DropdownButton<String>(
+                            isDense: true,
+                            style: new TextStyle(fontSize: 15.0, color: Colors.black),
+                            value: desg,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                desg = newValue;
+                              });
+                            },
+                            items: snapshot.data.map((Map map) {
+                              return new DropdownMenuItem<String>(
+                                value: map["Id"].toString(),
+                                child: new SizedBox(
+                                    width: 200.0,
+                                    child: new Text(
+                                      map["Name"],
+                                    )),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: new DropdownButton<String>(
-                  isDense: true,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                  value: desg,
-                  onChanged: (String newValue) {
-                    setState(() {
-                      desg = newValue;
-                    });
-                  },
-                  items: snapshot.data.map((Map map) {
-                    return new DropdownMenuItem<String>(
-                      value: map["Id"].toString(),
-                      child: new SizedBox(
-                          width: 200.0,
-                          child: new Text(
-                            map["Name"],
-                          )),
-                    );
-                  }).toList(),
-                ),
-              ),
+              ],
             );
           } else if (snapshot.hasError) {
             return new Text("${snapshot.error}");
@@ -1023,40 +1060,51 @@ class _AddEmployee extends State<AddEmployee> {
         future: getShiftsList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return new Container(
-              //    width: MediaQuery.of(context).size.width*.45,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: 'Shift',
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(1.0),
-                    child: Icon(
-                      Icons.access_alarm,
-                      color: Colors.grey,
-                    ), // icon is 48px widget.
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 15.0),
+                new Container(
+                  width: MediaQuery.of(context).size.width * .9,
+                  //    width: MediaQuery.of(context).size.width*.45,
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      labelText: 'Shift',
+                      prefixIcon: Icon(
+                        Icons.access_alarm,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        child: new DropdownButton<String>(
+                          isDense: true,
+                          style: new TextStyle(fontSize: 15.0, color: Colors.black),
+                          value: shift,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              shift = newValue;
+                            });
+                          },
+                          items: snapshot.data.map((Map map) {
+                            return new DropdownMenuItem<String>(
+                              value: map["Id"].toString(),
+                              child: new SizedBox(
+                                  width: 200.0,
+                                  child: new Text(
+                                    map["Name"],
+                                  )),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: new DropdownButton<String>(
-                  isDense: true,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                  value: shift,
-                  onChanged: (String newValue) {
-                    setState(() {
-                      shift = newValue;
-                    });
-                  },
-                  items: snapshot.data.map((Map map) {
-                    return new DropdownMenuItem<String>(
-                      value: map["Id"].toString(),
-                      child: new SizedBox(
-                          width: 200.0,
-                          child: new Text(
-                            map["Name"],
-                          )),
-                    );
-                  }).toList(),
-                ),
-              ),
+              ],
             );
           } else if (snapshot.hasError) {
             return new Text("${snapshot.error}");

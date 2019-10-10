@@ -57,7 +57,7 @@ class _AppDrawerState extends State<AppDrawer> {
     final prefs = await SharedPreferences.getInstance();
     //String admin= await getUserPerm();
     setState(() {
-      admin_sts=prefs.getString('sstatus').toString();
+      admin_sts = prefs.getString('sstatus').toString();
       fname = prefs.getString('fname') ?? '';
       lname = prefs.getString('lname') ?? '';
       store = prefs.getString('store') ?? '';
@@ -67,6 +67,11 @@ class _AppDrawerState extends State<AppDrawer> {
      // reportper = report_permission;
       reportper =int.parse(prefs.getString('sstatus')) ?? 0;
       buystatus = prefs.getString('buysts') ?? '';
+
+      print("Buy Status");
+      print(buystatus);
+
+
       trialstatus = prefs.getString('trialstatus') ?? '';
       orgmail = prefs.getString('orgmail') ?? '';
       profileimage = new NetworkImage(profile);
@@ -460,7 +465,9 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
+          (admin_sts=='1' && buystatus != '0')?
           new ListTile(
+
             title: Row(
               children: <Widget>[
                 Icon(Icons.help,size: 20.0),SizedBox(width: 5.0),
@@ -470,7 +477,8 @@ class _AppDrawerState extends State<AppDrawer> {
             onTap: () {
               openWhatsApp();
             },
-          ),
+          ):Center(),
+
           new ListTile(
             title: Row(
               children: <Widget>[

@@ -872,26 +872,30 @@ Future<String> updateDesg(desg, sts, did) async {
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-Future<List<Emp>> getEmployee() async {
+Future<List<Emp>> getEmployee($empname) async {
+
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid')?? '0';
+  String empname = $empname;
     print('getEmp called');
-    print(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
+    print(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid&empname=$empname');
   final response = await http.get(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
 //  print(response.body);
 //  print('fun end here1');
   List responseJson = json.decode(response.body.toString());
   // print('fun end here2');
   print(responseJson);
-  List<Emp> empList = createEmpList(responseJson);
+
+    List<Emp> empList = createEmpList(responseJson,empname);
    print('fun end here3');
   print(empList);
   return empList;
 }
 
-List<Emp> createEmpList(List data) {
+List<Emp> createEmpList(List data, String empname) {
   List<Emp> list = new List();
+   print(empname);
   for (int i = 0; i < data.length; i++) {
 
     String name = data[i]["name"];
@@ -919,6 +923,8 @@ List<Emp> createEmpList(List data) {
         Profile: Profile,
         Id: id);
     list.add(emp);
+    if(empname != '')
+      break;
   }
   return list;
 }
