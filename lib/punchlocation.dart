@@ -536,47 +536,71 @@ var FakeLocationStatus=0;
           child: getVisitInButton(),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
-        Container(
-            color: appcolor.withOpacity(0.1),
-            height: MediaQuery.of(context).size.height * .15,
-            child:
-            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              FlatButton(
-                child: new Text('You are at: ' + globalstreamlocationaddr,
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 14.0)),
-                onPressed: () {
-                  launchMap(lat, long);
+        Padding(
+          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+            ),
+            elevation: 0.0,
+            borderOnForeground: true ,
+            clipBehavior: Clip.antiAliasWithSaveLayer ,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height * .15,
+                  child:
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    FlatButton(
+                      child: new Text(globalstreamlocationaddr,
+                          textAlign: TextAlign.center,
+                          style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
+                      onPressed: () {
+                        launchMap(lat, long);
 
-                },
-              ),
-              new Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text('Location not correct? ',style: TextStyle(color: appcolor),),
-                    SizedBox(width: 5.0,),
-                    new InkWell(
-                      child: new Text(
-                        "Refresh location",
-                        style: new TextStyle(
-                            color: appcolor,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-                     //   startTimer();
-                        //sl.startStreaming(5);
-                        cameraChannel.invokeMethod("startAssistant");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => PunchLocation()),
-                        );
                       },
-                    )
-                  ],
-                ),
-              ),
-            ])),
+                    ),
+                    new Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+
+                          SizedBox(width: 5.0,),
+                          new InkWell(
+                            child:Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                ),
+                             Text(
+                              "Refresh location",
+                              style: new TextStyle(
+                                  color: appcolor,
+                                  decoration: TextDecoration.none),
+                            ),
+                              ]),
+                            onTap: () {
+                              //   startTimer();
+                              //sl.startStreaming(5);
+                              cameraChannel.invokeMethod("startAssistant");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PunchLocation()),
+                              );
+                            },
+
+                          )
+                        ],
+                      ),
+                    ),
+                  ])),
+            ),
+          ),
+        ),
       ]);
     } else {
       return Column(children: [
@@ -731,12 +755,16 @@ var FakeLocationStatus=0;
 
     return Center(
       child: Form(
+        child: Padding(
+          padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 10.0),
           child: TextFormField(
             controller: _clientname,
-
             keyboardType: TextInputType.text,
-
             decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                ),
                 labelText: 'Client Name',
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(0.0),
@@ -748,6 +776,7 @@ var FakeLocationStatus=0;
             ),
 
           ),
+        ),
       ),
     );
 

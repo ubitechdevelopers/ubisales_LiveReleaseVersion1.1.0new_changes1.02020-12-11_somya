@@ -101,10 +101,6 @@ String address="";
             fakeLocationDetected=false;
           }
 
-
-
-
-
         });
         break;
 
@@ -242,10 +238,10 @@ String address="";
       child: new AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         content: Container(
-          height: MediaQuery.of(context).size.height*0.20,
+          height: MediaQuery.of(context).size.height*0.14,
           child: Column(
             children: <Widget>[
-              new Expanded(
+              /*new Expanded(
                 child: new TextField(
                   maxLines: 5,
                   autofocus: true,
@@ -253,6 +249,18 @@ String address="";
                   decoration: new InputDecoration(
                       labelText: 'Visit Feedback ', hintText: 'Visit Feedback (Optional)'),
                 ),
+              ),*/
+              TextFormField(
+                controller: _comments,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                  ),
+                    labelText: 'Visit Feedback (Optional) ', hintText: 'Visit Feedback',
+
+                ),
+                maxLines: 2,
               ),
               SizedBox(height: 4.0,),
 
@@ -261,7 +269,11 @@ String address="";
         ),
         actions: <Widget>[
           new FlatButton(
-              shape: Border.all(color: Colors.black54),
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+                side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+              ),
               child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
               onPressed: () {
                 _comments.text='';
@@ -269,6 +281,14 @@ String address="";
               }),
           new RaisedButton(
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
+              elevation: 2.0,
+              highlightElevation: 5.0,
+              highlightColor: Colors.transparent,
+              disabledElevation: 0.0,
+              focusColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
               color: buttoncolor,
               onPressed: () {
                 globalCameraOpenedStatus=true;

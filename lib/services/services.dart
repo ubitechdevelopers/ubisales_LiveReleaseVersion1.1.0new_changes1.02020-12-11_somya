@@ -529,7 +529,7 @@ List<Map> createList(List data, int label) {
   List<Map> list = new List();
   if (label == 1) // with -All- label
     list.add({"Id": "0", "Name": "-All-"});
-  else
+ else
     list.add({"Id": "0", "Name": "-Select-"});
   for (int i = 0; i < data.length; i++) {
     if (data[i]["archive"].toString() == '1') {
@@ -879,14 +879,15 @@ Future<List<Emp>> getEmployee($empname) async {
   String empid = prefs.getString('empid')?? '0';
   String empname = $empname;
     print('getEmp called');
-    print(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid&empname=$empname');
-  final response = await http.get(globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
-//  print(response.body);
-//  print('fun end here1');
-  List responseJson = json.decode(response.body.toString());
-  // print('fun end here2');
-  print(responseJson);
-
+    print(responseJson.length);
+    if(!(responseJson.length!=0 && empname !='')) {
+      print(globals.path +
+          'getUsersMobile?refno=$orgid&empid=$empid');
+      final response = await http.get(
+          globals.path + 'getUsersMobile?refno=$orgid&empid=$empid');
+      responseJson = json.decode(response.body.toString());
+      print(responseJson);
+    }
     List<Emp> empList = createEmpList(responseJson,empname);
    print('fun end here3');
   print(empList);
@@ -895,15 +896,22 @@ Future<List<Emp>> getEmployee($empname) async {
 
 List<Emp> createEmpList(List data, String empname) {
   List<Emp> list = new List();
-   print(empname);
+  if(empname !='' )
   for (int i = 0; i < data.length; i++) {
+     print('Sohan');
+    //String name = data[i]["name"];
+    String name = data[i]["name"].length > 20 ? data[i]["name"].substring(0, 15) + '..' : data[i]["name"];
 
-    String name = data[i]["name"];
 
     String dept = data[i]["Department"].length > 20 ? data[i]["Department"].substring(0, 15) + '..' : data[i]["Department"];
     String desg = data[i]["Designation"].length > 20 ? data[i]["Designation"].substring(0, 15) + '..' : data[i]["Designation"];
-    print("This is testing line");
+
     String shift = data[i]["Shift"];
+
+    String deptid = data[i]["DepartmentId"];
+    String desgid = data[i]["DesignationId"];
+    String shiftid = data[i]["ShiftId"];
+    String password = data[i]["Password"];
     String status = data[i]["archive"] == '1' ? 'Active' : 'Inactive';
     String id = data[i]["Id"];
     String Email = data[i]["Email"];
@@ -916,17 +924,67 @@ List<Emp> createEmpList(List data, String empname) {
         Department: dept,
         Designation: desg,
         Shift: shift,
+        DepartmentId: deptid,
+        DesignationId: desgid,
+        ShiftId: shiftid,
         Status: status,
         Email: Email,
         Mobile: Mobile,
         Admin: Admin,
         Profile: Profile,
-        Id: id);
+        Id: id,
+        Password: password
+    );
+    if(name.toLowerCase().contains(empname.toLowerCase()))
     list.add(emp);
-    if(empname != '')
-      break;
   }
+  else
+    for (int i = 0; i < data.length; i++) {
+
+      String name = data[i]["name"].length > 20 ? data[i]["name"].substring(0, 15) + '..' : data[i]["name"];
+
+      String dept = data[i]["Department"].length > 20 ? data[i]["Department"].substring(0, 15) + '..' : data[i]["Department"];
+      String desg = data[i]["Designation"].length > 20 ? data[i]["Designation"].substring(0, 15) + '..' : data[i]["Designation"];
+
+      String shift = data[i]["Shift"];
+
+      String deptid = data[i]["DepartmentId"];
+      String desgid = data[i]["DesignationId"];
+      String shiftid = data[i]["ShiftId"];
+      String password = data[i]["Password"];
+
+      String status = data[i]["archive"] == '1' ? 'Active' : 'Inactive';
+      String id = data[i]["Id"];
+      String Email = data[i]["Email"];
+      String Mobile = data[i]["Mobile"];
+      String Admin = data[i]["Admin"] == '1' ? 'Mobile Admin' : 'User';
+      String Profile = data[i]["Profile"];
+      Emp emp = new Emp(
+        Name: name,
+        Department: dept,
+        Designation: desg,
+        Shift: shift,
+        DepartmentId: deptid,
+        DesignationId: desgid,
+        ShiftId: shiftid,
+        Status: status,
+        Email: Email,
+        Mobile: Mobile,
+        Admin: Admin,
+        Profile: Profile,
+        Id: id,
+        Password: password
+
+      );
+      print("ABCSBJSBJ132");
+        list.add(emp);
+        print("Add list");
+        print(list);
+
+    }
+    print("Last return");
   return list;
+
 }
 
 class Emp {
@@ -934,25 +992,35 @@ class Emp {
   String Department;
   String Designation;
   String Shift;
+  String DepartmentId;
+  String DesignationId;
+  String ShiftId;
   String Status;
   String Email;
   String Mobile;
   String Admin;
   String Profile;
   String Id;
+  String Password;
+
 
   // Emp({this.Name, this.Department, this.Designation, this.Status, this.Id});
   Emp(
-      {this.Name,
-      this.Department,
-      this.Designation,
-      this.Shift,
-      this.Status,
-      this.Id,
-      this.Email,
-      this.Mobile,
-      this.Admin,
-      this.Profile});
+        {this.Name,
+          this.Department,
+          this.Designation,
+          this.Shift,
+          this.DepartmentId,
+          this.DesignationId,
+          this.ShiftId,
+          this.Status,
+          this.Email,
+          this.Mobile,
+          this.Admin,
+          this.Profile,
+          this.Id,
+          this.Password
+        });
 }
 
 Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
@@ -975,9 +1043,36 @@ Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
       contact +
       '--' +
       password);*/
-//  print(globals.path+'registerEmp?uid=$empid&org_id=$orgdir,&f_name=$fname,&l_name=$lname,&password=$password,&username=$email,&contact=$contact,&country=$countryId,&countrycode=$countryCode,&admin=1');
+// print(globals.path +'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift');
   final response = await http.get(globals.path +
       'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift');
+  var res = json.decode(response.body);
+  print("--------> Adding employee" + res.toString());
+  return res['sts'];
+}
+Future<int> editEmployee(fname, lname, email, countryCode, countryId, contact,
+    password, dept, desg, shift , empid) async {
+  //print('RECIEVED STATUS: '+status.toString());
+
+  final prefs = await SharedPreferences.getInstance();
+  String uid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+//  print('addEmp function called, parameters :');
+/*  print(fname +
+      '--' +
+      lname +
+      '--' +
+      email +
+      '--' +
+      countryCode +
+      '--' +
+      countryId +
+      '--' +
+      contact +
+      '--' +
+      password);*/
+  print(globals.path+'updateEmp?uid=$uid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift&empid=$empid');
+  final response = await http.get(globals.path +'updateEmp?uid=$uid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift&empid=$empid');
   var res = json.decode(response.body);
   print("--------> Adding employee" + res.toString());
   return res['sts'];

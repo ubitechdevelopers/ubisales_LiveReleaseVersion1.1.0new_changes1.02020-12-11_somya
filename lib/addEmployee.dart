@@ -12,7 +12,8 @@ import 'Bottomnavigationbar.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:native_contact_picker/native_contact_picker.dart';
-
+import 'package:permission_handler/permission_handler.dart';
+import 'services/fetch_location.dart';
 class AddEmployee extends StatefulWidget {
   @override
   _AddEmployee createState() => _AddEmployee();
@@ -397,7 +398,7 @@ class _AddEmployee extends State<AddEmployee> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+            new Text("Add Employee", style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(
@@ -613,10 +614,10 @@ class _AddEmployee extends State<AddEmployee> {
         child: SafeArea(
             child: Column(children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 20.0,bottom: 20.0),
-                child: Center(
+                padding: const EdgeInsets.only(top: 8.0,bottom: 20.0),
+               /* child: Center(
                   child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
-                ),
+                ),*/
               ),
               new Expanded(
                 // padding: EdgeInsets.only(left:10.0,right:10.0),
@@ -639,6 +640,11 @@ class _AddEmployee extends State<AddEmployee> {
                               labelText: 'Name',
                               suffixIcon: IconButton(
                                 onPressed: ()async {
+
+                               //Loc permission = new Loc();
+                            //  var per =  await permission.getcontactpermission();
+                                //  print(per);
+
                                   Contact contact =
                                   await _contactPicker.selectContact();
                                   setState(() {
@@ -666,77 +672,7 @@ class _AddEmployee extends State<AddEmployee> {
                       ),
                     ),
                     SizedBox(height: 15.0),
-                    /*    Container(
-                      child: TextFormField(
-                    controller: _lastName,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                        labelText: 'Last Name',
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(0.0),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.grey,
-                          ), // icon is 48px widget.
-                        )),
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'Please Enter Last Name';
-                      }
-                    },
-                    onFieldSubmitted: (String value) {
-                      if (_formKey.currentState.validate()) {
-                        //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                      }
-                    },
-                      ),
-                    ),
-*/
 
-                    /* Container(
-                    //    width: MediaQuery.of(context).size.width*.45,
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: 'Country',
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(1.0),
-                          child: Icon(
-                            Icons.location_city,
-                            color: Colors.grey,
-                          ), // icon is 48px widget.
-                        ),
-                      ),
-
-                      child:  new DropdownButton<String>(
-                        isDense: true,
-                        style: new TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black
-                        ),
-                        value: country,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            country =newValue;
-                            var arr=newValue.split('#');
-                            _countryCode.text=arr[1];
-                            _countryId.text=arr[0];
-                          });
-                        },
-                        items: countrylist.map((Map map) {
-                          return new DropdownMenuItem<String>(
-                            value: map["id"].toString(),
-                            child:  new SizedBox(
-                                width: 200.0,
-                                child: new Text(
-                                  map["name"],
-                                )
-                            ),
-                          );
-                        }).toList(),
-
-                      ),
-                    ),
-                      ),*/
                     Container(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15.0,right: 15.0),
@@ -873,6 +809,15 @@ class _AddEmployee extends State<AddEmployee> {
   }
 
   ////////////////common dropdowns
+
+   permission() async
+  {
+
+   // Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.contacts]);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
+    return permission;
+  }
+
   Widget getDepartments_DD() {
     String dc = "0";
     return new FutureBuilder<List<Map>>(

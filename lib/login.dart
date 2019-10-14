@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
 
                     TextFormField(
                       decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Email or Phone',
                       ),
                       onFieldSubmitted: (String value) {
                         FocusScope.of(context).requestFocus(textSecondFocusNode);

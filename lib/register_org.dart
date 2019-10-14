@@ -354,43 +354,58 @@ class _MyHomePageState extends State<MyHomePage> {
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize:14.0, color: Colors.orange[900], ),
                   ),
+                  SizedBox(height: 15.0),
                   new TextFormField(
                     /*   validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter company name';
                       }
                     },*/
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.business),
-                      hintText: 'Company',
+                    decoration:  InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      prefixIcon:  Icon(Icons.business),
+//                      hintText: 'Company',
                       labelText: 'Company',
                     ),
                     controller: _name,
                     focusNode: __name,
                   ),
+                  SizedBox(height: 15.0),
                   new TextFormField(
                     /*  validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter contact person name';
                       }
                     },*/
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.person),
-                      hintText: 'Contact Person',
-                      labelText: 'Contact Person',
+                    decoration:  InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      prefixIcon:  Icon(Icons.person_outline),
+//                      hintText: 'Contact Person',
+                      labelText: 'Name',
                     ),
                     controller: _cname,
                     focusNode: __cname,
                   ),
+                  SizedBox(height: 15.0),
                   new TextFormField(
                     /*    validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter valid email';
                       }
                     },*/
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.email),
-                      hintText: 'Email',
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      prefixIcon: Icon(Icons.mail_outline),
+//                      hintText: 'Email',
                       labelText: 'Email',
                     ),
                     //obscureText: true,
@@ -398,47 +413,71 @@ class _MyHomePageState extends State<MyHomePage> {
                     focusNode: __email,
                     keyboardType: TextInputType.emailAddress,
                   ),
-
-                  new InputDecorator(
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.satellite),
-                      labelText: 'Country',
-                    ),
-                    //   isEmpty: _color == '',
-                    child:  new DropdownButton<String>(
-                      isDense: true,
-                      //    hint: new Text("Select"),
-                      value: _country,
-                      onChanged: (String newValue) {
-                        setState(() {
-                          print("******************");
-
-                          _country = newValue;
-                          print(newValue);
-                          print(_myJson[int.parse(newValue)]['countrycode']);
-                          print(_myJson[int.parse(newValue)]['name']);
-                          _contcode.text =
-                          _myJson[int.parse(newValue)]['countrycode'];
-                          _tempcontry = _myJson[int.parse(newValue)]['id'];
-
-
-                          //   _tempcontry = _myJson[int.parse(newValue)]['id'];
-                          /* _country = _myJson[int.parse(newValue)]['id'];
-
-
-                          _contcode.text = _myJson[int.parse(newValue)]['countrycode'];*/
-                        });
-                      },
-                      items: _myJson.map((Map map) {
-                        return new DropdownMenuItem<String>(
-                          value:  map['ind'].toString(),
-                          child: new Text(
-                            map["name"].toString(),
+                  SizedBox(height: 15.0),
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        child: new InputDecorator(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.grey.withOpacity(0.0),
+                                width: 1,
+                              ),
+                            ),
+                            prefixIcon: Icon(
+                                Icons.outlined_flag
+                            ),
+//                            suffixIcon: Icon(Icons.arrow_drop_down),
+//                            hintText: 'Country',
+//                            labelText: 'Country',
                           ),
-                        );
-                      }).toList(),
-                    ),
+                          //   isEmpty: _color == '',
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              child: new DropdownButton<String>(
+                                iconSize: 20,
+                                icon: Icon(Icons.arrow_drop_down),
+                                isDense: true,
+                                hint: new Text("Select Country"),
+                                value: _country,
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    print("******************");
+
+                                    _country = newValue;
+                                    print(newValue);
+                                    print(_myJson[int.parse(newValue)]['countrycode']);
+                                    print(_myJson[int.parse(newValue)]['name']);
+                                    _contcode.text =
+                                    _myJson[int.parse(newValue)]['countrycode'];
+                                    _tempcontry = _myJson[int.parse(newValue)]['id'];
+
+
+                                    //   _tempcontry = _myJson[int.parse(newValue)]['id'];
+                                    /* _country = _myJson[int.parse(newValue)]['id'];
+
+
+                                    _contcode.text = _myJson[int.parse(newValue)]['countrycode'];*/
+                                  });
+                                },
+                                items: _myJson.map((Map map) {
+                                  return new DropdownMenuItem<String>(
+                                    value:  map['ind'].toString(),
+                                    child: new Text(
+                                      map["name"].toString(),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 15.0),
 
                   /*  new TextFormField(
                     /*    validator: (value) {
@@ -461,50 +500,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   new Row(
                     children: <Widget>[
-
                       new Expanded(
-                        flex: 27,
-
-                        child:Padding(
-                          padding: const EdgeInsets.only(top: 12.0),
-
-                          child:  new TextFormField(
-
-                            enabled: false,
-                            textAlign: TextAlign.justify,
-                            style: new TextStyle(
-
-                              height: 1.25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            decoration: const InputDecoration(
-                              icon: const Icon(Icons.phone),
-                              fillColor: Colors.black12,
-                              // filled: true,
-                            ),
-                            controller: _contcode,
-                            focusNode: __contcode,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              WhitelistingTextInputFormatter.digitsOnly,
-                            ],
-                          ),
-
-                        ),
-                      ),
-
-                      new Expanded(
-                        flex: 73,
                         child:  new TextFormField(
                           /*    validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter Phone';
                       }
                     },*/
-
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                            ),
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(top: 0.0),
+                                child: Icon(Icons.phone)
+                            ),
                             // icon: const Icon(Icons.phone),
-                            hintText: 'Phone',
+//                            hintText: 'Phone',
                             labelText: 'Phone',
                           ),
                           controller: _phone,
@@ -521,45 +534,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     ],
                   ),
-
+                  SizedBox(height: 15.0),
 
                   new Row(
                     children: <Widget>[
                       new Expanded(
                         child:  new TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: 'Set Password',
-                              icon: const Padding(
-                                  padding: const EdgeInsets.only(top: 15.0),
-                                  child: const Icon(Icons.lock))),
-                          /*        validator: (val) => val.length < 6 ? 'Password too short.' : null,
-                          onSaved: (val) => _password = val,*/
+
                           obscureText: _obscureText,
                           controller: _pass,
                           focusNode: __pass,
-                        ),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                              ),
+                              labelText: 'Set Password',
+                              prefixIcon: Padding(
+                                  padding: EdgeInsets.only(top: 0.0),
+                                  child: Icon(Icons.lock)
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: _toggle,
+                                icon:  Icon(_obscureText ?Icons.visibility_off:Icons.visibility),
+                              )
+                          ),
+                          /*        validator: (val) => val.length < 6 ? 'Password too short.' : null,
+                          onSaved: (val) => _password = val,*/
 
-                      ),
-                      new FlatButton(
-                        padding: EdgeInsets.all(0.0),
-                        onPressed: _toggle,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(_obscureText ?Icons.visibility_off:Icons.visibility),
-                          ],
                         ),
                       ),
-                      // child: new Text(_obscureText ? "show": "Hide")),
-
                     ],
                   ),
 
 
-
+                  SizedBox(height: 15.0),
                   new TextFormField(
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.location_city),
-                      hintText: 'City(optional)',
+                    decoration:  InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      prefixIcon: Icon(
+                          Icons.location_city
+                      ),
+//                      hintText: 'City(optional)',
                       labelText: 'City',
                     ),
                     controller: _city,
@@ -575,6 +594,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: const Text('Please wait...',style: TextStyle(fontSize: 18.0),),
                           onPressed: (){}
                       ):new RaisedButton(
+                        elevation: 2.0,
+                        highlightElevation: 5.0,
+                        highlightColor: Colors.transparent,
+                        disabledElevation: 0.0,
+                        focusColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         color: buttoncolor,
                         textColor: Colors.white,
                         padding: EdgeInsets.all(20.0),

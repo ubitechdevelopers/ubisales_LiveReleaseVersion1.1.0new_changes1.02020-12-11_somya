@@ -35,6 +35,47 @@ class Loc{
     }
   }
 
+  getcontactpermission() async
+  {
+      try {
+      this.permission = PermissionGroup.contacts;
+
+      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
+
+      print(permission);
+      if (permission.toString()=='PermissionStatus.granted') {
+        return true;
+      } else {
+        return requestCPermission();
+      }
+    }catch(e){
+    print(e.toString());
+    return e.toString();
+    }
+  }
+  requestCPermission() async {
+    final permissions = await PermissionHandler().requestPermissions([this.permission]);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
+    //ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(this.permission);
+
+    //print("permission status is " + res.toString());
+    /*print('location permission....');
+    print(permissions);
+    print(permission);
+    print('location permission....');*/
+    if(permission.toString()=="PermissionStatus.granted"){
+      return true;
+    }else if(permission.toString()=="PermissionStatus.denied"){
+      bool isOpened = await PermissionHandler().openAppSettings();
+      //print("this is open settings "+ opensett.toString());
+      return true;
+    }else{
+      return requestCPermission();
+    }
+  }
+
+
+
   requestPermission() async {
     final permissions = await PermissionHandler().requestPermissions([this.permission]);
       PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);

@@ -107,8 +107,8 @@ class _Flexitime extends State<Flexitime> {
 
       case "locationAndInternet":
         locationThreadUpdatedLocation=true;
-      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-      // Map<String,String> responseMap=call.arguments;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -219,7 +219,7 @@ class _Flexitime extends State<Flexitime> {
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
-   /* flexitimein= await checkTimeinflexi();
+    /* flexitimein= await checkTimeinflexi();
     print(flexitimein);
     print("---");
     setState(() {
@@ -228,7 +228,7 @@ class _Flexitime extends State<Flexitime> {
     checkTimeinflexi().then((EmpList) {
       setState(() {
         flexiidsts = EmpList;
-          fid = flexiidsts[0].fid;
+        fid = flexiidsts[0].fid;
         flexitimein = flexiidsts[0].sts;
 
         print("id and sts");
@@ -305,6 +305,7 @@ class _Flexitime extends State<Flexitime> {
     return new WillPopScope(
         onWillPop: () async => true,
         child: new Scaffold(
+          backgroundColor: Colors.white,
           key: _scaffoldKey,
           appBar: AppBar(
             title: Row(
@@ -381,7 +382,7 @@ class _Flexitime extends State<Flexitime> {
                           fontSize: 15.0,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.right,
+                      textAlign: TextAlign.right,
                     ),
                     Text(
                       " If Location not being fetched automatically?",
@@ -395,11 +396,11 @@ class _Flexitime extends State<Flexitime> {
                 child: new Text(
                   "Fetch Location now",
                   style: new TextStyle(
-                      color: appcolor, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.none),
                 ),
                 onPressed: () {
-                //  sl.startStreaming(5);
-                //  startTimer();
+                  //  sl.startStreaming(5);
+                  //  startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -482,12 +483,12 @@ class _Flexitime extends State<Flexitime> {
                 child: new Text(
                   "Refresh location",
                   style: new TextStyle(
-                      color: appcolor, decoration: TextDecoration.underline),
+                      color: appcolor, decoration: TextDecoration.none),
                 ),
                 onPressed: () {
-                //  sl.startStreaming(5);
-                 // startTimer();
-                 // cameraChannel.invokeMethod("startAssistant");
+                  //  sl.startStreaming(5);
+                  // startTimer();
+                  // cameraChannel.invokeMethod("startAssistant");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Flexitime()),
@@ -527,8 +528,8 @@ class _Flexitime extends State<Flexitime> {
 
                       Container(
                         //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                          width: MediaQuery.of(context).size.height * .18,
-                          height: MediaQuery.of(context).size.height * .18,
+                          width: MediaQuery.of(context).size.height * .16,
+                          height: MediaQuery.of(context).size.height * .16,
                           decoration: new BoxDecoration(
                               shape: BoxShape.circle,
                               image: new DecorationImage(
@@ -558,11 +559,20 @@ class _Flexitime extends State<Flexitime> {
 
                   //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
                   // SizedBox(height: 5.0),
-                 // getClients_DD(),
+                  // getClients_DD(),
 
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
-                  Text("Hi " + fname, style: new TextStyle(fontSize: 16.0)),
-                 // SizedBox(height: 35.0),
+                  SizedBox(height: MediaQuery.of(context).size.height * .02),
+
+                  Text(fname.toUpperCase() +" "+lname.toUpperCase(), style: new TextStyle(
+
+                    color: Colors.black87,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 3.0,
+
+                  )
+                  ),
+                  // SizedBox(height: 35.0),
                   //SizedBox(height: MediaQuery.of(context).size.height * .01),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
                   (act1 == '') ? loader() : getMarkAttendanceWidgit(),
@@ -576,7 +586,7 @@ class _Flexitime extends State<Flexitime> {
   }
   Widget quickLinkList1() {
     return Container(
-      color: appcolor.withOpacity(0.8),
+      color: Colors.white.withOpacity(0.8),
 
       width: MediaQuery.of(context).size.width * 0.95,
       // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
@@ -603,50 +613,73 @@ class _Flexitime extends State<Flexitime> {
           child:flexitimein=='2'?getVisitoutButton():getVisitInButton(),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
-        Container(
-            color: appcolor.withOpacity(0.1),
-            height: MediaQuery.of(context).size.height * .15,
-            child:
-            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              FlatButton(
-                child: new Text('You are at: ' + prefix0.globalstreamlocationaddr,
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 14.0)),
-                onPressed: () {
-                  launchMap(prefix0.assign_lat.toString(), prefix0.assign_long.toString());
+        Padding(
+          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+            ),
+            elevation: 0.0,
+            borderOnForeground: true ,
+            clipBehavior: Clip.antiAliasWithSaveLayer ,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height * .15,
+                  child:
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    FlatButton(
+                      child: new Text(prefix0.globalstreamlocationaddr,
+                          textAlign: TextAlign.center,
+                          style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
+                      onPressed: () {
+                        launchMap(prefix0.assign_lat.toString(), prefix0.assign_long.toString());
 
-                },
-              ),
-              new Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text('Location not correct? ',style: TextStyle(color: appcolor),),
-                    SizedBox(width: 5.0,),
-                    new InkWell(
-                      child: new Text(
-                        "Refresh location",
-                        style: new TextStyle(
-                            color: appcolor,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-
-
-                     //  startTimer();
-                     //  sl.startStreaming(5);
-                      //  cameraChannel.invokeMethod("startAssistant");
-                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Flexitime()),
-                        );
                       },
-                    )
-                  ],
+                    ),
+                    new Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
 
-                ),
-              ),
-            ]) ),
+                          SizedBox(width: 5.0,),
+                          new InkWell(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                ),
+                                new Text(
+                              "Refresh location",
+                              style: new TextStyle(
+                                  color: appcolor,
+                                  decoration: TextDecoration.none),
+                            ),
+                           ]),
+                            onTap: () {
+
+
+                              //  startTimer();
+                              //  sl.startStreaming(5);
+                              //  cameraChannel.invokeMethod("startAssistant");
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Flexitime()),
+                              );
+                            },
+                          )
+                        ],
+
+                      ),
+                    ),
+                  ]) ),
+            ),
+          ),
+        ),
 
 
       ]);
@@ -669,35 +702,35 @@ class _Flexitime extends State<Flexitime> {
 
   Widget getBulkAttnWid() {
     List <Widget> widList = List<Widget>();
-     widList.add(Container(
-        padding: EdgeInsets.only(top: 10.0),
-        constraints: BoxConstraints(
-          maxHeight: 60.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-            onTap: () {
-             // startTimer();
+    widList.add(Container(
+      padding: EdgeInsets.only(top: 5.0),
+      constraints: BoxConstraints(
+        maxHeight: 50.0,
+        minHeight: 20.0,
+      ),
+      child: new GestureDetector(
+          onTap: () {
+            // startTimer();
             //  sl.startStreaming(5);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FlexiList()),
-              );
-            },
-            child: Column(
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  size: 30.0,
-                  color: Colors.white,
-                ),
-                Text('Log',
-                    textAlign: TextAlign.center,
-                    style:
-                    new TextStyle(fontSize: 15.0, color: Colors.white)),
-              ],
-            )),
-      ));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FlexiList()),
+            );
+          },
+          child: Column(
+            children: [
+              Icon(
+                const IconData(0xe81c, fontFamily: "CustomIcon"),
+                size: 30.0,
+                color: Colors.black45,
+              ),
+              Text('Log',
+                  textAlign: TextAlign.center,
+                  style:
+                  new TextStyle(fontSize: 12.0, color: Colors.black45)),
+            ],
+          )),
+    ));
 
 
     /* widList.add();
@@ -706,16 +739,26 @@ class _Flexitime extends State<Flexitime> {
   }
   getVisitInButton() {
     return RaisedButton(
+      clipBehavior: Clip.antiAlias,
+      elevation: 0.0,
+      highlightElevation: 0.0,
+      highlightColor: Colors.transparent,
+      disabledElevation: 50.0,
+      focusColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+      ),
       child: Text('FLEXI TIME IN',
-          style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+          style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () {
         prefix0.globalCameraOpenedStatus=true;
-       // if(_clientname.text=='') {
-       //   showInSnackBar('Please insert client name first');
+        // if(_clientname.text=='') {
+        //   showInSnackBar('Please insert client name first');
         //  return false;
-       // }else
-          saveVisitImage();
+        // }else
+        saveVisitImage();
       },
     );
   }
@@ -723,7 +766,16 @@ class _Flexitime extends State<Flexitime> {
 
   getVisitoutButton() {
     return  RaisedButton(
-
+        clipBehavior: Clip.antiAlias,
+        elevation: 0.0,
+        highlightElevation: 0.0,
+        highlightColor: Colors.transparent,
+        disabledElevation: 50.0,
+        focusColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+        ),
         color: buttoncolor,
         child: const Text('FLEXI TIME OUT',style: TextStyle(color: Colors.white,fontSize: 18),),
 
@@ -736,56 +788,56 @@ class _Flexitime extends State<Flexitime> {
           });
           print('****************************>>');
 
-         // print(visit_id.toString());
+          // print(visit_id.toString());
           print('00000000000');
-         // print(_comments.text);
+          // print(_comments.text);
           print('111111111111111');
           //print(lat+' '+long);
           print('22222222222222');
           print('<<****************************');
 
-         // Navigator.of(context, rootNavigator: true).pop();
-         saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus)
-             .then((res){
+          // Navigator.of(context, rootNavigator: true).pop();
+          saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus)
+              .then((res){
 
-           print(res);
-           print("444");
-           checkTimeinflexi().then((EmpList) {
-             setState(() {
-               flexiidsts = EmpList;
-               fid = flexiidsts[0].fid;
-               flexitimein = flexiidsts[0].sts;
+            print(res);
+            print("444");
+            checkTimeinflexi().then((EmpList) {
+              setState(() {
+                flexiidsts = EmpList;
+                fid = flexiidsts[0].fid;
+                flexitimein = flexiidsts[0].sts;
 
-              // print("id and sts1");
-            //  print(fid);
-             //  print(flexitimein);
+                // print("id and sts1");
+                //  print(fid);
+                //  print(flexitimein);
 
-             });
-           });
-           if(res) {
-             showDialog(context: context, child:
-             new AlertDialog(
-               content: new Text("Attendance marked successfully!"),
-             )
-             );
-           }
-           else
-             {
-               showDialog(context: context, child:
-               new AlertDialog(
-                 title: new Text("Warning!"),
-                 content: new Text("Problem while punching Attendance, try again."),
-               )
-               );
-             }
+              });
+            });
+            if(res) {
+              showDialog(context: context, child:
+              new AlertDialog(
+                content: new Text("Attendance marked successfully!"),
+              )
+              );
+            }
+            else
+            {
+              showDialog(context: context, child:
+              new AlertDialog(
+                title: new Text("Warning!"),
+                content: new Text("Problem while punching Attendance, try again."),
+              )
+              );
+            }
 
-           Navigator.push(
-             context,
-             MaterialPageRoute(builder: (context) => FlexiList()),
-           );
-           setState(() {
-             act1 = act;
-           });
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FlexiList()),
+            );
+            setState(() {
+              act1 = act;
+            });
           }).catchError((ett){
             showInSnackBar('Unable to punch attendance');
             setState(() {
@@ -836,8 +888,8 @@ print('visit out called for visit id:'+visit_id);
 
   saveVisitImage() async {
     print('------------*11');
-
-   // client = _clientname.text;
+    sl.startStreaming(5);
+    // client = _clientname.text;
     client ="";
     MarkVisit mk = new MarkVisit(
         empid,client, prefix0.globalstreamlocationaddr, orgdir, prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus);
@@ -900,11 +952,6 @@ print('visit out called for visit id:'+visit_id);
       )
       );
     }
-
-
-
-
-
 
     /*SaveImage saveImage = new SaveImage();
     bool issave = false;

@@ -1028,8 +1028,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                     child: new Stack(children: <Widget>[
                       Container(
                           //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                          width: MediaQuery.of(context).size.height * .18,
-                          height: MediaQuery.of(context).size.height * .18,
+                          width: MediaQuery.of(context).size.height * .16,
+                          height: MediaQuery.of(context).size.height * .16,
                           decoration: new BoxDecoration(
                               shape: BoxShape.circle,
                               image: new DecorationImage(
@@ -1058,10 +1058,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   ),*/
                     ]),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
-                  //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
-                  // SizedBox(height: 5.0),
-                  Text("Hi " + fname, style: new TextStyle(fontSize: 16.0)),
+                  SizedBox(height: MediaQuery.of(context).size.height * .02),
+
+                  Text(fname.toUpperCase() +" "+lname.toUpperCase(), style: new TextStyle(
+
+                    color: Colors.black87,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 3.0,
+
+                  )
+                  ),
+
 
                   SizedBox(height: MediaQuery.of(context).size.height * .01),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
@@ -1191,7 +1199,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             child: Column(
               children: [
                 Icon(
-                  const IconData(0xe819, fontFamily: "CustomIcon"),
+                  const IconData(0xe821, fontFamily: "CustomIcon"),
                   size: 30.0,
                   color: iconcolor,
                 ),
@@ -1367,33 +1375,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   getAlreadyMarkedWidgit() {
     return Column(children: <Widget>[
-      SizedBox(
-        height: 27.0,
-      ),
-      Container(
-        decoration: new ShapeDecoration(
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(13.0)),
-            color: appcolor),
-        child: Text(
-          '\nToday\'s attendance has been marked. Thank You!',
-          textAlign: TextAlign.center,
-          style: new TextStyle(color: Colors.white, fontSize: 15.0),
-        ),
-        width: 220.0,
-        height: 70.0,
-      ),
-      /*SizedBox(height: MediaQuery.of(context).size.height*.25),
-          Container(
-            height: MediaQuery.of(context).size.height*.10,
-            color: Colors.teal.withOpacity(0.8),
-            child: Column(
-                children:[
-                  SizedBox(height: 10.0,),
-                  getQuickLinksWidget()
-                ]
+      SizedBox(height: MediaQuery.of(context).size.height * .05),
+      Padding(
+        padding: const EdgeInsets.only(left:8.0,right: 8.0),
+        child: Card(
+          elevation: 0.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide( color: Colors.amber.withOpacity(0.5), width: 2,),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+
+            child: Container(
+              child: Text(
+                ' Attendance has been marked. Thank You!',
+                textAlign: TextAlign.center,
+                style: new TextStyle(color: Colors.amber,
+                    fontSize: 18.0,
+                    letterSpacing: 2.0,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+
+
             ),
-          )*/
+          ),
+        ),
+      ),
+
     ]);
   }
   getwidget(String addrloc) {
@@ -1537,8 +1547,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   getTimeInOutButton() {
     if (act1 == 'TimeIn') {
       return RaisedButton(
+        elevation: 0.0,
+        highlightElevation: 0.0,
+        highlightColor: Colors.transparent,
+        disabledElevation: 0.0,
+        focusColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.green.withOpacity(0.5), width: 2,),
+        ),
+        clipBehavior: Clip.antiAlias,
         child: Text('TIME IN',
-            style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+            style: new TextStyle(fontSize: 18.0, color: Colors.white,letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () {
           globals.globalCameraOpenedStatus=true;
@@ -1550,8 +1570,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       );
     } else if (act1 == 'TimeOut') {
       return RaisedButton(
+        clipBehavior: Clip.antiAlias,
+        elevation: 0.0,
+        highlightElevation: 0.0,
+        highlightColor: Colors.transparent,
+        disabledElevation: 50.0,
+        focusColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+        ),
         child: Text('TIME OUT',
-            style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+            style: new TextStyle(fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () {
           globals.globalCameraOpenedStatus=true;

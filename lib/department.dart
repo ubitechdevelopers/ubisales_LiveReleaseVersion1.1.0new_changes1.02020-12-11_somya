@@ -193,24 +193,42 @@ class _Department extends State<Department> {
     await showDialog<String>(
       context: context,
       child: new AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.all(15.0),
         content: Container(
-          height: MediaQuery.of(context).size.height*0.20,
+          height: MediaQuery.of(context).size.height*0.27,
+          width: MediaQuery.of(context).size.width*0.32,
           child: Column(
             children: <Widget>[
+              SizedBox(height: 5.0),
+              Center(
+                child:Text("Add Department",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+              ),
+              SizedBox(height: 15.0),
               new Expanded(
                 child: new TextField(
                   controller: dept,
-                //  focusNode: f_dept,
+                  //  focusNode: f_dept,
                   autofocus: false,
                   //   controller: client_name,
                   decoration: new InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
                       labelText: 'Department ', hintText: 'Department Name'),
                 ),
               ),
+              SizedBox(height: 5.0),
               new Expanded(
                 child:  new InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                    ),
                     labelText: 'Status',
                   ),
                   isEmpty: _sts == '',
@@ -240,58 +258,78 @@ class _Department extends State<Department> {
           ),
         ),
         actions: <Widget>[
-          new FlatButton(
-              shape: Border.all(color: Colors.black54),
-              child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
-              onPressed: () {
-                      dept.text='';
-                      _sts='Active';
-                     // Navigator.pop(context);
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-              }),
-          new RaisedButton(
-              color: buttoncolor,
-              child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
-              onPressed: ()
-              {
-                if( dept.text.trim()==''){
-              //    FocusScope.of(context).requestFocus(f_dept);
-                  showInSnackBar('Input Department Name');
-                }
-                else {
-                  if(_isButtonDisabled)
-                    return null;
-                  setState(() {
-                    _isButtonDisabled=true;
-                  });
-                  addDept(dept.text, _sts).
-                  then((res) {
-                    if(int.parse(res)==0) {
-                      showInSnackBar('Unable to add department');
-                    }
-                    else if(int.parse(res)==-1)
-                      showInSnackBar('Department already exists');
-                    else {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                      showInSnackBar('Department added successfully');
-                      getDeptWidget();
-                      dept.text = '';
-                      _sts = 'Active';
-                    }
-                    setState(() {
-                      _isButtonDisabled=false;
-                    });
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new FlatButton(
+                highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                ),
+                child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
+                onPressed: () {
+                  dept.text='';
+                  _sts='Active';
+                  // Navigator.pop(context);
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: new RaisedButton(
+                elevation: 2.0,
+                highlightElevation: 5.0,
+                highlightColor: Colors.transparent,
+                disabledElevation: 0.0,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
 
+                color: buttoncolor,
+                child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
+                onPressed: ()
+                {
+                  if( dept.text.trim()==''){
+                    //    FocusScope.of(context).requestFocus(f_dept);
+                    showInSnackBar('Input Department Name');
                   }
-                  ).catchError((err){
-                    showInSnackBar('unable to call service');
+                  else {
+                    if(_isButtonDisabled)
+                      return null;
                     setState(() {
-                      _isButtonDisabled=false;
+                      _isButtonDisabled=true;
                     });
-                  });
-                }
+                    addDept(dept.text, _sts).
+                    then((res) {
+                      if(int.parse(res)==0) {
+                        showInSnackBar('Unable to add department');
+                      }
+                      else if(int.parse(res)==-1)
+                        showInSnackBar('Department already exists');
+                      else {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Department added successfully');
+                        getDeptWidget();
+                        dept.text = '';
+                        _sts = 'Active';
+                      }
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
 
-              }),
+                    }
+                    ).catchError((err){
+                      showInSnackBar('unable to call service');
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
+                    });
+                  }
+
+                }),
+          ),
         ],
       ),
     );
@@ -306,24 +344,38 @@ class _Department extends State<Department> {
     await showDialog<String>(
       context: context,
       child: new AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.all(15.0),
         content: Container(
-          height: MediaQuery.of(context).size.height*0.20,
+          height: MediaQuery.of(context).size.height*0.23,
+          width: MediaQuery.of(context).size.width*0.32,
           child: Column(
             children: <Widget>[
+              SizedBox(height: 15.0),
               new Expanded(
                 child: new TextField(
                   controller: new_dept,
-              //    focusNode: f_dept,
+                  //    focusNode: f_dept,
                   autofocus: false,
                   //   controller: client_name,
                   decoration: new InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
                       labelText: dept, hintText: dept),
                 ),
               ),
+              SizedBox(height: 5.0),
               new Expanded(
                 child:  new InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                    ),
                     labelText: 'Status',
                   ),
                   isEmpty: _sts1 == '',
@@ -353,49 +405,68 @@ class _Department extends State<Department> {
           ),
         ),
         actions: <Widget>[
-          new FlatButton(
-		  shape: Border.all(color: Colors.black54),
-              child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop('dialog');
-              }),
-          new RaisedButton(
-              color: buttoncolor,
-              child: const Text('UPDATE',style: TextStyle(color: Colors.white),),
-              onPressed: ()
-              {
-                if( new_dept.text.trim()==''){
-                //  FocusScope.of(context).requestFocus(f_dept);
-                  showInSnackBar('Input Department Name');
-                }
-                else {
-                  if(_isButtonDisabled)
-                    return null;
-                  setState(() {
-                    _isButtonDisabled=true;
-                  });
-                  updateDept(new_dept.text,_sts1,did).
-                  then((res) {
-                    if(res=='0')
-                      showInSnackBar('Unable to update department');
-                    else if(res=='-1')
-                      showInSnackBar('Department name already exist');
-                    else {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                      showInSnackBar('Department updated successfully');
-                      getDeptWidget();
-                      new_dept.text = '';
-                      _sts1 = 'Active';
-                    }
-
-                    setState(() {
-                      _isButtonDisabled=false;
-                    });
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new FlatButton(
+                highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                ),
+                child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new RaisedButton(
+                elevation: 2.0,
+                highlightElevation: 5.0,
+                highlightColor: Colors.transparent,
+                disabledElevation: 0.0,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                color: buttoncolor,
+                child: const Text('UPDATE',style: TextStyle(color: Colors.white),),
+                onPressed: ()
+                {
+                  if( new_dept.text.trim()==''){
+                    //  FocusScope.of(context).requestFocus(f_dept);
+                    showInSnackBar('Input Department Name');
                   }
-                  );
-                }
+                  else {
+                    if(_isButtonDisabled)
+                      return null;
+                    setState(() {
+                      _isButtonDisabled=true;
+                    });
+                    updateDept(new_dept.text,_sts1,did).
+                    then((res) {
+                      if(res=='0')
+                        showInSnackBar('Unable to update department');
+                      else if(res=='-1')
+                        showInSnackBar('Department name already exist');
+                      else {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Department updated successfully');
+                        getDeptWidget();
+                        new_dept.text = '';
+                        _sts1 = 'Active';
+                      }
 
-              }),
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
+                    }
+                    );
+                  }
+
+                }),
+          ),
         ],
       ),
     );

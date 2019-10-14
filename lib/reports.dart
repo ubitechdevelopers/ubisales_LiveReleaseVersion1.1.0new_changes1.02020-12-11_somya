@@ -75,7 +75,7 @@ class _Reports extends State<Reports> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            new Text('Reports', style: new TextStyle(fontSize: 20.0)),
             /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
           ],
@@ -92,9 +92,9 @@ class _Reports extends State<Reports> {
         padding: EdgeInsets.only(left: 2.0,right: 2.0),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 8.0),
+            /*SizedBox(height: 8.0),
             Text('Reports',
-              style: new TextStyle(fontSize: 22.0, color: appcolor,),),
+              style: new TextStyle(fontSize: 22.0, color: appcolor,),),*/
             SizedBox(height: 5.0),
             new Expanded(
               child: getReportsWidget(),

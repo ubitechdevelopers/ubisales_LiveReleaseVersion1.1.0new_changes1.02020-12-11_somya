@@ -188,23 +188,41 @@ class _Designation extends State<Designation> {
     await showDialog<String>(
       context: context,
       child: new AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.all(15.0),
         content: Container(
-          height: MediaQuery.of(context).size.height*0.20,
+          height: MediaQuery.of(context).size.height*0.27,
+          width: MediaQuery.of(context).size.width*0.32,
           child: Column(
             children: <Widget>[
+              SizedBox(height: 5.0),
+              Center(
+                child:Text("Add Designation",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+              ),
+              SizedBox(height: 15.0),
               new Expanded(
                 child: new TextField(
                   controller: desg,
                   autofocus: false,
                   //   controller: client_name,
                   decoration: new InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
                       labelText: 'Designation ', hintText: 'Designation Name'),
                 ),
               ),
+              SizedBox(height: 5.0),
               new Expanded(
                 child:  new InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                    ),
                     labelText: 'Status',
                   ),
                   isEmpty: _sts == '',
@@ -233,66 +251,84 @@ class _Designation extends State<Designation> {
           ),
         ),
         actions: <Widget>[
-          new FlatButton(
-              shape: Border.all(color: Colors.black54),
-              child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
-              onPressed: () {
-                desg.text='';
-                _sts='Active';
-                Navigator.of(context, rootNavigator: true).pop('dialog');
-              }),
-          new RaisedButton(
-              color: buttoncolor,
-              child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
-              onPressed: ()
-              {
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new FlatButton(
+                highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                ),
+                child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
+                onPressed: () {
+                  desg.text='';
+                  _sts='Active';
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new RaisedButton(
+                elevation: 2.0,
+                highlightElevation: 5.0,
+                highlightColor: Colors.transparent,
+                disabledElevation: 0.0,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                color: buttoncolor,
+                child: (_isButtonDisabled)?Text('WAIT...'):Text('SAVE',style: TextStyle(color: Colors.white),),
+                onPressed: ()
+                {
 
-                if(desg.text.trim()==''){
+                  if(desg.text.trim()==''){
                     showInSnackBar('Input Designation');
                   }
-                else {
-                  if(_isButtonDisabled)
-                    return null;
-                  setState(() {
-                    _isButtonDisabled=true;
-                  });
-
-                  addDesg(desg.text, _sts).
-                  then((res) {
-                    if(int.parse(res)==0) {
-
-                      showInSnackBar('Unable to add designation');
-                    }
-                    else if(int.parse(res)==-1) {
-
-                      showInSnackBar('Designation already exists');
-                    }
-                    else {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                      showInSnackBar('Designation added successfully');
-                      getDesgWidget();
-                      desg.text = '';
-                      _sts = 'Active';
-                    }
-
+                  else {
+                    if(_isButtonDisabled)
+                      return null;
                     setState(() {
-                      _isButtonDisabled=false;
+                      _isButtonDisabled=true;
+                    });
+
+                    addDesg(desg.text, _sts).
+                    then((res) {
+                      if(int.parse(res)==0) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Unable to add designation');
+                      }
+                      else if(int.parse(res)==-1) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Designation already exists');
+                      }
+                      else {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Designation added successfully');
+                        getDesgWidget();
+                        desg.text = '';
+                        _sts = 'Active';
+                      }
+
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
+                    }
+                    ).catchError((err){
+                      showInSnackBar('unable to call service');
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
                     });
                   }
-                  ).catchError((err){
-                    showInSnackBar('unable to call service');
-                    setState(() {
-                      _isButtonDisabled=false;
-                    });
-                  });
-                }
 
-              }),
+                }),
+          ),
         ],
       ),
     );
   }
-////////////////drop down- end
 
 
 /******************* Editing Designation ************************************/
@@ -305,11 +341,16 @@ class _Designation extends State<Designation> {
     await showDialog<String>(
       context: context,
       child: new AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.all(15.0),
         content: Container(
-          height: MediaQuery.of(context).size.height*0.20,
+          height: MediaQuery.of(context).size.height*0.23,
+          width: MediaQuery.of(context).size.width*0.32,
           child: Column(
             children: <Widget>[
+              SizedBox(height: 15.0),
               new Expanded(
                 child: new TextField(
                   controller: new_dept,
@@ -317,12 +358,21 @@ class _Designation extends State<Designation> {
                   autofocus: false,
                   //   controller: client_name,
                   decoration: new InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
                       labelText: dept, hintText: dept),
                 ),
               ),
+              SizedBox(height: 5.0),
               new Expanded(
                 child:  new InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                    ),
                     labelText: 'Status',
                   ),
                   isEmpty: _sts1 == '',
@@ -352,49 +402,68 @@ class _Designation extends State<Designation> {
           ),
         ),
         actions: <Widget>[
-          new FlatButton(
-              shape: Border.all(color: Colors.black54),
-              child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop('dialog');
-              }),
-          new RaisedButton(
-              color: buttoncolor,
-              child: const Text('UPDATE', style: TextStyle(color: Colors.white)),
-              onPressed: ()
-              {
-                if( new_dept.text.trim()==''){
-                  //  FocusScope.of(context).requestFocus(f_dept);
-                  showInSnackBar('Input Designation Name');
-                }
-                else {
-                  if(_isButtonDisabled)
-                    return null;
-                  setState(() {
-                    _isButtonDisabled=true;
-                  });
-                  updateDesg(new_dept.text,_sts1,did).
-                  then((res) {
-                    if(res=='0')
-                      showInSnackBar('Unable to update designation');
-                    else if(res=='-1')
-                      showInSnackBar('Designation name already exist');
-                    else {
-                      Navigator.of(context, rootNavigator: true).pop('dialog');
-                      showInSnackBar('Designation updated successfully');
-                      getDesgWidget();
-                      new_dept.text = '';
-                      _sts1 = 'Active';
-                    }
-
-                    setState(() {
-                      _isButtonDisabled=false;
-                    });
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new FlatButton(
+                highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                ),
+                child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right:8.0),
+            child: new RaisedButton(
+                elevation: 2.0,
+                highlightElevation: 5.0,
+                highlightColor: Colors.transparent,
+                disabledElevation: 0.0,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                color: buttoncolor,
+                child: const Text('UPDATE', style: TextStyle(color: Colors.white)),
+                onPressed: ()
+                {
+                  if( new_dept.text.trim()==''){
+                    //  FocusScope.of(context).requestFocus(f_dept);
+                    showInSnackBar('Input Designation Name');
                   }
-                  );
-                }
+                  else {
+                    if(_isButtonDisabled)
+                      return null;
+                    setState(() {
+                      _isButtonDisabled=true;
+                    });
+                    updateDesg(new_dept.text,_sts1,did).
+                    then((res) {
+                      if(res=='0')
+                        showInSnackBar('Unable to update designation');
+                      else if(res=='-1')
+                        showInSnackBar('Designation name already exist');
+                      else {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
+                        showInSnackBar('Designation updated successfully');
+                        getDesgWidget();
+                        new_dept.text = '';
+                        _sts1 = 'Active';
+                      }
 
-              }),
+                      setState(() {
+                        _isButtonDisabled=false;
+                      });
+                    }
+                    );
+                  }
+
+                }),
+          ),
         ],
       ),
     );

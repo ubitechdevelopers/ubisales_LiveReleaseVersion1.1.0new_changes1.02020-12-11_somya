@@ -133,25 +133,89 @@ class _TimeOffPageState extends State<TimeOffPage> {
 
   getmainhomewidget(){
     return new WillPopScope(
-        onWillPop: ()=> sendToHome(),
-    child: Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            new Text(org_name, style: new TextStyle(fontSize: 20.0)),
-          ],
+      onWillPop: ()=> sendToHome(),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+            ],
+          ),
+          leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+            Navigator.of(context).pop();
+          },),
+          backgroundColor: appcolor,
         ),
-        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.of(context).pop();
-        },),
-        backgroundColor: appcolor,
+
+        bottomNavigationBar: Container(
+
+          height: 70.0,
+          decoration: new BoxDecoration(
+              color: Colors.white,
+              boxShadow: [new BoxShadow(
+                color: Colors.grey,
+                blurRadius: 3.0,
+              ),]
+          ),
+          child: Row(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.only(left: 50.0),
+                child: ButtonBar(
+
+                  children: <Widget>[
+                    FlatButton(
+                      highlightColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                      ),
+                      child: Text('CANCEL'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TimeoffSummary()),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 10.0),
+                    RaisedButton(
+                      elevation: 2.0,
+                      highlightElevation: 5.0,
+                      highlightColor: Colors.transparent,
+                      disabledElevation: 0.0,
+                      focusColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      /* child: _isButtonDisabled?Row(children: <Widget>[Text('Processing ',style: TextStyle(color: Colors.white),),SizedBox(width: 10.0,), SizedBox(child:CircularProgressIndicator(),height: 20.0,width: 20.0,),],):Text('SAVE',style: TextStyle(color: Colors.white),),*/
+                      child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('SAVE',style: TextStyle(color: Colors.white),),
+                      color: buttoncolor,
+                      onPressed: () {
+
+                        if (_formKey.currentState.validate()) {
+                          if(_isButtonDisabled)
+                            return null;
+                          setState(() {
+                            _isButtonDisabled=true;
+                          });
+                          requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+            ],
+          ),
+        ),
+        endDrawer: new AppDrawer(),
+        body: (act1=='') ? Center(child : loader()) : checkalreadylogin(),
       ),
-      bottomNavigationBar: Bottomnavigationbar(),
-      endDrawer: new AppDrawer(),
-      body: (act1=='') ? Center(child : loader()) : checkalreadylogin(),
-    ),
     );
   }
   checkalreadylogin(){
@@ -200,201 +264,160 @@ class _TimeOffPageState extends State<TimeOffPage> {
       child: Form(
         key: _formKey,
         child: SafeArea(
-          child: Column( children: <Widget>[
-            SizedBox(height: 20.0),
-            Text('Mark Time Off',
-                style: new TextStyle(fontSize: 22.0, color: appcolor)),
-            new Divider(color: Colors.black54,height: 1.5,),
-          new Expanded(child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 24.0),
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+            child: Column( children: <Widget>[
+              SizedBox(height: 20.0),
+              Text('Mark Time Off',
+                  style: new TextStyle(fontSize: 22.0, color: appcolor)),
+
+              new Expanded(child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
                 children: <Widget>[
-                  SizedBox(height: 20.0),
-                  DateTimeField(
-                    //firstDate: new DateTime.now(),
-                    //initialDate: new DateTime.now(),
-                    //dateOnly: true,
-                    format: dateFormat,
-                    controller: _dateController,
-                    onShowPicker: (context, currentValue) {
-                      return showDatePicker(
-                          context: context,
-                          firstDate: DateTime.now().subtract(Duration(days: 1)),
-                          initialDate: currentValue ?? DateTime.now(),
-                          lastDate: DateTime(2100));
-
-                    },
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Icon(
-                          Icons.date_range,
-                          color: Colors.grey,
-                        ), // icon is 48px widget.
-                      ), // icon is 48px widget.
-
-                      labelText: 'Date',
-                    ),
-                    validator: (date) {
-                      if (date==null){
-                        return 'Please enter Timeoff date';
-                      }
-                    },
-                  ), //Enter date
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Expanded(
-                        child:DateTimeField(
-                          //initialTime: new TimeOfDay.now(),
-                          format: timeFormat,
-                          controller: _starttimeController,
-                            onShowPicker: (context, currentValue) async {
-                              final time = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                              );
-                              return DateTimeField.convert(time);
-                            },
-                            readOnly: true,
-                          decoration: InputDecoration(
-                            labelText: 'From',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.all(0.0),
-                              child: Icon(
-                                Icons.alarm,
-                                color: Colors.grey,
-                              ), // icon is 48px widget.
-                            ),
-                          ),
-                          validator: (time) {
-                            if (time==null) {
-                              return 'Please enter start time';
-                            }
-                          },
-                            onChanged: (dt) {
-                              setState(() {
-                                starttime = TimeOfDay.fromDateTime(dt);
-                              });
-                              print("----->Changed Time------> "+starttime.toString());
-                            }
-                        ),
-                      ),
-                      SizedBox(width: 10.0),
-                      Expanded(
-                        child:DateTimeField(
-                          //initialTime: new TimeOfDay.now(),
-                          format: timeFormat,
-                          controller: _endtimeController,
-                          onShowPicker: (context, currentValue) async {
-                            final time = await showTimePicker(
+                      SizedBox(height: 20.0),
+                      DateTimeField(
+                        //firstDate: new DateTime.now(),
+                        //initialDate: new DateTime.now(),
+                        //dateOnly: true,
+                        format: dateFormat,
+                        controller: _dateController,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
                               context: context,
-                              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                            );
-                            return DateTimeField.convert(time);
-                          },
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            labelText: 'To',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.all(0.0),
-                              child: Icon(
-                                Icons.alarm,
-                                color: Colors.grey,
-                              ), // icon is 48px widget.
-                            ),
-                          ),
-                          onChanged: (dt) {
-                            setState(() {
-                              endtime = TimeOfDay.fromDateTime(dt);
-                            });
+                              firstDate: DateTime.now().subtract(Duration(days: 1)),
+                              initialDate: currentValue ?? DateTime.now(),
+                              lastDate: DateTime(2100));
 
-                            print("------> End Time"+_endtimeController.text);
-                          },
-                          validator: (time) {
-                            if (time==null) {
-                              return 'Please enter end time';
-                            }
-
-                            var arr=_starttimeController.text.split(':');
-                            var arr1=_endtimeController.text.split(':');
-                            final startTime = DateTime(2018, 6, 23,int.parse(arr[0]),int.parse(arr[1]),00,00);
-                            final endTime = DateTime(2018, 6, 23,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
-                            if(endTime.isBefore(startTime)){
-                              return '\"To Time\" can\'t be smaller.';
-                            }
-
-
-
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextFormField(
-                    controller: _reasonController,
-                    decoration: InputDecoration(
-                        labelText: 'Reason',
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(0.0),
-                          child: Icon(
-                            Icons.event_note,
-                            color: Colors.grey,
-                          ), // icon is 48px widget.
-                        )
-                    ),
-                    validator: (value) {
-                      if (value.trim().isEmpty) {
-                        return 'Please enter reason';
-                      }
-                    },
-                    onFieldSubmitted: (String value) {
-                      if (_formKey.currentState.validate()) {
-                        requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                      }
-                    },
-                    maxLines: 3,
-                  ),
-                  ButtonBar(
-                    children: <Widget>[
-                      FlatButton(
-                        shape: Border.all(color: Colors.black54),
-                        child: Text('CANCEL'),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => TimeoffSummary()),
-                          );
                         },
-                      ),
-                      RaisedButton(
-                       /* child: _isButtonDisabled?Row(children: <Widget>[Text('Processing ',style: TextStyle(color: Colors.white),),SizedBox(width: 10.0,), SizedBox(child:CircularProgressIndicator(),height: 20.0,width: 20.0,),],):Text('SAVE',style: TextStyle(color: Colors.white),),*/
-                        child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('SAVE',style: TextStyle(color: Colors.white),),
-                        color: buttoncolor,
-                        onPressed: () {
-
-                          if (_formKey.currentState.validate()) {
-                            if(_isButtonDisabled)
-                              return null;
-                            setState(() {
-                              _isButtonDisabled=true;
-                            });
-                            requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                          ),
+                          labelText: 'Date',
+                        ),
+                        validator: (date) {
+                          if (date==null){
+                            return 'Please enter Timeoff date';
                           }
                         },
                       ),
+                      SizedBox(height: 20.0),//Enter date
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child:DateTimeField(
+                              //initialTime: new TimeOfDay.now(),
+                                format: timeFormat,
+                                controller: _starttimeController,
+                                onShowPicker: (context, currentValue) async {
+                                  final time = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                  );
+                                  return DateTimeField.convert(time);
+                                },
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                                  ),
+                                  labelText: 'From',
+                                ),
+                                validator: (time) {
+                                  if (time==null) {
+                                    return 'Please enter start time';
+                                  }
+                                },
+                                onChanged: (dt) {
+                                  setState(() {
+                                    starttime = TimeOfDay.fromDateTime(dt);
+                                  });
+                                  print("----->Changed Time------> "+starttime.toString());
+                                }
+                            ),
+                          ),
+                          SizedBox(width: 10.0),
+                          Expanded(
+                            child:DateTimeField(
+                              //initialTime: new TimeOfDay.now(),
+                              format: timeFormat,
+                              controller: _endtimeController,
+                              onShowPicker: (context, currentValue) async {
+                                final time = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                );
+                                return DateTimeField.convert(time);
+                              },
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                                ),
+                                labelText: 'To',
+                              ),
+                              onChanged: (dt) {
+                                setState(() {
+                                  endtime = TimeOfDay.fromDateTime(dt);
+                                });
+
+                                print("------> End Time"+_endtimeController.text);
+                              },
+                              validator: (time) {
+                                if (time==null) {
+                                  return 'Please enter end time';
+                                }
+
+                                var arr=_starttimeController.text.split(':');
+                                var arr1=_endtimeController.text.split(':');
+                                final startTime = DateTime(2018, 6, 23,int.parse(arr[0]),int.parse(arr[1]),00,00);
+                                final endTime = DateTime(2018, 6, 23,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
+                                if(endTime.isBefore(startTime)){
+                                  return '\"To Time\" can\'t be smaller.';
+                                }
+
+
+
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: _reasonController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                          ),
+                          labelText: 'Reason',
+                        ),
+                        validator: (value) {
+                          if (value.trim().isEmpty) {
+                            return 'Please enter reason';
+                          }
+                        },
+                        onFieldSubmitted: (String value) {
+                          if (_formKey.currentState.validate()) {
+                            requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                          }
+                        },
+                        maxLines: 2,
+                      ),
                     ],
                   ),
+
                 ],
               ),
-
-            ],
-          ),
-          )
-      ]
-          )
+              )
+            ]
+            )
         ),
       ),
     );

@@ -216,13 +216,10 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
                   startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
-
                 }
                 if (call.method.equals("openLocationDialog")) {
                   openLocationDialog();
-
                 }
-
               }
             });
 

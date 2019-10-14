@@ -191,106 +191,103 @@ class _changePassword extends State<changePassword> {
                   ),
                   SizedBox(height: 30.0),
                   Container(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width*.75,
-                            child: TextFormField(
-                              controller: _oldPass,
-                              onFieldSubmitted: (String value) {
-                                FocusScope.of(context).requestFocus(__newPass);
-                              },
-                              keyboardType: TextInputType.text,
-                              obscureText: _obscureText_old,
-                              decoration: InputDecoration(
-                                  labelText: 'Old Password',
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.all(0.0),
-                                    child: Icon(
-                                      Icons.lock,
-                                      color: Colors.grey,
-                                    ), // icon is 48px widget.
-                                  )
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty || value==null) {
+                    width: MediaQuery.of(context).size.width*.9,
+                    child: TextFormField(
+                      controller: _oldPass,
+                      onFieldSubmitted: (String value) {
+                        FocusScope.of(context).requestFocus(__newPass);
+                      },
+                      keyboardType: TextInputType.text,
+                      obscureText: _obscureText_old,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                          ),
+                          labelText: 'Old Password',
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(0.0),
+                            child: Icon(
+                              Icons.lock,
+                              color: Colors.grey,
+                            ), // icon is 48px widget.
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: _toggle_old,
+                            icon: Icon( _obscureText_old ?Icons.visibility_off:Icons.visibility,
+                              color: Colors.grey,),
+                          )
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty || value==null) {
 //                                  FocusScope.of(context).requestFocus(__oldPass);
-                                  return 'Please enter old password';
-                                }
-                              },
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width*.1,
-                            child: FlatButton(
-                              padding: EdgeInsets.only(right:10.0),
-                              child: Icon(
-                                _obscureText_old ?Icons.visibility_off:Icons.visibility,
-                                color: Colors.grey,
-                              ),
-                              onPressed: _toggle_old,
-                            ),
-                          ),
-                        ],
-                      )
+                          return 'Please enter old password';
+                        }
+                      },
+                    ),
                   ), //Enter date
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 15.0),
                   Container(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width*.75,
-                            child: TextFormField(
-                              controller: _newPass,
-                              focusNode: __newPass,
-                              keyboardType: TextInputType.text,
-                              obscureText: _obscureText_new,
+                    width: MediaQuery.of(context).size.width*.9,
+                    child: TextFormField(
+                      controller: _newPass,
+                      focusNode: __newPass,
+                      keyboardType: TextInputType.text,
+                      obscureText: _obscureText_new,
 
-                              decoration: InputDecoration(
-                                  labelText: 'New Password',
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.all(0.0),
-                                    child: Icon(
-                                      Icons.lock,
-                                      color: Colors.grey,
-                                    ), // icon is 48px widget.
-                                  )
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty || value==null || value.length<6 ) {
-                                  __oldPass.notifyListeners();
- //                                 FocusScope.of(context).requestFocus(__newPass);
-                                  return 'Password must be at least 6 characters';
-                                }
-                              },
-                            ),
-                          ),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                        ),
+                        labelText: 'New Password',
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(0.0),
+                          child: Icon(
+                            Icons.lock,
+                            color: Colors.grey,
 
-                          Container(
-                            width: MediaQuery.of(context).size.width*.1,
-                            child: FlatButton(
-                              padding: EdgeInsets.only(right:10.0),
-                              child: Icon(
-                                _obscureText_new ?Icons.visibility_off:Icons.visibility,
-                                color: Colors.grey,
-                              ),
-                              onPressed: _toggle_new,
-                            ),
-                          ),
-                        ],
-                      )
+                          ), // icon is 48px widget.
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: _toggle_new,
+                          icon: Icon( _obscureText_new ?Icons.visibility_off:Icons.visibility,
+                            color: Colors.grey,),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty || value==null || value.length<6 ) {
+                          __oldPass.notifyListeners();
+                          //                                 FocusScope.of(context).requestFocus(__newPass);
+                          return 'Password must be at least 6 characters';
+                        }
+                      },
+                    ),
                   ),
 
                   ButtonBar(
                     children: <Widget>[
                       FlatButton(
-                        shape: Border.all(color: Colors.black54),
+                        highlightColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                        ),
                         child: Text('CANCEL'),
                         onPressed: () {
-                                Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                       ),
                       RaisedButton(
+                        elevation: 2.0,
+                        highlightElevation: 5.0,
+                        highlightColor: Colors.transparent,
+                        disabledElevation: 0.0,
+                        focusColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                         child: Text('SUBMIT',style: TextStyle(color: Colors.white),),
                         color: buttoncolor,
                         onPressed: () {

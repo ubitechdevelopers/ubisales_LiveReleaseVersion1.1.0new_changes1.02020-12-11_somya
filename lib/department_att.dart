@@ -22,8 +22,7 @@ class Department_att extends StatefulWidget {
   final String dname;
   final String total;
 
-  Department_att({Key key, this.departid, this.date, this.dname, this.total})
-      : super(key: key);
+  Department_att({Key key, this.departid, this.date, this.dname, this.total}):super(key: key);
 
   _Department_att createState() => _Department_att();
 }

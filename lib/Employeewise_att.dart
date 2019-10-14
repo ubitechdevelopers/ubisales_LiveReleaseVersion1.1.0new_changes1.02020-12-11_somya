@@ -688,8 +688,6 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
 
                 /////////TAB 4 STARTS
                 new Container(
-
-
                   height: MediaQuery.of(context).size.height*0.30,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
@@ -945,8 +943,6 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                           res = true;
 
                         });
-
-
                     },
                     items: snapshot.data.map((Map map) {
                       return new DropdownMenuItem<String>(

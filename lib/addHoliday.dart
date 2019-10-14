@@ -4,6 +4,7 @@
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
+import 'package:flutter/material.dart' as prefix1;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
@@ -15,7 +16,6 @@ import 'reports.dart';
 import 'profile.dart';
 import 'holidays.dart';
 import 'globals.dart';
-import 'package:Shrine/Bottomnavigationbar.dart';
 class addHoliday extends StatefulWidget {
   @override
   _addHoliday createState() => _addHoliday();
@@ -101,7 +101,95 @@ class _addHoliday extends State<addHoliday> {
         },),
         backgroundColor: appcolor,
       ),
-      bottomNavigationBar: Bottomnavigationbar(),
+      bottomNavigationBar: Container(
+
+        height: 70.0,
+        decoration: new BoxDecoration(
+            color: Colors.white,
+            boxShadow: [new BoxShadow(
+              color: Colors.grey,
+              blurRadius: 3.0,
+            ),]
+        ),
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(left: 50.0),
+              child: ButtonBar(
+
+                children: <Widget>[
+                  FlatButton(
+                    highlightColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                    ),
+                    child: Text('CANCEL'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(width: 10.0),
+                  RaisedButton(
+                    elevation: 2.0,
+                    highlightElevation: 5.0,
+                    highlightColor: Colors.transparent,
+                    disabledElevation: 0.0,
+                    focusColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('ADD',style: TextStyle(color: Colors.white),),
+                    color: buttoncolor,
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        if(_isButtonDisabled)
+                          return null;
+                        print(_from.toString());
+
+                        setState(() {
+                          _isButtonDisabled=true;
+                        });
+
+                        createHoliday(_holidayName.text,startdate,enddate,_description.text).then((res){
+                          if(res.toString()=='1') {
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HolidayList()),
+                            );
+                            showDialog(context: context, child:
+                            new AlertDialog(
+                              content: new Text("Holiday added successfully"),
+                            )
+                            );
+                          }
+                          else if(res.toString()=='-1')
+                            showInSnackBar('Holiday already exists');
+                          else
+                            showInSnackBar('Unable to add holiday');
+                          setState(() {
+                            _isButtonDisabled=false;
+                          });
+                        }).catchError((exp){
+                          showInSnackBar('Unable to call server service');
+                          setState(() {
+                            _isButtonDisabled=false;
+                          });
+                        });
+
+
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      ),
       endDrawer: new AppDrawer(),
       body:  checkalreadylogin(),
     );
@@ -167,19 +255,17 @@ class _addHoliday extends State<addHoliday> {
                   SizedBox(height: 30.0),
 
                   TextFormField(
-                    //format: dateFormat,
-                    controller: _holidayName,
                     decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Icon(
-                          Icons.weekend,
-                          color: Colors.grey,
-                        ), // icon is 48px widget.
-                      ), // icon is 48px widget.
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
 
                       labelText: 'Holiday Name',
                     ),
+                    //format: dateFormat,
+                    controller: _holidayName,
+
                     validator: (date) {
                       if (_holidayName.text==null||_holidayName.text.trim()==''){
                         return 'Please enter Holiday name';
@@ -188,6 +274,14 @@ class _addHoliday extends State<addHoliday> {
                   ), //Enter date
                   SizedBox(height: 12.0),
                   DateTimeField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+
+                      labelText: 'From',
+                    ),
                     //firstDate: new DateTime.now(),
                     //initialDate: new DateTime.now(),
                     //dateOnly: true,
@@ -203,17 +297,6 @@ class _addHoliday extends State<addHoliday> {
 
                     },
                     readOnly: true,
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Icon(
-                          Icons.date_range,
-                          color: Colors.grey,
-                        ), // icon is 48px widget.
-                      ), // icon is 48px widget.
-
-                      labelText: 'From',
-                    ),
                     validator: (date) {
                       if (date==null){
                         return 'Please enter from date';
@@ -234,6 +317,7 @@ class _addHoliday extends State<addHoliday> {
                     controller: _to,
                     onShowPicker: (context, currentValue) {
                       return showDatePicker(
+                          textDirection: prefix1.TextDirection.ltr,
                           context: context,
                           firstDate: DateTime.now().subtract(Duration(days: 1)),
                           initialDate: currentValue ?? DateTime.now(),
@@ -241,13 +325,11 @@ class _addHoliday extends State<addHoliday> {
                     },
                     readOnly: true,
                     decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: Icon(
-                          Icons.date_range,
-                          color: Colors.grey,
-                        ), // icon is 48px widget.
-                      ), // icon is 48px widget.
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+
                       labelText: 'To',
                     ),
                     validator: (date) {
@@ -262,7 +344,7 @@ class _addHoliday extends State<addHoliday> {
                           return 'To date can not be earlier than from date';
                         }
                       }
-                     /* var arr=_from.text.split(':');
+                      /* var arr=_from.text.split(':');
                       var arr1=_to.text.split(':');
                       final startTime = DateTime(2018, 6, 23,int.parse(arr[0]),int.parse(arr[1]),00,00);
                       final endTime = DateTime(2018, 6, 23,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
@@ -271,86 +353,18 @@ class _addHoliday extends State<addHoliday> {
                       }*/
                     },
                   ),
-
+                  SizedBox(height: 12.0),
                   TextFormField(
                     controller: _description,
                     decoration: InputDecoration(
-                        labelText: 'Description',
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(0.0),
-                          child: Icon(
-                            Icons.event_note,
-                            color: Colors.grey,
-                          ), // icon is 48px widget.
-                        )
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      labelText: 'Description',
+
                     ),
-                    /*validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter Description';
-                      }
-                    },*/
-                    /*onFieldSubmitted: (String value) {
-                      if (_formKey.currentState.validate()) {
-                        requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                      }
-                    },*/
-                    maxLines: 3,
-                  ),
-                  ButtonBar(
-                    children: <Widget>[
-                      FlatButton(
-                        shape: Border.all(color: Colors.black54),
-                        child: Text('CANCEL'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      RaisedButton(
-                        child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('ADD',style: TextStyle(color: Colors.white),),
-                        color: buttoncolor,
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            if(_isButtonDisabled)
-                              return null;
-                            print(_from.toString());
-
-                            setState(() {
-                              _isButtonDisabled=true;
-                            });
-
-
-                            createHoliday(_holidayName.text,startdate,enddate,_description.text).then((res){
-                              if(res.toString()=='1') {
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HolidayList()),
-                                );
-                                showDialog(context: context, child:
-                                new AlertDialog(
-                                  content: new Text("Holiday added successfully"),
-                                )
-                                );
-                              }
-                              else if(res.toString()=='-1')
-                                showInSnackBar('Holiday already exists');
-                              else
-                                showInSnackBar('Unable to add holiday');
-                              setState(() {
-                                _isButtonDisabled=false;
-                              });
-                            }).catchError((exp){
-                              showInSnackBar('Unable to call server service');
-                              setState(() {
-                                _isButtonDisabled=false;
-                              });
-                            });
-
-
-                       }
-                        },
-                      ),
-                    ],
+                    maxLines: 2,
                   ),
                 ],
               ),

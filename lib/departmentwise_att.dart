@@ -401,24 +401,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                              builder: (context) => Department_att(
-                                                                  departid: snapshot
-                                                                      .data[
-                                                                          index]
-                                                                      .Id
-                                                                      .toString(),
-                                                                  date: today
-                                                                      .text,
-                                                                  dname: snapshot
-                                                                      .data[
-                                                                          index]
-                                                                      .Name
-                                                                      .toString(),
-                                                                  total: snapshot
-                                                                      .data[
-                                                                          index]
-                                                                      .Total
-                                                                      .toString())),
+                                                              builder: (context) => Department_att(departid: snapshot.data[index].Id.toString(),date: today.text, dname: snapshot.data[index].Name.toString(), total: snapshot.data[index].Total.toString())),
                                                         );
                                                       },
                                                     ),

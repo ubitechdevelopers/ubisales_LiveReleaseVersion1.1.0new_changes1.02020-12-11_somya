@@ -480,20 +480,20 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
             mainAxisAlignment: MainAxisAlignment.start,
 //            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 50.0,),
+              SizedBox(height: 40.0,),
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.55,
                 child:Text(' Client',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
-              SizedBox(height: 50.0,),
+              SizedBox(height: 40.0,),
 
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
                 child:Text(' Visit In',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
-              SizedBox(height: 50.0,),
+              SizedBox(height: 40.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.2,
                 child:Text(' Visit Out',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
@@ -560,7 +560,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                         snapshot.data[index].VisitOutTime=='00:00:00'?
 
                                         Padding(
-                                          padding: EdgeInsets.all(8.0),
+                                          padding: EdgeInsets.only(top:8.0,bottom: 8.0),
                                           child: InkWell(
 
                                             child: new Container(
@@ -578,9 +578,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                             },),
                                         ):Container(
                                           child:InkWell(
-                                            child: Text('Visit Out: ' +
-                        snapshot.data[index]
-                            .VisitOutLatitude+','+snapshot.data[index].VisitOutLongitude,
+                                            child: Text('Visit Out: ' + snapshot.data[index].VisitOutLatitude+','+snapshot.data[index].VisitOutLongitude,
                                               style: TextStyle(
                                                   color: Colors.black54,
                                                   fontSize: 12.0),),
@@ -588,7 +586,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
                                           ),
                                         ),
 
-                                        SizedBox(height: 10.0,),
+                                        SizedBox(height: 2.0,),
 
 
                                       ],

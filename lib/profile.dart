@@ -417,28 +417,37 @@ class _ProfilePageState extends State<ProfilePage> {
                           new Text(" "+shifttiming, style: new TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold)),
                         ],
                       ),
-                      //SizedBox(height: MediaQuery.of(context).size.height*.01),
-                       new TextFormField(
-                            style: new TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.black
-                            ),
-                            decoration: const InputDecoration(
-                              icon: const Icon(Icons.phone,size: 20.0,),
-                              labelText: 'Phone',
-                            ),
-                            controller: _phone,
-                            keyboardType: TextInputType.phone,
-                         validator: (date) {
-                           if (_phone.text==null||_phone.text.trim()==''){
-                             return 'Please enter Phone Number';
-                           }
-                         },
+                      SizedBox(height: MediaQuery.of(context).size.height*.02),
+                      new TextFormField(
+                        style: new TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black
+                        ),
+                        decoration:  InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                           ),
+                          prefixIcon: const Icon(Icons.phone,size: 20.0,),
+                          labelText: 'Phone',
+                        ),
+                        controller: _phone,
+                        keyboardType: TextInputType.phone,
+                        validator: (date) {
+                          if (_phone.text==null||_phone.text.trim()==''){
+                            return 'Please enter Phone Number';
+                          }
+                        },
+                      ),
                       ButtonBar(
                         children: <Widget>[
                           FlatButton(
-                            shape: Border.all(color: Colors.black54),
+                            highlightColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                            ),
                             child: Text('CANCEL'),
                             onPressed: () {
                               Navigator.push(
@@ -448,7 +457,21 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                           ),
                           RaisedButton(
-                            child: _isButtonDisabled?Text('Processing..',style: TextStyle(color: Colors.white),):Text('SAVE',style: TextStyle(color: Colors.white),),
+                            elevation: 2.0,
+                            highlightElevation: 5.0,
+                            highlightColor: Colors.transparent,
+                            disabledElevation: 0.0,
+                            focusColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: _isButtonDisabled?Text(
+                              'Processing..',
+                              style: TextStyle(color: Colors.white),
+                            ):Text(
+                              'SAVE',
+                              style: TextStyle(color: Colors.white)
+                              ,),
                             color: buttoncolor,
                             onPressed: () {
                               if(_isButtonDisabled)
