@@ -2037,6 +2037,7 @@ addBulkAtt(List<grpattemp> data) async {
       "shift": data[i].shift.toString(),
       "Attid": data[i].Attid.toString(),
       "data_date": data[i].data_date.toString(),
+
     };
     list.add(per);
   }
@@ -2048,8 +2049,9 @@ addBulkAtt(List<grpattemp> data) async {
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
 //  print('addEmp function called, parameters :');
+  String plateform = 'android';
   print(globals.path +
-      'CreateBulkAtt?uid=$empid&org_id=$orgdir&attlist=$jsonlist');
+      'CreateBulkAtt?uid=$empid&org_id=$orgdir&attlist=$jsonlist&platform=$plateform');
   try {
     FormData formData = new FormData.from({
       "attlist": jsonlist,
@@ -2058,6 +2060,7 @@ addBulkAtt(List<grpattemp> data) async {
       "location": location,
       "lat": lat,
       "long": long,
+      "platform":plateform
     });
     Response response = await dio.post(globals.path + "CreateBulkAtt/",
         data:

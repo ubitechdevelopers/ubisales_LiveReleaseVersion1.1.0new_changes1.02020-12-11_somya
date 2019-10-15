@@ -181,7 +181,8 @@ class SaveImage {
             "latit": lat,
             "longi": long,
             "file": new UploadFileInfo(imagei, "image.png"),
-            "FakeLocationStatus" : mk.FakeLocationStatus
+            "FakeLocationStatus" : mk.FakeLocationStatus,
+            "platform":'android'
           });
           print(formData);
           Response<String> response1 = await dio.post(
@@ -237,7 +238,8 @@ class SaveImage {
           "refid": mk.refid,
           "latit": lat,
           "longi": long,
-          "FakeLocationStatus":mk.FakeLocationStatus
+          "FakeLocationStatus":mk.FakeLocationStatus,
+          "platform":'android'
          // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -473,7 +475,8 @@ class SaveImage {
             "latit": mk.latit,
             "longi": mk.longi,
             "file": new UploadFileInfo(imagei, "image.png"),
-            "FakeLocationStatus": mk.FakeLocationStatus
+            "FakeLocationStatus": mk.FakeLocationStatus,
+             "platform":'android'
           });
           print("5");
           print(globals.path + "saveImage");
@@ -510,7 +513,8 @@ class SaveImage {
           "refid": mk.refid,
           "latit": mk.latit,
           "longi": mk.longi,
-          "FakeLocationStatus": mk.FakeLocationStatus
+          "FakeLocationStatus": mk.FakeLocationStatus,
+          "platform":'android'
         });
 
         Response<String> response1 =
