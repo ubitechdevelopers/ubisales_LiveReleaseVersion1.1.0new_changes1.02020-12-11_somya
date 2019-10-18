@@ -261,7 +261,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                   fontSize: 16.0),),
                                               InkWell(
                                                 child: Text('Time In: ' +
-                                                    snapshot.data[index].CheckInLoc.toString(),
+                                                    snapshot.data[index].CheckInLoc.toString(), 
                                                     style: TextStyle(
                                                         color: Colors.black54,
                                                         fontSize: 12.0)),
