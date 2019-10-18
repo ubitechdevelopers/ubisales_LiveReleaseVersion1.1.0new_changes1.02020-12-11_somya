@@ -91,7 +91,7 @@ class _FlexiList extends State<FlexiList> {
             SizedBox(height: 8.0),
             Center(
               child: Text(
-                'Attendance',
+                'Flexi Attendance',
                 style: new TextStyle(
                   fontSize: 22.0,
                   color: Colors.black54,
@@ -102,7 +102,7 @@ class _FlexiList extends State<FlexiList> {
               height: 10.0, 
             ),
             SizedBox(height: 2.0),
-            Container(
+           /* Container(
               child: new GestureDetector(
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
@@ -145,7 +145,7 @@ class _FlexiList extends State<FlexiList> {
                   },
                 ),
               ),
-            ),
+            ),*/
             SizedBox(height: 12.0),
             Container(
               //  padding: EdgeInsets.only(bottom:10.0,top: 10.0),
@@ -225,7 +225,6 @@ class _FlexiList extends State<FlexiList> {
                     return new Container(
                       //          width: MediaQuery.of(context).size.width * .9,
                       child:Column(children: <Widget>[
-
                         new Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -327,10 +326,9 @@ class _FlexiList extends State<FlexiList> {
                                                 image: new DecorationImage(
                                                     fit: BoxFit.fill,
                                                     image: new NetworkImage(
-                                                        snapshot
-                                                            .data[index]
-                                                            .po_img)
-                                                )
+                                                        snapshot.data[index].po_img)
+                    )
+
                                             )),
                                         onTap: (){
                                           Navigator.push(

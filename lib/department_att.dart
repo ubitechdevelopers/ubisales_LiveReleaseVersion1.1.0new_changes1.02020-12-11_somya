@@ -12,6 +12,7 @@ import 'Image_view.dart';
 import 'generatepdf.dart';
 import 'package:simple_share/simple_share.dart';
 import 'globals.dart';
+
 import 'offline_home.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -22,7 +23,8 @@ class Department_att extends StatefulWidget {
   final String dname;
   final String total;
 
-  Department_att({Key key, this.departid, this.date, this.dname, this.total}):super(key: key);
+  Department_att({Key key, this.departid, this.date, this.dname, this.total})
+      : super(key: key);
 
   _Department_att createState() => _Department_att();
 }
@@ -72,8 +74,8 @@ class _Department_att extends State<Department_att>
     today.text = formatter.format(DateTime.now());
     tdate = widget.date;
     print(tdate);
-
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -224,7 +226,7 @@ class _Department_att extends State<Department_att>
                       child: Text(
                         '  Name',
                         style: TextStyle(
-                            color:appcolor,
+                            color: appcolor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
                       ),
@@ -614,8 +616,8 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color:appcolor
-                                                      .withOpacity(0.1),
+                                                  color:
+                                                      appcolor.withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
                                                   child: Text(
@@ -671,21 +673,16 @@ class _Department_att extends State<Department_att>
                                                   (BuildContext context,
                                                       int index) {
                                                 return new Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                   children: <Widget>[
-                                                    (index == 0)
-                                                        ? Row(
+                                                    (index == 0) ? Row(
                                                             children: <Widget>[
                                                                 SizedBox(
                                                                   height: 25.0,
                                                                 ),
                                                                 Container(
                                                                   padding: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5.0),
+                                                                      .only(left: 5.0),
                                                                   child: Text(
                                                                     "Total Absent: ${countA}  Out of ${widget.total}",
                                                                     style:
@@ -872,8 +869,8 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: appcolor
-                                                      .withOpacity(0.1),
+                                                  color:
+                                                      appcolor.withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
                                                   child: Text(
@@ -1252,8 +1249,8 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: appcolor
-                                                      .withOpacity(0.1),
+                                                  color:
+                                                      appcolor.withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
                                                   child: Text(
@@ -1631,8 +1628,8 @@ class _Department_att extends State<Department_att>
                                                           .size
                                                           .width *
                                                       1,
-                                                  color: appcolor
-                                                      .withOpacity(0.1),
+                                                  color:
+                                                      appcolor.withOpacity(0.1),
                                                   padding: EdgeInsets.only(
                                                       top: 5.0, bottom: 5.0),
                                                   child: Text(

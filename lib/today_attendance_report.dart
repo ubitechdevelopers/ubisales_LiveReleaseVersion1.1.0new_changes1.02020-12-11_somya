@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
 import 'globals.dart';
+import 'package:simple_share/simple_share.dart';
+import 'generatepdf.dart';
+import 'package:intl/intl.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TodayAttendance extends StatefulWidget {
   @override
@@ -18,6 +21,8 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String countP='-',countA='-',countL='-',countE='-';
+  bool filests = false;
+  String todaydate = "";
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -48,6 +53,9 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
     appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
+    print("Date");
+    var now = new DateTime.now();
+   todaydate =  new DateFormat("dd-MM-yyyy").format(now);
 
   }
 
@@ -171,16 +179,77 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                       children: <Widget>[
+                                        (index == 0) ? Row(children: <Widget>[
+                                          SizedBox(height: 25.0,),
+                                          Container(padding: EdgeInsets.only(left: 5.0),
+                                            child: Text(
+                                              "Total Present: "+snapshot.data.length.toString(),
+                                              style: TextStyle(
+                                                color: Colors
+                                                    .orange,
+                                                fontWeight:
+                                                FontWeight
+                                                    .bold,
+                                                fontSize: 16.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(padding: EdgeInsets.only(left: 5.0),
+                                            child: InkWell(
+                                            child: Text('CSV',
+                                                style: TextStyle(
+                                                    decoration: TextDecoration.underline,
+                                                    color: Colors.blueAccent),
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  filests = true;
+                                                });
+
+                                                getCsv(snapshot.data, 'Today_present_$todaydate', 'present').then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_present_$todaydate', res);
+                                                    });
+                                              },
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(left: 5.0),
+                                            child: InkWell(
+                                              child: Text('PDF',
+                                                style: TextStyle(
+                                                    decoration: TextDecoration.underline,
+                                                    color: Colors.blueAccent),
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  filests = true;
+                                                });
+                                                CreateDeptpdf(snapshot.data, 'Present Employees($todaydate)',
+                                                    snapshot.data.length.toString(),  'Today_present_$todaydate', 'present').then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_present_$todaydate.pdf', res);
+                                                    });
+                                              },
+                                            ),
+                                          ),
+                                        ])
+                                            : new Center(),
+                                        (index == 0) ? Divider(
+                                          color: Colors.black26,
+                                        )
+                                            : new Center(),
                                      Row(
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                       children: <Widget>[
                                         SizedBox(height: 40.0,),
                                         Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
+                                          width: MediaQuery.of(context).size.width * 0.46,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start,
@@ -190,45 +259,35 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                   color: Colors.black87,
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16.0),),
-
                                               InkWell(
                                                 child: Text('Time In: ' +
-                                                    snapshot.data[index]
-                                                        .CheckInLoc.toString(),
+                                                    snapshot.data[index].CheckInLoc.toString(),
                                                     style: TextStyle(
                                                         color: Colors.black54,
                                                         fontSize: 12.0)),
                                                 onTap: () {
                                                   goToMap(
-                                                      snapshot.data[index]
-                                                          .LatitIn ,
-                                                      snapshot.data[index]
-                                                          .LongiIn);
+                                                      snapshot.data[index].LatitIn ,
+                                                      snapshot.data[index].LongiIn);
                                                 },
                                               ),
                                               SizedBox(height:2.0),
                                               InkWell(
                                                 child: Text('Time Out: ' +
-                                                    snapshot.data[index]
-                                                        .CheckOutLoc.toString(),
+                                                    snapshot.data[index].CheckOutLoc.toString(),
                                                   style: TextStyle(
                                                       color: Colors.black54,
                                                       fontSize: 12.0),),
                                                 onTap: () {
                                                   goToMap(
-                                                      snapshot.data[index]
-                                                          .LatitOut,
-                                                      snapshot.data[index]
-                                                          .LongiOut);
+                                                      snapshot.data[index].LatitOut,
+                                                      snapshot.data[index].LongiOut);
                                                 },
                                               ),
                                               SizedBox(height: 15.0,),
-
-
                                             ],
                                           ),
                                         ),
-
                                         Container(
                                             width: MediaQuery
                                                 .of(context)
@@ -238,8 +297,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                               crossAxisAlignment: CrossAxisAlignment
                                                   .center,
                                               children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                                Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold),),
                                                 Container(
                                                   width: 62.0,
                                                   height: 62.0,
@@ -251,9 +309,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                           image: new DecorationImage(
                                                               fit: BoxFit.fill,
                                                               image: new NetworkImage(
-                                                                  snapshot
-                                                                      .data[index]
-                                                                      .EntryImage)
+                                                                  snapshot.data[index].EntryImage)
                                                           )
                                                       ),
                                                     /*child: new Stack(
@@ -276,7 +332,6 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
 
                                               ],
                                             )
-
                                         ),
                                         Container(
                                             width: MediaQuery
@@ -366,19 +421,82 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
-                                    return new Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
+                                    return new Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          (index == 0) ? Row(children: <Widget>[
+                                            SizedBox(height: 25.0,),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: Text(
+                                                "Total absent: "+snapshot.data.length.toString(),
+                                                style: TextStyle(
+                                                  color: Colors
+                                                      .orange,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                                  fontSize: 16.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('CSV',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+
+                                                  getCsv(snapshot.data, 'Today_absent_$todaydate', 'absent').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('PDF',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+                                                  CreateDeptpdf(snapshot.data, 'Absent Employees($todaydate)',
+                                                      snapshot.data.length.toString(),  'Today_absent_$todaydate', 'absent').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate.pdf', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ])
+                                              : new Center(),
+                                          (index == 0)
+                                              ? Divider(
+                                            color: Colors.black26,
+                                          )
+                                              : new Center(),
+                                      new Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       children: <Widget>[
                                         SizedBox(height: 40.0,),
                                         Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
+                                          width: MediaQuery.of(context).size.width * 0.46,
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Text(snapshot.data[index].Name
                                                   .toString(), style: TextStyle(
@@ -388,12 +506,8 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                             ],
                                           ),
                                         ),
-
                                         Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
+                                            width: MediaQuery.of(context).size.width * 0.22,
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment
                                                   .center,
@@ -402,27 +516,19 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                     .toString()),
                                               ],
                                             )
-
                                         ),
                                         Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
+                                            width: MediaQuery.of(context).size.width * 0.22,
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
+                                                Text(snapshot.data[index].TimeOut.toString()),
                                               ],
                                             )
-
                                         ),
                                         Divider(color: Colors.black26,),
-                                      ],
-
-                                    );
+                                        ]),
+                                      ]);
                                   }
                               );
                             }else{
@@ -473,9 +579,73 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0) ? Row(children: <Widget>[
+                                            SizedBox(height: 25.0,),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: Text(
+                                                "Total latecomings: "+snapshot.data.length.toString(),
+                                                style: TextStyle(
+                                                  color: Colors
+                                                      .orange,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                                  fontSize: 16.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('CSV',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+
+                                                  getCsv(snapshot.data, 'Today_latecomings_$todaydate', 'late').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('PDF',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+                                                  CreateDeptpdf(snapshot.data, 'Latecomings Employees($todaydate)',
+                                                      snapshot.data.length.toString(),  'Today_latecomings_$todaydate', 'late').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate.pdf', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ])
+                                              : new Center(),
+                                          (index == 0)
+                                              ? Divider(
+                                            color: Colors.black26,
+                                          )
+                                              : new Center(),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .spaceAround,
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                                             children: <Widget>[
                                               SizedBox(height: 40.0,),
                                               Container(
@@ -662,9 +832,73 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
+                                          (index == 0) ? Row(children: <Widget>[
+                                            SizedBox(height: 25.0,),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: Text(
+                                                "Total earlyleavings: "+snapshot.data.length.toString(),
+                                                style: TextStyle(
+                                                  color: Colors
+                                                      .orange,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                                  fontSize: 16.0,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('CSV',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+
+                                                  getCsv(snapshot.data, 'Today_earlyleavings_$todaydate', 'early').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(left: 5.0),
+                                              child: InkWell(
+                                                child: Text('PDF',
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration.underline,
+                                                      color: Colors.blueAccent),
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+                                                  CreateDeptpdf(snapshot.data, 'Earlyleavings Employees($todaydate)',
+                                                      snapshot.data.length.toString(),  'Today_earlyleavings_$todaydate', 'early').then((res) {
+                                                    setState(() {
+                                                      filests = false;
+                                                    });
+                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate.pdf', res);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ])
+                                              : new Center(),
+                                          (index == 0)
+                                              ? Divider(
+                                            color: Colors.black26,
+                                          )
+                                              : new Center(),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .spaceAround,
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                                             children: <Widget>[
                                               SizedBox(height: 40.0,),
                                               Container(
@@ -831,5 +1065,37 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
         ],
       ),
     );
+  }
+
+  dialogwidget(msg, filename) {
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          content: new Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Later'),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Share File',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: buttoncolor,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                final uri = Uri.file(filename);
+                SimpleShare.share(
+                    uri: uri.toString(),
+                    title: "Ubiattendance Report",
+                    msg: "Ubiattendance Report");
+              },
+            ),
+          ],
+        ));
   }
 }
