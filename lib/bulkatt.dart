@@ -25,6 +25,7 @@ class Bulkatt extends StatefulWidget {
 
 class _Bulkatt extends State<Bulkatt> {
   final List<grpattemp> _saved = new List<grpattemp>();
+  final _searchController = TextEditingController();
   NewServices ns = NewServices();
   List<grpattemp> emplist = null;
   bool isloading = false;
@@ -54,6 +55,7 @@ class _Bulkatt extends State<Bulkatt> {
   bool pageload = true;
   bool _obscureText = true;
   bool _isButtonDisabled = false;
+  bool showSearch= false;
   final _from = TextEditingController();
   final _to = TextEditingController();
   final timeFormat = DateFormat("H:mm");
@@ -65,7 +67,7 @@ class _Bulkatt extends State<Bulkatt> {
   String colorti;
   String colorto;
   bool loaderr=false;
-bool fakeLocationDetected=false;
+  bool fakeLocationDetected=false;
   @override
   void initState() {
     // TODO: implement initState
@@ -120,7 +122,7 @@ bool fakeLocationDetected=false;
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
-      prefix0.locationThreadUpdatedLocation=true;
+        prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -128,9 +130,7 @@ bool fakeLocationDetected=false;
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-          Navigator
-              .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
         }
 
         assign_lat=double.parse(call.arguments["latitude"].toString());
@@ -200,6 +200,7 @@ bool fakeLocationDetected=false;
     return new WillPopScope(
       onWillPop: ()=> sendToHome(),
       child: Scaffold(
+        backgroundColor: Colors.white,
         key: _scaffoldKey,
         appBar: AppBar(
           title: Row(
@@ -218,147 +219,33 @@ bool fakeLocationDetected=false;
           },),
           backgroundColor: appcolor,
         ),
-        bottomNavigationBar: Bottomnavigationbar(),
-        endDrawer: new AppDrawer(),
-        body: Container(
-          padding: EdgeInsets.only(left: 2.0, right: 2.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        bottomNavigationBar: Container(
+
+          height: 70.0,
+          decoration: new BoxDecoration(
+              color: Colors.white,
+              boxShadow: [new BoxShadow(
+                color: Colors.black12,
+                blurRadius: 3.0,
+              ),]
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 8.0),
-              Center(
-                child: Text(
-                  'Group Attendance',
-                  style: new TextStyle(
-                    fontSize: 22.0,
-                    color: Colors.black54,
-                  ),
-                ),
-
-              ),
-    new Container(
-    // width: MediaQuery.of(context).size.width*.45,
-    padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
-   child: InputDecorator(
-   decoration: InputDecoration(
-   labelText: 'Select',
-   // icon is 48px widget.
-   ),
-     child: DropdownButton<String>(
-     isDense: true,
-     hint: Text('Today'),
-     onChanged: (String changedValue) {
-    newValue=changedValue;
-    setState(() {
-    loaderr=true;
-    });
-                getDeptEmp(changedValue).then((EmpList) {
-                 setState(() {
-                 emplist = EmpList;
-                 _saved.clear();
-                 checkall = 0;
-                 loaderr=false;
-                 });
-
-                });
-
-            },value: newValue,
-              items: <String>['Today ', 'Yesterday'].map((String value) {
-                return new DropdownMenuItem<String>(
-                  value: value,
-                  child: new Text(value),
-                );
-              }).toList(),
-
-            ),
-
-          ), ),
-              Divider(
-                height: 10.0,
-              ),
-              SizedBox(height: 2.0),
               Container(
-                padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.20,
-                      child: Text(
-                        'Name',
-                        style: TextStyle(
-                            color: buttoncolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Time In',
-                        style: TextStyle(
-                            color: buttoncolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      padding: EdgeInsets.only(left:25),
-                      child: Text(
-                        'Time Out',
-                        style: TextStyle(
-                            color: buttoncolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      padding: EdgeInsets.only(left:10),
-                      child: new FlatButton(
-                        child: new Icon(
-                          checkall == 1
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                          color: checkall == 1 ? buttoncolor : null,
-                        ),
-                        onPressed: () =>
-                            checkbulkall(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(),
-              SizedBox(height: 5.0),
-              new Expanded(
-                child:loaderr==false?getBulkEmpWidget():loader(),
-              ),
-              new Container(
+//                margin: const EdgeInsets.only(left: 50.0),
                 child: ButtonBar(
-                  alignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     FlatButton(
-                      shape: Border.all(color: Colors.black54),
+                      highlightColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+                      ),
                       child: Text('CANCEL'),
                       onPressed: () {
-                      /*  Navigator.push(
+                        /*  Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => HomePage()),
@@ -369,10 +256,17 @@ bool fakeLocationDetected=false;
                         );
                       },
                     ),
+
                     RaisedButton(
-                      child: _isButtonDisabled
-                          ? Text(
-                        'Processing..',
+                      elevation: 2.0,
+                      highlightElevation: 5.0,
+                      highlightColor: Colors.transparent,
+                      disabledElevation: 0.0,
+                      focusColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: _isButtonDisabled ? Text('Processing..',
                         style: TextStyle(color: Colors.white),
                       )
                           : Text(
@@ -417,7 +311,7 @@ bool fakeLocationDetected=false;
                                   if (to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
                                         "'s timeout is greater than current time...");
-                                     return null;
+                                    return null;
                                   }
                                 }
                               }
@@ -478,7 +372,7 @@ bool fakeLocationDetected=false;
                               _isButtonDisabled = false;
                             });
                           });
-                        };
+                        }
                       },
                     )
                   ],
@@ -487,14 +381,140 @@ bool fakeLocationDetected=false;
             ],
           ),
         ),
+        endDrawer: new AppDrawer(),
+        body: Container(
+          padding: EdgeInsets.only(left: 2.0, right: 2.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 8.0),
+              /*Center(
+                child: Text(
+                  'Group Attendance',
+                  style: new TextStyle(
+                    fontSize: 22.0,
+                    color: Colors.black54,
+                  ),
+                ),
+
+              ),*/
+              SizedBox(height: 5.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: Container(
+                      padding: EdgeInsets.all(5.0),
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide( color: Colors.grey.withOpacity(1.0), width: 1,),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left:5.0,top: 5.0,bottom: 5.0,),
+                            child: DropdownButton<String>(
+                              icon: Icon(Icons.arrow_drop_down),
+                              isDense: true,
+                              hint: Text('Today'),
+                              onChanged: (String changedValue) {
+                                newValue=changedValue;
+                                setState(() {
+                                  loaderr=true;
+                                });
+                                getDeptEmp(changedValue).then((EmpList) {
+                                  setState(() {
+                                    emplist = EmpList;
+                                    _saved.clear();
+                                    checkall = 0;
+                                    loaderr=false;
+                                  });
+
+                                });
+                              },value: newValue,
+                              items: <String>['Today ', 'Yesterday'].map((String value) {
+                                return new DropdownMenuItem<String>(
+                                  value: value,
+                                  child: new Text(value),
+                                );
+                              }).toList(),
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right:10.0),
+                    child:
+                    (showSearch == false) ?
+                    IconButton(
+                      onPressed: (){
+                        setState(() {
+                          showSearch=true;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      ),
+                    ) :
+                    IconButton(
+                      onPressed: (){
+                        setState(() {
+                          showSearch=false;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              (showSearch == true) ?
+              Padding(
+                padding: const EdgeInsets.only(left:10.0,right: 10.0),
+                child: Card(
+                  elevation: 2.0,
+                  clipBehavior: Clip.antiAlias,
+                  child: TextFormField(
+                    autofocus: true,
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      prefixIcon: Icon(Icons.search),
+                      hintText: 'Search',
+                      focusColor: Colors.white,
+                      /*suffixIcon: IconButton(
+                          icon: Icon(Icons.close),
+                          : (){},
+                        )*/
+                    ),
+                    /*onChanged: _searchController,*/
+                  ),
+                ),
+              ) : new Container(
+              ),
+
+              SizedBox(height: 5.0),
+              new Expanded(
+                child:loaderr==false?getBulkEmpWidget():loader(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
-
   getBulkEmpWidget() {
     if (emplist != null) {
       return new Container(
-        height: MediaQuery.of(context).size.height * 0.60,
         child: Form(
           key:_formKey,
           child: new ListView.builder(
@@ -511,19 +531,8 @@ bool fakeLocationDetected=false;
                 /* print(emplist[index].timein);
                print(int.parse(til[0]));
                print(til[1]);*/
-                DateTime ti = new DateTime(
-                    2001,
-                    01,
-                    01,
-                    int.parse(emplist[index].timein.split(":")[0]),
-                    int.parse(emplist[index].timein.split(":")[1]),
-                    00,
-                    00);
-                DateTime tout = new DateTime(
-                    2001,
-                    01,
-                    01,
-                    int.parse(emplist[index].timeout.split(":")[0]),
+                DateTime ti = new DateTime(2001, 01, 01, int.parse(emplist[index].timein.split(":")[0]), int.parse(emplist[index].timein.split(":")[1]), 00, 00);
+                DateTime tout = new DateTime(2001, 01, 01, int.parse(emplist[index].timeout.split(":")[0]),
                     int.parse(emplist[index].timeout.split(":")[1]),
                     00,
                     00);
@@ -540,239 +549,248 @@ bool fakeLocationDetected=false;
                 if(emplist[index].timeout=='00:00:00' || emplist[index].device=='Auto Time Out'){
                   _enabletimeout=true;
                 }
-              else{
+                else{
                   _enabletimeout=false;
                 }
-               // print(tout);
+                // print(tout);
                 //print('_enabletimeout'+emplist[index].Name+_enabletimeout.toString()+emplist[index].Attid.toString());
                 print('_enabletimein'+emplist[index].Name+_enabletimein.toString()+emplist[index].Attid.toString());
                 //  print(_saved.elementAt(index).Name);
                 return new Column(children: <Widget>[
-                  new FlatButton(
-                    child: new Row(
-                      //crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                InkWell(
-                                  child:Container(
-                                    width: 62.0,
-                                    height: 62.0,
-                                    child: Container(
-                                        decoration: new BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: new DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: new NetworkImage(
-                                                    emplist[index].img)))),
-                                  ),
-                                  onTap: (){
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
-                                    );
-                                  },
-                                ),
-                                Text(
-                                  emplist[index].Name.toString(),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            )),
-                        SizedBox(
-                          height: 50.0,
+                  Padding(
+                    padding: const EdgeInsets.only(left:8.0, right:8.0),
+                    child: InkWell(
+                      onLongPress: (){},
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide( color: const Color(0xFFEEEEEE), width: 1,),
+
                         ),
-                        new   Expanded(child:Container(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  child: DateTimeField(
-                                    format: timeFormat,
-                                    initialValue: ti,
-                                    enabled:_enabletimein,
-                                    readOnly: true,
-                                    //controller: _from,
-                                    decoration: InputDecoration(
-                                      // labelText: 'Time In',
-                                      /* prefixIcon: Padding(
-                                      padding: EdgeInsets.all(0.0),
-                                      child: Text('Time In'), // icon is 48px widget.
-                                    ),*/
-                                    ),
-                                    onShowPicker: (context, currentValue) async {
-                                      final time = await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                                      );
-                                      return DateTimeField.convert(time);
-                                    },
-                                    onChanged: (t) => setState(() {
-                                      print('time');
-                                      print(t);
-                                      if(t!=null) {
-                                        emplist[index].timein =
-                                            t.hour.toString() + ':' +
-                                                t.minute.toString();
-                                      }else{
-                                       // emplist[index].timein = t.toString();
-                                      }
-                                      if (emplist[index].csts != 1) {
-                                        _saved.add(emplist[index]);
-                                        emplist[index].csts = 1;
-                                      }
-                                    }
-                                    ),
-                                   /* onSaved: (t) => setState(() {
-                                      emplist[index].timein = t.hour.toString()+':'+t.minute.toString();
-                                      if (emplist[index].csts != 1) {
-                                        _saved.add(emplist[index]);
-                                        emplist[index].csts = 1;
-                                      }
-                                    }
-                                    ),*/
-                                    validator: (time) {
-                                      if (time == null && emplist[index].csts==1) {
-                                        return 'Please enter TimeIn';
-                                      }
-                                    },
+                        elevation: 0.0,
+                        clipBehavior: Clip.antiAlias,
+                        borderOnForeground: false,
+                        child: new Container(
+                          padding: const EdgeInsets.all(10.0),
+                          child: new Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              /*new IconButton(
+                                icon: Padding(
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: Icon(
+                                    alreadySaved == 1
+                                        ? Icons.check_box
+                                        : Icons.check_box_outline_blank,
+                                    color:
+                                    alreadySaved == 1 ? buttoncolor   : null,
                                   ),
                                 ),
-                                /*  SizedBox(width: 10.0),
-                              Container(
-                                child: TimePickerFormField(
-                                  format: timeFormat,
-                                  initialValue: tout,
-                                  //controller: _to,
-                                  decoration: InputDecoration(
-                                   // labelText: 'Time Out',
-                                    /*prefixIcon: Padding(
-                                      padding: EdgeInsets.all(0.0),
-                                      child: Text('Time Out'), // icon is 48px widget.
-                                    ),*/
-                                  ),
-                                  onChanged: (t) => setState(() => emplist[index].timeout = t.hour.toString()+':'+t.minute.toString()),
-                                  validator: (time) {
-                                    if (time == null && emplist[index].csts==1) {
-                                      return 'Please enter TimeOut';
+                                onPressed: () {
+                                  setState(() {
+                                    if (emplist[index].csts == 1) {
+                                      _saved.remove(emplist[index]);
+                                      emplist[index].csts = 0;
+                                      print(emplist[index].Name+'Remove');
+                                      print(_saved);
+                                    } else {
+                                      _saved.add(emplist[index]);
+                                      emplist[index].csts = 1;
+                                      print(emplist[index].Name);
                                     }
-                                  },
-                                ),
+                                  });
+                                  //return null;
+                                  // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
+                                },
                               ),*/
-                                //new Text(emplist[index].Name.toString()),
-                                //new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
-                                // new Text('('+snapshot.data[index].Id.toString()+')',style: TextStyle(color: Colors.grey),),
-                              ],
-                            ))),
-                        SizedBox(
-                            height: 50.0,
-                            width:15.0
-                        ),
-                        new Expanded(child: Container(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: DateTimeField(
-                              format: timeFormat,
-                               //initialValue: tout,
-                              //enabled:_enabletimeout,
-                              readOnly: true,
-                              onShowPicker: (context, currentValue) async {
-                                final time = await showTimePicker(
-                                  context: context,
-                                  initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                                );
-                                return DateTimeField.convert(time);
-                              },
-                              //editable: false,
-                              //controller: _to,
-                              decoration: InputDecoration(
+                              InkWell(
+                                child:Container(
+                                    width: MediaQuery.of(context).size.height * .07,
+                                    height: MediaQuery.of(context).size.height * .07,
+                                    decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: new NetworkImage(
+                                                emplist[index].img)
+                                        )
+                                    )
+                                ),
+                                onTap: (){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
+                                  );
+                                },
+                              ),
+                              SizedBox(width:10.0),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    emplist[index].Name.toString(),
+                                    style: TextStyle(fontWeight: FontWeight.w600,
+                                      fontSize: 13.0,),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        width: MediaQuery.of(context).size.width*0.32,
+                                        height: MediaQuery.of(context).size.height*.06,
+                                        decoration: BoxDecoration(
+                                            color: const Color(0xFFFBFBFB),
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            boxShadow: [new BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 2.0,
+                                            ),]
+                                        ),
+                                        child: DateTimeField(
+                                          format: timeFormat,
+                                          initialValue: ti,
+                                          enabled:_enabletimein,
+                                          readOnly: true,
+                                          //controller: _from,
+                                          decoration: InputDecoration(
 
-                                // labelText: 'Time Out',
-                                /*prefixIcon: Padding(
+                                            border: InputBorder.none,
+                                            hintText: 'Time In',
+                                            hintStyle: TextStyle(
+                                                fontSize: 12.0
+                                            ),
+                                            contentPadding: const EdgeInsets.symmetric(horizontal:5,vertical: 12.0),
+
+                                            // labelText: 'Time In',
+                                            /* prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Text('Time In'), // icon is 48px widget.
+                                      ),*/
+                                          ),
+                                          onShowPicker: (context, currentValue) async {
+                                            final time = await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                            );
+                                            return DateTimeField.convert(time);
+                                          },
+                                          onChanged: (t) => setState(() {
+                                            print('time');
+                                            print(t);
+                                            if(t!=null) {
+                                              emplist[index].timein =
+                                                  t.hour.toString() + ':' +
+                                                      t.minute.toString();
+                                            }else{
+                                              // emplist[index].timein = t.toString();
+                                            }
+                                            if (emplist[index].csts != 1) {
+                                              _saved.add(emplist[index]);
+                                              emplist[index].csts = 1;
+                                            }
+                                          }
+                                          ),
+                                          /* onSaved: (t) => setState(() {
+                                        emplist[index].timein = t.hour.toString()+':'+t.minute.toString();
+                                        if (emplist[index].csts != 1) {
+                                      _saved.add(emplist[index]);
+                                      emplist[index].csts = 1;
+                                        }
+                                      }
+                                      ),*/
+                                          validator: (time) {
+                                            if (time == null && emplist[index].csts==1) {
+                                              return 'Please enter TimeIn';
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(width:10.0),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width*0.33,
+                                        height: MediaQuery.of(context).size.height*.06,
+                                        decoration: BoxDecoration(
+                                            color: const Color(0xFFFBFBFB),
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            boxShadow: [new BoxShadow(
+                                              color: Colors.black12,
+                                              blurRadius: 2.0,
+                                            ),]
+                                        ),
+                                        child: DateTimeField(
+                                          format: timeFormat,
+                                          //initialValue: tout,
+                                          //enabled:_enabletimeout,
+                                          readOnly: true,
+                                          onShowPicker: (context, currentValue) async {
+                                            final time = await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                            );
+                                            return DateTimeField.convert(time);
+                                          },
+                                          //editable: false,
+                                          //controller: _to,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: 'Time Out',
+                                            hintStyle: TextStyle(
+                                                fontSize: 12.0
+                                            ),
+                                            contentPadding: const EdgeInsets.symmetric(horizontal:5,vertical: 12.0),
+                                            /* border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                                ),*/
+
+                                            // labelText: 'Time Out',
+                                            /*prefixIcon: Padding(
                                       padding: EdgeInsets.all(0.0),
                                       child: Text('Time Out'), // icon is 48px widget.
-                                    ),*/
+                                      ),*/
+                                          ),
+                                          onChanged: (t) => setState(() {
+                                            print('timeout');
+                                            print(t);
+                                            if(t!=null) {
+                                              emplist[index].timeout =
+                                                  t.hour.toString() + ':' + t.minute.toString();
+                                            }else{
+
+                                            }
+                                            if (emplist[index].csts != 1) {
+                                              _saved.add(emplist[index]);
+                                              emplist[index].csts = 1;
+                                            }
+                                          }),
+                                          validator: (time) {
+                                            //    print("dddddddd");
+                                            // print(emplist[index].Attid);
+                                            if ( time == null && emplist[index].csts==1 && emplist[index].Attid!='0'){
+                                              return "Enter Time out";
+                                            }
+                                            else if (time == null && emplist[index].csts==1) {
+                                              emplist[index].timeout ='00:00:00';
+                                            }
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
-                              onChanged: (t) => setState(() {
-                print('timeout');
-                print(t);
-                if(t!=null) {
-                  emplist[index].timeout =
-                      t.hour.toString() + ':' + t.minute.toString();
-                }else{
-
-                }
-                                if (emplist[index].csts != 1) {
-                                  _saved.add(emplist[index]);
-                                  emplist[index].csts = 1;
-                                }
-                              }),
-                              validator: (time) {
-                                //    print("dddddddd");
-                                // print(emplist[index].Attid);
-                                if ( time == null && emplist[index].csts==1 && emplist[index].Attid!='0'){
-                                  return "Enter Time out";
-                                }
-                                else if (time == null && emplist[index].csts==1) {
-                                  emplist[index].timeout ='00:00:00';
-                                }
-                              },
-                            ),
+                            ],
                           ),
-                          //child: getStatus_DD(emplist[index]),
+                          /*      onPressed: () {
+                            // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
+                          },*/
                         ),
-                        ),
-                        SizedBox(
-                          height: 50.0,
-                        ),
-                        new Container(
-                          width: MediaQuery.of(context).size.width * 0.10,
-                          child: new FlatButton(
-                            child: new Icon(
-                              alreadySaved == 1
-                                  ? Icons.check_box
-                                  : Icons.check_box_outline_blank,
-                              color:
-                              alreadySaved == 1 ? buttoncolor   : null,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                if (emplist[index].csts == 1) {
-                                  _saved.remove(emplist[index]);
-                                  emplist[index].csts = 0;
-                                  print(emplist[index].Name+'Remove');
-                                  print(_saved);
-                                } else {
-                                  _saved.add(emplist[index]);
-                                  emplist[index].csts = 1;
-                                  print(emplist[index].Name);
-                                }
-                              });
-                              //return null;
-                              // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 50.0,
-                        ),
-                      ],
+                      ),
                     ),
-                    onPressed: () {
-                      // editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
-                    },
                   ),
-
-                  Divider(
-                    color: Colors.blueGrey.withOpacity(0.25),
-                    height: 20,
-                  ),
+                  SizedBox(height:5.0),
                 ]
                 );
               }
