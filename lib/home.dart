@@ -260,23 +260,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   syncVisits(visits) async {
     for (int i = 0; i < visits.length; i++) {
-      var VisitInaddress = await getAddressFromLati(
+      var VisitInaddress = await getAddressFromLati_offline(
           visits[i].VisitInLatitude, visits[i].VisitInLongitude);
 
-      var VisitOutaddress = await getAddressFromLati(
+      var VisitOutaddress = await getAddressFromLati_offline(
           visits[i].VisitOutLatitude, visits[i].VisitOutLongitude);
       // print(address);
       List<Map> jsonList = [];
       jsonList.add({
         'Id': visits[i].Id,
-
-
         'EmployeeId': visits[i].EmployeeId,
         'VisitInLatitude': visits[i].VisitInLatitude,
         'VisitInLongitude': visits[i].VisitInLongitude,
         'VisitInTime': visits[i].VisitInTime,
         'VisitInDate': visits[i].VisitInDate,
-
         'VisitOutLatitude': visits[i].VisitOutLatitude,
         'VisitOutLongitude': visits[i].VisitOutLongitude,
         'VisitOutTime': visits[i].VisitOutTime,
@@ -290,7 +287,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         'VisitOutImage': visits[i].VisitOutImage,
         'VisitInAddress': VisitInaddress,
         'VisitOutAddress': VisitOutaddress,
-
         'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
         'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut,
       'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,

@@ -81,8 +81,6 @@ checkLocationEnabled(context) async{
   print("isLocationEnabled:-------------------"+isLocationEnabled.toString());
 
 
-
-
   if(!isLocationEnabled){
     showDialog(
         context: context,
@@ -1952,12 +1950,14 @@ Future<List<grpattemp>> getDeptEmp(value) async {
 
   print(globals.path + 'getDeptEmp?orgid=$orgid&datafor=$value&empid=$empid');
   List responseJson = json.decode(response.body.toString());
-  print("))))))))))");
+  responseEmplist = responseJson; // set employee data in globle var
   // print(responseJson);
   List<grpattemp> deptList = createDeptempList(responseJson);
   // print(responseJson);
   return deptList;
 }
+
+
 
 List<grpattemp> createDeptempList(List data) {
   List<grpattemp> list = new List();
@@ -2010,6 +2010,67 @@ List<grpattemp> createDeptempList(List data) {
   }
   return list;
 }
+
+Future<List<grpattemp>> getDeptEmp_Search($val) async {
+  List<grpattemp> deptList = createDeptempList_search(responseEmplist, $val);
+  return deptList;
+}
+List<grpattemp> createDeptempList_search(List data , String empname){
+  List<grpattemp> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String name = data[i]["name"];
+    // String status=data[i]["archive"]=='1'?'Active':'Inactive';
+    String id = data[i]["id"];
+    int csts = data[i]["csts"];
+    String img = data[i]["img"];
+    // String timein=data[i]["timein"];
+    String timein = data[i]["timein"];
+    String timeout = data[i][
+    "timeout"]; //(hour: data[i]["timeout"].split(":")[0], minute: data[i]["timeout"].split(":")[1]);
+    //print(timein+' and '+timeout);
+    String attsts = '1';
+    String todate = data[i]["todate"];
+    String shift = data[i]["shift"];
+    String shifttype = data[i]["shifttype"];
+    String rtimein = data[i]["rtimein"];
+    String rtimeout = data[i]["rtimeout"];
+    String attid = data[i]["Attid"];
+    String data_date = data[i]["data_date"];
+    String device = data[i]["device"];
+    //String timein='';
+    //String timeout ='';
+    if (data[i]["rtimein"] != '') {
+      timein = data[i]["rtimein"];
+    }
+    if (data[i]["rtimeout"] != '') {
+      timeout = data[i]["rtimeout"];
+    }
+    print("......");
+    print(timein);
+    print(timeout);
+    grpattemp dpt = new grpattemp(
+        Name: name,
+        csts: csts,
+        img: img,
+        attsts: attsts,
+        timein: timein,
+        timeout: timeout,
+        todate: todate,
+        shift: shift,
+        shifttype: shifttype,
+        Id: id,
+        Attid: attid,
+        data_date: data_date,
+        device: device);
+    if(name.toLowerCase().contains(empname.toLowerCase()))
+      list.add(dpt);
+
+
+  }
+  return list;
+}
+
+
 
 addBulkAtt(List<grpattemp> data) async {
   var dio = new Dio();
@@ -2111,7 +2172,7 @@ getAddressFromLati( String Latitude,String Longitude) async{
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-    if (globals.assign_lat.compareTo(0.0) != 0&&globals.assign_lat!=null) {
+    if (globals.assign_lat.compareTo(0.0) != 0&& globals.assign_lat!=null) {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(
               globals.assign_lat, globals.assign_long));
@@ -2142,6 +2203,42 @@ getAddressFromLati( String Latitude,String Longitude) async{
   }
 }
 
+getAddressFromLati_offline( double Latitude,double Longitude) async{
+  try {
+    ///print(_currentLocation);
+    //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
+         Latitude = 14.5679826;
+         Longitude = 121.0932919;
+    if (Latitude.compareTo(0.0) != 0&& Latitude!=null) {
+      var addresses = await Geocoder.local.findAddressesFromCoordinates(
+          Coordinates(
+              Latitude, Longitude));
+      var first = addresses.first;
+      //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
+      var streamlocationaddr = "${first.addressLine}";
+
+      globalstreamlocationaddr = streamlocationaddr;
+      return streamlocationaddr;
+    }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+
+      return globalstreamlocationaddr;
+    }
+
+  }catch(e){
+    print(e.toString());
+    if (Latitude.compareTo(0.0) != 0&& Latitude!=null) {
+      globalstreamlocationaddr = "${Latitude},${Longitude}";
+      print("inside iffffffffffffffffffffffffffffffffffffffffffffff"+globals.assign_lat.toString());
+    }
+    else{
+      globalstreamlocationaddr="Location not fetched.";
+    }
+
+    return globals.globalstreamlocationaddr;
+  }
+}
 
 
 

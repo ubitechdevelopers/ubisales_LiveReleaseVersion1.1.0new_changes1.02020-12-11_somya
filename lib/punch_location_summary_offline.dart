@@ -285,7 +285,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
             )),
 
         floatingActionButton: new FloatingActionButton(
-          backgroundColor: Colors.blue,
+          backgroundColor:buttoncolor,
           onPressed: (){
             Navigator.pushReplacement(
               context,

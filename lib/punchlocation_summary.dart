@@ -202,7 +202,7 @@ String address="";
         bottomNavigationBar: Bottomnavigationbar(),
         endDrawer: new AppDrawer(),
         floatingActionButton: new FloatingActionButton(
-          backgroundColor: Colors.blue,
+          backgroundColor:buttoncolor,
           onPressed: (){
             Navigator.push(
               context,

@@ -122,6 +122,7 @@ class _EmployeeList extends State<EmployeeList> {
                     /*onChanged: _searchController,*/
                     onChanged: (value) {
                       setState(() {
+                        print(value);
                         empname = value;
                         res = true;
                       });

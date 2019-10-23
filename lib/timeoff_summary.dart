@@ -281,7 +281,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       endDrawer: new AppDrawer(),
       body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
       floatingActionButton: new FloatingActionButton(
-        backgroundColor: Colors.blue,
+        backgroundColor: buttoncolor,
         onPressed: (){
           Navigator.push(
             context,

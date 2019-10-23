@@ -139,7 +139,7 @@ class _EmployeeList extends State<EmployeeList> {
 
       floatingActionButton: new FloatingActionButton(
         mini: false,
-        backgroundColor: Colors.blue,
+        backgroundColor: buttoncolor,
         onPressed: (){
           Navigator.push(
             context,

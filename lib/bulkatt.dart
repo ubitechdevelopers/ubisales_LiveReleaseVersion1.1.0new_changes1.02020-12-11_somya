@@ -32,8 +32,12 @@ class _Bulkatt extends State<Bulkatt> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 2;
+  Color cartcolor =  Colors.white;
+  Color appcolor_check =  Colors.cyan[50];
   String org_name = "";
   String admin_sts = '0';
+  String empname = "";
+  String searchval = "";
   int response;
   String fname = "",
       lname = "",
@@ -53,6 +57,7 @@ class _Bulkatt extends State<Bulkatt> {
   int checkall = 0;
   List<Map> attstsList = null;
   bool pageload = true;
+  bool res = true;
   bool _obscureText = true;
   bool _isButtonDisabled = false;
   bool showSearch= false;
@@ -91,6 +96,7 @@ class _Bulkatt extends State<Bulkatt> {
         emplist = EmpList;
       });
     });
+
     attstsList = createAttStsList();
     response = prefs.getInt('response') ?? 0;
     if (response == 1) {
@@ -113,6 +119,17 @@ class _Bulkatt extends State<Bulkatt> {
     }
     platform.setMethodCallHandler(_handleMethod);
   }
+
+  getemployeelist($val)
+  {
+    getDeptEmp_Search($val).then((EmpList) {
+      setState(() {
+        emplist = EmpList;
+      });
+    });
+  }
+
+
   static const platform = const MethodChannel('location.spoofing.check');
   String address="";
   String areaStatus="";
@@ -158,12 +175,8 @@ class _Bulkatt extends State<Bulkatt> {
             fakeLocationDetected=false;
           }
 
-
-
-
         });
         break;
-
         return new Future.value("");
     }
   }
@@ -332,11 +345,13 @@ class _Bulkatt extends State<Bulkatt> {
                               }
                             }
                           }
+                          print("---------------before add bulk att");
+                          print(_saved);
+                          return false;
                           setState(() {
                             _isButtonDisabled = true;
                           });
-                          //    print(_saved);
-                          //  return false;
+
 
                           print("---------------before add bulk att");
                           addBulkAtt(_saved)
@@ -427,6 +442,7 @@ class _Bulkatt extends State<Bulkatt> {
                                 });
                                 getDeptEmp(changedValue).then((EmpList) {
                                   setState(() {
+
                                     emplist = EmpList;
                                     _saved.clear();
                                     checkall = 0;
@@ -455,7 +471,8 @@ class _Bulkatt extends State<Bulkatt> {
                     IconButton(
                       onPressed: (){
                         setState(() {
-                          showSearch=true;
+                          _searchController.text = '';
+                           showSearch=true;
                         });
                       },
                       icon: Icon(
@@ -466,6 +483,8 @@ class _Bulkatt extends State<Bulkatt> {
                     IconButton(
                       onPressed: (){
                         setState(() {
+                          getemployeelist("");
+                          _searchController.text = '';
                           showSearch=false;
                         });
                       },
@@ -483,11 +502,12 @@ class _Bulkatt extends State<Bulkatt> {
                 child: Card(
                   elevation: 2.0,
                   clipBehavior: Clip.antiAlias,
-                  child: TextFormField(
+                  child: TextField(
                     autofocus: true,
                     controller: _searchController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
+
                       prefixIcon: Icon(Icons.search),
                       hintText: 'Search',
                       focusColor: Colors.white,
@@ -497,6 +517,14 @@ class _Bulkatt extends State<Bulkatt> {
                         )*/
                     ),
                     /*onChanged: _searchController,*/
+                    onChanged: (value) {
+                      setState(() {
+                        print(value);
+                        empname = value;
+                        loaderr=false;
+                        showSearch?getemployeelist(value):"" ;
+                      });
+                    },
                   ),
                 ),
               ) : new Container(
@@ -533,9 +561,7 @@ class _Bulkatt extends State<Bulkatt> {
                print(til[1]);*/
                 DateTime ti = new DateTime(2001, 01, 01, int.parse(emplist[index].timein.split(":")[0]), int.parse(emplist[index].timein.split(":")[1]), 00, 00);
                 DateTime tout = new DateTime(2001, 01, 01, int.parse(emplist[index].timeout.split(":")[0]),
-                    int.parse(emplist[index].timeout.split(":")[1]),
-                    00,
-                    00);
+                    int.parse(emplist[index].timeout.split(":")[1]), 00, 00);
                 //TimeOfDay(hour: int.parse(emplist[index].timein.split(":")[0]), minute: int.parse(emplist[index].timein.split(":")[1]));
                 //print(ti);
                 //TimeOfDay tout = TimeOfDay(hour: int.parse(emplist[index].timeout.split(":")[0]), minute: int.parse(emplist[index].timeout.split(":")[1]));
@@ -557,17 +583,20 @@ class _Bulkatt extends State<Bulkatt> {
                 print('_enabletimein'+emplist[index].Name+_enabletimein.toString()+emplist[index].Attid.toString());
                 //  print(_saved.elementAt(index).Name);
                 return new Column(children: <Widget>[
-                  Padding(
+                 new Padding(
                     padding: const EdgeInsets.only(left:8.0, right:8.0),
+
                     child: InkWell(
                       onLongPress: (){},
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide( color: const Color(0xFFEEEEEE), width: 1,),
+                          side: BorderSide( color: const Color(0xFFEEEEEE), width: 0.5,),
 
                         ),
                         elevation: 0.0,
+                        color: alreadySaved==1?appcolor_check:Colors.white,
+
                         clipBehavior: Clip.antiAlias,
                         borderOnForeground: false,
                         child: new Container(
@@ -618,10 +647,22 @@ class _Bulkatt extends State<Bulkatt> {
                                     )
                                 ),
                                 onTap: (){
-                                  Navigator.push(
+                                setState(() {
+
+                                  if (emplist[index].csts == 1) {
+                                    _saved.remove(emplist[index]);
+                                    emplist[index].csts = 0;
+                                  } else {
+                                    _saved.add(emplist[index]);
+                                    emplist[index].csts = 1;
+                                    print(emplist[index].Name);
+                                  }
+                                });
+
+                                  /*Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => ImageView(myimage: emplist[index].img,org_name: org_name)),
-                                  );
+                                  );*/
                                 },
                               ),
                               SizedBox(width:10.0),
@@ -680,15 +721,16 @@ class _Bulkatt extends State<Bulkatt> {
                                             print('time');
                                             print(t);
                                             if(t!=null) {
-                                              emplist[index].timein =
-                                                  t.hour.toString() + ':' +
-                                                      t.minute.toString();
+                                              emplist[index].timein = t.hour.toString() + ':' + t.minute.toString();
                                             }else{
                                               // emplist[index].timein = t.toString();
                                             }
                                             if (emplist[index].csts != 1) {
                                               _saved.add(emplist[index]);
                                               emplist[index].csts = 1;
+                                            }
+                                            else{
+
                                             }
                                           }
                                           ),
@@ -764,6 +806,11 @@ class _Bulkatt extends State<Bulkatt> {
                                               _saved.add(emplist[index]);
                                               emplist[index].csts = 1;
                                             }
+                                            /*if((emplist[index].Attid != 0 &&  t==null) && (emplist[index].Attid != 0 && t.hour.toString() + ':' + t.minute.toString() =='00:00'))
+                                              {
+                                                _saved.remove(emplist[index]);
+                                                emplist[index].csts = 0;
+                                              }*/
                                           }),
                                           validator: (time) {
                                             //    print("dddddddd");
@@ -790,7 +837,7 @@ class _Bulkatt extends State<Bulkatt> {
                       ),
                     ),
                   ),
-                  SizedBox(height:5.0),
+                 // SizedBox(height:5.0),
                 ]
                 );
               }

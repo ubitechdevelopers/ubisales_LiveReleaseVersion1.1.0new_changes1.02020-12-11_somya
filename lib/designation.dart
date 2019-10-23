@@ -109,7 +109,7 @@ class _Designation extends State<Designation> {
           ),
           floatingActionButton: new FloatingActionButton(
             mini: false,
-            backgroundColor: Colors.blue,
+            backgroundColor: buttoncolor,
             onPressed: (){
               setState(() {
                 _isButtonDisabled=false;

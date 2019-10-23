@@ -132,7 +132,7 @@ class _HolidayList extends State<HolidayList> {
       ),
       floatingActionButton: new FloatingActionButton(
         mini: false,
-        backgroundColor: Colors.blue,
+        backgroundColor: buttoncolor,
         onPressed: (){
           Navigator.push(
             context,

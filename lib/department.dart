@@ -115,7 +115,7 @@ class _Department extends State<Department> {
           ),
           floatingActionButton: new FloatingActionButton(
             mini: false,
-            backgroundColor: Colors.blue,
+            backgroundColor: buttoncolor,
             onPressed: (){
               setState(() {
                 _isButtonDisabled=false;

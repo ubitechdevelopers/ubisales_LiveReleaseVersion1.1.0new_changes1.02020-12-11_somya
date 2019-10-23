@@ -142,7 +142,7 @@ class _ShiftList extends State<ShiftList> {
           ),
           floatingActionButton: new FloatingActionButton(
             mini: false,
-            backgroundColor: Colors.blue,
+            backgroundColor: buttoncolor,
             onPressed: (){
               Navigator.push(
                 context,
