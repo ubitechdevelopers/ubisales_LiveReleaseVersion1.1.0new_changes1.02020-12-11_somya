@@ -21,7 +21,7 @@ import 'userGuide.dart';
 import 'services/services.dart';
 import 'flexi_time.dart';
 import 'notifications.dart';
-
+import 'contactUs.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -467,7 +467,6 @@ class _AppDrawerState extends State<AppDrawer> {
           ),*/
           (admin_sts=='1' && buystatus != '0')?
           new ListTile(
-
             title: Row(
               children: <Widget>[
                 Icon(Icons.help,size: 20.0),SizedBox(width: 5.0),
@@ -478,6 +477,21 @@ class _AppDrawerState extends State<AppDrawer> {
               openWhatsApp();
             },
           ):Center(),
+
+          new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.help_outline,size: 20.0),SizedBox(width: 5.0),
+                new Text("Contact Us", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactUs()),
+              );
+            },
+          ),
 
           new ListTile(
             title: Row(

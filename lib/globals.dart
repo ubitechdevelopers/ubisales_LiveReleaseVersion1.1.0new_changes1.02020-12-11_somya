@@ -26,8 +26,8 @@ String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/
 */
 
 
-String path="https://ubiattendance.ubihrm.com/index.php/Att_services1/";
-String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services1/";
+String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
+String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 
 
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
