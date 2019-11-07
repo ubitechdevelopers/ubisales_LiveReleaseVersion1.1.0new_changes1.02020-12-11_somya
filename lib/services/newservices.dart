@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:Shrine/model/model.dart';
 import 'package:Shrine/globals.dart' as globals;
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -11,6 +12,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'package:Shrine/globals.dart';
 import 'services.dart';
+import 'package:Shrine/genericCameraClass.dart';
 
 class RequestTimeOffService{
 
@@ -114,7 +116,7 @@ class NewServices{
   }
 
 
-  Future<bool> updateProfilePhoto(int uploadtype, String empid, String orgid) async {
+  Future<bool> updateProfilePhoto(int uploadtype, String empid, String orgid,context) async {
     try{
 
       File imagei = null;
@@ -125,7 +127,10 @@ class NewServices{
       }
       //for camera
       if(uploadtype==2){
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera);
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
       }
       //for removing photo
       if(uploadtype==3){

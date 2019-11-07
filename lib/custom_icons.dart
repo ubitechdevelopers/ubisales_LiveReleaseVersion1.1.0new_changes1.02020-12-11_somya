@@ -52,5 +52,6 @@ class Custom {
   static const IconData email_icon = const IconData(0xe81f, fontFamily: _kFontFam);
   static const IconData message_icon = const IconData(0xe820, fontFamily: _kFontFam);
   static const IconData visits_man = const IconData(0xe821, fontFamily: _kFontFam);
+  static const IconData contact_directory = const IconData(0xe826, fontFamily: _kFontFam);
 
 }

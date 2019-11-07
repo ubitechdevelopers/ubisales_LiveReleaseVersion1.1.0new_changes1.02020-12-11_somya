@@ -148,7 +148,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       StrictMode.setThreadPolicy(policy);
     }
       ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS}, 1);
+              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS,Manifest.permission.RECORD_AUDIO}, 1);
 
     channel=new MethodChannel(getFlutterView(), CHANNEL);
     GeneratedPluginRegistrant.registerWith(this);

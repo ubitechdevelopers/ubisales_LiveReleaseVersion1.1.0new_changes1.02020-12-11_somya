@@ -13,6 +13,7 @@ import 'newservices.dart';
 import 'package:location/location.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter/services.dart';
+import 'package:Shrine/genericCameraClass.dart';
 
 class SaveImage {
   String base64Image;
@@ -107,7 +108,7 @@ class SaveImage {
   }
 
 
-  Future<bool> saveTimeInOutImagePicker(MarkTime mk) async {
+  Future<bool> saveTimeInOutImagePicker(MarkTime mk,context) async {
 
     try{
       File imagei = null;
@@ -119,8 +120,10 @@ class SaveImage {
       if (globals.attImage == 1) {
 
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
 
 
 
@@ -267,7 +270,7 @@ class SaveImage {
   }
 
 
-  Future<bool> saveTimeInOutImagePicker_old123(MarkTime mk) async {
+  Future<bool> saveTimeInOutImagePicker_old123(MarkTime mk,context) async {
     bool ready = false;
     String location = globals.globalstreamlocationaddr;
 
@@ -285,8 +288,12 @@ class SaveImage {
       globals.cameraChannel.invokeMethod("cameraOpened");
       imageCache.clear();
       if (globals.attImage == 1) {
-        ImagePicker.pickImage(
-                source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+
+        print("Pahunch gaya-----------------------------------------------");
+        Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        )
             .then((imagei) {
 
           if (imagei != null) {
@@ -440,7 +447,7 @@ class SaveImage {
     }
   }
 
-  Future<bool> saveTimeInOutQR(MarkTime mk) async {
+  Future<bool> saveTimeInOutQR(MarkTime mk,context) async {
 
     try {
       File imagei = null;
@@ -451,8 +458,10 @@ class SaveImage {
       {
         print("Testing of attendance123");
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -540,15 +549,17 @@ class SaveImage {
     }
   }
 
-  Future<bool> saveVisit(MarkVisit mk) async {
+  Future<bool> saveVisit(MarkVisit mk,context) async {
     // visit in function
     try {
       File imagei = null;
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       if (globals.visitImage == 1) {
-        imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -654,15 +665,17 @@ class SaveImage {
   }
 
   Future<bool> saveVisitOut(
-      empid, addr, visit_id, latit, longi, remark, refid,FakeLocationStatus) async {
+      empid, addr, visit_id, latit, longi, remark, refid,FakeLocationStatus,context) async {
     // visit in function
     try {
       File imagei = null;
       imageCache.clear();
       if (globals.visitImage == 1) {
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -761,7 +774,7 @@ class SaveImage {
 
 
   /////Start SAve flexi time in out//////
-  Future<bool> saveFlexi(MarkVisit mk) async {
+  Future<bool> saveFlexi(MarkVisit mk,context) async {
     print('------------**v');
     // visit in function
     try {
@@ -771,7 +784,10 @@ class SaveImage {
       //   if (globals.FlexiImage != 1) {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      imagei = await Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      );
 
       if (imagei != null) {
         globals.globalCameraOpenedStatus=false;
@@ -881,7 +897,7 @@ class SaveImage {
 
 
   Future<bool> saveFlexiOut(
-      empid, addr, visit_id, latit, longi,  refid,FakeLocationStatus) async
+      empid, addr, visit_id, latit, longi,  refid,FakeLocationStatus,context) async
   {
     // visit in function
     try {
@@ -889,8 +905,10 @@ class SaveImage {
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       // if (globals.FlexiImage != 1) {
-      imagei = await ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      imagei = await Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      );
 
       print(imagei);
       if (imagei != null)

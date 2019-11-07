@@ -258,6 +258,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 child: Text("Buy"),
                 color: buttoncolor,
                 onPressed: (){
+
                   if(buystatus=="1" && trialstatus=="2") {
                     launchMap("https://ubiattendance.ubihrm.com/");
                   }

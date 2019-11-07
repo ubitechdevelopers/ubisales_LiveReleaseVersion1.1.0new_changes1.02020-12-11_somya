@@ -291,6 +291,7 @@ var FakeLocationStatus=0;
     return new WillPopScope(
         onWillPop: () async => true,
         child: new Scaffold(
+          backgroundColor: Colors.white,
           key: _scaffoldKey,
           appBar: AppBar(
             title: Row(
@@ -621,11 +622,21 @@ var FakeLocationStatus=0;
 
   getVisitInButton() {
     return RaisedButton(
+      clipBehavior: Clip.antiAlias,
+      elevation: 0.0,
+      highlightElevation: 0.0,
+      highlightColor: Colors.transparent,
+      disabledElevation: 50.0,
+      focusColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+      ),
       child: Text('VISIT IN',
-          style: new TextStyle(fontSize: 22.0, color: Colors.white)),
+          style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () {
-       globalCameraOpenedStatus=true;
+        globalCameraOpenedStatus=true;
         if(_clientname.text.trim()=='') {
           showInSnackBar('Please insert client name first');
           return false;
@@ -666,7 +677,7 @@ var FakeLocationStatus=0;
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveVisit(mk);
+      issave = await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
         showDialog(context: context, child:

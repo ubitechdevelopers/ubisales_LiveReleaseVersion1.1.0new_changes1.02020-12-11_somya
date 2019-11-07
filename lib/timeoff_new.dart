@@ -602,7 +602,7 @@ class _TimeOff_New extends State<TimeOff_New> {
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveVisit(mk);
+      issave = await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
         showDialog(context: context, child:

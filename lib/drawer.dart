@@ -465,7 +465,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-          (admin_sts=='1' && buystatus != '0')?
+         /* (admin_sts=='1' && buystatus != '0')?
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -476,7 +476,7 @@ class _AppDrawerState extends State<AppDrawer> {
             onTap: () {
               openWhatsApp();
             },
-          ):Center(),
+          ):Center(),*/
 
           new ListTile(
             title: Row(

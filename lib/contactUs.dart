@@ -25,6 +25,11 @@ class _ContactUs extends State<ContactUs> {
   String desination="";
   String profile="";
   String org_name="";
+  bool _isButtonDisabled = false;
+  String admin_sts='0';
+  String buystatus = "";
+  TextEditingController textsms = new TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -33,11 +38,21 @@ class _ContactUs extends State<ContactUs> {
     initPlatformState();
 
   }
+  _launchURL(url) async {
+    //  const url = 'https://flutter.io';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
+      admin_sts = prefs.getString('sstatus').toString();
+      buystatus = prefs.getString('buysts') ?? '';
       fname = prefs.getString('fname') ?? '';
       lname = prefs.getString('lname') ?? '';
       desination = prefs.getString('desination') ?? '';
@@ -46,10 +61,11 @@ class _ContactUs extends State<ContactUs> {
       // _animatedHeight = 0.0;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.white,
         appBar: new AppBar(
           title: Row(
@@ -70,21 +86,53 @@ class _ContactUs extends State<ContactUs> {
         body: userWidget()
     );
   }
+
+  void showInSnackBar(String value) {
+    final snackBar = SnackBar(
+        content: Text(
+          value,
+          textAlign: TextAlign.center,
+        ));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  SMS(String sms) async{
+
+
+     sendsms(sms).then((res){
+       textsms.text = "";
+        setState(() {
+         _isButtonDisabled = false;
+       });
+
+       showDialog(
+           context: context,
+           child: new AlertDialog(
+             content: new Text('Enquiry Mail sent successfully'),
+           ));
+     }).catchError((exp) {
+       showDialog(
+           context: context,
+           child: new AlertDialog(
+             content: new Text('Unable to call service. Please try later'),
+           ));
+     });
+
+  }
   openWhatsApp() async{
-
-    facebookChannel.invokeMethod("logContactEvent");
-
+    //prefix0.facebookChannel.invokeMethod("logContactEvent");
     print("Language is "+window.locale.countryCode);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var name=prefs.getString("fname")??"";
     var org_name= prefs.getString('org_name') ?? '';
-    String country=window.locale.countryCode;
+    var country = prefs.getString("org_country")??"";
+  //  String country=window.locale.countryCode;
     var message;
 
     message="Hello%20I%20am%20"+name+"%20from%20"+org_name+"%0AI%20need%20some%20help%20regarding%20ubiAttendance%20app";
 
     var url;
-    if(country=="IN")
+    if(country=="93" || country== '14' || country== '153	' )
       url = "https://wa.me/917067822132?text="+message;
     else{
       url = "https://wa.me/971555524131?text="+message;
@@ -95,8 +143,8 @@ class _ContactUs extends State<ContactUs> {
       throw 'Could not launch Maps';
     }
   }
-  userWidget(){
 
+  userWidget(){
     return ListView(
       children: <Widget>[
         Container(
@@ -151,6 +199,8 @@ class _ContactUs extends State<ContactUs> {
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal:10,vertical: 15.0),
                   ),
+
+                  controller: textsms,
                   maxLines: 5,
                 ),
               ),
@@ -170,10 +220,21 @@ class _ContactUs extends State<ContactUs> {
                       ),
                       color: Colors.amber,
                       onPressed: (){
+                        if(textsms.text.length<=0)
+                          {
+                            showInSnackBar("Please enter message");
+                            return null;
+                          }
+                         setState(() {
+                           _isButtonDisabled = true;
+                         });
 
-                        openWhatsApp();
+                        SMS(textsms.text);
                       },
-                      child: Icon(
+                      child: _isButtonDisabled?Text(
+                        'Processing..',
+                        style: TextStyle(color: Colors.white),
+                      ): Icon(
                         Icons.send,
                         color: Colors.white,
                       ),
@@ -182,11 +243,52 @@ class _ContactUs extends State<ContactUs> {
                 ],
               ),
               SizedBox(height: 20.0,),
-              Container(
+
+              (admin_sts=='1' && buystatus != '0')?Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        "Get in touch on whats app",
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                    InkWell(
+                      onTap: (){
+                        openWhatsApp();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Container(
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.message,
+                                size: 30.0,
+//                                color: Colors.black54,
+                                color: Colors.teal,
+                              ),
+                              SizedBox(width: 10.0,),
+                              Text(
+                                'whats app',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: Colors.teal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.0,),
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Text(
@@ -198,7 +300,17 @@ class _ContactUs extends State<ContactUs> {
                     ),
                     SizedBox(height: 5,),
                     InkWell(
-                      onTap: (){},
+                      onTap: ()async{
+                        var phone;
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        var country = prefs.getString("org_country")??"";
+                        if(country=="93" || country== '14' || country== '153' )
+                          phone = "917067822132";
+                        else{
+                          phone = "971555524131";
+                        }
+                        _launchURL('tel:'+phone);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Container(
@@ -224,47 +336,11 @@ class _ContactUs extends State<ContactUs> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0,),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        "We'd love for you to Visit Us ",
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 5,),
-                    InkWell(
-                      onTap: (){},
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.location_on,
-                                size: 30.0,
-//                                color: Colors.black54,
-                                color: Colors.teal,
-                              ),
-                              SizedBox(width: 10.0,),
-                              Text(
-                                'Visit Us',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  color: Colors.teal,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+
+
                   ],
                 ),
-              )
+              ):Center(),
             ],
           ),
 

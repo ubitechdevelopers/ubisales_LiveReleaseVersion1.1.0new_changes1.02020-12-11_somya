@@ -659,7 +659,7 @@ class _EditEmployee extends State<EditEmployee> {
                               ),
                               prefixIcon: Icon(Icons.person),
                               labelText: 'Name',
-                              suffixIcon: IconButton(
+                              /*suffixIcon: IconButton(
                                 onPressed: ()async {
                                   Contact contact =
                                   await _contactPicker.selectContact();
@@ -670,9 +670,9 @@ class _EditEmployee extends State<EditEmployee> {
                                   });
                                 },
                                 icon: Icon(
-                                  Icons.contacts,
+                                  const IconData(0xe826, fontFamily: 'CustomIcon'),
                                   color: Colors.grey,),
-                              )
+                              )*/
                           ),
                           validator: (value) {
                             if (value.trim().isEmpty) {

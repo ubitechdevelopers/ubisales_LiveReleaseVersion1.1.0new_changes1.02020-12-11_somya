@@ -233,6 +233,9 @@ class _ShiftList extends State<ShiftList> {
     await showDialog<String>(
       context: context,
       child: new AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         contentPadding: const EdgeInsets.all(16.0),
         content: Container(
           height: MediaQuery.of(context).size.height*0.20,
@@ -245,12 +248,20 @@ class _ShiftList extends State<ShiftList> {
                   autofocus: false,
                   //   controller: client_name,
                   decoration: new InputDecoration(
-                      labelText: dept, hintText: dept),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                      ),
+                      labelText: 'Shift', hintText: 'Shift Name'),
                 ),
               ),
               new Expanded(
                 child:  new InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                    ),
                     labelText: 'Status',
                   ),
                   isEmpty: _sts1 == '',

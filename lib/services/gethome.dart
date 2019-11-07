@@ -6,6 +6,20 @@ import 'package:Shrine/globals.dart' as globals;
 class Home{
   var dio = new Dio();
 
+
+  updateTimeOut(String empid, String orgid) async{
+    try{
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });
+      Response response = await dio.post(globals.path+"updatetimeout", data: formData);
+    }catch(e)
+    {
+      print(e.toString());
+    }
+  }
+
   checkTimeIn(String empid, String orgid) async{
     try {
 
@@ -21,9 +35,7 @@ class Home{
       });
       print(globals.path+"getInfo?uid=$empid&refno=$orgid");
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
-      Response response = await dio.post(
-          globals.path+"getInfo",
-          data: formData);
+      Response response = await dio.post(globals.path+"getInfo", data: formData);
       //print("<<------------------GET HOME-------------------->>");
       print(response.toString());
       //print("this is status "+response.statusCode.toString());
@@ -31,14 +43,17 @@ class Home{
         Map timeinoutMap = json.decode(response.data);
         String aid = timeinoutMap['aid'].toString();
         print('aid'+aid);
+        print("Timeoutdate "+timeinoutMap['timeoutdate'].toString());
         String sstatus = timeinoutMap['sstatus'].toString();
 
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
         String org_country = timeinoutMap['orgcountry'].toString();
+        prefs.setString('countrycode',timeinoutMap['countrycode']);
         int Is_Delete = int.parse(timeinoutMap['Is_Delete']);
         globals.departmentname = timeinoutMap['departmentname'].toString();
+        globals.timeoutdate = timeinoutMap['timeoutdate'].toString();
         globals.departmentid = int.parse(timeinoutMap['departmentid']);
         globals.bulkAttn=int.parse(timeinoutMap['Addon_BulkAttn']);
         globals.geoFence=int.parse(timeinoutMap['Addon_GeoFence']);
@@ -150,21 +165,24 @@ class Home{
     }
   }
 
+
+
   checkTimeInQR(String empid, String orgid) async{
+
     try {
       final prefs = await SharedPreferences.getInstance();
+
       FormData formData = new FormData.from({
         "uid": empid,
         "refid": orgid,
       });
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
-      Response response = await dio.post(
-          globals.path+"getInfo",
-          data: formData);
+      Response response = await dio.post(globals.path+"getInfo", data: formData);
+
       //Response response = await dio.post("http://192.168.0.20 0/UBIHRM/HRMINDIA/services/getInfo", data: formData);
       //Response response = await dio.post("https://ubitech.ubihrm.com/services/getInfo", data: formData);
 
-      //print(response.toString());
+         print(response.toString());
       //print("this is status "+response.statusCode.toString());
       if (response.statusCode == 200) {
         Map timeinoutMap = json.decode(response.data);
@@ -173,6 +191,7 @@ class Home{
         String lat="",long="";
         String streamlocationaddr = "";
         if(globals.assign_lat!=null ||globals.assign_lat!=0.0 ) {
+
           lat = globals.assign_lat.toString();
           long = globals.assign_long.toString();
           streamlocationaddr = globals.globalstreamlocationaddr;
@@ -191,7 +210,7 @@ class Home{
         timeinoutMap.putIfAbsent('location', ()=> streamlocationaddr );
         timeinoutMap.putIfAbsent('uid', ()=> empid );
         timeinoutMap.putIfAbsent('refid', ()=> orgid );
-       return timeinoutMap;
+        return timeinoutMap;
       } else {
         return "Poor network connection";
       }

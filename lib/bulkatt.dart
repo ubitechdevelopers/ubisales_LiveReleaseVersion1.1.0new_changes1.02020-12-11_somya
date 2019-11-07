@@ -347,7 +347,7 @@ class _Bulkatt extends State<Bulkatt> {
                           }
                           print("---------------before add bulk att");
                           print(_saved);
-                          return false;
+                         //  return false;
                           setState(() {
                             _isButtonDisabled = true;
                           });
@@ -464,7 +464,7 @@ class _Bulkatt extends State<Bulkatt> {
                       ),
                     ),
                   ),
-                  Padding(
+                  /*Padding(
                     padding: const EdgeInsets.only(right:10.0),
                     child:
                     (showSearch == false) ?
@@ -493,10 +493,10 @@ class _Bulkatt extends State<Bulkatt> {
                         color: Colors.grey,
                       ),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
-              (showSearch == true) ?
+              /*(showSearch == true) ?
               Padding(
                 padding: const EdgeInsets.only(left:10.0,right: 10.0),
                 child: Card(
@@ -528,7 +528,7 @@ class _Bulkatt extends State<Bulkatt> {
                   ),
                 ),
               ) : new Container(
-              ),
+              ),*/
 
               SizedBox(height: 5.0),
               new Expanded(
@@ -680,7 +680,7 @@ class _Bulkatt extends State<Bulkatt> {
                                     children: <Widget>[
                                       Container(
                                         width: MediaQuery.of(context).size.width*0.32,
-                                        height: MediaQuery.of(context).size.height*.06,
+                                      //  height: MediaQuery.of(context).size.height*.06,
                                         decoration: BoxDecoration(
                                             color: const Color(0xFFFBFBFB),
                                             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -752,7 +752,7 @@ class _Bulkatt extends State<Bulkatt> {
                                       SizedBox(width:10.0),
                                       Container(
                                         width: MediaQuery.of(context).size.width*0.33,
-                                        height: MediaQuery.of(context).size.height*.06,
+                                       // height: MediaQuery.of(context).size.height*.06,
                                         decoration: BoxDecoration(
                                             color: const Color(0xFFFBFBFB),
                                             borderRadius: BorderRadius.all(Radius.circular(10)),

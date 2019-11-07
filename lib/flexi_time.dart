@@ -797,7 +797,7 @@ class _Flexitime extends State<Flexitime> {
           print('<<****************************');
 
           // Navigator.of(context, rootNavigator: true).pop();
-          saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus)
+          saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus,context)
               .then((res){
 
             print(res);
@@ -906,7 +906,7 @@ print('visit out called for visit id:'+visit_id);
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveFlexi(mk);
+      issave = await saveImage.saveFlexi(mk,context);
       ////print(issave);
       if (issave) {
         checkTimeinflexi().then((EmpList) {

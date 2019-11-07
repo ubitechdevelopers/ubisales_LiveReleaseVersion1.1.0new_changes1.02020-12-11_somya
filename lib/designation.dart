@@ -362,7 +362,7 @@ class _Designation extends State<Designation> {
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                       ),
-                      labelText: dept, hintText: dept),
+                      labelText: 'Designation', hintText: 'Designation Name'),
                 ),
               ),
               SizedBox(height: 5.0),

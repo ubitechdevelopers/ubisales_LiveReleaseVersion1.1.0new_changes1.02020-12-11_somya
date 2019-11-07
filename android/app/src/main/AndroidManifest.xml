@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.ubitech.attendance"
-    android:versionCode="50009"
-    android:versionName="5.0.9">
+    android:versionCode="50101"
+    android:versionName="5.1.1">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application

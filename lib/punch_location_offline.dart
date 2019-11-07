@@ -44,6 +44,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'punch_location_summary_offline.dart';
+import 'genericCameraClass.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class PunchLocationOffline extends StatefulWidget {
@@ -714,8 +715,10 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
     if (imageRequired == 1) {
       cameraChannel.invokeMethod("cameraOpened");
       prefix0.globalCameraOpenedStatus=true;
-      ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+      Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      )
           .then((img) async {
         prefix0.globalCameraOpenedStatus=false;
         if (img != null) {

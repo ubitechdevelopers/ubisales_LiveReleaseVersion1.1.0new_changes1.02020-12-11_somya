@@ -40,6 +40,7 @@ int timeOff=0,bulkAttn = 0,geoFence=0,payroll=0,tracking=0,visitpunch=0,departme
 int globalalertcount = 0;
 int visitImage = 0;
 int attImage = 0;
+var timeoutdate = "";
 String departmentname = "";
 int departmentid = 1;
 int varCheckNet=0;

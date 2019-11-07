@@ -571,7 +571,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _isProfileUploading = true;
     });
     NewServices ns = NewServices();
-    bool isupdate = await ns.updateProfilePhoto(uploadtype,empid,orgid);
+    bool isupdate = await ns.updateProfilePhoto(uploadtype,empid,orgid,context);
    // bool isupdate = true;
     if(isupdate){
       setState(() {

@@ -32,7 +32,7 @@ import 'package:Shrine/home.dart';
 import 'package:Shrine/loggedOut.dart';
 import 'offline_attendance_logs.dart';
 import 'punch_location_summary_offline.dart';
-
+import 'package:Shrine/genericCameraClass.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -693,10 +693,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: () {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeInPressedTime=DateTime.now();
-                                /*
+
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-*/
+
                                 saveOfflineQr(0);
 
                               },
@@ -712,10 +712,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: () {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
-  /*
+
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-    */                            saveOfflineQr(1);
+                              saveOfflineQr(1);
                               },
                             ),
                           ],
@@ -755,9 +755,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         if (imageRequired == 1) {
           prefix0.globalCameraOpenedStatus=true;
           cameraChannel.invokeMethod("cameraOpened");
-          ImagePicker.pickImage(
-              source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
-              .then((img) async {
+          Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new TakePictureScreen(),
+            fullscreenDialog: true,)
+          ).then((img) async {
 
             if (img != null) {
               prefix0.globalCameraOpenedStatus=false;
@@ -854,8 +855,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 MaterialPageRoute(builder: (context) => OfflineHomePage()),
               );
 
-              Navigator.of(context, rootNavigator: true)
-                  .pop();
+
 
 
             }
@@ -939,8 +939,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             MaterialPageRoute(builder: (context) => OfflineHomePage()),
           );
 
-          Navigator.of(context, rootNavigator: true)
-              .pop();
+
 
 /*
           showDialog(context: context, child:
@@ -1485,8 +1484,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         print("-----------------------Context before-----------------------");
         print(context);
         cameraChannel.invokeMethod("cameraOpened");
-        ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+        Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        )
             .then((img) async {
           prefix0.globalCameraOpenedStatus=false;
           if (img != null) {
@@ -1571,8 +1572,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             print("-----------------------Context-----------------------");
             print(context);
             Navigator
-                .of(context)
-                .push(
+
+                .push(context,
               MaterialPageRoute(builder: (context) => OfflineHomePage()),
             );
           }
@@ -1642,8 +1643,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         print("-----------------------Context-----------------------");
         print(context);
         Navigator
-            .of(context)
-            .push(
+
+            .push(context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),
         );
       }

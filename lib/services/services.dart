@@ -32,7 +32,7 @@ class Services {}
 ////////////////////Shashank///////////////////////////////
 
 bool isOfflineHomeRedirected=false;
-
+String trialstatus = '';
 appResumedPausedLogic(context,[bool isVisitPage]){
   SystemChannels.lifecycle.setMessageHandler((msg)async{
     if(msg=='AppLifecycleState.resumed' )
@@ -1021,6 +1021,26 @@ class Emp {
         });
 }
 
+
+
+
+
+Future<int> sendsms(sms) async {
+
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+
+  // print(globals.path+'sendsms?uid=$empid&org_id=$orgdir&sms=$sms');
+  final response = await http.get(globals.path+'sendsms?uid=$empid&org_id=$orgdir&sms=$sms');
+  var res = json.decode(response.body);
+  print(res);
+  return res;
+
+}
+
+
+
 Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
     password, dept, desg, shift) async {
   //print('RECIEVED STATUS: '+status.toString());
@@ -1208,6 +1228,7 @@ Future<int> resetMyPassword(username) async {
 //********************************************************************************************//
 Future<List<Attn>> getTodaysAttn(listType) async {
   final prefs = await SharedPreferences.getInstance();
+  trialstatus = prefs.getString('trialstatus') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid') ?? '';
   final response = await http.get(globals.path +
@@ -1290,7 +1311,15 @@ List<SyncNotification> createNotificationList(List data) {
 List<Attn> createTodayEmpList(List data) {
   // print('Create list called/*******************');
   List<Attn> list = new List();
-  for (int i = 0; i < data.length; i++) {
+
+   print("Tril status");
+   print(trialstatus);
+   int length = data.length;
+    if(trialstatus=='2' && length>10)
+      {
+        length = 10;  // expired organization show only 10 records
+      }
+  for (int i = 0; i < length; i++) {
     String Id = data[i]['id'].toString();
     String Name = data[i]["name"].toString();
     String TimeIn = data[i]["TimeIn"].toString();
@@ -1494,6 +1523,7 @@ Future<List<Attn>> getCDateAttnDesgWise(listType, date, desg) async {
 //******************yesterday Attn List Data
 Future<List<Attn>> getYesAttn(listType) async {
   final prefs = await SharedPreferences.getInstance();
+  trialstatus = prefs.getString('trialstatus') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
   final response = await http
       .get(globals.path + 'getAttendances_yes?refno=$orgdir&datafor=$listType');

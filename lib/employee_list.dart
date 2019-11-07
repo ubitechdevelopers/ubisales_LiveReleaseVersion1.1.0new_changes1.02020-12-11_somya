@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Image_view.dart';
 import 'Bottomnavigationbar.dart';
 import 'globals.dart';
+import 'settings.dart';
 //import 'package:material_search/material_search.dart';
 
 class EmployeeList extends StatefulWidget {
@@ -67,9 +68,18 @@ class _EmployeeList extends State<EmployeeList> {
         content: Text(value, textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+  Future<bool> sendToHome() async{
 
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Settings()), (Route<dynamic> route) => false,
+    );
+    return false;
+  }
   getmainhomewidget() {
-    return new Scaffold(
+    return new WillPopScope(
+        onWillPop: ()=> sendToHome(),
+    child: new Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,
       appBar: AppBar(
@@ -83,7 +93,7 @@ class _EmployeeList extends State<EmployeeList> {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.pop(context);}),
+          sendToHome();}),
         backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
@@ -150,6 +160,7 @@ class _EmployeeList extends State<EmployeeList> {
         },
         tooltip: 'Add Employee',
         child: new Icon(Icons.person_add),
+      ),
       ),
     );
 
@@ -457,9 +468,7 @@ class _EmployeeList extends State<EmployeeList> {
                                             size: 21.0,
                                           ),
                                           onPressed:(){
-
                                             _launchURL('sms:'+snapshot.data[index].Mobile.toString());
-
                                           },
                                         ),
                                         /*IconButton(
@@ -562,8 +571,8 @@ class _EmployeeList extends State<EmployeeList> {
                                               onTap:(){
 
                                                 print('SMS tapped');
-                                              //  _launchURL('sms:'+snapshot.data[index].Mobile.toString());
-                                                _showPopupMenu();
+                                                _launchURL('sms:'+snapshot.data[index].Mobile.toString());
+                                               // _showPopupMenu();
                                               },
                                               child:Icon(
                                                 const IconData(0xe820, fontFamily: "CustomIcon"),

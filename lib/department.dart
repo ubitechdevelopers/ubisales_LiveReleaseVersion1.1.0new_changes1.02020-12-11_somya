@@ -218,7 +218,7 @@ class _Department extends State<Department> {
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                       ),
-                      labelText: 'Department ', hintText: 'Department Name'),
+                      labelText: 'Department', hintText: 'Department Name'),
                 ),
               ),
               SizedBox(height: 5.0),
@@ -304,10 +304,13 @@ class _Department extends State<Department> {
                     addDept(dept.text, _sts).
                     then((res) {
                       if(int.parse(res)==0) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
                         showInSnackBar('Unable to add department');
                       }
-                      else if(int.parse(res)==-1)
+                      else if(int.parse(res)==-1) {
+                        Navigator.of(context, rootNavigator: true).pop('dialog');
                         showInSnackBar('Department already exists');
+                      }
                       else {
                         Navigator.of(context, rootNavigator: true).pop('dialog');
                         showInSnackBar('Department added successfully');
@@ -365,7 +368,7 @@ class _Department extends State<Department> {
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                       ),
-                      labelText: dept, hintText: dept),
+                      labelText: 'Department', hintText: 'Department Name'),
                 ),
               ),
               SizedBox(height: 5.0),

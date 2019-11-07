@@ -34,6 +34,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/offline_home.dart';
 import 'package:Shrine/database_models/qr_offline.dart';
+import 'genericCameraClass.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -393,8 +394,10 @@ class _LoginPageState extends State<LoginPage> {
         if (imageRequired == 1) {
 
           cameraChannel.invokeMethod("cameraOpened");
-          ImagePicker.pickImage(
-              source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+          Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new TakePictureScreen(),
+            fullscreenDialog: true,)
+          )
               .then((img) async {
             if (img != null) {
               List<int> imageBytes = await img.readAsBytes();
@@ -562,7 +565,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     print('ab');
 
-    var islogin = await dologin.markAttByQR(qr,fakeLocationDetected?1:0);
+    var islogin = await dologin.markAttByQR(qr,fakeLocationDetected?1:0,context);
     print(islogin);
     if(islogin=="success" || islogin=="success1" ){
       setState(() {

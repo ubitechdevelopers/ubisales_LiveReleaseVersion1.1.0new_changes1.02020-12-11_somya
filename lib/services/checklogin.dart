@@ -90,7 +90,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     //print(values);
   }
 
-  checkLoginForQr(User user,int FakeLocationStatus) async{
+  checkLoginForQr(User user,int FakeLocationStatus,context) async{
     try {
       final prefs = await SharedPreferences.getInstance();
       print(user.userName + "----");
@@ -115,14 +115,15 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
 
         if (employeeMap["response"] == 1) {
           var user = new Employee.fromJson(employeeMap);
-          print(user.fname + " " + user.lname);
+          print(user.fname + " //" + user.lname);
           globals.attImage = int.parse(user.imgstatus);
           print(user.org_perm);
           prefs.setString('empid', user.empid);
           Home ho = new Home();
-
+          print("no error here1");
           Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
-          print(timeinout);
+        //  print(timeinout);
+          print("no error here3");
           if(timeinout["latit"]=='0.0' && timeinout["longi"]=='0.0'){
             print("Location not fetched...");
             return "nolocation";
@@ -139,7 +140,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
                 FakeLocationStatus);
             if (timeinout["act"] != "Imposed") {
               SaveImage mark = new SaveImage();
-              bool res = await mark.saveTimeInOutQR(marktimeinout);
+              bool res = await mark.saveTimeInOutQR(marktimeinout,context);
               if (res)
                 if(timeinout["aid"].toString() != '0')
                   return "success1";
@@ -164,10 +165,10 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     }
   }
 
-  markAttByQR(String qr,int FakeLocationStatus) async{
+  markAttByQR(String qr,int FakeLocationStatus,context) async{
     List splitstring = qr.split("ykks==");
     User qruser = new User(splitstring[0], splitstring[1]);
-    String result = await checkLoginForQr(qruser,FakeLocationStatus);
+    String result = await checkLoginForQr(qruser,FakeLocationStatus,context);
     return result;
     print(splitstring[0]);
     print(splitstring[1]);

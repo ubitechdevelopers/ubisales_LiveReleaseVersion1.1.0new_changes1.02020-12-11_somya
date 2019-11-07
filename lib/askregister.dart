@@ -126,7 +126,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
     setState(() {
       loader = true;
     });
-    var islogin = await dologin.markAttByQR(qr,0);
+    var islogin = await dologin.markAttByQR(qr,0,context);
     print(islogin);
     if(islogin=="success"){
       setState(() {

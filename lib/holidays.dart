@@ -76,7 +76,9 @@ class _HolidayList extends State<HolidayList> {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.pop(context);}),
+          //Navigator.pop(context);
+          sendToHome();
+        }),
         backgroundColor: appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),

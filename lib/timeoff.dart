@@ -95,7 +95,6 @@ class _TimeOffPageState extends State<TimeOffPage> {
         org_name = prefs.getString('org_name') ?? '';
         desination = prefs.getString('desination') ?? '';
         profile = prefs.getString('profile') ?? '';
-
         profileimage = new NetworkImage(profile);
         print("1-"+profile);
         _checkLoaded = false;
@@ -199,9 +198,19 @@ class _TimeOffPageState extends State<TimeOffPage> {
                         if (_formKey.currentState.validate()) {
                           if(_isButtonDisabled)
                             return null;
+                          var arr=_starttimeController.text.split(':');
+                          var arr1=_endtimeController.text.split(':');
+                          final startTime = DateTime(2018, 6, 23,int.parse(arr[0]),int.parse(arr[1]),00,00);
+                          final endTime = DateTime(2018, 6, 23,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
+                          if(endTime.isBefore(startTime)){
+
+                            showInSnackBar('\"To Time\" can\'t be smaller.');
+                            return null ;
+                          }
                           setState(() {
                             _isButtonDisabled=true;
                           });
+
                           requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
                         }
                       },
@@ -372,16 +381,6 @@ class _TimeOffPageState extends State<TimeOffPage> {
                                 if (time==null) {
                                   return 'Please enter end time';
                                 }
-
-                                var arr=_starttimeController.text.split(':');
-                                var arr1=_endtimeController.text.split(':');
-                                final startTime = DateTime(2018, 6, 23,int.parse(arr[0]),int.parse(arr[1]),00,00);
-                                final endTime = DateTime(2018, 6, 23,int.parse(arr1[0]),int.parse(arr1[1]),00,00);
-                                if(endTime.isBefore(startTime)){
-                                  return '\"To Time\" can\'t be smaller.';
-                                }
-
-
 
                               },
                             ),

@@ -28,6 +28,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'punch_location_summary_offline.dart';
+import 'package:Shrine/genericCameraClass.dart';
 //import 'package:intl/intl.dart';
 
 
@@ -92,7 +93,6 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
         {
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-
           Navigator
               .of(context)
               .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => HomePage()));
@@ -115,11 +115,6 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
           long=call.arguments["longitude"].toString();
           lat=call.arguments["latitude"].toString();
-
-
-
-
-
 
         });
         break;
@@ -349,7 +344,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
               color: buttoncolor,
               onPressed: () {
-
+                Navigator.of(context, rootNavigator: true).pop('dialog');
                 saveVisitOutOffline(visit_id,_comments.text);
 
               })
@@ -373,8 +368,10 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     if (imageRequired == 1) {
       prefix0.globalCameraOpenedStatus=true;
       cameraChannel.invokeMethod("cameraOpened");
-      ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+      Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      )
           .then((img) async {
             prefix0.globalCameraOpenedStatus=false;
         if (img != null) {
@@ -409,7 +406,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           cameraChannel.invokeMethod("cameraClosed");
           img.deleteSync();
           imageCache.clear();
-          Navigator.of(context, rootNavigator: true).pop('dialog');
+
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(

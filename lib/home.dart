@@ -7,7 +7,7 @@ import 'package:Shrine/services/fetch_location.dart';
 import 'package:pdf/widgets.dart' as prefix0;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'genericCameraClass.dart';
 import 'askregister.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/saveimage.dart';
@@ -260,11 +260,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   syncVisits(visits) async {
     for (int i = 0; i < visits.length; i++) {
-      var VisitInaddress = await getAddressFromLati_offline(
-          visits[i].VisitInLatitude, visits[i].VisitInLongitude);
+      if(visits[i].VisitInLatitude.isEmpty)
+        visits[i].VisitInLatitude="0.0";
+      if(visits[i].VisitOutLatitude.isEmpty)
+        visits[i].VisitOutLatitude="0.0";
+      if(visits[i].VisitInLongitude.isEmpty)
+        visits[i].VisitInLongitude="0.0";
+      if(visits[i].VisitOutLongitude.isEmpty)
+        visits[i].VisitOutLongitude="0.0";
 
+
+      var VisitInaddress = await getAddressFromLati_offline(
+          double.parse(visits[i].VisitInLatitude), double.parse(visits[i].VisitInLongitude));
+      print("-------------------------------jhkhk--------------------------");
+      print(visits[i].VisitOutLatitude+"   ");
+      print(visits[i].VisitOutLongitude);
       var VisitOutaddress = await getAddressFromLati_offline(
-          visits[i].VisitOutLatitude, visits[i].VisitOutLongitude);
+
+          double.parse(visits[i].VisitOutLatitude), double.parse(visits[i].VisitOutLongitude));
       // print(address);
       List<Map> jsonList = [];
       jsonList.add({
@@ -289,8 +302,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         'VisitOutAddress': VisitOutaddress,
         'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
         'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut,
-      'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,
-      'FakeVisitOutTimeStatus': visits[i].FakeVisitOutTimeStatus
+        'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,
+        'FakeVisitOutTimeStatus': visits[i].FakeVisitOutTimeStatus
       });
 
       var jsonList1 = json.encode(jsonList);
@@ -322,6 +335,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       });
     }
   }
+
 
   syncOfflineData() async{
 
@@ -416,7 +430,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     Home ho = new Home();
     act = await ho.checkTimeIn(empid, orgdir);
-    print("Action from check time in");
+    print("Action from check time in1");
+    if(timeoutdate=='nextdate' && act=='TimeOut')
+    dialogwidget(context);
     ho.managePermission(empid, orgdir, desinationId);
 
     setState(() {
@@ -654,11 +670,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         });
       }
     }
-
   appResumedPausedLogic(context);
-
-
-
   }
 
   setaddress () async{
@@ -745,6 +757,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     return new WillPopScope(
         onWillPop: () async => true,
         child: new Scaffold(
+          backgroundColor: Colors.white,
           key: _scaffoldKey,
           appBar: AppBar(
             title: Row(
@@ -1541,6 +1554,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   getTimeInOutButton() {
+
     if (act1 == 'TimeIn') {
       return RaisedButton(
         elevation: 0.0,
@@ -1629,7 +1643,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           act1 = "";
         });
       }
-      issave = await saveImage.saveTimeInOutImagePicker(mk);
+      issave = await saveImage.saveTimeInOutImagePicker(mk,context);
       print(issave);
       if(issave==null){
         globals.timeWhenButtonPressed=null;
@@ -1715,6 +1729,47 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         act1 = act;
       });
     }*/
+  }
+  void dialogwidget (BuildContext context){
+    print("Sohan patel");
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        child: new AlertDialog(
+          content: new Text('Do you want mark yesterday timeout?'),
+          actions: <Widget>[
+
+            RaisedButton(
+              child: Text(
+                ' Yes ',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.amber,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+
+              },
+            ),
+            FlatButton(
+              child: Text(' No '),
+              shape: Border.all(),
+              onPressed: () async{
+                Navigator.of(context, rootNavigator: true).pop();
+                Home ho = new Home();
+                await ho.updateTimeOut(empid, orgdir);
+                act = await ho.checkTimeIn(empid, orgdir);
+                print("Action from check time in1");
+                if(timeoutdate=='nextdate' && act=='TimeOut')
+                  dialogwidget(context);
+                ho.managePermission(empid, orgdir, desinationId);
+
+                setState(() {
+                  act1=act;
+                });
+              },
+            ),
+          ],
+        ));
   }
 /*
   saveImage_old() async {
@@ -1906,8 +1961,10 @@ var FakeLocationStatus=0;
       File imagei = null;
       imageCache.clear();
       if (globals.attImage == 1) {
-        ImagePicker.pickImage(
-                source: ImageSource.camera, maxWidth: 250.0, maxHeight: 250.0)
+        Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        )
             .then((imagei) {
           if (imagei != null) {
             _location.getLocation().then((res) {

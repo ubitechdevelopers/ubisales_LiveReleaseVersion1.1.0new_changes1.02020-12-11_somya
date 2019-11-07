@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'Image_view.dart';
+//import 'payment.dart';
 // This app is a stateful, it tracks the user's current choice.
 class YesAttendance extends StatefulWidget {
   @override
@@ -22,6 +24,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   List<Map<String,String>> chartData;
+  String buystatus="";
+  String trialstatus="";
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(value,textAlign: TextAlign.center,));
@@ -30,6 +34,10 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
+      buystatus = prefs.getString('buysts') ?? '';
+      trialstatus = prefs.getString('trialstatus') ?? '';
+      print("Sohan patel");
+      print(trialstatus);
       _orgName= prefs.getString('org_name') ?? '';
     });
   }
@@ -331,6 +339,33 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(bottom:4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(context).size.width*0.88,
+                                                      color: Colors.red[400],
+                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
+                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+
+                                              ),
+                                            ),
+                                            SizedBox(height: 50.0,),
+                                          ]) : new Center(),
                                         ]); }
                               );
                             }else{
@@ -427,10 +462,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                     .toString()),
                                               ],
                                             )
-
                                         ),
                                       ],
-
                                     );
                                   }
                               );
@@ -626,6 +659,33 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(bottom:4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(context).size.width*0.88,
+                                                      color: Colors.red[400],
+                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
+                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+
+                                              ),
+                                            ),
+                                            SizedBox(height: 50.0,),
+                                          ]) : new Center(),
                                         ]);
                                   }
                               );
@@ -831,6 +891,33 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(bottom:4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(context).size.width*0.88,
+                                                      color: Colors.red[400],
+                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
+                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+
+                                              ),
+                                            ),
+                                            SizedBox(height: 50.0,),
+                                          ]) : new Center(),
                                         ]);
                                   }
                               );
