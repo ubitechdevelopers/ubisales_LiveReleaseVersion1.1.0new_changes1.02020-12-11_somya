@@ -86,10 +86,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                             onPressed: (){
                                 print('clicked');
                               (response == 1) ?
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => HomePage()),
-                              ) :
+                              Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,) :
                               Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => LoginPage()),

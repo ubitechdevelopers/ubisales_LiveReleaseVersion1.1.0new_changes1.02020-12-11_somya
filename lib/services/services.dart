@@ -1525,8 +1525,9 @@ Future<List<Attn>> getYesAttn(listType) async {
   final prefs = await SharedPreferences.getInstance();
   trialstatus = prefs.getString('trialstatus') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
   final response = await http
-      .get(globals.path + 'getAttendances_yes?refno=$orgdir&datafor=$listType');
+      .get(globals.path + 'getAttendances_yes?refno=$orgdir&datafor=$listType&empid=$empid');
   final res = json.decode(response.body);
   // print(res);
   List responseJson;
@@ -2285,9 +2286,7 @@ checkNetForOfflineMode(context) {
           '====================internet checked...Not connected=====================');
       SchedulerBinding.instance.addPostFrameCallback((_) {
       if(isLoggedIn==1 && OfflineModePermitted==1) {
-        Navigator
-            .of(context)
-            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
       }
       });
     }
@@ -2307,9 +2306,7 @@ checknetonpage(context) {
       print(
           '====================internet checked...Not connected=====================');
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator
-            .of(context)
-            .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
       /*  Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),

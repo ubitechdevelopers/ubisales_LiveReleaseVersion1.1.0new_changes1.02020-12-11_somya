@@ -76,7 +76,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   int alertdialogcount = 0;
   Timer timer;
   Timer timer1;
-
   Timer timerrefresh;
   int response;
   final Widget removedChild = Center();
@@ -196,21 +195,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
       case "locationAndInternet":
         locationThreadUpdatedLocation=true;
        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
        // Map<String,String> responseMap=call.arguments;
-
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-
-          Navigator
-              .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
-
+          //Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage(),maintainState: false));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
         }
         var long=call.arguments["longitude"].toString();
         var lat=call.arguments["latitude"].toString();
@@ -233,30 +227,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           print('Exception occured in clling function.......');
           print(onError);
         });
-
         setState(() {
-
           if(call.arguments["mocked"].toString()=="Yes"){
             fakeLocationDetected=true;
-
           }
           else{
             fakeLocationDetected=false;
           }
           if(call.arguments["TimeSpoofed"].toString()=="Yes"){
             timeSpoofed=true;
-
           }
-
-
-
         });
         break;
 
         return new Future.value("");
     }
   }
-
 
   syncVisits(visits) async {
     for (int i = 0; i < visits.length; i++) {
@@ -1692,11 +1678,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       int offlinemode=prefs.getInt("OfflineModePermission");
       if(offlinemode==1){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => OfflineHomePage()),
-        );
-
+        print("Routing");
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
       }
       else{
         showDialog(

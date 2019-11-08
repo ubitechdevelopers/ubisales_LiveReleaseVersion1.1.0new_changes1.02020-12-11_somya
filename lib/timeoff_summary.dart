@@ -400,9 +400,10 @@ class _TimeoffSummary extends State<TimeoffSummary> {
               ),
             ],
           ),
-          new Divider(),
+          new Divider(height: 1.5,),
+
           new Container(
-            height: MediaQuery.of(context).size.height*.60,
+            height: MediaQuery.of(context).size.height*.68,
             width: MediaQuery.of(context).size.width*.99,
             //padding: EdgeInsets.only(bottom: 15.0),
             color: Colors.white,

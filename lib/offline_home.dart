@@ -117,9 +117,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
 
-          Navigator
-              .of(context)
-              .push(new MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
 
         }
         var long=call.arguments["longitude"].toString();
@@ -333,7 +331,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     serverConnected= await checkConnectionToServer();
     //if(isAlreadyLoggedIn==1)
     if(serverConnected==1){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
     }
     AttendanceOffline ao = AttendanceOffline.empty();
     int Id = int.parse(prefs.getString("empid")??"0");
@@ -1111,7 +1110,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           loading=false;
         });
 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
 
       }
       else{

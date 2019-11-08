@@ -640,10 +640,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );*/
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
-        );
+        Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
       }else if(islogin=="failure"){
         setState(() {
           loader = false;

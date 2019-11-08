@@ -93,9 +93,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
         {
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-          Navigator
-              .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
 
         }
         long=call.arguments["longitude"].toString();

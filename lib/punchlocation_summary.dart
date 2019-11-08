@@ -79,9 +79,7 @@ String address="";
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
 
-          Navigator
-              .of(context)
-              .pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
+          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage()));
 
         }
         long=call.arguments["longitude"].toString();
