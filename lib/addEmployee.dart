@@ -396,7 +396,7 @@ class _AddEmployee extends State<AddEmployee> {
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(
-          value,   
+          value,
           textAlign: TextAlign.center,
         ));
     _scaffoldKey.currentState.showSnackBar(snackBar);

@@ -221,6 +221,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           if (mounted) {
             setState(() {
               areaStatus = res.toString();
+              if(areaId != 0 && geoFence == 1)
               AbleTomarkAttendance = res.toString();
             });
           }
@@ -593,6 +594,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       if (mounted) {
         setState(() {
           areaStatus = res.toString();
+          if(areaId != 0 && geoFence == 1)
+          AbleTomarkAttendance = res.toString();
         });
       }
     }).catchError((onError) {
@@ -1600,7 +1603,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     print('aidId' + aid);
     var FakeLocationStatus=0;
 
-     return null;
+     //return null;
 
     if(fakeLocationDetected){
       FakeLocationStatus=1;
