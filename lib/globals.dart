@@ -7,13 +7,10 @@ Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
 
-
-
 Color appcolor =  Colors.teal;
 Color buttoncolor =  Colors.orangeAccent;
 Color headingcolor =  Colors.orange;
 Color iconcolor =  Colors.black45;
-
 
 /*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";

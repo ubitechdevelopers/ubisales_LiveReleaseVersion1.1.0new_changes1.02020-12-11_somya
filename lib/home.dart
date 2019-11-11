@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   String admin_sts = '0';
   String mail_varified = '1';
-
+  String AbleTomarkAttendance = '1';
   String act = "";
   String act1 = "";
   int alertdialogcount = 0;
@@ -221,6 +221,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           if (mounted) {
             setState(() {
               areaStatus = res.toString();
+              AbleTomarkAttendance = res.toString();
             });
           }
         }).catchError((onError) {
@@ -580,9 +581,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         });
 
     });
-
     SystemChannels.lifecycle.setMessageHandler((msg)async{
-
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
@@ -1494,26 +1493,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                               ,letterSpacing: 1.0),
                         ),
                       )else
-                      (areaId != 0 && geoFence == 1)
-                          ? areaStatus == '0'
-                          ? Container(
+                      (areaId != 0 && geoFence == 1) ? areaStatus == '0' ? Container(
                         padding: EdgeInsets.only(top: 5.0, right: 5.0),
-
                         child: Text(
                           'Outside Fenced Area',
                           style:
-                          TextStyle(fontSize: 20.0, color: Colors.red,fontWeight: FontWeight.w600
-                              ,letterSpacing: 1.0),
+                          TextStyle(fontSize: 20.0, color: Colors.red,fontWeight: FontWeight.w600,letterSpacing: 1.0),
                         ),
-                      )
-                          : Container(
+                      ) : Container(
                         padding: EdgeInsets.all(5.0),
-
                         child: Text(
                           'Within Fenced Area',
                           style:
-                          TextStyle(fontSize: 20.0, color: Colors.green,fontWeight: FontWeight.w600
-                              ,letterSpacing: 1.0),
+                          TextStyle(fontSize: 20.0, color: Colors.green,fontWeight: FontWeight.w600,letterSpacing: 1.0),
                         ),
                       )
                           : Center(),
@@ -1607,6 +1599,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus=0;
+
+     return null;
 
     if(fakeLocationDetected){
       FakeLocationStatus=1;

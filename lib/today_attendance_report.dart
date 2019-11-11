@@ -209,16 +209,26 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                     color: Colors.blueAccent),
                                               ),
                                               onTap: () {
-                                                setState(() {
-                                                  filests = true;
-                                                });
+                                               if(trialstatus !='2') {
+                                                 setState(() {
+                                                   filests = true;
+                                                 });
 
-                                                getCsv(snapshot.data, 'Today_present_$todaydate', 'present').then((res) {
-                                                      setState(() {
-                                                        filests = false;
-                                                      });
-                                                      dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_present_$todaydate', res);
-                                                    });
+                                                 getCsv(snapshot.data,
+                                                     'Today_present_$todaydate',
+                                                     'present').then((res) {
+                                                   setState(() {
+                                                     filests = false;
+                                                   });
+                                                   dialogwidget(
+                                                       'CSV has been saved in internal storage in ubiattendance_files/Today_present_$todaydate',
+                                                       res);
+                                                 });
+                                               }
+                                               else
+                                                 {
+                                                   showInSnackBar("For CSV please Buy Now");
+                                                 }
                                               },
                                             ),
                                           ),
@@ -231,16 +241,28 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                     color: Colors.blueAccent),
                                               ),
                                               onTap: () {
-                                                setState(() {
-                                                  filests = true;
-                                                });
-                                                CreateDeptpdf(snapshot.data, 'Present Employees($todaydate)',
-                                                    snapshot.data.length.toString(),  'Today_present_$todaydate', 'present').then((res) {
-                                                      setState(() {
-                                                        filests = false;
-                                                      });
-                                                      dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_present_$todaydate.pdf', res);
+                                                if(trialstatus =='2') {
+                                                  setState(() {
+                                                    filests = true;
+                                                  });
+                                                  CreateDeptpdf(snapshot.data,
+                                                      'Present Employees($todaydate)',
+                                                      snapshot.data.length
+                                                          .toString(),
+                                                      'Today_present_$todaydate',
+                                                      'present').then((res) {
+                                                    setState(() {
+                                                      filests = false;
                                                     });
+                                                    dialogwidget(
+                                                        'PDF has been saved in internal storage in ubiattendance_files/Today_present_$todaydate.pdf',
+                                                        res);
+                                                  });
+                                                }
+                                                else
+                                                {
+                                                  showInSnackBar("For PDF please Buy Now");
+                                                }
                                               },
                                             ),
                                           ),
