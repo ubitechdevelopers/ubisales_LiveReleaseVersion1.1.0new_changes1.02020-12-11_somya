@@ -189,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           shape: new CircleBorder(),
                           elevation: 0.5,
-                          fillColor: appcolor,
+                          fillColor: Colors.teal[100],
                           padding: const EdgeInsets.all(1.0),
                         ),
                         Text("Remove\n photo")
@@ -574,17 +574,19 @@ class _ProfilePageState extends State<ProfilePage> {
     bool isupdate = await ns.updateProfilePhoto(uploadtype,empid,orgid,context);
    // bool isupdate = true;
     if(isupdate){
+      var smstext = "Profile image has been changed.";
       setState(() {
         _isProfileUploading = false;
       });
       if(uploadtype==3){
         setState(() {
           _checkLoaded = true;
+          smstext = "Profile image has been removed.";
         });
       }
       showDialog(context: context, child:
       new AlertDialog(
-        content: new Text("Profile image has been changed."),
+        content: new Text(smstext),
       )
       );
       Navigator.push(

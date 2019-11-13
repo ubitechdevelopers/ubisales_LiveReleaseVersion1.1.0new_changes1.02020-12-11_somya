@@ -52,10 +52,10 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static const platform = const MethodChannel('location.spoofing.check');
   AppLifecycleState state;
- // StreamLocation sl = new StreamLocation();
+  // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   String newpwd = "new";
   int Is_Delete = 0;
   bool _visible = true;
-
 
   String admin_sts = '0';
   String mail_varified = '1';
@@ -97,10 +96,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   String shiftId = "";
   List<Widget> widgets;
   bool refreshsts = false;
-  bool fakeLocationDetected=false;
-  bool offlineDataSaved=false;
-  bool internetAvailable=true;
-  String address='';
+  bool fakeLocationDetected = false;
+  bool offlineDataSaved = false;
+  bool internetAvailable = true;
+  String address = '';
 
   @override
   void initState() {
@@ -110,119 +109,117 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     checknetonpage(context);
     initPlatformState();
     //setLocationAddress();
-   // startTimer();
-   platform.setMethodCallHandler(_handleMethod);
-    }
+    // startTimer();
+    platform.setMethodCallHandler(_handleMethod);
+  }
 
-  syncOfflineQRData() async{
+  syncOfflineQRData() async {
+    address = await getAddressFromLati(
+        globals.assign_lat.toString(), globals.assign_long.toString());
+    print(address +
+        "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
-    address=await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
-    print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
-
-
-    int serverAvailable=await checkConnectionToServer ();
-    if(serverAvailable==1){
+    int serverAvailable = await checkConnectionToServer();
+    if (serverAvailable == 1) {
       /*****************************For Attendances***********************************************/
 
-      QROffline qrOffline=new QROffline.empty();
+      QROffline qrOffline = new QROffline.empty();
 
-      List<QROffline> qrs= await qrOffline.select();
+      List<QROffline> qrs = await qrOffline.select();
 
-      List<Map> jsonList=[];
-      if(qrs.isNotEmpty){
-        for(int i=0;i<qrs.length;i++){
-          var address= await getAddressFromLati(qrs[i].Latitude,qrs[i].Longitude);
+      List<Map> jsonList = [];
+      if (qrs.isNotEmpty) {
+        for (int i = 0; i < qrs.length; i++) {
+          var address =
+              await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
           print(address);
           jsonList.add({
-            "Id":qrs[i].Id,
-            "SupervisorId":qrs[i].SupervisorId,
-            "Action":qrs[i].Action, // 0 for time in and 1 for time out
-            "Date":qrs[i].Date,
-            "OrganizationId":qrs[i].OrganizationId,
-            "PictureBase64":qrs[i].PictureBase64,
-            "Latitude":qrs[i].Latitude,
-            "Longitude":qrs[i].Longitude,
-            "Time":qrs[i].Time,
-            "UserName":qrs[i].UserName,
-            "Password":qrs[i].Password,
-            "FakeLocationStatus":qrs[i].FakeLocationStatus,
-            "FakeTimeStatus":qrs[i].FakeTimeStatus,
-            "Address":address
+            "Id": qrs[i].Id,
+            "SupervisorId": qrs[i].SupervisorId,
+            "Action": qrs[i].Action, // 0 for time in and 1 for time out
+            "Date": qrs[i].Date,
+            "OrganizationId": qrs[i].OrganizationId,
+            "PictureBase64": qrs[i].PictureBase64,
+            "Latitude": qrs[i].Latitude,
+            "Longitude": qrs[i].Longitude,
+            "Time": qrs[i].Time,
+            "UserName": qrs[i].UserName,
+            "Password": qrs[i].Password,
+            "FakeLocationStatus": qrs[i].FakeLocationStatus,
+            "FakeTimeStatus": qrs[i].FakeTimeStatus,
+            "Address": address
           });
         }
-        var jsonList1=json.encode(jsonList);
+        var jsonList1 = json.encode(jsonList);
         //LogPrint('response1: ' + jsonList1.toString());
         //LogPrint(attendances);
-        FormData formData = new FormData.from({"data":jsonList1});
+        FormData formData = new FormData.from({"data": jsonList1});
 
-        Dio dioForSavingOfflineAttendance=new Dio();
-        dioForSavingOfflineAttendance.post(path + "saveOfflineQRData", data: formData)
+        Dio dioForSavingOfflineAttendance = new Dio();
+        dioForSavingOfflineAttendance
+            .post(path + "saveOfflineQRData", data: formData)
             .then((responseAfterSavingOfflineData) async {
-          var response=json.decode(responseAfterSavingOfflineData.toString());
+          var response = json.decode(responseAfterSavingOfflineData.toString());
 
-          print('--------------------- Data Syncing Response--------------------------------');
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
           print(responseAfterSavingOfflineData);
 
-          print('--------------------- Data Syncing Response--------------------------------');
-          for(int i=0;i<response.length;i++){
-            var map=response[i];
-            map.forEach((localDbId,status){
-              QROffline qrOffline=QROffline.empty();
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
+          for (int i = 0; i < response.length; i++) {
+            var map = response[i];
+            map.forEach((localDbId, status) {
+              QROffline qrOffline = QROffline.empty();
               print(status);
               qrOffline.delete(int.parse(localDbId));
-
-
-            } );
+            });
           }
-
-
         });
-      }
-      else{
+      } else {
         setState(() {
           //  offlineDataSaved=true;
         });
       }
-
     }
 
-
     /*****************************For Attendances***********************************************/
-
-
   }
 
-
   Future<dynamic> _handleMethod(MethodCall call) async {
-    switch(call.method) {
+    switch (call.method) {
       case "locationAndInternet":
-        locationThreadUpdatedLocation=true;
-       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-       // Map<String,String> responseMap=call.arguments;
-        if(call.arguments["internet"].toString()=="Internet Not Available")
-        {
-          internetAvailable=false;
+        locationThreadUpdatedLocation = true;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
+        if (call.arguments["internet"].toString() == "Internet Not Available") {
+          internetAvailable = false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
           //Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage(),maintainState: false));
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+            (Route<dynamic> route) => false,
+          );
         }
-        var long=call.arguments["longitude"].toString();
-        var lat=call.arguments["latitude"].toString();
+        var long = call.arguments["longitude"].toString();
+        var lat = call.arguments["latitude"].toString();
         //lat=assign_lat.toString();
         //long=assign_long.toString();
-        assign_lat=double.parse(lat);
-        assign_long=double.parse(long);
-        address=await getAddressFromLati(lat, long);
-        print(address+"xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
-        globalstreamlocationaddr=address;
+        assign_lat = double.parse(lat);
+        assign_long = double.parse(long);
+        address = await getAddressFromLati(lat, long);
+        print(address +
+            "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        globalstreamlocationaddr = address;
         print(call.arguments["mocked"].toString());
         getAreaStatus().then((res) {
           // print('called again');
           if (mounted) {
             setState(() {
               areaStatus = res.toString();
-              if(areaId != 0 && geoFence == 1)
-              AbleTomarkAttendance = res.toString();
+              if (areaId != 0 && geoFence == 1)
+                AbleTomarkAttendance = res.toString();
             });
           }
         }).catchError((onError) {
@@ -230,14 +227,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           print(onError);
         });
         setState(() {
-          if(call.arguments["mocked"].toString()=="Yes"){
-            fakeLocationDetected=true;
+          if (call.arguments["mocked"].toString() == "Yes") {
+            fakeLocationDetected = true;
+          } else {
+            fakeLocationDetected = false;
           }
-          else{
-            fakeLocationDetected=false;
-          }
-          if(call.arguments["TimeSpoofed"].toString()=="Yes"){
-            timeSpoofed=true;
+          if (call.arguments["TimeSpoofed"].toString() == "Yes") {
+            timeSpoofed = true;
           }
         });
         break;
@@ -248,24 +244,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   syncVisits(visits) async {
     for (int i = 0; i < visits.length; i++) {
-      if(visits[i].VisitInLatitude.isEmpty)
-        visits[i].VisitInLatitude="0.0";
-      if(visits[i].VisitOutLatitude.isEmpty)
-        visits[i].VisitOutLatitude="0.0";
-      if(visits[i].VisitInLongitude.isEmpty)
-        visits[i].VisitInLongitude="0.0";
-      if(visits[i].VisitOutLongitude.isEmpty)
-        visits[i].VisitOutLongitude="0.0";
-
+      if (visits[i].VisitInLatitude.isEmpty) visits[i].VisitInLatitude = "0.0";
+      if (visits[i].VisitOutLatitude.isEmpty)
+        visits[i].VisitOutLatitude = "0.0";
+      if (visits[i].VisitInLongitude.isEmpty)
+        visits[i].VisitInLongitude = "0.0";
+      if (visits[i].VisitOutLongitude.isEmpty)
+        visits[i].VisitOutLongitude = "0.0";
 
       var VisitInaddress = await getAddressFromLati_offline(
-          double.parse(visits[i].VisitInLatitude), double.parse(visits[i].VisitInLongitude));
+          double.parse(visits[i].VisitInLatitude),
+          double.parse(visits[i].VisitInLongitude));
       print("-------------------------------jhkhk--------------------------");
-      print(visits[i].VisitOutLatitude+"   ");
+      print(visits[i].VisitOutLatitude + "   ");
       print(visits[i].VisitOutLongitude);
       var VisitOutaddress = await getAddressFromLati_offline(
-
-          double.parse(visits[i].VisitOutLatitude), double.parse(visits[i].VisitOutLongitude));
+          double.parse(visits[i].VisitOutLatitude),
+          double.parse(visits[i].VisitOutLongitude));
       // print(address);
       List<Map> jsonList = [];
       jsonList.add({
@@ -300,15 +295,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       FormData formData = new FormData.from({"data": jsonList1});
 
       Dio dioForSavingOfflineAttendance = new Dio();
-      dioForSavingOfflineAttendance.post(
-          globals.path + "saveOfflineVisits", data: formData)
+      dioForSavingOfflineAttendance
+          .post(globals.path + "saveOfflineVisits", data: formData)
           .then((responseAfterSavingOfflineData) async {
         var response = json.decode(responseAfterSavingOfflineData.toString());
 
-        print('--------------------- Visit Syncing Response--------------------------------');
+        print(
+            '--------------------- Visit Syncing Response--------------------------------');
         LogPrint(responseAfterSavingOfflineData);
 
-        print('--------------------- Visit Syncing Response--------------------------------');
+        print(
+            '--------------------- Visit Syncing Response--------------------------------');
         for (int i = 0; i < response.length; i++) {
           var map = response[i];
           map.forEach((localDbId, status) {
@@ -324,120 +321,105 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
-
-  syncOfflineData() async{
-
-    int serverAvailable=await checkConnectionToServer ();
-    if(serverAvailable==1){
+  syncOfflineData() async {
+    int serverAvailable = await checkConnectionToServer();
+    if (serverAvailable == 1) {
       /*****************************For Attendances***********************************************/
       await syncOfflineQRData();
 
-      AttendanceOffline attendanceOffline=new AttendanceOffline.empty();
-      VisitsOffline visitsOffline=VisitsOffline.empty();
+      AttendanceOffline attendanceOffline = new AttendanceOffline.empty();
+      VisitsOffline visitsOffline = VisitsOffline.empty();
 
-      List<AttendanceOffline> attendances= await attendanceOffline.select();
-      List<VisitsOffline> visits= await visitsOffline.select();
+      List<AttendanceOffline> attendances = await attendanceOffline.select();
+      List<VisitsOffline> visits = await visitsOffline.select();
 
-      List<Map> jsonList=[];
-      List<Map> jsonListVisits=[];
-      if(visits.isNotEmpty){
+      List<Map> jsonList = [];
+      List<Map> jsonListVisits = [];
+      if (visits.isNotEmpty) {
         await syncVisits(visits);
+      } else {
+        offlineDataSaved = true;
       }
-      else{
-        offlineDataSaved=true;
-      }
-      if(attendances.isNotEmpty){
-        for(int i=0;i<attendances.length;i++){
-
-          var address= await getAddressFromLati(attendances[i].Latitude,attendances[i].Longitude);
+      if (attendances.isNotEmpty) {
+        for (int i = 0; i < attendances.length; i++) {
+          var address = await getAddressFromLati_offline(
+             double.parse(attendances[i].Latitude) , double.parse(attendances[i].Longitude));
           print(address);
           jsonList.add({
-            "Id":attendances[i].Id,
-            "UserId":attendances[i].UserId,
-            "Action":attendances[i].Action, // 0 for time in and 1 for time out
-            "Date":attendances[i].Date,
-            "OrganizationId":attendances[i].OrganizationId,
-            "PictureBase64":attendances[i].PictureBase64,
-            "Latitude":attendances[i].Latitude,
-            "Longitude":attendances[i].Longitude,
-            "Time":attendances[i].Time,
-            "FakeLocationStatus":attendances[i].FakeLocationStatus,
-            "FakeTimeStatus":attendances[i].FakeTimeStatus,
-            "Address":address
+            "Id": attendances[i].Id,
+            "UserId": attendances[i].UserId,
+            "Action": attendances[i].Action, // 0 for time in and 1 for time out
+            "Date": attendances[i].Date,
+            "OrganizationId": attendances[i].OrganizationId,
+            "PictureBase64": attendances[i].PictureBase64,
+            "Latitude": attendances[i].Latitude,
+            "Longitude": attendances[i].Longitude,
+            "Time": attendances[i].Time,
+            "FakeLocationStatus": attendances[i].FakeLocationStatus,
+            "FakeTimeStatus": attendances[i].FakeTimeStatus,
+            "Address": address
           });
         }
-        var jsonList1=json.encode(jsonList);
+        var jsonList1 = json.encode(jsonList);
         //LogPrint('response1: ' + jsonList1.toString());
         //LogPrint(attendances);
-        FormData formData = new FormData.from({"data":jsonList1});
+        FormData formData = new FormData.from({"data": jsonList1});
 
-        Dio dioForSavingOfflineAttendance=new Dio();
-        dioForSavingOfflineAttendance.post(globals.path + "saveOfflineData", data: formData)
+        Dio dioForSavingOfflineAttendance = new Dio();
+        dioForSavingOfflineAttendance
+            .post(globals.path + "saveOfflineData", data: formData)
             .then((responseAfterSavingOfflineData) async {
-          var response=json.decode(responseAfterSavingOfflineData.toString());
+          var response = json.decode(responseAfterSavingOfflineData.toString());
 
           print('--------------------- Data Syncing Response--------------------------------');
           LogPrint(responseAfterSavingOfflineData);
 
           print('--------------------- Data Syncing Response--------------------------------');
-          for(int i=0;i<response.length;i++){
-            var map=response[i];
-            map.forEach((localDbId,status){
-              AttendanceOffline attendanceOffline=AttendanceOffline.empty();
+          for (int i = 0; i < response.length; i++) {
+            var map = response[i];
+            map.forEach((localDbId, status) {
+              AttendanceOffline attendanceOffline = AttendanceOffline.empty();
               print(status);
               attendanceOffline.delete(int.parse(localDbId));
-
-
-            } );
+            });
           }
           setState(() {
-            offlineDataSaved=true;
+            offlineDataSaved = true;
           });
 
           Home ho = new Home();
-
 
           act = await ho.checkTimeIn(empid, orgdir);
           print("Action from check time in");
           ho.managePermission(empid, orgdir, desinationId);
 
           setState(() {
-            act1=act;
+            act1 = act;
           });
-
-
         });
-      }
-      else{
+      } else {
         setState(() {
-          offlineDataSaved=true;
+          offlineDataSaved = true;
         });
       }
-
     }
 
     Home ho = new Home();
     act = await ho.checkTimeIn(empid, orgdir);
     print("Action from check time in1");
-    if(timeoutdate=='nextdate' && act=='TimeOut')
-    dialogwidget(context);
+    if (timeoutdate == 'nextdate' && act == 'TimeOut') dialogwidget(context);
     ho.managePermission(empid, orgdir, desinationId);
 
     setState(() {
-      act1=act;
+      act1 = act;
     });
 
     /*****************************For Attendances***********************************************/
-
-
   }
-
 
   static void LogPrint(Object object) async {
     int defaultPrintLength = 1020;
-    if (object == null || object
-        .toString()
-        .length <= defaultPrintLength) {
+    if (object == null || object.toString().length <= defaultPrintLength) {
       print(object);
     } else {
       String log = object.toString();
@@ -457,7 +439,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
   }
 
-   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
     /*
     setState(() {
       state = appLifecycleState;
@@ -574,16 +556,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     appResumedPausedLogic(context);
 
     Future.delayed(const Duration(milliseconds: 3000), () {
-
 // Here you can write your code
-      if(mounted)
+      if (mounted)
         setState(() {
-          locationThreadUpdatedLocation=locationThreadUpdatedLocation;
+          locationThreadUpdatedLocation = locationThreadUpdatedLocation;
         });
-
     });
-    SystemChannels.lifecycle.setMessageHandler((msg)async{
-    });
+    SystemChannels.lifecycle.setMessageHandler((msg) async {});
     SharedPreferences prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
@@ -594,8 +573,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       if (mounted) {
         setState(() {
           areaStatus = res.toString();
-          if(areaId != 0 && geoFence == 1)
-          AbleTomarkAttendance = res.toString();
+          if (areaId != 0 && geoFence == 1)
+            AbleTomarkAttendance = res.toString();
         });
       }
     }).catchError((onError) {
@@ -610,9 +589,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       ////print("this is-----> "+act);
       ////print("this is main "+location_addr);
       prefs = await SharedPreferences.getInstance();
-      var netAvailable=0;
-      netAvailable=await checkNet();
-      if (mounted && netAvailable==1) {
+      var netAvailable = 0;
+      netAvailable = await checkNet();
+      if (mounted && netAvailable == 1) {
         setState(() {
           Is_Delete = prefs.getInt('Is_Delete') ?? 0;
           newpwd = prefs.getString('newpwd') ?? "";
@@ -634,12 +613,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           org_name = prefs.getString('org_name') ?? '';
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
-          print("Profile Image"+profile);
-         profileimage = new NetworkImage(profile);
+          print("Profile Image" + profile);
+          profileimage = new NetworkImage(profile);
           setaddress();
-         // _checkLoaded = false;
+          // _checkLoaded = false;
           // //print("1-"+profile);
-          profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+          profileimage
+              .resolve(new ImageConfiguration())
+              .addListener(new ImageStreamListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
@@ -654,18 +635,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           ////print("this is set state "+location_addr1);
           act1 = act;
           print(act1);
-
         });
       }
     }
-  appResumedPausedLogic(context);
+    appResumedPausedLogic(context);
   }
 
-  setaddress () async{
-    globalstreamlocationaddr= await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
-    var serverConnected=await checkConnectionToServer();
-    if(serverConnected!=0)
-    if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation){
+  setaddress() async {
+    globalstreamlocationaddr = await getAddressFromLati(
+        globals.assign_lat.toString(), globals.assign_long.toString());
+    var serverConnected = await checkConnectionToServer();
+    if (serverConnected != 0) if (globals.assign_lat == 0.0 ||
+        globals.assign_lat == null ||
+        !locationThreadUpdatedLocation) {
       cameraChannel.invokeMethod("openLocationDialog");
       /*
       showDialog(
@@ -724,7 +706,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         ? Future.delayed(Duration.zero, () => _showAlert(context))
         : "";
 
-    return (response == 0 || userpwd != newpwd || Is_Delete != 0  || orgid=='10932')
+    return (response == 0 ||
+            userpwd != newpwd ||
+            Is_Delete != 0 ||
+            orgid == '10932')
         ? new AskRegisterationPage()
         : getmainhomewidget();
     /* return MaterialApp(
@@ -767,19 +752,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
           endDrawer: new AppDrawer(),
           body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-          floatingActionButton: (admin_sts == '1' ||admin_sts == '2')?new FloatingActionButton(
-            mini: false,
-            backgroundColor: buttoncolor,
-            onPressed: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddEmployee()),
-              );
-            },
-            tooltip: 'Add Employee',
-            child: new Icon(Icons.person_add),
-          ):new Center(),
-
+          floatingActionButton: (admin_sts == '1' || admin_sts == '2')
+              ? new FloatingActionButton(
+                  mini: false,
+                  backgroundColor: buttoncolor,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddEmployee()),
+                    );
+                  },
+                  tooltip: 'Add Employee',
+                  child: new Icon(Icons.person_add),
+                )
+              : new Center(),
         ));
   }
 
@@ -790,7 +776,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         index: _currentIndex,
         children: <Widget>[
           underdevelopment(),
-          (globalstreamlocationaddr != "Location not fetched."||globals.globalstreamlocationaddr.isNotEmpty) ? mainbodyWidget() : refreshPageWidgit(),
+          (globalstreamlocationaddr != "Location not fetched." ||
+                  globals.globalstreamlocationaddr.isNotEmpty)
+              ? mainbodyWidget()
+              : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
           underdevelopment()
         ],
@@ -814,10 +803,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   refreshPageWidgit() {
     if (globals.globalstreamlocationaddr.isNotEmpty) {
-
-
-
-
       return new Container(
         child: Center(
           child: new Column(
@@ -840,13 +825,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                     )*/
                     Container(
                       decoration: new ShapeDecoration(
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(13.0)),
-                          color: Colors.red,),
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(13.0)),
+                        color: Colors.red,
+                      ),
                       child: Text(
                         '\nProblem Getting Location! Please turn on GPS and try again.',
                         textAlign: TextAlign.center,
-                        style: new TextStyle(color: Colors.white, fontSize: 15.0),
+                        style:
+                            new TextStyle(color: Colors.white, fontSize: 15.0),
                       ),
                       width: 220.0,
                       height: 90.0,
@@ -897,10 +884,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                //  sl.startStreaming(5);
-                 // startTimer();
+                  //  sl.startStreaming(5);
+                  // startTimer();
                   cameraChannel.invokeMethod("startAssistant");
-                 /* Navigator.push(
+                  /* Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
                   );*/
@@ -912,8 +899,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       );
     } else {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
-            'Sorry we can not continue with out location.',
+        Text('Sorry we can not continue with out location.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -958,8 +944,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   poorNetworkWidget() {
-
-
     return Container(
       child: Center(
         child: Column(
@@ -985,8 +969,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       color: appcolor, decoration: TextDecoration.underline),
                 ),
                 onPressed: () {
-                 // sl.startStreaming(5);
-                 // startTimer();
+                  // sl.startStreaming(5);
+                  // startTimer();
                   cameraChannel.invokeMethod("startAssistant");
                   Navigator.push(
                     context,
@@ -1003,40 +987,38 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     ////to do check act1 for poor network connection
 
     if (act1 == "Poor network connection") {
-
       return poorNetworkWidget();
     } else {
       return ListView(
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            Container(
-              // foregroundDecoration: BoxDecoration(color:Colors.red ),
-              height: MediaQuery.of(context).size.height * 0.80,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .06),
-                  new GestureDetector(
-                    onTap: () {
-
-                      // profile navigation
-                      /* Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));*/
-                    },
-                    child: new Stack(children: <Widget>[
-                      Container(
-                          //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                          width: MediaQuery.of(context).size.height * .16,
-                          height: MediaQuery.of(context).size.height * .16,
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: _checkLoaded
-                                    ? AssetImage('assets/avatar.png')
-                                    : profileimage,
-                                //image: AssetImage('assets/avatar.png')
-                              ))),
-                      /*new Positioned(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          Container(
+            // foregroundDecoration: BoxDecoration(color:Colors.red ),
+            height: MediaQuery.of(context).size.height * 0.80,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: MediaQuery.of(context).size.height * .06),
+                new GestureDetector(
+                  onTap: () {
+                    // profile navigation
+                    /* Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));*/
+                  },
+                  child: new Stack(children: <Widget>[
+                    Container(
+                        //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                        width: MediaQuery.of(context).size.height * .16,
+                        height: MediaQuery.of(context).size.height * .16,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: _checkLoaded
+                                  ? AssetImage('assets/avatar.png')
+                                  : profileimage,
+                              //image: AssetImage('assets/avatar.png')
+                            ))),
+                    /*new Positioned(
                     left: MediaQuery.of(context).size.width*.14,
                     top: MediaQuery.of(context).size.height*.11,
                     child: new RawMaterialButton(
@@ -1053,30 +1035,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                       padding: const EdgeInsets.all(1.0),
                     ),
                   ),*/
-                    ]),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * .02),
+                  ]),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * .02),
 
-                  Text(fname.toUpperCase() +" "+lname.toUpperCase(), style: new TextStyle(
+                Text(fname.toUpperCase() + " " + lname.toUpperCase(),
+                    style: new TextStyle(
+                      color: Colors.black87,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 3.0,
+                    )),
 
-                    color: Colors.black87,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 3.0,
-
-                  )
-                  ),
-
-
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
-                  // SizedBox(height: MediaQuery.of(context).size.height*.01),
-                  (act1 == '') ? loader() : getMarkAttendanceWidgit(),
-                ],
-              ),
+                SizedBox(height: MediaQuery.of(context).size.height * .01),
+                // SizedBox(height: MediaQuery.of(context).size.height*.01),
+                (act1 == '') ? loader() : getMarkAttendanceWidgit(),
+              ],
             ),
-          ],
-        );
-
+          ),
+        ],
+      );
     }
   }
 
@@ -1084,15 +1062,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     if (act1 == "Imposed") {
       return getAlreadyMarkedWidgit();
     } else {
-      return  Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              /* Text('Mark Attendance',
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            /* Text('Mark Attendance',
                 style: new TextStyle(fontSize: 30.0, color: Colors.teal)),
             SizedBox(height: 10.0),*/
-              getwidget(globals.globalstreamlocationaddr),
-              //    SizedBox(height: MediaQuery.of(context).size.height*.1),
-              /*      Container(
+            getwidget(globals.globalstreamlocationaddr),
+            //    SizedBox(height: MediaQuery.of(context).size.height*.1),
+            /*      Container(
             //foregroundDecoration: BoxDecoration(color:Colors.green ),
             margin: EdgeInsets.only(bottom:MediaQuery.of(context).size.height*0),
             //padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.02,bottom:MediaQuery.of(context).size.height*0.02),
@@ -1105,14 +1083,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   ]),
             ),
 */
-            ]);
-
+          ]);
     }
   }
 
   Widget quickLinkList1() {
     return Container(
-     // color: appcolor,
+      // color: appcolor,
 
       width: MediaQuery.of(context).size.width * 0.95,
       // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
@@ -1123,12 +1100,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   Widget getBulkAttnWid() {
     List<Widget> widList = List<Widget>();
 
-    if (bulkAttn.toString() == '1' && (admin_sts == '1' ||admin_sts == '2')) {
+    if (bulkAttn.toString() == '1' && (admin_sts == '1' || admin_sts == '2')) {
       widList.add(Container(
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
           maxHeight: 50.0,
-          minHeight: 20.0, 
+          minHeight: 20.0,
         ),
         child: new GestureDetector(
             onTap: () {
@@ -1374,35 +1351,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     return Column(children: <Widget>[
       SizedBox(height: MediaQuery.of(context).size.height * .05),
       Padding(
-        padding: const EdgeInsets.only(left:8.0,right: 8.0),
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
         child: Card(
           elevation: 0.0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide( color: Colors.amber.withOpacity(0.5), width: 2,),
+            side: BorderSide(
+              color: Colors.amber.withOpacity(0.5),
+              width: 2,
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-
             child: Container(
               child: Text(
                 ' Attendance has been marked. Thank You!',
                 textAlign: TextAlign.center,
-                style: new TextStyle(color: Colors.amber,
+                style: new TextStyle(
+                    color: Colors.amber,
                     fontSize: 18.0,
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.w600
-                ),
+                    fontWeight: FontWeight.w600),
               ),
-
-
             ),
           ),
         ),
       ),
-
     ]);
   }
+
   getwidget(String addrloc) {
     if (addrloc != "Location not fetched.") {
       return Column(children: [
@@ -1413,114 +1390,138 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .04),
         Padding(
-          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
-              side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+              side: BorderSide(
+                color: Colors.grey.withOpacity(0.5),
+                width: 1,
+              ),
             ),
             elevation: 0.0,
-
-            borderOnForeground: true ,
-            clipBehavior: Clip.antiAliasWithSaveLayer ,
-
+            borderOnForeground: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Container(
                   color: Colors.white,
                   height: MediaQuery.of(context).size.height * .15,
-                  child:
-                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    FlatButton(
-                      child: new Text(globals.globalstreamlocationaddr!=null? globals.globalstreamlocationaddr:"Location not fetched",
-                          textAlign: TextAlign.center,
-                          style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
-                      onPressed: () {
-                        launchMap(globals.assign_lat.toString(), globals.assign_long.toString());
-                        /* Navigator.push(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FlatButton(
+                          child: new Text(
+                              globals.globalstreamlocationaddr != null
+                                  ? globals.globalstreamlocationaddr
+                                  : "Location not fetched",
+                              textAlign: TextAlign.center,
+                              style: new TextStyle(
+                                  fontSize: 14.0, color: Colors.black54)),
+                          onPressed: () {
+                            launchMap(globals.assign_lat.toString(),
+                                globals.assign_long.toString());
+                            /* Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),
                         );*/
-                      },
-                    ),
-                    new Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Row(
-
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-
-                            new InkWell(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
-                                  Text("  "),
-                                  Text(
-                                    "Refresh Location", // main  widget
-                                    style: new TextStyle(
-                                        color: appcolor,
-                                        decoration: TextDecoration.none),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                //  startTimer();
-                                //  sl.startStreaming(5);
-                                cameraChannel.invokeMethod("startAssistant");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HomePage()),
-                                );
-                              },
-                            )
-                          ],
+                          },
                         ),
-                      ),
-                    ),
+                        new Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new InkWell(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        const IconData(0xe81a,
+                                            fontFamily: "CustomIcon"),
+                                        size: 15.0,
+                                        color: Colors.teal,
+                                      ),
+                                      Text("  "),
+                                      Text(
+                                        "Refresh Location", // main  widget
+                                        style: new TextStyle(
+                                            color: appcolor,
+                                            decoration: TextDecoration.none),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    //  startTimer();
+                                    //  sl.startStreaming(5);
+                                    cameraChannel
+                                        .invokeMethod("startAssistant");
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => HomePage()),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
 //                    SizedBox(
 //                      height: 5.0,
 //                    ),
-                    if(fakeLocationDetected)
-                      Container(
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                          color: Color(0xfffc6203),
-                          //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                        ),
-                        child: Text(
-                          'Fake Location',
-                          style:
-                          TextStyle(fontSize: 20.0, color: Colors.amber,fontWeight: FontWeight.w600
-                              ,letterSpacing: 1.0),
-                        ),
-                      )else
-                      (areaId != 0 && geoFence == 1) ? areaStatus == '0' ? Container(
-                        padding: EdgeInsets.only(top: 5.0, right: 5.0),
-                        child: Text(
-                          'Outside Fenced Area',
-                          style:
-                          TextStyle(fontSize: 20.0, color: Colors.red,fontWeight: FontWeight.w600,letterSpacing: 1.0),
-                        ),
-                      ) : Container(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Within Fenced Area',
-                          style:
-                          TextStyle(fontSize: 20.0, color: Colors.green,fontWeight: FontWeight.w600,letterSpacing: 1.0),
-                        ),
-                      )
-                          : Center(),
-                  ])),
+                        if (fakeLocationDetected)
+                          Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              color: Color(0xfffc6203),
+                              //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                            ),
+                            child: Text(
+                              'Fake Location',
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.amber,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0),
+                            ),
+                          )
+                        else
+                          (areaId != 0 && geoFence == 1)
+                              ? areaStatus == '0'
+                                  ? Container(
+                                      padding:
+                                          EdgeInsets.only(top: 5.0, right: 5.0),
+                                      child: Text(
+                                        'Outside Fenced Area',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1.0),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: EdgeInsets.all(5.0),
+                                      child: Text(
+                                        'Within Fenced Area',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1.0),
+                                      ),
+                                    )
+                              : Center(),
+                      ])),
             ),
           ),
         ),
       ]);
     } else {
       return Column(children: [
-        Text(
-            'Sorry we can not continue without location',
+        Text('Sorry we can not continue without location',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -1535,7 +1536,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   getTimeInOutButton() {
-
     if (act1 == 'TimeIn') {
       return RaisedButton(
         elevation: 0.0,
@@ -1549,10 +1549,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         ),
         clipBehavior: Clip.antiAlias,
         child: Text('TIME IN',
-            style: new TextStyle(fontSize: 18.0, color: Colors.white,letterSpacing: 2)),
+            style: new TextStyle(
+                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () {
-          globals.globalCameraOpenedStatus=true;
+          globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
 
           saveImage();
@@ -1572,10 +1573,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 //          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
         ),
         child: Text('TIME OUT',
-            style: new TextStyle(fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+            style: new TextStyle(
+                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () {
-          globals.globalCameraOpenedStatus=true;
+          globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
           saveImage();
         },
@@ -1597,19 +1599,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   }
 
   saveImage() async {
-
-    timeWhenButtonPressed= DateTime.now();
-  //  sl.startStreaming(5);
+    timeWhenButtonPressed = DateTime.now();
+    //  sl.startStreaming(5);
     print('aidId' + aid);
-    var FakeLocationStatus=0;
+    var FakeLocationStatus = 0;
 
-     //return null;
+    if(AbleTomarkAttendance != '1' && globals.ableToMarkAttendance == 1 && geoFence == 1) {
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("You Can't punch Attendance from Outside fence."),
+          ));
+      return null;
+    }
 
-    if(fakeLocationDetected){
-      FakeLocationStatus=1;
+    if (fakeLocationDetected) {
+      FakeLocationStatus = 1;
     }
     MarkTime mk = new MarkTime(
-        empid, globals.globalstreamlocationaddr, aid, act1, shiftId, orgdir, globals.assign_lat.toString(), assign_long.toString(),FakeLocationStatus);
+        empid,
+        globals.globalstreamlocationaddr,
+        aid,
+        act1,
+        shiftId,
+        orgdir,
+        globals.assign_lat.toString(),
+        assign_long.toString(),
+        FakeLocationStatus);
     /* mk1 = mk;*/
     print("inside saveImage Home");
     var connectivityResult = await (new Connectivity().checkConnectivity());
@@ -1626,21 +1643,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
           act1 = "";
         });
       }
-      issave = await saveImage.saveTimeInOutImagePicker(mk,context);
+      issave = await saveImage.saveTimeInOutImagePicker(mk, context);
       print(issave);
-      if(issave==null){
-        globals.timeWhenButtonPressed=null;
+      if (issave == null) {
+        globals.timeWhenButtonPressed = null;
         showDialog(
             context: context,
             child: new AlertDialog(
               title: new Text(""),
-              content: new Text("Sorry you have taken more time than expected to mark attendance. Please mark again!"),
+              content: new Text(
+                  "Sorry you have taken more time than expected to mark attendance. Please mark again!"),
             ));
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
-
       }
 
       if (issave) {
@@ -1673,19 +1690,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       }
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int offlinemode=prefs.getInt("OfflineModePermission");
-      if(offlinemode==1){
+      int offlinemode = prefs.getInt("OfflineModePermission");
+      if (offlinemode == 1) {
         print("Routing");
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
-      }
-      else{
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
         showDialog(
             context: context,
             child: new AlertDialog(
               content: new Text("Internet connection not found!."),
             ));
       }
-
     }
 
     /*SaveImage saveImage = new SaveImage();
@@ -1710,7 +1729,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       });
     }*/
   }
-  void dialogwidget (BuildContext context){
+
+  void dialogwidget(BuildContext context) {
     print("Sohan patel");
     showDialog(
         context: context,
@@ -1718,7 +1738,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         child: new AlertDialog(
           content: new Text('Do you want mark yesterday timeout?'),
           actions: <Widget>[
-
             RaisedButton(
               child: Text(
                 ' Yes ',
@@ -1727,24 +1746,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
               color: Colors.amber,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
-
               },
             ),
             FlatButton(
               child: Text(' No '),
               shape: Border.all(),
-              onPressed: () async{
+              onPressed: () async {
                 Navigator.of(context, rootNavigator: true).pop();
                 Home ho = new Home();
+                print("Test");
                 await ho.updateTimeOut(empid, orgdir);
                 act = await ho.checkTimeIn(empid, orgdir);
                 print("Action from check time in1");
-                if(timeoutdate=='nextdate' && act=='TimeOut')
+                if (timeoutdate == 'nextdate' && act == 'TimeOut')
                   dialogwidget(context);
                 ho.managePermission(empid, orgdir, desinationId);
 
                 setState(() {
-                  act1=act;
+                  act1 = act;
                 });
               },
             ),
@@ -1921,31 +1940,30 @@ var FakeLocationStatus=0;
   }
   //////////////////////////////////////////////////////////////////
 
-
   Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
     String base64Image;
     String base64Image1;
     print('saveTimeInOutImagePicker_new CALLED');
     String location = globalstreamlocationaddr;
 
-
     String lat = assign_lat.toString();
     String long = assign_long.toString();
     try {
       ///////////////////////////
       StreamLocation sl = new StreamLocation();
-     // sl.startStreaming(5);
+      // sl.startStreaming(5);
       Location _location = new Location();
 
       ////////////////////////////////suumitted block
       File imagei = null;
       imageCache.clear();
       if (globals.attImage == 1) {
-        Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        )
-            .then((imagei) {
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (BuildContext context) => new TakePictureScreen(),
+              fullscreenDialog: true,
+            )).then((imagei) {
           if (imagei != null) {
             _location.getLocation().then((res) {
               if (res.latitude != '') {
@@ -2132,9 +2150,7 @@ var FakeLocationStatus=0;
                 //   "file": new UploadFileInfo(imagei, "image.png"),
               });
               print("5");
-              dio
-                  .post(globals.path + "saveImage", data: formData)
-                  .then((response1) {
+              dio.post(globals.path + "saveImage", data: formData).then((response1) {
                 print('response2: ' + response1.toString());
                 //     imagei.deleteSync();
                 //    imageCache.clear();
@@ -2207,13 +2223,6 @@ var FakeLocationStatus=0;
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-   /* if(timer!=null)
-    timer.cancel();
-    if(timerrefresh!=null)
-    timerrefresh.cancel();*/
-    /* if(timerrefresh.isActive){
-      timerrefresh.cancel();
-    }*/
   }
 //////////////////////////////////////////////////////////////////
 }

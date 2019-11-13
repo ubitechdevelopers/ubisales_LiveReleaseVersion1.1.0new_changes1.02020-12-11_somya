@@ -97,8 +97,6 @@ class _ContactUs extends State<ContactUs> {
   }
 
   SMS(String sms) async{
-
-
      sendsms(sms).then((res){
        textsms.text = "";
         setState(() {
@@ -117,7 +115,6 @@ class _ContactUs extends State<ContactUs> {
              content: new Text('Unable to call service. Please try later'),
            ));
      });
-
   }
   openWhatsApp() async{
     //prefix0.facebookChannel.invokeMethod("logContactEvent");
@@ -276,7 +273,7 @@ class _ContactUs extends State<ContactUs> {
                               ),
                               SizedBox(width: 10.0,),
                               Text(
-                                'whats app',
+                                'WhatsApp',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,

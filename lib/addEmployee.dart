@@ -53,6 +53,7 @@ class _AddEmployee extends State<AddEmployee> {
   String admname = '';
   bool _obscureText = false;
   bool supervisor = true;
+  String buysts = '0';
   bool _isButtonDisabled = false;
   TextEditingController deptctr = new TextEditingController();
   TextEditingController desgctrl = new TextEditingController();
@@ -327,6 +328,7 @@ class _AddEmployee extends State<AddEmployee> {
     if (response == 1) {
       Home ho = new Home();
       setState(() {
+        buysts = prefs.getString('buysts')??'0';
         org_name = prefs.getString('org_name') ?? '';
         org_country = prefs.getString('org_country') ?? '';
         councode = prefs.getString('countrycode') ?? '';
@@ -334,6 +336,12 @@ class _AddEmployee extends State<AddEmployee> {
         admname = prefs.getString('fname') ?? ''+' '+ prefs.getString('lname') ?? '';
         _department1.text = globals.departmentname;
         if (admin_sts == '2') supervisor = false;
+        if(buysts=='0')
+          {
+            dept = globals.departmentid.toString();
+            desg = globals.designationid.toString();
+            shift =  prefs.getString('shiftId')??'0';
+          }
         /*   response = prefs.getInt('response') ?? 0;
         fname = prefs.getString('fname') ?? '';
         lname = prefs.getString('lname') ?? '';
@@ -816,10 +824,14 @@ class _AddEmployee extends State<AddEmployee> {
                           )),
                     ),
                     ////////////////////-----------------
-                    (supervisor) ? getDepartments_DD() : getDepartments_DD1(),
 
-                    getDesignations_DD(),
-                    getShifts_DD(),
+                           (supervisor)
+                               ? getDepartments_DD()
+                               : getDepartments_DD1(),
+                           getDesignations_DD(),
+                           getShifts_DD(),
+
+
                     ////////////////////-----------------
 
                     ButtonBar(

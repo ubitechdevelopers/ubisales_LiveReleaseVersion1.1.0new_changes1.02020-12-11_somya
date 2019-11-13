@@ -162,6 +162,8 @@ class NewServices{
           "uid": empid,
           "refno": orgid,
         });
+        print(globals.path_hrm_india+"updateProfilePhoto?uid=$empid&refno=$orgid");
+
         Response<String> response1=await dio.post(globals.path_hrm_india+"updateProfilePhoto",data:formData);
         //print(response1.toString());
         Map MarkAttMap = json.decode(response1.data);

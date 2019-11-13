@@ -12,47 +12,55 @@ import 'package:simple_share/simple_share.dart';
 import 'generatepdf.dart';
 import 'package:intl/intl.dart';
 import 'payment.dart';
+
 // This app is a stateful, it tracks the user's current choice.
 class TodayAttendance extends StatefulWidget {
   @override
   _TodayAttendance createState() => _TodayAttendance();
 }
+
 String _orgName = "";
-class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderStateMixin {
+
+class _TodayAttendance extends State<TodayAttendance>
+    with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String countP='-',countA='-',countL='-',countE='-';
+  String countP = '-', countA = '-', countL = '-', countE = '-';
   bool filests = false;
   String todaydate = "";
-  String buystatus="";
-  String trialstatus="";
-  List<Map<String,String>> chartData;
+  String buystatus = "";
+  String trialstatus = "";
+  List<Map<String, String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
-        content: Text(value,textAlign: TextAlign.center,));
+        content: Text(
+      value,
+      textAlign: TextAlign.center,
+    ));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
-  getOrgName() async{
+
+  getOrgName() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _orgName= prefs.getString('org_name') ?? '';
+      _orgName = prefs.getString('org_name') ?? '';
       buystatus = prefs.getString('buysts') ?? '';
       trialstatus = prefs.getString('trialstatus') ?? '';
       print(trialstatus);
       print("Sohan Patel");
     });
 
-    getChartDataToday().then((onValue){
+    getChartDataToday().then((onValue) {
       print('get chart data summary called successfully......');
       setState(() {
-        countP=onValue[0]['present'];
-        countA=onValue[0]['absent'];
-        countL=onValue[0]['late'];
-        countE=onValue[0]['early'];
+        countP = onValue[0]['present'];
+        countA = onValue[0]['absent'];
+        countL = onValue[0]['late'];
+        countE = onValue[0]['early'];
       });
     });
-
   }
+
   @override
   void initState() {
     super.initState();
@@ -62,8 +70,7 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
     getOrgName();
     print("Date");
     var now = new DateTime.now();
-   todaydate =  new DateFormat("dd-MM-yyyy").format(now);
-
+    todaydate = new DateFormat("dd-MM-yyyy").format(now);
   }
 
   @override
@@ -78,63 +85,85 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          SizedBox(height:3.0),
+          SizedBox(height: 3.0),
           new Container(
-            child: Center(child:Text("Today's Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(
+              child: Text(
+                "Today's Attendance",
+                style: TextStyle(
+                  fontSize: 22.0,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
           ),
           new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
             child: new ListTile(
-              title: new SizedBox(height: MediaQuery.of(context).size.height*0.20,
+              title: new SizedBox(
+                height: MediaQuery.of(context).size.height * 0.20,
 
-                  child: new FutureBuilder<List<Map<String,String>>>(
+                child: new FutureBuilder<List<Map<String, String>>>(
                     future: getChartDataToday(),
-                      builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                             if (snapshot.data.length > 0) {
-                               return new PieOutsideLabelChart.withRandomData(snapshot.data);
-                              }
-                           }
-                          return new Center( child: CircularProgressIndicator());
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.length > 0) {
+                          return new PieOutsideLabelChart.withRandomData(
+                              snapshot.data);
+                        }
                       }
-                  ),
+                      return new Center(child: CircularProgressIndicator());
+                    }),
 
-              //  child: new PieOutsideLabelChart.withRandomData(),
+                //  child: new PieOutsideLabelChart.withRandomData(),
 
-                width: MediaQuery.of(context).size.width*1.0,),
+                width: MediaQuery.of(context).size.width * 1.0,
+              ),
             ),
           ),
           new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('Early Leavers(EL)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Late Comers(LC)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Absent(A)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
+              Text(
+                'Early Leavers(EL)',
+                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+              ),
+              Text(
+                'Late Comers(LC)',
+                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+              ),
+              Text(
+                'Absent(A)',
+                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+              ),
+              Text(
+                'Present(P)',
+                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+              ),
             ],
           ),
           Divider(),
           new Container(
-
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
-
-              indicator: BoxDecoration(color: buttoncolor,),
+              indicator: BoxDecoration(
+                color: buttoncolor,
+              ),
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present ',//('+countP+')',
+                  text: 'Present ', //('+countP+')',
                 ),
                 new Tab(
-                  text: 'Absent',// ('+countA+')',
+                  text: 'Absent', // ('+countA+')',
                 ),
                 new Tab(
-                  text: 'Late \nComers',// ('+countL+')',
+                  text: 'Late \nComers', // ('+countL+')',
                 ),
                 new Tab(
-                  text: 'Early \nLeavers',// ('+countE+')',
+                  text: 'Early \nLeavers', // ('+countE+')',
                 ),
               ],
             ),
@@ -143,35 +172,62 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 50.0,),
-              Container(
-                width: MediaQuery.of(context).size.width*0.46,
-                child:Text('  Name',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              SizedBox(
+                height: 50.0,
               ),
-              SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                width: MediaQuery.of(context).size.width * 0.46,
+                child: Text(
+                  '  Name',
+                  style: TextStyle(
+                      color: appcolor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0),
+                ),
               ),
-              SizedBox(height: 50.0,),
+              SizedBox(
+                height: 50.0,
+              ),
               Container(
-                width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                width: MediaQuery.of(context).size.width * 0.22,
+                child: Text(
+                  'Time In',
+                  style: TextStyle(
+                      color: appcolor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0),
+                ),
+              ),
+              SizedBox(
+                height: 50.0,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.22,
+                child: Text(
+                  'Time Out',
+                  style: TextStyle(
+                      color: appcolor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0),
+                ),
               ),
             ],
           ),
-          new Divider(height: 1.0,color: Colors.black45,),
+          new Divider(
+            height: 1.0,
+            color: Colors.black45,
+          ),
           new Container(
-            height: MediaQuery.of(context).size.height*0.50,
+            height: MediaQuery.of(context).size.height * 0.50,
             child: new TabBarView(
               controller: _controller,
               children: <Widget>[
                 new Container(
-                  height: MediaQuery.of(context).size.height*0.3,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
-                    title:
-                    Container( height: MediaQuery.of(context).size.height*.45,
+                    title: Container(
+                      height: MediaQuery.of(context).size.height * .45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -179,169 +235,218 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                         future: getTodaysAttn('present'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            if(snapshot.data.length>0) {
+                            if (snapshot.data.length > 0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return new Column(
-                                      children: <Widget>[
-                                        (index == 0) ? Row(children: <Widget>[
-                                          SizedBox(height: 25.0,),
-                                          Container(padding: EdgeInsets.only(left: 5.0),
-                                            child: Text(
-                                              "Total Present: "+snapshot.data.length.toString(),
-                                              style: TextStyle(
-                                                color: Colors
-                                                    .orange,
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 16.0,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return new Column(children: <Widget>[
+                                      (index == 0)
+                                          ? Row(children: <Widget>[
+                                              SizedBox(
+                                                height: 25.0,
                                               ),
-                                            ),
-                                          ),
-                                          Container(padding: EdgeInsets.only(left: 5.0),
-                                            child: InkWell(
-                                            child: Text('CSV',
-                                                style: TextStyle(
-                                                    decoration: TextDecoration.underline,
-                                                    color: Colors.blueAccent),
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: Text(
+                                                  "Total Present: " +
+                                                      snapshot.data.length
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                    color: Colors.orange,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0,
+                                                  ),
+                                                ),
                                               ),
-                                              onTap: () {
-                                               if(trialstatus !='2') {
-                                                 setState(() {
-                                                   filests = true;
-                                                 });
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: InkWell(
+                                                  child: Text(
+                                                    'CSV',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
+                                                  ),
+                                                  onTap: () {
+                                                    if (trialstatus != '2') {
+                                                      setState(() {
+                                                        filests = true;
+                                                      });
 
-                                                 getCsv(snapshot.data,
-                                                     'Today_present_$todaydate',
-                                                     'present').then((res) {
-                                                   setState(() {
-                                                     filests = false;
-                                                   });
-                                                   dialogwidget(
-                                                       'CSV has been saved in internal storage in ubiattendance_files/Today_present_$todaydate',
-                                                       res);
-                                                 });
-                                               }
-                                               else
-                                                 {
-                                                   showInSnackBar("For CSV please Buy Now");
-                                                 }
-                                              },
+                                                      getCsv(
+                                                              snapshot.data,
+                                                              'Today_present_$todaydate',
+                                                              'present')
+                                                          .then((res) {
+                                                        setState(() {
+                                                          filests = false;
+                                                        });
+                                                        dialogwidget(
+                                                            'CSV has been saved in internal storage in ubiattendance_files/Today_present_$todaydate',
+                                                            res);
+                                                      });
+                                                    } else {
+                                                      showInSnackBar(
+                                                          "For CSV please Buy Now");
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: InkWell(
+                                                  child: Text(
+                                                    'PDF',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
+                                                  ),
+                                                  onTap: () {
+                                                    if (trialstatus != '2') {
+                                                      setState(() {
+                                                        filests = true;
+                                                      });
+                                                      CreateDeptpdf(
+                                                              snapshot.data,
+                                                              'Present Employees($todaydate)',
+                                                              snapshot
+                                                                  .data.length
+                                                                  .toString(),
+                                                              'Today_present_$todaydate',
+                                                              'present')
+                                                          .then((res) {
+                                                        setState(() {
+                                                          filests = false;
+                                                        });
+                                                        dialogwidget(
+                                                            'PDF has been saved in internal storage in ubiattendance_files/Today_present_$todaydate.pdf',
+                                                            res);
+                                                      });
+                                                    } else {
+                                                      showInSnackBar(
+                                                          "For PDF please Buy Now");
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ])
+                                          : new Center(),
+                                      (index == 0)
+                                          ? Divider(
+                                              color: Colors.black26,
+                                            )
+                                          : new Center(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 40.0,
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.46,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  snapshot.data[index].Name
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0),
+                                                ),
+                                                InkWell(
+                                                  child: Text(
+                                                      'Time In: ' +
+                                                          snapshot.data[index]
+                                                              .CheckInLoc
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 12.0)),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitIn,
+                                                        snapshot.data[index]
+                                                            .LongiIn);
+                                                  },
+                                                ),
+                                                SizedBox(height: 2.0),
+                                                InkWell(
+                                                  child: Text(
+                                                    'Time Out: ' +
+                                                        snapshot.data[index]
+                                                            .CheckOutLoc
+                                                            .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 12.0),
+                                                  ),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitOut,
+                                                        snapshot.data[index]
+                                                            .LongiOut);
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           Container(
-                                            padding: EdgeInsets.only(left: 5.0),
-                                            child: InkWell(
-                                              child: Text('PDF',
-                                                style: TextStyle(
-                                                    decoration: TextDecoration.underline,
-                                                    color: Colors.blueAccent),
-                                              ),
-                                              onTap: () {
-                                                if(trialstatus =='2') {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-                                                  CreateDeptpdf(snapshot.data,
-                                                      'Present Employees($todaydate)',
-                                                      snapshot.data.length
-                                                          .toString(),
-                                                      'Today_present_$todaydate',
-                                                      'present').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget(
-                                                        'PDF has been saved in internal storage in ubiattendance_files/Today_present_$todaydate.pdf',
-                                                        res);
-                                                  });
-                                                }
-                                                else
-                                                {
-                                                  showInSnackBar("For PDF please Buy Now");
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ]) : new Center(),
-
-                                        (index == 0) ? Divider(
-                                          color: Colors.black26,
-                                        )
-                                            : new Center(),
-                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
-                                      children: <Widget>[
-                                        SizedBox(height: 40.0,),
-                                        Container(
-                                          width: MediaQuery.of(context).size.width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
-                                              InkWell(
-                                                child: Text('Time In: ' +
-                                                    snapshot.data[index].CheckInLoc.toString(), 
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeIn
+                                                        .toString(),
                                                     style: TextStyle(
-                                                        color: Colors.black54,
-                                                        fontSize: 12.0)),
-                                                onTap: () {
-                                                  goToMap(
-                                                      snapshot.data[index].LatitIn ,
-                                                      snapshot.data[index].LongiIn);
-                                                },
-                                              ),
-                                              SizedBox(height:2.0),
-                                              InkWell(
-                                                child: Text('Time Out: ' +
-                                                    snapshot.data[index].CheckOutLoc.toString(),
-                                                  style: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontSize: 12.0),),
-                                                onTap: () {
-                                                  goToMap(
-                                                      snapshot.data[index].LatitOut,
-                                                      snapshot.data[index].LongiOut);
-                                                },
-                                              ),
-                                              SizedBox(height: 15.0,),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                Container(
-                                                  width: 62.0,
-                                                  height: 62.0,
-                                                  child:InkWell(
-                                                  child: Container(
-                                                      decoration: new BoxDecoration(
-                                                          shape: BoxShape
-                                                              .circle,
-                                                          image: new DecorationImage(
-                                                              fit: BoxFit.fill,
-                                                              image: new NetworkImage(
-                                                                  snapshot.data[index].EntryImage)
-                                                          )
-                                                      ),
-                                                    /*child: new Stack(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                        decoration: new BoxDecoration(
+                                                            shape: BoxShape
+                                                                .circle,
+                                                            image: new DecorationImage(
+                                                                fit: BoxFit
+                                                                    .fill,
+                                                                image: new NetworkImage(
+                                                                    snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .EntryImage))),
+                                                        /*child: new Stack(
                                                       children: <Widget>[
                                                         new Positioned(
                                                           right: MediaQuery.of(context).size.width*.00,
@@ -350,109 +455,141 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                                                         )
                                                       ],
                                                     ),*/
-                                                  ),
-                                                    onTap: (){
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
-                                                      );
-                                                    },
-                                                  ),),
-
-                                              ],
-                                            )
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                Container(
-                                                  width: 62.0,
-                                                  height: 62.0,
-                                                  child:InkWell(
-                                                  child: Container(
-                                                      decoration: new BoxDecoration(
-                                                          shape: BoxShape
-                                                              .circle,
-                                                          image: new DecorationImage(
-                                                              fit: BoxFit.fill,
-                                                              image: new NetworkImage(
-                                                                  snapshot
-                                                                      .data[index]
-                                                                      .ExitImage)
-                                                          )
                                                       ),
-
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .EntryImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
                                                   ),
-
-                                                    onTap: (){
+                                                ],
+                                              )),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeOut
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                        decoration: new BoxDecoration(
+                                                            shape: BoxShape
+                                                                .circle,
+                                                            image: new DecorationImage(
+                                                                fit: BoxFit
+                                                                    .fill,
+                                                                image: new NetworkImage(
+                                                                    snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .ExitImage))),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .ExitImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        ],
+                                      ),
+                                      Divider(
+                                        color: Colors.black26,
+                                      ),
+                                      (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                          ? Row(children: <Widget>[
+                                              //  SizedBox(height: 25.0,),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 4.0),
+                                                child: Container(
+                                                  //  padding: EdgeInsets.only(bottom: 10.0),
+                                                  child: InkWell(
+                                                    child: Center(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.88,
+                                                        color: Colors.red[400],
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 3.0,
+                                                                bottom: 3.0),
+                                                        child: Text(
+                                                            "For More Information Pay Now ",
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                color: Colors
+                                                                    .white),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
                                                       Navigator.push(
                                                         context,
-                                                        MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PaymentPage()),
                                                       );
                                                     },
-                                    ),
-                                    ),
-
-                                              ],
-                                            )
-
-                                        ),
-                                      ],
-
-                                    ),
-                                        Divider(color: Colors.black26,),
-                                        (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
-                                          //  SizedBox(height: 25.0,),
-                                          Padding(
-                                            padding: const EdgeInsets.only(bottom:4.0),
-                                            child: Container(
-                                              //  padding: EdgeInsets.only(bottom: 10.0),
-                                              child: InkWell(
-                                                child: Center(
-                                                  child: Container(
-                                                    width: MediaQuery.of(context).size.width*0.88,
-                                                    color: Colors.red[400],
-                                                    padding:EdgeInsets.only(top:3.0,bottom: 3.0),
-                                                    child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
                                                   ),
                                                 ),
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(builder: (context) => PaymentPage()),
-                                                  );
-                                                },
                                               ),
-
-                                            ),
-                                          ),
-                                          SizedBox(height: 50.0,),
-                                        ]) : new Center(),
+                                              SizedBox(
+                                                height: 50.0,
+                                              ),
+                                            ])
+                                          : new Center(),
                                     ]);
-
-                                  }
-                              );
-
-                            }else{
+                                  });
+                            } else {
                               return new Center(
-                                child:Text("No one is present today "),
+                                child: Text("No one is present today "),
                               );
                             }
-                          }
-                          else if (snapshot.hasError) {
-                             return new Center(child:Text("Unable to connect server"));
+                          } else if (snapshot.hasError) {
+                            return new Center(
+                                child: Text("Unable to connect server"));
                           }
 
                           // By default, show a loading spinner
-                          return new Center( child: CircularProgressIndicator());
+                          return new Center(child: CircularProgressIndicator());
                         },
                       ),
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -461,12 +598,11 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                 ),
                 //////////////TABB 2 Start
                 new Container(
-
-                  height: MediaQuery.of(context).size.height*0.5,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
-                    title:
-                    Container( height: MediaQuery.of(context).size.height*.45,
+                    title: Container(
+                      height: MediaQuery.of(context).size.height * .45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -474,182 +610,263 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                         future: getTodaysAttn('absent'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            if(snapshot.data.length>0) {
+                            if (snapshot.data.length > 0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     return new Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
                                         children: <Widget>[
-                                          (index == 0) ? Row(children: <Widget>[
-                                            SizedBox(height: 25.0,),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: Text(
-                                                "Total absent: "+snapshot.data.length.toString(),
-                                                style: TextStyle(
-                                                  color: Colors
-                                                      .orange,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  fontSize: 16.0,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('CSV',
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
+                                          (index == 0)
+                                              ? Row(children: <Widget>[
+                                                  SizedBox(
+                                                    height: 25.0,
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    child: Text(
+                                                      "Total absent: " +
+                                                          snapshot.data.length
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                        color: Colors.orange,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16.0,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    child: InkWell(
+                                                      child: Text(
+                                                        'CSV',
+                                                        style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          filests = true;
+                                                        });
 
-                                                  getCsv(snapshot.data, 'Today_absent_$todaydate', 'absent').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('PDF',
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-                                                  CreateDeptpdf(snapshot.data, 'Absent Employees($todaydate)',
-                                                      snapshot.data.length.toString(),  'Today_absent_$todaydate', 'absent').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate.pdf', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ])
+                                                        getCsv(
+                                                                snapshot.data,
+                                                                'Today_absent_$todaydate',
+                                                                'absent')
+                                                            .then((res) {
+                                                          setState(() {
+                                                            filests = false;
+                                                          });
+                                                          dialogwidget(
+                                                              'CSV has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate',
+                                                              res);
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    child: InkWell(
+                                                      child: Text(
+                                                        'PDF',
+                                                        style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          filests = true;
+                                                        });
+                                                        CreateDeptpdf(
+                                                                snapshot.data,
+                                                                'Absent Employees($todaydate)',
+                                                                snapshot
+                                                                    .data.length
+                                                                    .toString(),
+                                                                'Today_absent_$todaydate',
+                                                                'absent')
+                                                            .then((res) {
+                                                          setState(() {
+                                                            filests = false;
+                                                          });
+                                                          dialogwidget(
+                                                              'PDF has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate.pdf',
+                                                              res);
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                ])
                                               : new Center(),
                                           (index == 0)
                                               ? Divider(
-                                            color: Colors.black26,
-                                          )
+                                                  color: Colors.black26,
+                                                )
                                               : new Center(),
-                                      new Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        SizedBox(height: 40.0,),
-                                        Container(
-                                          width: MediaQuery.of(context).size.width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                            width: MediaQuery.of(context).size.width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
+                                          new Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
                                               children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
-                                        ),
-                                        Container(
-                                            width: MediaQuery.of(context).size.width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut.toString()),
-                                              ],
-                                            )
-                                        ),
-                                        Divider(color: Colors.black26,),
-                                        ]),
-                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
-                                            //  SizedBox(height: 25.0,),
-                                            Padding(
-                                              padding: const EdgeInsets.only(bottom:4.0),
-                                              child: Container(
-                                                //  padding: EdgeInsets.only(bottom: 10.0),
-                                                child: InkWell(
-                                                  child: Center(
+                                                SizedBox(
+                                                  height: 40.0,
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.46,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        snapshot
+                                                            .data[index].Name
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black87,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 16.0),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.22,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(snapshot
+                                                            .data[index].TimeIn
+                                                            .toString()),
+                                                      ],
+                                                    )),
+                                                Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.22,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(snapshot
+                                                            .data[index].TimeOut
+                                                            .toString()),
+                                                      ],
+                                                    )),
+                                                Divider(
+                                                  color: Colors.black26,
+                                                ),
+                                              ]),
+                                          (index == snapshot.data.length - 1 &&
+                                                  trialstatus == '2')
+                                              ? Row(children: <Widget>[
+                                                  //  SizedBox(height: 25.0,),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 4.0),
                                                     child: Container(
-                                                      width: MediaQuery.of(context).size.width*0.88,
-                                                      color: Colors.red[400],
-                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
-                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
+                                                      //  padding: EdgeInsets.only(bottom: 10.0),
+                                                      child: InkWell(
+                                                        child: Center(
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.88,
+                                                            color:
+                                                                Colors.red[400],
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 3.0,
+                                                                    bottom:
+                                                                        3.0),
+                                                            child: Text(
+                                                                "For More Information Pay Now ",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18.0,
+                                                                    color: Colors
+                                                                        .white),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center),
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        PaymentPage()),
+                                                          );
+                                                        },
+                                                      ),
                                                     ),
                                                   ),
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
-                                                    );
-                                                  },
-                                                ),
-
-                                              ),
-                                            ),
-                                            SizedBox(height: 50.0,),
-                                          ]) : new Center(),
-                                      ]);
-                                  }
-                              );
-                            }else{
+                                                  SizedBox(
+                                                    height: 50.0,
+                                                  ),
+                                                ])
+                                              : new Center(),
+                                        ]);
+                                  });
+                            } else {
                               return new Center(
-                                child:Text("No one is absent today"),
+                                child: Text("No one is absent today"),
                               );
                             }
-
-                          }
-                          else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                          } else if (snapshot.hasError) {
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
-                          return new Center( child: CircularProgressIndicator());
+                          return new Center(child: CircularProgressIndicator());
                         },
                       ),
                       //////////////////////////////////////////////////////////////////////---------------------------------
                     ),
                   ),
-
                 ),
 
                 /////////////TAB 2 Ends
 
-
-
                 /////////////TAB 3 STARTS
 
                 new Container(
-
-                  height: MediaQuery.of(context).size.height*0.5,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
-                    title:
-                    Container( height: MediaQuery.of(context).size.height*.45,
+                    title: Container(
+                      height: MediaQuery.of(context).size.height * .45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -657,279 +874,351 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                         future: getTodaysAttn('latecomings'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            if(snapshot.data.length>0) {
+                            if (snapshot.data.length > 0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return new Column(
-                                        children: <Widget>[
-                                          (index == 0) ? Row(children: <Widget>[
-                                            SizedBox(height: 25.0,),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: Text(
-                                                "Total latecomings: "+snapshot.data.length.toString(),
-                                                style: TextStyle(
-                                                  color: Colors
-                                                      .orange,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  fontSize: 16.0,
-                                                ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return new Column(children: <Widget>[
+                                      (index == 0)
+                                          ? Row(children: <Widget>[
+                                              SizedBox(
+                                                height: 25.0,
                                               ),
-                                            ),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('CSV',
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: Text(
+                                                  "Total latecomings: " +
+                                                      snapshot.data.length
+                                                          .toString(),
                                                   style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-
-                                                  getCsv(snapshot.data, 'Today_latecomings_$todaydate', 'late').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('PDF',
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-                                                  CreateDeptpdf(snapshot.data, 'Latecomings Employees($todaydate)',
-                                                      snapshot.data.length.toString(),  'Today_latecomings_$todaydate', 'late').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate.pdf', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ])
-                                              : new Center(),
-                                          (index == 0)
-                                              ? Divider(
-                                            color: Colors.black26,
-                                          )
-                                              : new Center(),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: <Widget>[
-                                              SizedBox(height: 40.0,),
-                                              Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.46,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].Name
-                                                        .toString(), style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 16.0),),
-
-                                                    InkWell(
-                                                      child: Text('Time In: ' +
-                                                          snapshot.data[index]
-                                                              .CheckInLoc.toString(),
-                                                          style: TextStyle(
-                                                              color: Colors.black54,
-                                                              fontSize: 12.0)),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitIn ,
-                                                            snapshot.data[index]
-                                                                .LongiIn);
-                                                      },
-                                                    ),
-                                                    SizedBox(height:2.0),
-                                                    InkWell(
-                                                      child: Text('Time Out: ' +
-                                                          snapshot.data[index]
-                                                              .CheckOutLoc.toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.black54,
-                                                            fontSize: 12.0),),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitOut,
-                                                            snapshot.data[index]
-                                                                .LongiOut);
-                                                      },
-                                                    ),
-                                                    SizedBox(height: 15.0,),
-
-
-                                                  ],
+                                                    color: Colors.orange,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0,
+                                                  ),
                                                 ),
                                               ),
-
                                               Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.22,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeIn
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
-                                                            );
-                                                          },
-                                    ),
-                                    ),
-
-                                                    ],
-                                                  )
-
-                                              ),
-                                              Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.22,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeOut
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
-                                                            );
-                                                          },
-                                    ),
-                                    ),
-
-                                                    ],
-                                                  )
-
-                                              ),
-                                            ],
-
-                                          ),
-                                          Divider(color: Colors.black26,),
-                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
-                                            //  SizedBox(height: 25.0,),
-                                            Padding(
-                                              padding: const EdgeInsets.only(bottom:4.0),
-                                              child: Container(
-                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
                                                 child: InkWell(
-                                                  child: Center(
-                                                    child: Container(
-                                                      width: MediaQuery.of(context).size.width*0.88,
-                                                      color: Colors.red[400],
-                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
-                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
-                                                    ),
+                                                  child: Text(
+                                                    'CSV',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
                                                   ),
                                                   onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
-                                                    );
+                                                    setState(() {
+                                                      filests = true;
+                                                    });
+
+                                                    getCsv(
+                                                            snapshot.data,
+                                                            'Today_latecomings_$todaydate',
+                                                            'late')
+                                                        .then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget(
+                                                          'CSV has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate',
+                                                          res);
+                                                    });
                                                   },
                                                 ),
-
                                               ),
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: InkWell(
+                                                  child: Text(
+                                                    'PDF',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      filests = true;
+                                                    });
+                                                    CreateDeptpdf(
+                                                            snapshot.data,
+                                                            'Latecomings Employees($todaydate)',
+                                                            snapshot.data.length
+                                                                .toString(),
+                                                            'Today_latecomings_$todaydate',
+                                                            'late')
+                                                        .then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget(
+                                                          'PDF has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate.pdf',
+                                                          res);
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ])
+                                          : new Center(),
+                                      (index == 0)
+                                          ? Divider(
+                                              color: Colors.black26,
+                                            )
+                                          : new Center(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 40.0,
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.46,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  snapshot.data[index].Name
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0),
+                                                ),
+                                                InkWell(
+                                                  child: Text(
+                                                      'Time In: ' +
+                                                          snapshot.data[index]
+                                                              .CheckInLoc
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 12.0)),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitIn,
+                                                        snapshot.data[index]
+                                                            .LongiIn);
+                                                  },
+                                                ),
+                                                SizedBox(height: 2.0),
+                                                InkWell(
+                                                  child: Text(
+                                                    'Time Out: ' +
+                                                        snapshot.data[index]
+                                                            .CheckOutLoc
+                                                            .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 12.0),
+                                                  ),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitOut,
+                                                        snapshot.data[index]
+                                                            .LongiOut);
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(height: 50.0,),
-                                          ]) : new Center(),
-                                        ]);}
-                              );
-                            }else{
+                                          ),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeIn
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                          decoration: new BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: new DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: new NetworkImage(snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .EntryImage)))),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .EntryImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeOut
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                          decoration: new BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: new DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: new NetworkImage(snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .ExitImage)))),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .ExitImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        ],
+                                      ),
+                                      Divider(
+                                        color: Colors.black26,
+                                      ),
+                                      (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                          ? Row(children: <Widget>[
+                                              //  SizedBox(height: 25.0,),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 4.0),
+                                                child: Container(
+                                                  //  padding: EdgeInsets.only(bottom: 10.0),
+                                                  child: InkWell(
+                                                    child: Center(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.88,
+                                                        color: Colors.red[400],
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 3.0,
+                                                                bottom: 3.0),
+                                                        child: Text(
+                                                            "For More Information Pay Now ",
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                color: Colors
+                                                                    .white),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PaymentPage()),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 50.0,
+                                              ),
+                                            ])
+                                          : new Center(),
+                                    ]);
+                                  });
+                            } else {
                               return new Center(
-                                child:Text("No one is late today"),
+                                child: Text("No one is late today"),
                               );
                             }
-                          }
-                          else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                          } else if (snapshot.hasError) {
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
-                          return new Center( child: CircularProgressIndicator());
+                          return new Center(child: CircularProgressIndicator());
                         },
                       ),
                       //////////////////////////////////////////////////////////////////////---------------------------------
                     ),
                   ),
-
                 ),
                 /////////TAB 3 ENDS
 
-
                 /////////TAB 4 STARTS
                 new Container(
-
-
-                  height: MediaQuery.of(context).size.height*0.5,
+                  height: MediaQuery.of(context).size.height * 0.5,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
-                    title:
-                    Container( height: MediaQuery.of(context).size.height*.45,
+                    title: Container(
+                      height: MediaQuery.of(context).size.height * .45,
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
@@ -937,260 +1226,336 @@ class _TodayAttendance extends State<TodayAttendance> with SingleTickerProviderS
                         future: getTodaysAttn('earlyleavings'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            if(snapshot.data.length>0) {
+                            if (snapshot.data.length > 0) {
                               return new ListView.builder(
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return new Column(
-                                        children: <Widget>[
-                                          (index == 0) ? Row(children: <Widget>[
-                                            SizedBox(height: 25.0,),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: Text(
-                                                "Total earlyleavings: "+snapshot.data.length.toString(),
-                                                style: TextStyle(
-                                                  color: Colors
-                                                      .orange,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold,
-                                                  fontSize: 16.0,
-                                                ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return new Column(children: <Widget>[
+                                      (index == 0)
+                                          ? Row(children: <Widget>[
+                                              SizedBox(
+                                                height: 25.0,
                                               ),
-                                            ),
-                                            Container(padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('CSV',
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: Text(
+                                                  "Total earlyleavings: " +
+                                                      snapshot.data.length
+                                                          .toString(),
                                                   style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-
-                                                  getCsv(snapshot.data, 'Today_earlyleavings_$todaydate', 'early').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('CSV has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.only(left: 5.0),
-                                              child: InkWell(
-                                                child: Text('PDF',
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration.underline,
-                                                      color: Colors.blueAccent),
-                                                ),
-                                                onTap: () {
-                                                  setState(() {
-                                                    filests = true;
-                                                  });
-                                                  CreateDeptpdf(snapshot.data, 'Earlyleavings Employees($todaydate)',
-                                                      snapshot.data.length.toString(),  'Today_earlyleavings_$todaydate', 'early').then((res) {
-                                                    setState(() {
-                                                      filests = false;
-                                                    });
-                                                    dialogwidget('PDF has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate.pdf', res);
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ])
-                                              : new Center(),
-                                          (index == 0)
-                                              ? Divider(
-                                            color: Colors.black26,
-                                          )
-                                              : new Center(),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: <Widget>[
-                                              SizedBox(height: 40.0,),
-                                              Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.46,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].Name
-                                                        .toString(), style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 16.0),),
-
-                                                    InkWell(
-                                                      child: Text('Time In: ' +
-                                                          snapshot.data[index]
-                                                              .CheckInLoc.toString(),
-                                                          style: TextStyle(
-                                                              color: Colors.black54,
-                                                              fontSize: 12.0)),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitIn ,
-                                                            snapshot.data[index]
-                                                                .LongiIn);
-                                                      },
-                                                    ),
-                                                    SizedBox(height:2.0),
-                                                    InkWell(
-                                                      child: Text('Time Out: ' +
-                                                          snapshot.data[index]
-                                                              .CheckOutLoc.toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.black54,
-                                                            fontSize: 12.0),),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitOut,
-                                                            snapshot.data[index]
-                                                                .LongiOut);
-                                                      },
-                                                    ),
-                                                    SizedBox(height: 15.0,),
-
-
-                                                  ],
+                                                    color: Colors.orange,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0,
+                                                  ),
                                                 ),
                                               ),
-
                                               Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.22,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeIn
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
-                                                            );
-                                                          },
-                                    ),
-                                    ),
-
-                                                    ],
-                                                  )
-
-                                              ),
-                                              Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.22,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeOut
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
-                                                            );
-                                                          },
-                                    ),
-                                    ),
-
-                                                    ],
-                                                  )
-
-                                              ),
-                                            ],
-
-                                          ),
-                                          Divider(color: Colors.black26,),
-                                          (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
-                                            //  SizedBox(height: 25.0,),
-                                            Padding(
-                                              padding: const EdgeInsets.only(bottom:4.0),
-                                              child: Container(
-                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
                                                 child: InkWell(
-                                                  child: Center(
-                                                    child: Container(
-                                                      width: MediaQuery.of(context).size.width*0.88,
-                                                      color: Colors.red[400],
-                                                      padding:EdgeInsets.only(top:3.0,bottom: 3.0),
-                                                      child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
-                                                    ),
+                                                  child: Text(
+                                                    'CSV',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
                                                   ),
                                                   onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(builder: (context) => PaymentPage()),
-                                                    );
+                                                    setState(() {
+                                                      filests = true;
+                                                    });
+
+                                                    getCsv(
+                                                            snapshot.data,
+                                                            'Today_earlyleavings_$todaydate',
+                                                            'early')
+                                                        .then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget(
+                                                          'CSV has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate',
+                                                          res);
+                                                    });
                                                   },
                                                 ),
-
                                               ),
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                child: InkWell(
+                                                  child: Text(
+                                                    'PDF',
+                                                    style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        color:
+                                                            Colors.blueAccent),
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      filests = true;
+                                                    });
+                                                    CreateDeptpdf(
+                                                            snapshot.data,
+                                                            'Earlyleavings Employees($todaydate)',
+                                                            snapshot.data.length
+                                                                .toString(),
+                                                            'Today_earlyleavings_$todaydate',
+                                                            'early')
+                                                        .then((res) {
+                                                      setState(() {
+                                                        filests = false;
+                                                      });
+                                                      dialogwidget(
+                                                          'PDF has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate.pdf',
+                                                          res);
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ])
+                                          : new Center(),
+                                      (index == 0)
+                                          ? Divider(
+                                              color: Colors.black26,
+                                            )
+                                          : new Center(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: 40.0,
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.46,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  snapshot.data[index].Name
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0),
+                                                ),
+                                                InkWell(
+                                                  child: Text(
+                                                      'Time In: ' +
+                                                          snapshot.data[index]
+                                                              .CheckInLoc
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 12.0)),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitIn,
+                                                        snapshot.data[index]
+                                                            .LongiIn);
+                                                  },
+                                                ),
+                                                SizedBox(height: 2.0),
+                                                InkWell(
+                                                  child: Text(
+                                                    'Time Out: ' +
+                                                        snapshot.data[index]
+                                                            .CheckOutLoc
+                                                            .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 12.0),
+                                                  ),
+                                                  onTap: () {
+                                                    goToMap(
+                                                        snapshot.data[index]
+                                                            .LatitOut,
+                                                        snapshot.data[index]
+                                                            .LongiOut);
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  height: 15.0,
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(height: 50.0,),
-                                          ]) : new Center(),
-                                        ]);}
-                              );
-                            }else{
+                                          ),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeIn
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                          decoration: new BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: new DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: new NetworkImage(snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .EntryImage)))),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .EntryImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.22,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].TimeOut
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Container(
+                                                    width: 62.0,
+                                                    height: 62.0,
+                                                    child: InkWell(
+                                                      child: Container(
+                                                          decoration: new BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image: new DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: new NetworkImage(snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .ExitImage)))),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => ImageView(
+                                                                  myimage: snapshot
+                                                                      .data[
+                                                                          index]
+                                                                      .ExitImage,
+                                                                  org_name:
+                                                                      _orgName)),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        ],
+                                      ),
+                                      Divider(
+                                        color: Colors.black26,
+                                      ),
+                                      (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                          ? Row(children: <Widget>[
+                                              //  SizedBox(height: 25.0,),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 4.0),
+                                                child: Container(
+                                                  //  padding: EdgeInsets.only(bottom: 10.0),
+                                                  child: InkWell(
+                                                    child: Center(
+                                                      child: Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.88,
+                                                        color: Colors.red[400],
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 3.0,
+                                                                bottom: 3.0),
+                                                        child: Text(
+                                                            "For More Information Pay Now ",
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                color: Colors
+                                                                    .white),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PaymentPage()),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 50.0,
+                                              ),
+                                            ])
+                                          : new Center(),
+                                    ]);
+                                  });
+                            } else {
                               return new Center(
-                                child:Text("No early leavers today"),
+                                child: Text("No early leavers today"),
                               );
                             }
-                          }
-                          else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                          } else if (snapshot.hasError) {
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
-                          return new Center( child: CircularProgressIndicator());
+                          return new Center(child: CircularProgressIndicator());
                         },
                       ),
                       //////////////////////////////////////////////////////////////////////---------------------------------

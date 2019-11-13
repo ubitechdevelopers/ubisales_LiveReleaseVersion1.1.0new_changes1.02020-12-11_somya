@@ -1031,7 +1031,7 @@ Future<int> sendsms(sms) async {
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
 
-  // print(globals.path+'sendsms?uid=$empid&org_id=$orgdir&sms=$sms');
+  print(globals.path+'sendsms?uid=$empid&org_id=$orgdir&sms=$sms');
   final response = await http.get(globals.path+'sendsms?uid=$empid&org_id=$orgdir&sms=$sms');
   var res = json.decode(response.body);
   print(res);
@@ -1641,8 +1641,10 @@ List<Attn> createLastEmpList(List data) {
 Future<List<Map<String, String>>> getChartDataToday() async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
+
   final response =
-      await http.get(globals.path + 'getChartDataToday?refno=$orgdir');
+      await http.get(globals.path + 'getChartDataToday?refno=$orgdir&empid=$empid');
   final data = json.decode(response.body);
   List<Map<String, String>> val = [
     {
@@ -1660,8 +1662,9 @@ Future<List<Map<String, String>>> getChartDataToday() async {
 Future<List<Map<String, String>>> getChartDataYes() async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
   final response =
-      await http.get(globals.path + 'getChartDataYes?refno=$orgdir');
+      await http.get(globals.path + 'getChartDataYes?refno=$orgdir&empid=$empid');
   final data = json.decode(response.body);
   List<Map<String, String>> val = [
     {
@@ -2238,8 +2241,7 @@ getAddressFromLati_offline( double Latitude,double Longitude) async{
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
-         Latitude = 14.5679826;
-         Longitude = 121.0932919;
+
     if (Latitude.compareTo(0.0) != 0&& Latitude!=null) {
       var addresses = await Geocoder.local.findAddressesFromCoordinates(
           Coordinates(

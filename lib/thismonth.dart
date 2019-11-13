@@ -186,7 +186,7 @@ class _ThisMonth extends State<ThisMonth> with SingleTickerProviderStateMixin {
                                               Text(snapshot.data[index].Name
                                                   .toString(), style: TextStyle(
                                                   color: Colors.black87,
-
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 16.0),),
                                             ],
                                           ),

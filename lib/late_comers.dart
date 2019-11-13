@@ -260,18 +260,24 @@ class _LateComers extends State<LateComers> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   new Text(
-                                      snapshot.data[index].name.toString()),
+                                      snapshot.data[index].name.toString(),
+                                  style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight:
+                                  FontWeight.bold,
+                                  fontSize: 16.0),
+                                  ),
 
                                 ],
                               )),
                           new Container(
-                            width: MediaQuery.of(context).size.width * 0.2,
+                            width: MediaQuery.of(context).size.width * 0.25,
                             child: new Text(
                               snapshot.data[index].shift.toString(),
                             ),
                           ),
                           new Container(
-                            width: MediaQuery.of(context).size.width * 0.2,
+                            width: MediaQuery.of(context).size.width * 0.16,
                             child: new Text(
                               snapshot.data[index].timeAct.toString(),
                             ),

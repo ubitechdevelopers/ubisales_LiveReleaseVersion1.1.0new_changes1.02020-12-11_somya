@@ -9,11 +9,16 @@ class Home{
 
   updateTimeOut(String empid, String orgid) async{
     try{
+    /*
       FormData formData = new FormData.from({
         "uid": empid,
         "refno": orgid,
-      });
-      Response response = await dio.post(globals.path+"updatetimeout", data: formData);
+      });*/
+
+      print(globals.path+"updatetimeout?uid=$empid&refno=$orgid");
+
+      Response response = await dio.post(globals.path+"updatetimeout?uid=$empid&refno=$orgid");
+
     }catch(e)
     {
       print(e.toString());
@@ -55,20 +60,29 @@ class Home{
         globals.departmentname = timeinoutMap['departmentname'].toString();
         globals.timeoutdate = timeinoutMap['timeoutdate'].toString();
         globals.departmentid = int.parse(timeinoutMap['departmentid']);
+        globals.designationid = int.parse(timeinoutMap['designationid']);
+        print("Testing line");
         globals.bulkAttn=int.parse(timeinoutMap['Addon_BulkAttn']);
         globals.geoFence=int.parse(timeinoutMap['Addon_GeoFence']);
         globals.tracking=int.parse(timeinoutMap['Addon_Tracking']);
         globals.payroll=int.parse(timeinoutMap['Addon_Payroll']);
+        print("Testing line1");
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
+
+        print("Testing line2");
         globals.attImage=int.parse(timeinoutMap['attImage']);
+        print("Testing line3");
+        globals.ableToMarkAttendance = int.parse(timeinoutMap['ableToMarkAttendance']);
+
         globals.areaId=int.parse(timeinoutMap['areaId']);
+        print("Testing line4");
 
         print("Area Id :"+globals.areaId.toString()+" geofence :"+globals.geoFence.toString());
-
+        prefs.setString('buysts', timeinoutMap["buysts"]);
         prefs.setString("nextWorkingDay", timeinoutMap['nextWorkingDay']);
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
