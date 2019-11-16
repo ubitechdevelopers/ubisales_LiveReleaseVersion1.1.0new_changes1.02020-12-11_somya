@@ -1958,12 +1958,10 @@ var FakeLocationStatus=0;
       File imagei = null;
       imageCache.clear();
       if (globals.attImage == 1) {
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-              builder: (BuildContext context) => new TakePictureScreen(),
-              fullscreenDialog: true,
-            )).then((imagei) {
+        ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+            .then((img) async {
+
           if (imagei != null) {
             _location.getLocation().then((res) {
               if (res.latitude != '') {

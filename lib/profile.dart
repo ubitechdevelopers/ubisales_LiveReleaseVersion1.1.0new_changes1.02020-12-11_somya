@@ -572,6 +572,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     NewServices ns = NewServices();
     bool isupdate = await ns.updateProfilePhoto(uploadtype,empid,orgid,context);
+    print('Image status');
+    print(isupdate);
    // bool isupdate = true;
     if(isupdate){
       var smstext = "Profile image has been changed.";
@@ -597,6 +599,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _isProfileUploading = false;
       });
+      if(selectimg)
       showDialog(context: context, child:
       new AlertDialog(
         //title: new Text("Congrats!"),

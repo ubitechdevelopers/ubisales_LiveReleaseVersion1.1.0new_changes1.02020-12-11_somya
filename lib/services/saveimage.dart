@@ -120,10 +120,7 @@ class SaveImage {
       if (globals.attImage == 1) {
 
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        );
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
 
 
@@ -290,11 +287,10 @@ class SaveImage {
       if (globals.attImage == 1) {
 
         print("Pahunch gaya-----------------------------------------------");
-        Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        )
-            .then((imagei) {
+
+        ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+            .then((img) async {
 
           if (imagei != null) {
             globals.globalCameraOpenedStatus=false;
@@ -458,10 +454,7 @@ class SaveImage {
       {
         print("Testing of attendance123");
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        );
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -556,10 +549,7 @@ class SaveImage {
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       if (globals.visitImage == 1) {
-        imagei = await Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        );
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -672,10 +662,7 @@ class SaveImage {
       imageCache.clear();
       if (globals.visitImage == 1) {
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        );
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -784,10 +771,9 @@ class SaveImage {
       //   if (globals.FlexiImage != 1) {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
-      imagei = await Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new TakePictureScreen(),
-        fullscreenDialog: true,)
-      );
+
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+
 
       if (imagei != null) {
         globals.globalCameraOpenedStatus=false;
@@ -905,10 +891,7 @@ class SaveImage {
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       // if (globals.FlexiImage != 1) {
-      imagei = await Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new TakePictureScreen(),
-        fullscreenDialog: true,)
-      );
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
 
       print(imagei);
       if (imagei != null)

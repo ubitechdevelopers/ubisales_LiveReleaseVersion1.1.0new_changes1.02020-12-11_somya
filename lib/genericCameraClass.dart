@@ -152,6 +152,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                   await _controller.takePicture(path);
                   print("Length of file"+File(path).lengthSync().toString());
                   //print(result.lengthSync());
+
                   var takenImage = await Navigator.push(context, new MaterialPageRoute(
                     builder: (BuildContext context) => new ControllerExample(image:File(path)),
                     fullscreenDialog: true,)

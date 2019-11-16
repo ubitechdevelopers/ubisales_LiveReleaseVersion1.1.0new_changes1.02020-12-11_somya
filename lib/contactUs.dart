@@ -249,7 +249,7 @@ class _ContactUs extends State<ContactUs> {
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Text(
-                        "Get in touch on whats app",
+                        "Get in touch on WhatsApp",
                         style: TextStyle(
                           fontSize: 20,
                         ),

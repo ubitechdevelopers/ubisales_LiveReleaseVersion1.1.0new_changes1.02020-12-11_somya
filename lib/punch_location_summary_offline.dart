@@ -366,11 +366,11 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     if (imageRequired == 1) {
       prefix0.globalCameraOpenedStatus=true;
       cameraChannel.invokeMethod("cameraOpened");
-      Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new TakePictureScreen(),
-        fullscreenDialog: true,)
-      )
+
+      ImagePicker.pickImage(
+          source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
           .then((img) async {
+
             prefix0.globalCameraOpenedStatus=false;
         if (img != null) {
           List<int> imageBytes = await img.readAsBytes();

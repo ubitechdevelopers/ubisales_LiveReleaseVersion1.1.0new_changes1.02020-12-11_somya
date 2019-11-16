@@ -118,7 +118,7 @@ class NewServices{
 
   Future<bool> updateProfilePhoto(int uploadtype, String empid, String orgid,context) async {
     try{
-
+      selectimg = true;
       File imagei = null;
       imageCache.clear();
       //for gallery
@@ -127,10 +127,7 @@ class NewServices{
       }
       //for camera
       if(uploadtype==2){
-        imagei = await Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        );
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
       }
       //for removing photo
       if(uploadtype==3){
@@ -138,6 +135,11 @@ class NewServices{
       }
       print("Selected image information ****************************");
       print(imagei.toString());
+      if(imagei==null)
+        {
+          selectimg = false;
+          return false;
+        }
       if(imagei!=null ) {
         //// sending this base64image string +to rest api
         FormData formData = new FormData.from({

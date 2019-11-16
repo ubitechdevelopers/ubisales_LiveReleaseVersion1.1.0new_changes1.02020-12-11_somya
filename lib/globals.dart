@@ -55,7 +55,7 @@ const cameraChannel = const MethodChannel('update.camera.status');
 const facebookChannel= const MethodChannel('log.facebook.data');
 bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
-
+bool selectimg = true;
 bool showTimeInNotification=true;
 bool timeSpoofed=false;
 bool globalCameraOpenedStatus=false;

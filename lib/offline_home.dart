@@ -754,10 +754,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         if (imageRequired == 1) {
           prefix0.globalCameraOpenedStatus=true;
           cameraChannel.invokeMethod("cameraOpened");
-          Navigator.push(context, new MaterialPageRoute(
-            builder: (BuildContext context) => new TakePictureScreen(),
-            fullscreenDialog: true,)
-          ).then((img) async {
+
+          ImagePicker.pickImage(
+              source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+              .then((img) async {
 
             if (img != null) {
               prefix0.globalCameraOpenedStatus=false;
@@ -1483,11 +1483,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         print("-----------------------Context before-----------------------");
         print(context);
         cameraChannel.invokeMethod("cameraOpened");
-        Navigator.push(context, new MaterialPageRoute(
-          builder: (BuildContext context) => new TakePictureScreen(),
-          fullscreenDialog: true,)
-        )
+
+        ImagePicker.pickImage(
+            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
             .then((img) async {
+
           prefix0.globalCameraOpenedStatus=false;
           if (img != null) {
 
