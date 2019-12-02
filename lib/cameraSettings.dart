@@ -191,7 +191,7 @@ class _CameraSettings extends State<CameraSettings> {
                   Center(
                     child:Text("Modify your Camera Settings",style: new TextStyle(fontSize: 22.0,color: buttoncolor)),
                   ),
-                  SizedBox(height: 30.0),  
+                  SizedBox(height: 30.0),
                   Container(
                       child: Row(
                         children: <Widget>[
