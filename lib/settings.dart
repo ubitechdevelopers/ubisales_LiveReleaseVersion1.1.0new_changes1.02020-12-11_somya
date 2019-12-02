@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'cameraSettings.dart';
 import 'drawer.dart';
 import 'department.dart';
 import 'designation.dart';
@@ -560,6 +561,46 @@ class _Settings extends State<Settings> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => changePassword()),
+        );
+      },
+    ));
+    list.add( new RaisedButton(
+      child: Container(
+        padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Icon(const IconData(0xe802, fontFamily: "CustomIcon"),size: 30.0,),
+            SizedBox(width: 20.0,),
+            Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                      child: Text('Change Camera',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: Container(
+                        child: Text('Choose from android default or app\'s personalized camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.keyboard_arrow_right,size: 30.0,),
+          ],
+        ),
+      ),
+      color: Colors.white,
+      elevation: 0.0,
+      splashColor: splashcolor,
+      textColor: textcolor,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CameraSettings()),
         );
       },
     ));

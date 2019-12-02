@@ -57,6 +57,7 @@ bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
 bool selectimg = true;
 bool showTimeInNotification=true;
+bool showAppInbuiltCamera=false;
 bool timeSpoofed=false;
 bool globalCameraOpenedStatus=false;
 bool locationThreadUpdatedLocation=false;

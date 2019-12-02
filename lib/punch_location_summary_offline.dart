@@ -341,9 +341,11 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           new RaisedButton(
               child: const Text('PUNCH',style: TextStyle(color: Colors.white),),
               color: buttoncolor,
-              onPressed: () {
+              onPressed: () async{
                 Navigator.of(context, rootNavigator: true).pop('dialog');
-                saveVisitOutOffline(visit_id,_comments.text);
+                var prefs= await SharedPreferences.getInstance();
+                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+                prefix0.showAppInbuiltCamera?saveVisitOutOfflineAppCamera(visit_id,_comments.text): saveVisitOutOffline(visit_id,_comments.text);
 
               })
         ],
@@ -351,6 +353,129 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     );
   }
 
+
+
+  /************************************************ for app camera ********************************************/
+
+
+
+
+
+  saveVisitOutOfflineAppCamera(var visitId,String Desc) async {
+    // sl.startStreaming(5);
+    final prefs = await SharedPreferences.getInstance();
+    String Date;
+    String PictureBase64;
+    String Latitude;
+    String Longitude;
+    String Time;
+    File img = null;
+    imageCache.clear();
+    var imageRequired = prefs.getInt("VisitImageRequired")??0;
+    if (imageRequired == 1) {
+      prefix0.globalCameraOpenedStatus=true;
+      // cameraChannel.invokeMethod("cameraOpened");
+      Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      )
+          .then((img) async {
+        prefix0.globalCameraOpenedStatus=false;
+        if (img != null) {
+          List<int> imageBytes = await img.readAsBytes();
+          PictureBase64 = base64.encode(imageBytes);
+          //sl.startStreaming(5);
+          if (assign_long != null && !assign_long.isNaN ) {
+            lat = assign_lat.toString();
+            long = assign_long.toString();
+            if (globalstreamlocationaddr.isEmpty) {
+              globalstreamlocationaddr = lat + "," + long;
+            }
+          }
+
+          print("--------------------Image---------------------------");
+          print(PictureBase64);
+
+          var now = new DateTime.now();
+          var formatter = new DateFormat('yyyy-MM-dd');
+
+          Date = formatter.format(now);
+          Time = DateFormat("H:mm:ss").format(now);
+          Latitude = assign_lat.toString();
+          Longitude = assign_long.toString();
+          var FakeLocationStatus = 0;
+          if (fakeLocationDetected)
+            FakeLocationStatus = 1;
+          VisitsOffline visit = VisitsOffline.empty();
+          visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, PictureBase64, FakeLocationStatus,timeSpoofed?1:0);
+
+          print("---------------Visit in saved offline---------------");
+          // cameraChannel.invokeMethod("cameraClosed");
+          img.deleteSync();
+          imageCache.clear();
+
+          showDialog(context: context, child:
+          new AlertDialog(
+            content: new Text(
+                "Visit punched successfully. It will be synced when you are online"),
+          )
+          );
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return new PunchLocationSummaryOffline();
+                  }
+              )
+          );
+        } });
+    }
+    else{
+      //sl.startStreaming(5);
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd');
+
+      Date = formatter.format(now);
+      Time = DateFormat("H:mm:ss").format(now);
+      Latitude = assign_lat.toString();
+      Longitude = assign_long.toString();
+      var FakeLocationStatus = 0;
+      if (fakeLocationDetected)
+        FakeLocationStatus = 1;
+      VisitsOffline visit = VisitsOffline.empty();
+
+      visit.saveVisitOut(visitId, Latitude, Longitude, Time, Date, Desc, defaultUserImage, FakeLocationStatus,timeSpoofed?1:0);
+
+      print("---------------Visit in saved offline---------------");
+      Navigator.of(context, rootNavigator: true).pop();
+      showDialog(context: context, child:
+      new AlertDialog(
+        content: new Text(
+            "Visit punched successfully. It will be synced when you are online"),
+      )
+      );
+      Navigator.pushReplacement(context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return new PunchLocationSummaryOffline();
+              }
+          )
+      );
+    }
+    _comments.text='';
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   saveVisitOutOffline(var visitId,String Desc) async {
    // sl.startStreaming(5);

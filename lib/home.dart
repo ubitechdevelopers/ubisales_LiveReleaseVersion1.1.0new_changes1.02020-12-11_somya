@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool offlineDataSaved = false;
   bool internetAvailable = true;
   String address = '';
-
+  String createdDate="";
   @override
   void initState() {
     print('aintitstate');
@@ -548,6 +548,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+
+  showReferralPopup(BuildContext context,String createdDate){
+    String dateToSend='';
+    if(createdDate==''){
+      dateToSend='12';
+    }
+
+
+  }
+
+
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     /*await availableCameras();*/
@@ -613,6 +624,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           org_name = prefs.getString('org_name') ?? '';
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
+          createdDate = prefs.getString('CreatedDate') ?? '';
+
+          showReferralPopup(context,createdDate);
+
           print("Profile Image" + profile);
           profileimage = new NetworkImage(profile);
           setaddress();
@@ -1643,7 +1658,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           act1 = "";
         });
       }
-      issave = await saveImage.saveTimeInOutImagePicker(mk, context);
+
+      var prefs= await SharedPreferences.getInstance();
+      globals.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      issave = globals.showAppInbuiltCamera?await saveImage.saveTimeInOutImagePickerAppCamera(mk, context):await saveImage.saveTimeInOutImagePicker(mk, context);
       print(issave);
       if (issave == null) {
         globals.timeWhenButtonPressed = null;

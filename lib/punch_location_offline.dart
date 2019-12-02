@@ -673,12 +673,17 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       child: Text('VISIT IN',
           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
       color: buttoncolor,
-      onPressed: () {
+      onPressed: () async{
         if(_clientname.text.trim()=='') {
           showInSnackBar('Please insert client name first');
           return false;
         }else
-          saveVisitInOffline();
+          {
+            var prefs= await SharedPreferences.getInstance();
+            prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+            prefix0.showAppInbuiltCamera?saveVisitInOfflineAppCamera(): saveVisitInOffline();
+          }
+
       },
     );
   }
@@ -695,6 +700,160 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
       /*return new  Text('Location is restricted from app settings, click here to allow location permission and refresh', textAlign: TextAlign.center, style: new TextStyle(fontSize: 14.0,color: Colors.red));*/
     }
   }
+
+  /************************************* for app camera ********************************************/
+
+
+
+
+  saveVisitInOfflineAppCamera() async {
+    //sl.startStreaming(5);
+    print("inside savevisit in offline method");
+    client = _clientname.text;
+    final prefs = await SharedPreferences.getInstance();
+    int UserId = int.parse(prefs.getString("empid")) ?? 0;
+    String Date;
+    String OrganizationId = prefs.getString("orgid") ?? "0";
+    String PictureBase64;
+    int IsSynced;
+    String Latitude;
+    String Longitude;
+    String Time;
+    File img = null;
+    imageCache.clear();
+    var imageRequired = prefs.getInt("VisitImageRequired")??0;
+    if (imageRequired == 1) {
+      // cameraChannel.invokeMethod("cameraOpened");
+      prefix0.globalCameraOpenedStatus=true;
+      Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new TakePictureScreen(),
+        fullscreenDialog: true,)
+      )
+          .then((img) async {
+        prefix0.globalCameraOpenedStatus=false;
+        if (img != null) {
+          List<int> imageBytes = await img.readAsBytes();
+          PictureBase64 = base64.encode(imageBytes);
+          //sl.startStreaming(5);
+
+          print("--------------------Image---------------------------");
+          print(PictureBase64);
+
+          var now = new DateTime.now();
+          var formatter = new DateFormat('yyyy-MM-dd');
+
+          Date = formatter.format(now);
+          Time = DateFormat("H:mm:ss").format(now);
+          Latitude = assign_lat.toString();
+          Longitude = assign_long.toString();
+          print("--------------------Lati Longi---------------------------");
+          print(Latitude+" ,,  "+Longitude);
+          var FakeLocationStatus = 0;
+          if (fakeLocationDetected)
+            FakeLocationStatus = 1;
+          VisitsOffline visitIn = VisitsOffline(
+              null,
+
+
+              UserId,
+              Latitude,
+              Longitude,
+              Time,
+              Date,
+
+              "",
+              "",
+              '00:00:00',
+              "",
+              client,
+              "",
+              "",
+              OrganizationId,
+              0,
+              PictureBase64,
+              defaultUserImage,
+              FakeLocationStatus,
+              0,
+              timeSpoofed?1:0,
+              0
+          );
+          int savedVisitId = await visitIn.save();
+          prefs.setInt("savedVisitId", savedVisitId);
+
+          print("---------------Visit in saved offline---------------");
+          // cameraChannel.invokeMethod("cameraClosed");
+          img.deleteSync();
+          imageCache.clear();
+          showDialog(context: context, child:
+          new AlertDialog(
+            content: new Text(
+                "Visit punched successfully. It will be synced when you are online"),
+          )
+          );
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return new PunchLocationSummaryOffline();
+                  }
+              )
+          );
+        }
+      });
+    }
+    else{
+      // sl.startStreaming(5);
+      print("--------------------Image---------------------------");
+
+
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd');
+
+      Date = formatter.format(now);
+      Time = DateFormat("H:mm:ss").format(now);
+      Latitude = assign_lat.toString();
+      Longitude = assign_long.toString();
+      var FakeLocationStatus = 0;
+      if (fakeLocationDetected)
+        FakeLocationStatus = 1;
+
+      VisitsOffline visitIn = VisitsOffline(
+          null, UserId, Latitude, Longitude, Time, Date, "", "", '00:00:00', "", client, "", "", OrganizationId, 0, defaultUserImage, defaultUserImage, FakeLocationStatus, 0, timeSpoofed?1:0, 0
+      );
+      int savedVisitId= await visitIn.save();
+      prefs.setInt("savedVisitId",savedVisitId);
+
+
+      print("---------------Visit in saved offline---------------");
+
+      showDialog(context: context, child:
+      new AlertDialog(
+        content: new Text(
+            "Visit punched successfully. It will be synced when you are online"),
+      )
+      );
+      Navigator.pushReplacement(context,
+          new MaterialPageRoute(
+              builder: (BuildContext context) {
+                return new PunchLocationSummaryOffline();
+              }
+          )
+      );
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+  /*************************************************************************************************/
+
+
+
 
   saveVisitInOffline() async {
     //sl.startStreaming(5);

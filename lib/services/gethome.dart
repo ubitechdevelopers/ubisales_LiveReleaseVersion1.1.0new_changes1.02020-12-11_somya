@@ -111,6 +111,11 @@ class Home{
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));
 
+        String createdDate = timeinoutMap['CreatedDate'].toString();
+        prefs.setString('CreatedDate',createdDate);
+
+
+
         return timeinoutMap['act'];
       } else {
       //  print('8888');
@@ -122,6 +127,11 @@ class Home{
       return "Poor network connection";
     }
   }
+
+  showPopupForReferral(var createdDate){
+
+  }
+
 
   managePermission(String empid, String orgid, String designation) async{
 //print("This is called manage permissions-------------------->");

@@ -140,7 +140,10 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
                 FakeLocationStatus);
             if (timeinout["act"] != "Imposed") {
               SaveImage mark = new SaveImage();
-              bool res = await mark.saveTimeInOutQR(marktimeinout,context);
+
+              var prefs= await SharedPreferences.getInstance();
+              globals.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+              bool res = globals.showAppInbuiltCamera?await mark.saveTimeInOutQRAppCamera(marktimeinout,context):await mark.saveTimeInOutQR(marktimeinout,context);
               if (res)
                 if(timeinout["aid"].toString() != '0')
                   return "success1";

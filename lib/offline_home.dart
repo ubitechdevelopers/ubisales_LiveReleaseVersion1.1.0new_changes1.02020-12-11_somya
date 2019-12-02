@@ -689,14 +689,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                             FlatButton(
                               child: Text('Time In' ,style: TextStyle(color: Colors.green),),
                               shape: Border.all(color: Colors.green),
-                              onPressed: () {
+                              onPressed: ()async {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeInPressedTime=DateTime.now();
 
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
+                                var prefs= await SharedPreferences.getInstance();
+                                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
 
-                                saveOfflineQr(0);
+                                showAppInbuiltCamera?saveOfflineQrAppCamera(0):saveOfflineQr(0);
 
                               },
                             ),
@@ -708,13 +710,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                                 ),
                               ),
                               color: Colors.redAccent,
-                              onPressed: () {
+                              onPressed: ()async {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
 
                                 Navigator.of(context, rootNavigator: true)
                                     .pop();
-                              saveOfflineQr(1);
+                                var prefs= await SharedPreferences.getInstance();
+                                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+
+                                showAppInbuiltCamera?saveOfflineQrAppCamera(1):saveOfflineQr(1);
                               },
                             ),
                           ],
@@ -722,6 +727,273 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                       ])
                 ]))));
   }
+
+
+  /********************** for inbuilt caera***************************/
+
+
+  saveOfflineQrAppCamera(int action) async{
+    final prefs = await SharedPreferences.getInstance();
+    int UserId = int.parse(prefs.getString("empid")??"0") ?? 0;
+    int Action = action; // 0 for time in and 1 for time out
+    String Date;
+    int OrganizationId = int.parse(prefs.getString("orgid")??"0") ?? 0;
+    String PictureBase64;
+    int IsSynced;
+    String Latitude;
+    String Longitude;
+    String Time;
+    String actionString=(action==0)?"Time In":"Time Out";
+    File img = null;
+    imageCache.clear();
+    prefix0.globalCameraOpenedStatus=true;
+    scan().then((onValue){
+
+      print("******************** QR value **************************");
+      print(onValue);
+      print("******************** QR value **************************");
+      //return false;
+      if(onValue!='error') {
+        prefix0.globalCameraOpenedStatus=false;
+        List splitstring = onValue.split("ykks==");
+        var UserName=splitstring[0];
+        var Password=splitstring[1];
+
+        var imageRequired = prefs.getInt("ImageRequired");
+        if (imageRequired == 1) {
+          prefix0.globalCameraOpenedStatus=true;
+          // cameraChannel.invokeMethod("cameraOpened");
+          Navigator.push(context, new MaterialPageRoute(
+            builder: (BuildContext context) => new TakePictureScreen(),
+            fullscreenDialog: true,)
+          ).then((img) async {
+
+            if (img != null) {
+              prefix0.globalCameraOpenedStatus=false;
+              List<int> imageBytes = await img.readAsBytes();
+              PictureBase64 = base64.encode(imageBytes);
+
+              print("--------------------Image---------------------------");
+              print(PictureBase64);
+
+              print("--------------------Image---------------------------");
+
+              var now;
+              if(action==0){
+                now=timeInPressedTime;
+              }
+              else{
+                now=timeOutPressedTime;
+              }
+              var formatter = new DateFormat('yyyy-MM-dd');
+
+              Date = formatter.format(now);
+              Time = DateFormat("H:mm:ss").format(now);
+
+
+              print("--------------------Date Time---------------------------");
+              print(Date + " " + Time);
+
+              print("--------------------Date Time---------------------------");
+
+              Latitude = await assign_lat.toString();
+              Longitude = await assign_long.toString();
+              var FakeLocationStatus=0;
+              if(fakeLocationDetected)
+                FakeLocationStatus=1;
+
+              // print(lat+"lalalal"+long+location_addr);
+
+              IsSynced = 0;
+
+
+              QROffline qrOffline = new QROffline(
+                  null,
+                  UserId,
+                  Action,
+                  Date,
+                  OrganizationId,
+                  PictureBase64,
+                  IsSynced,
+                  Latitude,
+                  Longitude,
+                  Time,
+                  UserName,
+                  Password,
+                  FakeLocationStatus,
+                  timeSpoofed?1:0
+              );
+              qrOffline.save();
+              timeInPressedTime=null;
+              timeOutPressedTime=null;
+              // cameraChannel.invokeMethod("cameraClosed");
+              img.deleteSync();
+              imageCache.clear();
+
+              /*
+              SimpleDialog(
+                children: <Widget>[
+                  Text( actionString+" is marked. It will be synced when you are online"),
+                ],
+              );
+              Scaffold.of(context)
+                  .showSnackBar(
+                  SnackBar(content: Text("Attendance marked")));
+              */
+              /*
+               */
+              Future.delayed(const Duration(milliseconds: 2000), () {
+                showDialog(context: context, child:
+                new AlertDialog(
+                  content: new Text(
+                      actionString +
+                          " is marked. It will be synced when you are online"),
+                )
+                );
+                setState(() {
+                  prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+                });
+              });
+              print("-----------------------Context-----------------------");
+              print(context);
+
+              Navigator
+                  .of(context)
+                  .push(
+                MaterialPageRoute(builder: (context) => OfflineHomePage()),
+              );
+
+
+
+
+            }
+            else {
+              prefix0.globalCameraOpenedStatus=false;
+              setState(() {
+                // timeInClicked = false;
+                // timeOutClicked = false;
+              });
+            }
+          });
+        }
+        else {
+          var now;
+          if(action==0){
+            now=timeInPressedTime;
+          }
+          else{
+            now=timeOutPressedTime;
+          }
+          var formatter = new DateFormat('yyyy-MM-dd');
+
+          Date = formatter.format(now);
+          Time = DateFormat("H:mm:ss").format(now);
+
+
+          print("--------------------Date Time---------------------------");
+          print(Date + " " + Time);
+
+          print("--------------------Date Time---------------------------");
+
+          Latitude = assign_lat.toString();
+          Longitude = assign_long.toString();
+
+          // print(lat+"lalalal"+long+location_addr);
+
+          IsSynced = 0;
+          var FakeLocationStatus=0;
+          if(fakeLocationDetected)
+            FakeLocationStatus=1;
+          QROffline qrOffline = new QROffline(
+              null,
+              UserId,
+              Action,
+              Date,
+              OrganizationId,
+              '',
+              IsSynced,
+              Latitude,
+              Longitude,
+              Time,
+              UserName,
+              Password,
+              FakeLocationStatus,
+              timeSpoofed?1:0
+          );
+          qrOffline.save();
+
+          timeInPressedTime=null;
+          timeOutPressedTime=null;
+          Future.delayed(const Duration(milliseconds: 2000), () {
+            showDialog(context: context, child:
+            new AlertDialog(
+              content: new Text(
+                  actionString +
+                      " is marked. It will be synced when you are online"),
+            )
+            );
+            setState(() {
+              prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+            });
+          });
+          print("-----------------------Context-----------------------");
+          print(context);
+
+          Navigator
+              .of(context)
+              .push(
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+          );
+
+
+
+/*
+          showDialog(context: context, child:
+          new AlertDialog(
+            content: new Text(
+                "Attendance marked successfully and will be synced when you get connected!"),
+          )
+          );
+
+
+          print("-----------------------Context-----------------------");
+          print(context);
+          Navigator
+              .of(context)
+              .push(
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+          );
+  */      }
+
+      }else {
+        prefix0.globalCameraOpenedStatus=false;
+        setState(() {
+          // loader = false;
+        });
+      }
+    });
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+  /*******************************************************************/
+
+
+
+
+
+
+
+
 
   saveOfflineQr(int action) async{
     final prefs = await SharedPreferences.getInstance();
@@ -1155,15 +1427,33 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             child: Text('TIME IN',
                 style: new TextStyle(fontSize: 22.0, color: Colors.white)),
             color: timeInClicked?Colors.grey:buttoncolor,
-            onPressed: () {
-              globalCameraOpenedStatus=true;
-              timeInPressedTime=DateTime.now();
-              if(!timeInClicked){
-                saveOfflineAttendance(0);
-                setState(() {
-                  timeInClicked =true;
-                });
+            onPressed: ()async {
+              var prefs= await SharedPreferences.getInstance();
+              prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+
+              if(prefix0.showAppInbuiltCamera)
+                {
+                  globalCameraOpenedStatus=true;
+                  timeInPressedTime=DateTime.now();
+                  if(!timeInClicked){
+                    saveOfflineAttendanceAppCamera(0);
+                    setState(() {
+                      timeInClicked =true;
+                    });
+                  }
+                }
+              else{
+                globalCameraOpenedStatus=true;
+                timeInPressedTime=DateTime.now();
+                if(!timeInClicked){
+                  saveOfflineAttendance(0);
+                  setState(() {
+                    timeInClicked =true;
+                  });
+                }
+
               }
+
               // //print("Time out button pressed");
               //    saveImage();
               //Navigator.pushNamed(context, '/home');
@@ -1194,18 +1484,34 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                       child: Text('TIME OUT',
                           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
                       color: timeOutClicked?Colors.grey:buttoncolor,
-                      onPressed: () {
-                        prefix0.globalCameraOpenedStatus=true;
-                        timeOutPressedTime=DateTime.now();
-                        if(!timeOutClicked){
-                          saveOfflineAttendance(1);
-                          setState(() {
-                            timeOutClicked=true;
-                          });
-                        }
-                        // //print("Time out button pressed");
-                        //    saveImage();
-                        //Navigator.pushNamed(context, '/home');
+                      onPressed: () async{
+                        var prefs= await SharedPreferences.getInstance();
+                        prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+
+                        if(prefix0.showAppInbuiltCamera)
+                          {
+                            prefix0.globalCameraOpenedStatus=true;
+                            timeOutPressedTime=DateTime.now();
+                            if(!timeOutClicked){
+                              saveOfflineAttendanceAppCamera(1);
+                              setState(() {
+                                timeOutClicked=true;
+                              });
+                            }
+                          }
+                        else
+                          {
+                            prefix0.globalCameraOpenedStatus=true;
+                            timeOutPressedTime=DateTime.now();
+                            if(!timeOutClicked){
+                              saveOfflineAttendance(1);
+                              setState(() {
+                                timeOutClicked=true;
+                              });
+                            }
+                          }
+
+
                       },
                     )
                 ),
@@ -1446,6 +1752,221 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
     cameraChannel.invokeMethod("startTimeOutNotificationWorker",{"ShiftTimeOut":ShiftTimeOut});
   }
+
+  /************************************ for app camera*******************************************/
+
+
+  saveOfflineAttendanceAppCamera(int actionPressed) async {
+
+    if(actionPressed==0&&showTimeOutNotification){
+      startTimeOutNotificationWorker();
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    int UserId = int.parse(prefs.getString("empid")) ?? 0;
+    int Action = actionPressed; // 0 for time in and 1 for time out
+    String Date;
+    int OrganizationId = int.parse(prefs.getString("orgid")) ?? 0;
+    String PictureBase64;
+    int IsSynced;
+    String Latitude;
+    String Longitude;
+    String Time;
+    String actionString=(actionPressed==0)?"Time In":"Time Out";
+    File img = null;
+    imageCache.clear();
+    //img = await ImagePicker.pickImage(source: ImageSource.camera,maxWidth: 250.0, maxHeight: 250.0);
+    if(actionPressed==0 && attendanceFound=="Time In Marked"){
+      timeInAlreadyMarkedDialog();
+    }
+    else if(actionPressed==0 && attendanceFound=="Time In Marked"){
+      //Show dialog for time out marked before time in do you want to discard previous time out
+      timeOutMarkedPreviously();
+    }
+    else if(actionPressed==1 && (attendanceFound=="Only Time Out Marked"||attendanceFound=="Both Marked")){
+      // Show dialog for time out already marked
+      timeOutAlreadyMarked();
+    }
+    else{
+      var imageRequired = prefs.getInt("ImageRequired");
+      if (imageRequired == 1) {
+        print("-----------------------Context before-----------------------");
+        print(context);
+        // cameraChannel.invokeMethod("cameraOpened");
+        Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        )
+            .then((img) async {
+          prefix0.globalCameraOpenedStatus=false;
+          if (img != null) {
+
+            List<int> imageBytes = await img.readAsBytes();
+            PictureBase64 = base64.encode(imageBytes);
+            /* sl.startStreaming(5);
+            if (list != null && list.length > 0) {
+              lat = list[list.length - 1].latitude.toString();
+              long = list[list.length - 1].longitude.toString();
+              if (streamlocationaddr == '') {
+                streamlocationaddr = lat + ", " + long;
+              }
+            }
+            if (streamlocationaddr == '' && varCheckNet==0) {
+              print('again');
+              sl.startStreaming(5);
+              startTimer();
+            }
+            */
+            print("--------------------Image---------------------------");
+            print(PictureBase64);
+
+            print("--------------------Image---------------------------");
+
+            var now;
+            if(actionPressed==0){
+              now=timeInPressedTime;
+            }
+            else{
+              now=timeOutPressedTime;
+            }
+            var formatter = new DateFormat('yyyy-MM-dd');
+
+            Date = formatter.format(now);
+            Time = DateFormat("H:mm:ss").format(now);
+
+
+            print("--------------------Date Time---------------------------");
+            print(Date + " " + Time);
+
+            print("--------------------Date Time---------------------------");
+
+            Latitude = await assign_lat.toString();
+            Longitude = await assign_long.toString();
+            var FakeLocationStatus=0;
+            if(fakeLocationDetected)
+              FakeLocationStatus=1;
+
+            // print(lat+"lalalal"+long+location_addr);
+
+            IsSynced = 0;
+
+
+            AttendanceOffline attendanceOffline = new AttendanceOffline(
+                null,
+                UserId,
+                Action,
+                Date,
+                OrganizationId,
+                PictureBase64,
+                IsSynced,
+                Latitude,
+                Longitude,
+                Time,
+                FakeLocationStatus,
+                timeSpoofed?1:0
+            );
+            attendanceOffline.save();
+            timeInPressedTime=null;
+            timeOutPressedTime=null;
+            // cameraChannel.invokeMethod("cameraClosed");
+            img.deleteSync();
+            imageCache.clear();
+
+            showDialog(context: context, child:
+            new AlertDialog(
+              content: new Text(
+                  actionString+" is marked. It will be synced when you are online"),
+            )
+            );
+            print("-----------------------Context-----------------------");
+            print(context);
+            Navigator
+
+                .push(context,
+              MaterialPageRoute(builder: (context) => OfflineHomePage()),
+            );
+          }
+          else {
+            setState(() {
+              timeInClicked = false;
+              timeOutClicked = false;
+            });
+          }
+        });
+      }
+      else {
+        var now;
+        if(actionPressed==0){
+          now=timeInPressedTime;
+        }
+        else{
+          now=timeOutPressedTime;
+        }
+        var formatter = new DateFormat('yyyy-MM-dd');
+
+        Date = formatter.format(now);
+        Time = DateFormat("H:mm:ss").format(now);
+
+
+        print("--------------------Date Time---------------------------");
+        print(Date + " " + Time);
+
+        print("--------------------Date Time---------------------------");
+
+        Latitude = await assign_lat.toString();
+        Longitude = await assign_long.toString();
+
+        // print(lat+"lalalal"+long+location_addr);
+
+        IsSynced = 0;
+        var FakeLocationStatus=0;
+        if(fakeLocationDetected)
+          FakeLocationStatus=1;
+
+
+        AttendanceOffline attendanceOffline = new AttendanceOffline(
+            null,
+            UserId,
+            Action,
+            Date,
+            OrganizationId,
+            '',
+            IsSynced,
+            Latitude,
+            Longitude,
+            Time,
+            FakeLocationStatus,
+            timeSpoofed?1:0
+        );
+        attendanceOffline.save();
+
+        timeInPressedTime=null;
+        timeOutPressedTime=null;
+
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text(
+              "Attendance marked successfully and will be synced when you get connected!"),
+        )
+        );
+        print("-----------------------Context-----------------------");
+        print(context);
+        Navigator
+
+            .push(context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+        );
+      }
+
+    }
+
+  }
+
+
+
+
+  /**********************************************************************************************/
+
   saveOfflineAttendance(int actionPressed) async {
 
     if(actionPressed==0&&showTimeOutNotification){

@@ -115,6 +115,87 @@ class NewServices{
 
   }
 
+  /************************* for app camera*************************************/
+
+
+
+
+  Future<bool> updateProfilePhotoAppCamera(int uploadtype, String empid, String orgid,context) async {
+    try{
+
+      File imagei = null;
+      imageCache.clear();
+      //for gallery
+      if(uploadtype==1){
+        imagei = await ImagePicker.pickImage(source: ImageSource.gallery);
+      }
+      //for camera
+      if(uploadtype==2){
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new TakePictureScreen(),
+          fullscreenDialog: true,)
+        );
+      }
+      //for removing photo
+      if(uploadtype==3){
+        imagei = null;
+      }
+      print("Selected image information ****************************");
+      print(imagei.toString());
+      if(imagei!=null ) {
+        //// sending this base64image string +to rest api
+        FormData formData = new FormData.from({
+          "uid": empid,
+          "refno": orgid,
+          "file": new UploadFileInfo(imagei, "sample.png"),
+        });
+        //print("5");
+        Response<String> response1=await dio.post(globals.path_hrm_india+"updateProfilePhoto",data:formData);
+
+        //imagei.deleteSync();
+        imageCache.clear();
+        /*getTempImageDirectory();*/
+        Map MarkAttMap = json.decode(response1.data);
+        //print(MarkAttMap["status"].toString());
+        if (MarkAttMap["status"])
+          return true;
+        else
+          return false;
+      }else if(uploadtype==3 && imagei==null){
+        FormData formData = new FormData.from({
+          "uid": empid,
+          "refno": orgid,
+        });
+        print(globals.path_hrm_india+"updateProfilePhoto?uid=$empid&refno=$orgid");
+
+        Response<String> response1=await dio.post(globals.path_hrm_india+"updateProfilePhoto",data:formData);
+        //print(response1.toString());
+        Map MarkAttMap = json.decode(response1.data);
+        //print(MarkAttMap["status"].toString());
+        if (MarkAttMap["status"])
+          return true;
+        else
+          return false;
+      }else{
+        return false;
+      }
+    } catch (e) {
+      print("this is catch.. of updateprofilephoto**************************");
+      print(e.toString());
+      return false;
+    }
+  }
+
+
+
+
+
+
+
+
+  /////////////////////////////////////////////////////////////////////////////
+
+
 
   Future<bool> updateProfilePhoto(int uploadtype, String empid, String orgid,context) async {
     try{

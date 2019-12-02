@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +34,55 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 String trialstatus = '';
+var refererId="0";
+
+void initDynamicLinks() async {
+  final PendingDynamicLinkData data = await FirebaseDynamicLinks.instance.getInitialLink();
+  final Uri deepLink = data?.link;
+
+  if (deepLink != null) {
+    print("Deep Link"+deepLink.path);
+  }
+
+  FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+
+        if (deepLink != null) {
+          print("Deep Link"+deepLink.path);
+
+          refererId=deepLink.path.split("/")[1];
+
+          SharedPreferences prefs=await SharedPreferences.getInstance();
+
+          prefs.setString("referedId", refererId.toString());
+          print("refeeeeeeeeeeeeeeeeeeeeeeeeeeee"+refererId);
+        }
+      },
+      onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      }
+  );
+
+
+
+
+}
+
+
+
+
 appResumedPausedLogic(context,[bool isVisitPage]){
+  if(showAppInbuiltCamera)
+    globals.globalCameraOpenedStatus=false;
+
   SystemChannels.lifecycle.setMessageHandler((msg)async{
     if(msg=='AppLifecycleState.resumed' )
     {
       print("------------------------------------ App Resumed-----------------------------");
 
-
+      initDynamicLinks();
 
       var serverConnected= await checkConnectionToServer();
       if(globals.globalCameraOpenedStatus==false)

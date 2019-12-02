@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -288,7 +289,7 @@ String address="";
                 borderRadius: BorderRadius.circular(5),
               ),
               color: buttoncolor,
-              onPressed: () {
+              onPressed: () async{
                 globalCameraOpenedStatus=true;
               //  sl.startStreaming(5);
                 SaveImage saveImage = new SaveImage();
@@ -302,6 +303,38 @@ String address="";
                 print('22222222222222');
                 print('<<****************************');
                 Navigator.of(context, rootNavigator: true).pop();
+
+                var prefs= await SharedPreferences.getInstance();
+                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+                prefix0.showAppInbuiltCamera?
+                saveImage.saveVisitOutAppCamera(empid,streamlocationaddr.toString(),visit_id.toString(),assign_lat.toString(),assign_long.toString(),_comments.text,orgid,FakeLocationStatus,context).then((res){
+
+                  if(res)
+                  {
+                    _comments.text = "";
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+                    );
+                    showDialog(
+                        context: context,
+                        child: new AlertDialog(
+                          content: new Text("Punch visit successfully"),
+                        ));
+                  }
+                  else
+                  {
+                    _comments.text = "";
+                    showDialog(
+                        context: context,
+                        child: new AlertDialog(
+                          content: new Text("Unable to punch visit. Please try again!"),
+                        ));
+                  }
+                }).catchError((ett){
+                  showInSnackBar('Unable to punch visit');
+                })
+                    :
                 saveImage.saveVisitOut(empid,streamlocationaddr.toString(),visit_id.toString(),assign_lat.toString(),assign_long.toString(),_comments.text,orgid,FakeLocationStatus,context).then((res){
 
                   if(res)

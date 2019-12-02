@@ -677,7 +677,9 @@ var FakeLocationStatus=0;
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveVisit(mk,context);
+      var prefs= await SharedPreferences.getInstance();
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
         showDialog(context: context, child:

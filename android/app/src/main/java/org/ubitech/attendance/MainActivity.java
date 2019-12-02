@@ -2,9 +2,11 @@ package org.ubitech.attendance;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -183,18 +185,38 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 }
                 else
                 if (call.method.equals("cameraClosed")) {
-                  Log.i("camera","camera opened false");
-                  cameraOpened=false;
-                  try{
+                    Log.i("camera","camera opened false");
+                    cameraOpened=false;
+                    try{
                       /*
                   if(listenerExecuter!=null)
                   listenerExecuter.updateCameraStatus(false);
 
                        */
-                  }
-                  catch(Exception e){
+                    }
+                    catch(Exception e){
 
-                  }
+                    }
+                }
+                else
+                if (call.method.equals("askAudioPermission")) {
+                    Log.i("audio","permission asked");
+                    try{
+
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.RECORD_AUDIO}, 444);
+
+
+
+                      /*
+                  if(listenerExecuter!=null)
+                  listenerExecuter.updateCameraStatus(false);
+
+                       */
+                    }
+                    catch(Exception e){
+
+                    }
                 }
                 else
                 if (call.method.equals("startAssistant")) {
@@ -226,6 +248,15 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 
 
   }
+
+    public static void triggerRebirth(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
+    }
 
 
   public void openLocationDialog(){
@@ -297,9 +328,15 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       if (!isGpsEnabled) {
         openLocationDialog();
       } else {
+
         //navigateToUser();
        // manuallyStartAssistant();
       }
+    }
+    else if(requestCode==444){
+    /*    Log.i("request code",""+requestCode);
+        triggerRebirth(MainActivity.this);
+*/
     }
   }
 

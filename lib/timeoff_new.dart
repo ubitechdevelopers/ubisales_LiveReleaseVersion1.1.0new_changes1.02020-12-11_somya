@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
 //import 'package:simple_permissions/simple_permissions.dart';
@@ -602,7 +603,9 @@ class _TimeOff_New extends State<TimeOff_New> {
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveVisit(mk,context);
+      var prefs= await SharedPreferences.getInstance();
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
         showDialog(context: context, child:

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
@@ -43,7 +44,7 @@ class _AppDrawerState extends State<AppDrawer> {
   String buystatus = "";
   String trialstatus = "";
   String orgmail = "";
-
+  String empId="";
   Services services=new Services();
   @override
   void initState() {
@@ -61,6 +62,7 @@ class _AppDrawerState extends State<AppDrawer> {
       fname = prefs.getString('fname') ?? '';
       lname = prefs.getString('lname') ?? '';
       store = prefs.getString('store') ?? '';
+      empId = prefs.getString("empid")??"0";
       sstatus = (int.parse(prefs.getString('sstatus')))==1 ? 'You have logged in as Admin':'';
       desination = prefs.getString('desination') ?? '';
       profile = prefs.getString('profile') ?? '';
@@ -393,6 +395,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
+          (admin_sts==0)?
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -406,6 +409,32 @@ class _AppDrawerState extends State<AppDrawer> {
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
                   box.size);
+            },
+          ):new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.star,size: 20.0),SizedBox(width: 5.0),
+                new Text("Share and Earn", style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () async {
+              final DynamicLinkParameters parameters = DynamicLinkParameters(
+                uriPrefix: 'https://ubiattendance.page.link',
+                link: Uri.parse('https://ubiattendance.com/'+empId),
+                androidParameters: AndroidParameters(
+                  packageName: 'org.ubitech.attendance',
+                  minimumVersion: 50009,
+                ),
+
+              );
+
+              //final Uri dynamicUrl = await parameters.buildUrl();
+              final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+              final Uri shortUrl = shortDynamicLink.shortUrl;
+              print("short URL"+shortUrl.toString());
+
+              Share.share(shortUrl.toString());
+
             },
           ),
           new ListTile(

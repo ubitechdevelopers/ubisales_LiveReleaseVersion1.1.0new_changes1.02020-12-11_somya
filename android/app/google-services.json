@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "761674523487",
+    "firebase_url": "https://ubiattendance-referrals.firebaseio.com",
+    "project_id": "ubiattendance-referrals",
+    "storage_bucket": "ubiattendance-referrals.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761674523487:android:7081d1ee8a2bbab3444cea",
+        "android_client_info": {
+          "package_name": "org.ubitech.attendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761674523487-ict5lo9v8543rooc3a9fckns2juujomg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR4avFGCA2D9gU1g2946RjNFNMEubtXV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761674523487-ict5lo9v8543rooc3a9fckns2juujomg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -779,7 +779,7 @@ class _Flexitime extends State<Flexitime> {
         color: buttoncolor,
         child: const Text('FLEXI TIME OUT',style: TextStyle(color: Colors.white,fontSize: 18),),
 
-        onPressed: () {
+        onPressed: () async {
           prefix0.globalCameraOpenedStatus=true;
 
           SaveImage saveImage = new SaveImage();
@@ -796,7 +796,58 @@ class _Flexitime extends State<Flexitime> {
           print('22222222222222');
           print('<<****************************');
 
+          var prefs= await SharedPreferences.getInstance();
+          prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
           // Navigator.of(context, rootNavigator: true).pop();
+          prefix0.showAppInbuiltCamera?
+          saveImage.saveFlexiOutAppCamera(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus,context)
+              .then((res){
+
+            print(res);
+            print("444");
+            checkTimeinflexi().then((EmpList) {
+              setState(() {
+                flexiidsts = EmpList;
+                fid = flexiidsts[0].fid;
+                flexitimein = flexiidsts[0].sts;
+
+                // print("id and sts1");
+                //  print(fid);
+                //  print(flexitimein);
+
+              });
+            });
+            if(res) {
+              showDialog(context: context, child:
+              new AlertDialog(
+                content: new Text("Attendance marked successfully!"),
+              )
+              );
+            }
+            else
+            {
+              showDialog(context: context, child:
+              new AlertDialog(
+                title: new Text("Warning!"),
+                content: new Text("Problem while punching Attendance, try again."),
+              )
+              );
+            }
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FlexiList()),
+            );
+            setState(() {
+              act1 = act;
+            });
+          }).catchError((ett){
+            showInSnackBar('Unable to punch attendance');
+            setState(() {
+              act1 = act;
+            });
+          })
+              :
           saveImage.saveFlexiOut(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus,context)
               .then((res){
 
@@ -906,7 +957,10 @@ print('visit out called for visit id:'+visit_id);
       setState(() {
         act1 = "";
       });
-      issave = await saveImage.saveFlexi(mk,context);
+
+      var prefs= await SharedPreferences.getInstance();
+      prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      issave = prefix0.showAppInbuiltCamera?await saveImage.saveFlexiAppCamera(mk,context): await saveImage.saveFlexi(mk,context);
       ////print(issave);
       if (issave) {
         checkTimeinflexi().then((EmpList) {
