@@ -76,13 +76,9 @@ class _ShrineAppState extends State<ShrineApp> {
         print(call.arguments["mocked"].toString());
 
         globalstreamlocationaddr=address;
-
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
-
         }
-
-
         break;
 
         return new Future.value("");

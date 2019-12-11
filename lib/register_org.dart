@@ -824,7 +824,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "password": _pass.text,
                                 "country": _tempcontry,
                                 "countrycode": '',
-                                "address": _city.text
+                                "address": _city.text,
+                                "platform":'android'
                               }) .then((response) {
                                 if  (response.statusCode == 200) {
 

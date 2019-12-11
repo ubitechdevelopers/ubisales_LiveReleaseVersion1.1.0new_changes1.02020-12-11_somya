@@ -73,11 +73,13 @@ class Home{
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
 
+        globals.userlimit=int.parse(timeinoutMap['User_limit']);
+        globals.registeruser=int.parse(timeinoutMap['registeremp']);
+
         print("Testing line2");
         globals.attImage=int.parse(timeinoutMap['attImage']);
         print("Testing line3");
         globals.ableToMarkAttendance = int.parse(timeinoutMap['ableToMarkAttendance']);
-
         globals.areaId=int.parse(timeinoutMap['areaId']);
         print("Testing line4");
 
@@ -87,13 +89,10 @@ class Home{
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
         prefs.setInt("VisitImageRequired", int.parse(timeinoutMap['visitImage']));
-
         globals.assigned_lat=  (timeinoutMap['assign_lat']).toDouble();
         globals.assigned_long=    (timeinoutMap['assign_long']).toDouble();
         globals.assign_radius=  (timeinoutMap['assign_radius']).toDouble();
         print("----visitImage------>"+globals.visitImage.toString());
-
-
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
        // print(timeinoutMap['pwd']);
         prefs.setString('aid', aid);
@@ -113,9 +112,6 @@ class Home{
 
         String createdDate = timeinoutMap['CreatedDate'].toString();
         prefs.setString('CreatedDate',createdDate);
-
-
-
         return timeinoutMap['act'];
       } else {
       //  print('8888');
