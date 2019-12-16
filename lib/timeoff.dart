@@ -2,24 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'drawer.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:Shrine/model/model.dart' as TimeOffModal;
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
-import 'timeoff_summary.dart';
-import 'settings.dart';
-import 'home.dart';
-import 'reports.dart';
-import 'profile.dart';
 import 'package:Shrine/services/services.dart';
-import 'Bottomnavigationbar.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'drawer.dart';
 import 'globals.dart';
+import 'login.dart';
+import 'timeoff_summary.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeOffPage extends StatefulWidget {
   @override

@@ -1,21 +1,17 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
-import 'globals.dart';
-import 'home.dart';
-import 'globals.dart' as globals;
-import 'package:Shrine/services/services.dart';
-import 'offline_home.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'Image_view.dart';
-import 'notifications.dart';
+
 import 'Bottomnavigationbar.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
+import 'globals.dart' as globals;
+import 'home.dart';
 //import 'package:intl/intl.dart';
 
 

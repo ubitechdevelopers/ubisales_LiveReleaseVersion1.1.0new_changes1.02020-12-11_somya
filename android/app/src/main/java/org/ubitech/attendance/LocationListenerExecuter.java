@@ -1,6 +1,5 @@
 package org.ubitech.attendance;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import io.flutter.plugin.common.MethodChannel;

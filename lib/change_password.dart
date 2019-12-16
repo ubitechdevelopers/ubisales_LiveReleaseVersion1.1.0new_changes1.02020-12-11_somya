@@ -1,21 +1,16 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'globals.dart';
-import 'home.dart';
-import 'offline_home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'globals.dart';
 
 
 class changePassword extends StatefulWidget {

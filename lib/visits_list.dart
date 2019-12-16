@@ -1,19 +1,14 @@
-import 'package:flutter/material.dart';
-import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/addShift.dart';
-import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'Image_view.dart';
-import 'notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
 import 'globals.dart';
+
 class VisitList extends StatefulWidget {
   @override
   _VisitList createState() => _VisitList();
@@ -24,7 +19,6 @@ String _orgName = "";
 //FocusNode f_dept ;
 class _VisitList extends State<VisitList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _currentIndex = 1;
   String emp='0';
   String admin_sts='0';
   bool res = true;
@@ -153,7 +147,7 @@ class _VisitList extends State<VisitList> {
                 children: <Widget>[
                   SizedBox(width: 1.0,),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.22,
                     child: Text(
                       'Name',
                       style: TextStyle(color: headingcolor),
@@ -161,7 +155,7 @@ class _VisitList extends State<VisitList> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.37,
+                    width: MediaQuery.of(context).size.width * 0.38,
                     child: Text(
                       'Client',
                       style: TextStyle(color: headingcolor),
@@ -169,7 +163,7 @@ class _VisitList extends State<VisitList> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.18,
                     child: Text('In',
                         style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
@@ -210,7 +204,6 @@ class _VisitList extends State<VisitList> {
 
 
   Widget getEmployee_DD() {
-    String dc = "0";
     return new FutureBuilder<List<Map>>(
         future: getEmployeesList(1),// with -select- label
         builder: (context, snapshot) {
@@ -323,8 +316,6 @@ class _VisitList extends State<VisitList> {
                                   ),
                                 ],
                               ),
-
-
                             ),
                             Container(
                                 width: MediaQuery
@@ -364,7 +355,6 @@ class _VisitList extends State<VisitList> {
 
                                   ],
                                 )
-
                             ),
                             Container(
                                 width: MediaQuery
@@ -404,10 +394,32 @@ class _VisitList extends State<VisitList> {
 
                                   ],
                                 )
-
                             ),
+
                           ],
                         ),
+
+                          snapshot.data[index].desc == '' ? Container() : snapshot
+                              .data[index].desc != 'Visit out not punched' ?
+                          Row(
+                            children: <Widget>[
+                              SizedBox(width: 10.0,),
+                              Text('Remark:  ',
+                                style: TextStyle(fontWeight: FontWeight.bold,),),
+                              Text(snapshot.data[index].desc)
+                            ],
+
+                          ) :
+                          Row(
+                            children: <Widget>[
+                              SizedBox(width: 10.0,),
+                              Text('Remark:  ', style: TextStyle(
+                                  fontWeight: FontWeight.bold, color: Colors.red),),
+                              Text(snapshot.data[index].desc,
+                                style: TextStyle(color: Colors.red),)
+                            ],
+
+                          ),
 
                       Divider(
                         color: Colors.blueGrey.withOpacity(0.25),

@@ -1,29 +1,26 @@
-import 'package:flutter/material.dart';
-import 'drawer.dart';
-import 'today_attendance_report.dart';
-import 'late_comers.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'settings.dart';
-import 'earlyLeavers.dart';
-import 'timeoff_list.dart';
-import 'cust_date_report.dart';
-import 'attendance_report_yes.dart';
-import 'last_seven_days.dart';
-import 'departmentwise_att.dart';
-import 'thismonth.dart';
-import 'visits_list.dart';
-import 'home.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'payment.dart';
-import 'profile.dart';
-import 'designation_att.dart';
-import 'Employeewise_att.dart';
-import  'globals.dart';
 import 'package:Shrine/services/services.dart';
-import 'flexi_report.dart';
-import 'notifications.dart';
-import 'Outsidegeofance.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'Bottomnavigationbar.dart';
+import 'Employeewise_att.dart';
+import 'Outsidegeofance.dart';
+import 'attendance_report_yes.dart';
+import 'cust_date_report.dart';
+import 'departmentwise_att.dart';
+import 'designation_att.dart';
+import 'drawer.dart';
+import 'earlyLeavers.dart';
+import 'flexi_report.dart';
+import  'globals.dart';
+import 'last_seven_days.dart';
+import 'late_comers.dart';
+import 'payment.dart';
+import 'thismonth.dart';
+import 'timeoff_list.dart';
+import 'today_attendance_report.dart';
+import 'visits_list.dart';
 
 class Reports extends StatefulWidget {
   @override

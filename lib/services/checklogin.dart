@@ -1,13 +1,14 @@
+import 'dart:convert';
+
+import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/model/employee.dart';
+import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/model/user.dart';
 import 'package:dio/dio.dart';
-import 'package:Shrine/model/employee.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Shrine/globals.dart' as globals;
+
 import 'gethome.dart';
-import 'package:Shrine/model/timeinout.dart';
 import 'saveimage.dart';
-import 'newservices.dart';
 
 class Login{
 

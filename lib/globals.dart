@@ -1,7 +1,8 @@
-import 'package:flutter/services.dart';
-import 'model/timeinout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart';
+
+import 'model/timeinout.dart';
 
 Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
@@ -12,10 +13,8 @@ Color buttoncolor =  Colors.orangeAccent;
 Color headingcolor =  Colors.orange;
 Color iconcolor =  Colors.black45;
 
-/*
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services";
-*/
 
 /*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
@@ -23,8 +22,8 @@ String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/
 */
 
 
-String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
-String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
+/*String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
+String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";*/
 
 
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
@@ -50,6 +49,8 @@ var assigned_long = 0.0;//These are user to store geofence latitude got from ser
 var assign_radius = 0.0;
 var timeInPressedTime;
 var timeOutPressedTime;
+int userlimit = 0;
+int registeruser = 0;
 var timeWhenButtonPressed;
 const cameraChannel = const MethodChannel('update.camera.status');
 const facebookChannel= const MethodChannel('log.facebook.data');
@@ -63,3 +64,10 @@ bool globalCameraOpenedStatus=false;
 bool locationThreadUpdatedLocation=false;
 List responseJson = new List();
 List responseEmplist = new List();
+
+
+/*
+int total_dept = 0;
+int total_abs = 0;
+int total_pre = 0;
+int total_emp = 0;*/

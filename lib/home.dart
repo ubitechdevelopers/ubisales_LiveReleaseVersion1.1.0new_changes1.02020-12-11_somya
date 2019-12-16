@@ -1,50 +1,46 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:Shrine/addEmployee.dart';
+import 'package:Shrine/database_models/attendance_offline.dart';
+import 'package:Shrine/database_models/visits_offline.dart';
+import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/fetch_location.dart';
-import 'package:pdf/widgets.dart' as prefix0;
+import 'package:Shrine/services/gethome.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/saveimage.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'genericCameraClass.dart';
-import 'askregister.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'database_models/qr_offline.dart';
-import 'punchlocation.dart';
-import 'drawer.dart';
-import 'timeoff_summary.dart';
-import 'package:Shrine/services/services.dart';
-import 'globals.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'leave_summary.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:location/location.dart';
-import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
-import 'punchlocation_summary.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'services/services.dart';
-import 'bulkatt.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:connectivity/connectivity.dart';
-import 'package:Shrine/database_models/attendance_offline.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/database_models/visits_offline.dart';
-import "package:Shrine/notifications.dart";
-import "offline_home.dart";
+
 import 'Bottomnavigationbar.dart';
-import 'login.dart';
-import 'package:Shrine/addEmployee.dart';
+import 'askregister.dart';
+import 'attendance_summary.dart';
+import 'bulkatt.dart';
+import 'database_models/qr_offline.dart';
+import 'drawer.dart';
+import 'globals.dart';
+import 'leave_summary.dart';
+import "offline_home.dart";
+import 'payment.dart';
+import 'punchlocation.dart';
+import 'punchlocation_summary.dart';
+import 'services/services.dart';
+import 'timeoff_summary.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
@@ -66,7 +62,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String newpwd = "new";
   int Is_Delete = 0;
   bool _visible = true;
-
+  String buysts = '0';
   String admin_sts = '0';
   String mail_varified = '1';
   String AbleTomarkAttendance = '1';
@@ -131,7 +127,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (qrs.isNotEmpty) {
         for (int i = 0; i < qrs.length; i++) {
           var address =
-              await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
+          await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
           print(address);
           jsonList.add({
             "Id": qrs[i].Id,
@@ -177,9 +173,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         });
       } else {
-        setState(() {
-          //  offlineDataSaved=true;
-        });
+        if (mounted) {
+          setState(() {
+            //  offlineDataSaved=true;
+          });
+        }
       }
     }
 
@@ -199,7 +197,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => OfflineHomePage()),
-            (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
           );
         }
         var long = call.arguments["longitude"].toString();
@@ -343,7 +341,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (attendances.isNotEmpty) {
         for (int i = 0; i < attendances.length; i++) {
           var address = await getAddressFromLati_offline(
-             double.parse(attendances[i].Latitude) , double.parse(attendances[i].Longitude));
+              double.parse(attendances[i].Latitude) , double.parse(attendances[i].Longitude));
           print(address);
           jsonList.add({
             "Id": attendances[i].Id,
@@ -398,9 +396,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           });
         });
       } else {
-        setState(() {
-          offlineDataSaved = true;
-        });
+        if (mounted) {
+          setState(() {
+            offlineDataSaved=true;
+          });
+        }
       }
     }
 
@@ -409,10 +409,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     print("Action from check time in1");
     if (timeoutdate == 'nextdate' && act == 'TimeOut') dialogwidget(context);
     ho.managePermission(empid, orgdir, desinationId);
-
-    setState(() {
-      act1 = act;
-    });
+    if(mounted) {
+      setState(() {
+        act1=act;
+      });
+    }
 
     /*****************************For Attendances***********************************************/
   }
@@ -579,6 +580,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
+    buysts = prefs.getString('buysts') ?? '0';
     getAreaStatus().then((res) {
       // print('called again');
       if (mounted) {
@@ -722,9 +724,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         : "";
 
     return (response == 0 ||
-            userpwd != newpwd ||
-            Is_Delete != 0 ||
-            orgid == '10932')
+        userpwd != newpwd ||
+        Is_Delete != 0 ||
+        orgid == '10932')
         ? new AskRegisterationPage()
         : getmainhomewidget();
     /* return MaterialApp(
@@ -735,9 +737,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(
-      value,
-      textAlign: TextAlign.center,
-    ));
+          value,
+          textAlign: TextAlign.center,
+        ));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
@@ -769,17 +771,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
           floatingActionButton: (admin_sts == '1' || admin_sts == '2')
               ? new FloatingActionButton(
-                  mini: false,
-                  backgroundColor: buttoncolor,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddEmployee()),
-                    );
-                  },
-                  tooltip: 'Add Employee',
-                  child: new Icon(Icons.person_add),
-                )
+            mini: false,
+            backgroundColor: buttoncolor,
+            onPressed: () {
+
+              if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
+                showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+              else
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddEmployee()),
+                );
+            },
+            tooltip: 'Add Employee',
+            child: new Icon(Icons.person_add),
+          )
               : new Center(),
         ));
   }
@@ -792,7 +798,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         children: <Widget>[
           underdevelopment(),
           (globalstreamlocationaddr != "Location not fetched." ||
-                  globals.globalstreamlocationaddr.isNotEmpty)
+              globals.globalstreamlocationaddr.isNotEmpty)
               ? mainbodyWidget()
               : refreshPageWidgit(),
           //(false) ? mainbodyWidget() : refreshPageWidgit(),
@@ -803,7 +809,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-        (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
       );
     }
 
@@ -848,7 +854,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         '\nProblem Getting Location! Please turn on GPS and try again.',
                         textAlign: TextAlign.center,
                         style:
-                            new TextStyle(color: Colors.white, fontSize: 15.0),
+                        new TextStyle(color: Colors.white, fontSize: 15.0),
                       ),
                       width: 220.0,
                       height: 90.0,
@@ -1021,7 +1027,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   },
                   child: new Stack(children: <Widget>[
                     Container(
-                        //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                      //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
                         width: MediaQuery.of(context).size.height * .16,
                         height: MediaQuery.of(context).size.height * .16,
                         decoration: new BoxDecoration(
@@ -1505,29 +1511,29 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         else
                           (areaId != 0 && geoFence == 1)
                               ? areaStatus == '0'
-                                  ? Container(
-                                      padding:
-                                          EdgeInsets.only(top: 5.0, right: 5.0),
-                                      child: Text(
-                                        'Outside Fenced Area',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1.0),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: EdgeInsets.all(5.0),
-                                      child: Text(
-                                        'Within Fenced Area',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1.0),
-                                      ),
-                                    )
+                              ? Container(
+                            padding:
+                            EdgeInsets.only(top: 5.0, right: 5.0),
+                            child: Text(
+                              'Outside Fenced Area',
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0),
+                            ),
+                          )
+                              : Container(
+                            padding: EdgeInsets.all(5.0),
+                            child: Text(
+                              'Within Fenced Area',
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0),
+                            ),
+                          )
                               : Center(),
                       ])),
             ),
@@ -1547,7 +1553,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ]);
     }
-    return Container(width: 0.0, height: 0.0);
   }
 
   getTimeInOutButton() {
@@ -1622,6 +1627,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if(AbleTomarkAttendance != '1' && globals.ableToMarkAttendance == 1 && geoFence == 1) {
       showDialog(
           context: context,
+          // ignore: deprecated_member_use
           child: new AlertDialog(
             //title: new Text("Warning!"),
             content: new Text("You Can't punch Attendance from Outside fence."),
@@ -1667,6 +1673,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         globals.timeWhenButtonPressed = null;
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               title: new Text(""),
               content: new Text(
@@ -1681,6 +1688,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (issave) {
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               content: new Text("Attendance marked successfully!"),
             ));
@@ -1696,6 +1704,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       } else {
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               title: new Text("Warning!"),
               content: new Text("Problem while marking attendance, try again."),
@@ -1714,11 +1723,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       } else {
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               content: new Text("Internet connection not found!."),
             ));
@@ -1753,6 +1763,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     showDialog(
         context: context,
         barrierDismissible: false,
+        // ignore: deprecated_member_use
         child: new AlertDialog(
           content: new Text('Do you want mark yesterday timeout?'),
           actions: <Widget>[
@@ -1900,7 +1911,7 @@ var FakeLocationStatus=0;
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                  content: Row(children: <Widget>[
+              content: Row(children: <Widget>[
                 Text(
                     "Verification link has been sent to \nyour organization's registered Email."),
               ])));
@@ -1958,6 +1969,42 @@ var FakeLocationStatus=0;
   }
   //////////////////////////////////////////////////////////////////
 
+  showDialogWidget(String loginstr){
+    return showDialog(context: context, builder:(context) {
+
+      return new AlertDialog(
+        title: new Text(
+          loginstr,
+          style: TextStyle(fontSize: 15.0),),
+        content: ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: Text('Later',style: TextStyle(fontSize: 13.0)),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Pay Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaymentPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    );
+  }
+
+
   Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
     String base64Image;
     String base64Image1;
@@ -1986,7 +2033,7 @@ var FakeLocationStatus=0;
                 var addresses = '';
                 Geocoder.local
                     .findAddressesFromCoordinates(
-                        Coordinates(res.latitude, res.longitude))
+                    Coordinates(res.latitude, res.longitude))
                     .then((add) {
                   print(
                       'Location taekn--------------------------------------------------');
@@ -2048,9 +2095,10 @@ var FakeLocationStatus=0;
 
                       showDialog(
                           context: context,
+                          // ignore: deprecated_member_use
                           child: new AlertDialog(
                             content:
-                                new Text("Attendance marked successfully !"),
+                            new Text("Attendance marked successfully !"),
                           ));
                       Navigator.push(
                         context,
@@ -2063,6 +2111,7 @@ var FakeLocationStatus=0;
                     } else {
                       showDialog(
                           context: context,
+                          // ignore: deprecated_member_use
                           child: new AlertDialog(
                             title: new Text("Warning!"),
                             content: new Text(
@@ -2086,6 +2135,7 @@ var FakeLocationStatus=0;
               } else {
                 showDialog(
                     context: context,
+                    // ignore: deprecated_member_use
                     child: new AlertDialog(
                       title: new Text("Warning!"),
                       content: new Text("Location not fetched..."),
@@ -2098,6 +2148,7 @@ var FakeLocationStatus=0;
 
             showDialog(
                 context: context,
+                // ignore: deprecated_member_use
                 child: new AlertDialog(
                   title: new Text("Warning!"),
                   content: new Text("Camera closed improperly"),
@@ -2123,7 +2174,7 @@ var FakeLocationStatus=0;
             var addresses = '';
             Geocoder.local
                 .findAddressesFromCoordinates(
-                    Coordinates(res.latitude, res.longitude))
+                Coordinates(res.latitude, res.longitude))
                 .then((add) {
               print(
                   'Location taekn 2--------------------------------------------------');
@@ -2181,6 +2232,7 @@ var FakeLocationStatus=0;
 
                   showDialog(
                       context: context,
+                      // ignore: deprecated_member_use
                       child: new AlertDialog(
                         content: new Text("Attendance marked successfully !"),
                       ));
@@ -2195,6 +2247,7 @@ var FakeLocationStatus=0;
                 } else {
                   showDialog(
                       context: context,
+                      // ignore: deprecated_member_use
                       child: new AlertDialog(
                         title: new Text("Warning!"),
                         content: new Text(
@@ -2218,6 +2271,7 @@ var FakeLocationStatus=0;
           } else {
             showDialog(
                 context: context,
+                // ignore: deprecated_member_use
                 child: new AlertDialog(
                   title: new Text("Warning!"),
                   content: new Text("Location not fetched..."),

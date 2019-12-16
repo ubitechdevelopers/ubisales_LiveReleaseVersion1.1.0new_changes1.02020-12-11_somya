@@ -9,14 +9,6 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-
-import java.io.IOException;
-import java.net.*;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +33,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+
+import java.net.*;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import io.flutter.plugin.common.MethodChannel;
 

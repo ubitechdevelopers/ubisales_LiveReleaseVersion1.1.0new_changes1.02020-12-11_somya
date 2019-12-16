@@ -1,14 +1,9 @@
-import 'database.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'database.dart';
+
 class LoginOffline{
-
-
-
-  
   int 	Id;
   int UserTableId;
   int EmployeeId;

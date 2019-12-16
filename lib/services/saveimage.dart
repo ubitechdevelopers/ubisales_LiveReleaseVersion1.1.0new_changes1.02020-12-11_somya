@@ -1,19 +1,20 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'package:flutter/painting.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'newservices.dart';
-import 'package:location/location.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:flutter/services.dart';
+import 'dart:io';
+
 import 'package:Shrine/genericCameraClass.dart';
+import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/model/timeinout.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'newservices.dart';
 
 class SaveImage {
   String base64Image;

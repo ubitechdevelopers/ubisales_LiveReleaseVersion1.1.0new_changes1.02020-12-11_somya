@@ -1,16 +1,17 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
-import 'outside_label.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
-import 'Image_view.dart';
-import 'globals.dart';
-import 'package:simple_share/simple_share.dart';
-import 'generatepdf.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_share/simple_share.dart';
+
+import 'Image_view.dart';
+import 'drawer.dart';
+import 'generatepdf.dart';
+import 'globals.dart';
+import 'outside_label.dart';
 import 'payment.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -528,8 +529,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                       Divider(
                                         color: Colors.black26,
                                       ),
-                                      (index == snapshot.data.length - 1 &&
-                                              trialstatus == '2')
+                                      (index == snapshot.data.length - 1 && trialstatus == '2')
                                           ? Row(children: <Widget>[
                                               //  SizedBox(height: 25.0,),
                                               Padding(
@@ -654,6 +654,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                                 .blueAccent),
                                                       ),
                                                       onTap: () {
+                                                      if (trialstatus != '2') {
                                                         setState(() {
                                                           filests = true;
                                                         });
@@ -670,6 +671,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                               'CSV has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate',
                                                               res);
                                                         });
+                                                      } else {
+                                                        showInSnackBar(
+                                                            "For CSV please Buy Now");
+                                                      }
                                                       },
                                                     ),
                                                   ),
@@ -687,6 +692,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                                 .blueAccent),
                                                       ),
                                                       onTap: () {
+                                                     if (trialstatus != '2') {
                                                         setState(() {
                                                           filests = true;
                                                         });
@@ -706,6 +712,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                               'PDF has been saved in internal storage in ubiattendance_files/Today_absent_$todaydate.pdf',
                                                               res);
                                                         });
+                                                     } else {
+                                                       showInSnackBar(
+                                                           "For CSV please Buy Now");
+                                                     }
                                                       },
                                                     ),
                                                   ),
@@ -914,6 +924,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                             Colors.blueAccent),
                                                   ),
                                                   onTap: () {
+                                                  if (trialstatus != '2') {
                                                     setState(() {
                                                       filests = true;
                                                     });
@@ -930,6 +941,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                           'CSV has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate',
                                                           res);
                                                     });
+                                                  } else {
+                                                  showInSnackBar(
+                                                  "For CSV please Buy Now");
+                                                  }
                                                   },
                                                 ),
                                               ),
@@ -947,6 +962,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                             Colors.blueAccent),
                                                   ),
                                                   onTap: () {
+                                                   if (trialstatus != '2') {
                                                     setState(() {
                                                       filests = true;
                                                     });
@@ -965,6 +981,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                           'PDF has been saved in internal storage in ubiattendance_files/Today_latecomings_$todaydate.pdf',
                                                           res);
                                                     });
+                                                  } else {
+                                                  showInSnackBar(
+                                                  "For CSV please Buy Now");
+                                                  }
                                                   },
                                                 ),
                                               ),
@@ -1266,6 +1286,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                             Colors.blueAccent),
                                                   ),
                                                   onTap: () {
+                                                  if (trialstatus != '2') {
                                                     setState(() {
                                                       filests = true;
                                                     });
@@ -1282,6 +1303,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                           'CSV has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate',
                                                           res);
                                                     });
+                                                  } else {
+                                                    showInSnackBar(
+                                                        "For CSV please Buy Now");
+                                                  }
                                                   },
                                                 ),
                                               ),
@@ -1299,6 +1324,8 @@ class _TodayAttendance extends State<TodayAttendance>
                                                             Colors.blueAccent),
                                                   ),
                                                   onTap: () {
+                                                   if (trialstatus != '2') {
+
                                                     setState(() {
                                                       filests = true;
                                                     });
@@ -1317,6 +1344,10 @@ class _TodayAttendance extends State<TodayAttendance>
                                                           'PDF has been saved in internal storage in ubiattendance_files/Today_earlyleavings_$todaydate.pdf',
                                                           res);
                                                     });
+                                                    } else {
+                                                    showInSnackBar(
+                                                    "For CSV please Buy Now");
+                                                    }
                                                   },
                                                 ),
                                               ),
@@ -1574,6 +1605,7 @@ class _TodayAttendance extends State<TodayAttendance>
   dialogwidget(msg, filename) {
     showDialog(
         context: context,
+        // ignore: deprecated_member_use
         child: new AlertDialog(
           content: new Text(msg),
           actions: <Widget>[

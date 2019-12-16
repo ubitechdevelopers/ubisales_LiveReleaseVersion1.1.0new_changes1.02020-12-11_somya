@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'settings.dart';
-import 'home.dart';
-import 'reports.dart';
-import 'profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart';
+
+import 'home.dart';
+import 'profile.dart';
+import 'reports.dart';
+import 'settings.dart';
 
 class Bottomnavigationbar extends StatefulWidget {
   @override

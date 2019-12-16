@@ -1,17 +1,11 @@
-import 'package:flutter/material.dart';
-import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'Image_view.dart';
-import 'notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'package:flutter/services.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
 import 'globals.dart';
 class FlexiList extends StatefulWidget {
   @override

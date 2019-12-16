@@ -1,19 +1,16 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'drawer.dart';
-import 'Image_view.dart';
-import 'generatepdf.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_share/simple_share.dart';
-import 'globals.dart';
 
-import 'offline_home.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
+import 'generatepdf.dart';
+import 'globals.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class Department_att extends StatefulWidget {
@@ -284,8 +281,8 @@ class _Department_att extends State<Department_att>
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
-                              countP=snapshot.data.length.toString();
-                            }));*/
+                                          countP=snapshot.data.length.toString();
+                                        }));*/
                                         countP =
                                             snapshot.data.length.toString();
                                         if (snapshot.data.length > 0) {
@@ -307,7 +304,7 @@ class _Department_att extends State<Department_att>
                                                                 EdgeInsets.only(
                                                                     left: 5.0),
                                                             child: Text(
-                                                              "Total Present: ${countP} Out of ${widget.total}",
+                                                              "Total Present: $countP Out of ${widget.total}",
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .orange,
@@ -338,12 +335,7 @@ class _Department_att extends State<Department_att>
                                                                       true;
                                                                 });
 
-                                                                getCsv(
-                                                                        snapshot
-                                                                            .data,
-                                                                        widget.dname +
-                                                                            '_Dept_Present_Emp_$tdate',
-                                                                        'present')
+                                                                getCsv(snapshot.data, widget.dname + '_Dept_Present_Emp_$tdate', 'present')
                                                                     .then(
                                                                         (res) {
                                                                   setState(() {
@@ -684,7 +676,7 @@ class _Department_att extends State<Department_att>
                                                                   padding: EdgeInsets
                                                                       .only(left: 5.0),
                                                                   child: Text(
-                                                                    "Total Absent: ${countA}  Out of ${widget.total}",
+                                                                    "Total Absent: $countA Out of ${widget.total}",
                                                                     style:
                                                                         TextStyle(
                                                                       color: Colors
@@ -941,7 +933,7 @@ class _Department_att extends State<Department_att>
                                                                 EdgeInsets.only(
                                                                     left: 5.0),
                                                             child: Text(
-                                                              "Total Late: ${countL} Out of ${widget.total} ",
+                                                              "Total Late: $countL Out of ${widget.total} ",
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .orange,
@@ -1320,7 +1312,7 @@ class _Department_att extends State<Department_att>
                                                                 EdgeInsets.only(
                                                                     left: 5.0),
                                                             child: Text(
-                                                              "Total Early: ${countE} Out of ${widget.total}",
+                                                              "Total Early: $countE Out of ${widget.total}",
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .orange,

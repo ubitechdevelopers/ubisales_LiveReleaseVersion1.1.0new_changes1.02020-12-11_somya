@@ -1,29 +1,19 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'dart:convert';
-import 'package:Shrine/services/newservices.dart';
-import 'attendance_summary.dart';
-import 'home.dart';
-import 'drawer.dart';
-import 'dart:async';
-import 'package:Shrine/services/fetch_location.dart';
-import 'timeoff.dart';
-import 'package:Shrine/model/model.dart';
-import 'leave.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'notifications.dart';
-import 'globals.dart';
-import 'services/services.dart';
 import 'package:Shrine/Bottomnavigationbar.dart';
+import 'package:Shrine/model/model.dart';
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'drawer.dart';
+import 'globals.dart';
+import 'home.dart';
+import 'leave.dart';
+import 'login.dart';
+import 'services/services.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class LeaveSummary extends StatefulWidget {
@@ -132,6 +122,7 @@ class _LeaveSummary extends State<LeaveSummary> {
       )
       );*/
     }else if(islogin=="failure"){
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),
@@ -139,6 +130,7 @@ class _LeaveSummary extends State<LeaveSummary> {
       )
       );
     }else{
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),
@@ -149,6 +141,7 @@ class _LeaveSummary extends State<LeaveSummary> {
   }
 
   confirmWithdrawl(String leaveid) async{
+    // ignore: deprecated_member_use
     showDialog(context: context, child:
     new AlertDialog(
       title: new Text("Do you really want to withdraw your leave."),

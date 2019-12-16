@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
-import 'drawer.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 import 'package:Shrine/addShift.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'settings.dart';
 class ShiftList extends StatefulWidget {
   @override
   _ShiftList createState() => _ShiftList();
@@ -19,8 +15,6 @@ TextEditingController dept;
 //FocusNode f_dept ;
 class _ShiftList extends State<ShiftList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _currentIndex = 2;
-  String _sts = 'Active';
   String _sts1 = 'Active';
   String _orgName='';
   bool _isButtonDisabled = false;
@@ -232,6 +226,7 @@ class _ShiftList extends State<ShiftList> {
     new_dept.text=dept;
     await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       child: new AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

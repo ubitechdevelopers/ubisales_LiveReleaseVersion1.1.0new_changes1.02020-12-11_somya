@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:Shrine/app.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'package:Shrine/app.dart';
-import 'package:Shrine/services/newservices.dart';
+
 import 'globals.dart';
 import 'services/services.dart';
 

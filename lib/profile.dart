@@ -4,20 +4,18 @@
 // found in the LICENSE file.
 
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/model/model.dart';
+import 'package:Shrine/services/gethome.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'drawer.dart';
-import 'package:Shrine/model/model.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'home.dart';
+import 'login.dart';
 // This app is a stateful, it tracks the user's current choice.
 class ProfilePage extends StatefulWidget {
   @override
@@ -36,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isButtonDisabled= false;
   bool _isProfileUploading= false;
   int _currentIndex = 2;
-  bool _visible = true;
+  //bool _visible = true;
   String location_addr="";
   String location_addr1="";
   String admin_sts='0';
@@ -589,6 +587,7 @@ class _ProfilePageState extends State<ProfilePage> {
           smstext = "Profile image has been removed.";
         });
       }
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         content: new Text(smstext),
@@ -603,6 +602,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _isProfileUploading = false;
       });
       if(selectimg)
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         //title: new Text("Congrats!"),
@@ -625,6 +625,7 @@ class _ProfilePageState extends State<ProfilePage> {
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );*/
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Congrats!"),
@@ -635,6 +636,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _isButtonDisabled=false;
       });
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),
@@ -645,6 +647,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _isButtonDisabled=false;
       });
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),

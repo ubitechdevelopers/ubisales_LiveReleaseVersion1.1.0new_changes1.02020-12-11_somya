@@ -1,16 +1,17 @@
+import 'dart:convert';
+
+import 'package:Shrine/model/user.dart';
+import 'package:Shrine/services/checklogin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart' as globals;
+
 import 'askregister.dart';
-import 'package:Shrine/services/checklogin.dart';
-import 'home.dart';
-import 'package:Shrine/model/user.dart';
-import 'services/services.dart';
-import 'dart:convert';
+import 'globals.dart' as globals;
 import 'globals.dart';
+import 'home.dart';
+import 'services/services.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -39,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final FocusNode __cname = FocusNode();
   final FocusNode __email = FocusNode();
   final FocusNode __pass = FocusNode();
-  final FocusNode __cont = FocusNode();
+  //final FocusNode __cont = FocusNode();
   final FocusNode __contcode = FocusNode();
   final FocusNode __phone = FocusNode();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -721,12 +722,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: EdgeInsets.all(20.0),
                           child: const Text('Register Company',style: TextStyle(fontSize: 18.0),),
                           onPressed: (){
-
-
-
-
-
-
                             /*
                             setLocal('Ubitech Solutions','0','0');
                             showDialog(context: context, child:
@@ -751,6 +746,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               return null;
 
                             if(_name.text=='') {
+                              // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
@@ -759,6 +755,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               FocusScope.of(context).requestFocus(__name);
                             }
                             else if(_cname.text=='') {
+                              // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
@@ -777,6 +774,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if(!(validateEmail(_email.text))) {
                               //print((validateEmail(_email.text)).toString());
 
+                              // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
@@ -824,7 +822,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "password": _pass.text,
                                 "country": _tempcontry,
                                 "countrycode": '',
-                                "address": _city.text
+                                "address": _city.text,
+                                "platform":'android'
                               }) .then((response) {
                                 if  (response.statusCode == 200) {
 
@@ -885,6 +884,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                   } else if (res['sts'] == 'false1' ||
                                       res['sts'] == 'false3') {
+                                    // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
                                       title: new Text("ubiAttendance"),
@@ -893,6 +893,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ));
                                   } else if (res['sts'] == 'false2' ||
                                       res['sts'] == 'false4') {
+                                    // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
                                       title: new Text("ubiAttendance"),
@@ -900,6 +901,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           "Phone No. is already registered"),
                                     ));
                                   } else {
+                                    // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
                                       title: new Text("ubiAttendance"),
@@ -916,6 +918,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     _isButtonDisabled=false;
 
                                   });
+                                  // ignore: deprecated_member_use
                                   showDialog(context: context, child:
                                   new AlertDialog(
                                     title: new Text("Error"),
@@ -933,6 +936,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 setState(() {
                                   _isButtonDisabled=false;
                                 });
+                                // ignore: deprecated_member_use
                                 showDialog(context: context, child:
                                 new AlertDialog(
                                   title: new Text("Error"),

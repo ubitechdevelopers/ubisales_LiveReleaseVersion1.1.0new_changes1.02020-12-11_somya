@@ -1,7 +1,5 @@
 package org.ubitech.attendance;
 
-import android.content.Context;
-import android.os.Bundle;
 /*
 import com.facebook.appevents.AppEventsConstants;
 import com.facebook.appevents.AppEventsLogger;

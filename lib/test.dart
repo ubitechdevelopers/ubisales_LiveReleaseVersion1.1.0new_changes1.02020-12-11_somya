@@ -1,18 +1,14 @@
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'drawer.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/editEmployee.dart';
+
 import 'package:Shrine/addEmployee.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:Shrine/editEmployee.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'Image_view.dart';
+
 import 'Bottomnavigationbar.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
 import 'globals.dart';
 //import 'package:material_search/material_search.dart';
 
@@ -24,9 +20,6 @@ TextEditingController dept;
 //FocusNode f_dept ;
 class _EmployeeList extends State<EmployeeList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _currentIndex = 2;
-  String _sts = 'Active';
-  String _sts1 = 'Active';
   String admin_sts='0';
   String _orgName = "";
   String empname = "";
@@ -185,6 +178,7 @@ class _EmployeeList extends State<EmployeeList> {
                     onTap: (){
                       showDialog<String>(
                         context: context,
+                        // ignore: deprecated_member_use
                         child: AlertDialog(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),

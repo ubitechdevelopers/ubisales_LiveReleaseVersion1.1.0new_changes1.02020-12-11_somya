@@ -1,22 +1,18 @@
+import 'dart:math' as math;
+
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'package:intl/intl.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'package:Shrine/services/services.dart';
-import 'Image_view.dart';
-import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
-//import 'package:gradient_app_bar/gradient_app_bar.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class Bulkatt extends StatefulWidget {
   @override
@@ -51,6 +47,9 @@ class _Bulkatt extends State<Bulkatt> {
       desinationId = "",
       profile;
 
+  var First;
+  var Last;
+  var name;
   String sts = '0';
   String aid = "";
   String shiftId = "";
@@ -73,11 +72,13 @@ class _Bulkatt extends State<Bulkatt> {
   String colorto;
   bool loaderr=false;
   bool fakeLocationDetected=false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     initPlatformState();
+
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
@@ -581,6 +582,27 @@ class _Bulkatt extends State<Bulkatt> {
                 // print(tout);
                 //print('_enabletimeout'+emplist[index].Name+_enabletimeout.toString()+emplist[index].Attid.toString());
                 print('_enabletimein'+emplist[index].Name+_enabletimein.toString()+emplist[index].Attid.toString());
+                print(emplist[index].Name.split(' '));
+                getAcronym(var val) {
+                  if((emplist[index].Name.trim()).contains(" ")){
+                    name=emplist[index].Name.split(" ");
+                    print('print(name);');
+                    print(name);
+                    First=name[0][0];
+                    Last=name[1][0];
+                    return First+Last;
+                  }else{
+                    First=emplist[index].Name[0];
+                    print('print(First)else');
+                    print(First);
+                    return First;
+                  }
+                }
+
+
+                /*var first = Name[0][0];
+                var last = Name[1][0];*/
+
                 //  print(_saved.elementAt(index).Name);
                 return new Column(children: <Widget>[
                  new Padding(
@@ -634,17 +656,26 @@ class _Bulkatt extends State<Bulkatt> {
                                 },
                               ),*/
                               InkWell(
-                                child:Container(
+                                child:/*Container(
                                     width: MediaQuery.of(context).size.height * .07,
                                     height: MediaQuery.of(context).size.height * .07,
                                     decoration: new BoxDecoration(
                                         shape: BoxShape.circle,
                                         image: new DecorationImage(
                                             fit: BoxFit.fill,
-                                            image: new NetworkImage(
-                                                emplist[index].img)
+                                            image:alreadySaved==1?AssetImage('assets/checkmark.png'):NetworkImage(emplist[index].img)
+                                         )
                                         )
                                     )
+                                ),*/
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .14,
+                                  height: MediaQuery.of(context).size.height * .07,
+                                  child: alreadySaved==1?Icon(IconData(0x2713, fontFamily: "CustomIcon"),size: 35.0,
+                                    color: appcolor,):CircleAvatar(
+                                    child: Text(getAcronym(emplist[index].Name),style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w400)),
+                                    backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
+                                  ),
                                 ),
                                 onTap: (){
                                 setState(() {

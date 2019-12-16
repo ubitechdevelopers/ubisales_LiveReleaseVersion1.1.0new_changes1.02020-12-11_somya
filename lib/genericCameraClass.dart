@@ -6,20 +6,12 @@ import 'package:Shrine/photoviewController.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-//import 'package:gallery_saver/gallery_saver.dart';
-//import 'package:album_saver/album_saver.dart';
 import 'package:photo_view/photo_view.dart';
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
-
-
-
-
-
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }

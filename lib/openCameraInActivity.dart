@@ -2,20 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:exifdart/exifdart_io.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as rotatingImage;
 import 'package:path_provider/path_provider.dart';
-import 'services/saveimage.dart';
+
 import 'attendance_summary.dart';
+import 'globals.dart' as global;
+import 'globals.dart';
 import 'home.dart';
 import 'model/timeinout.dart';
-import 'globals.dart' as global;
-//import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:exifdart/exifdart_io.dart';
-import 'package:image/image.dart' as rotatingImage;
-import 'globals.dart';
-//import 'package:flutter_image_compress/flutter_image_compress.dart';
-
-/*import 'package:video_player/video_player.dart';*/
+import 'services/saveimage.dart';
 
 class CameraExampleHome extends StatefulWidget {
   @override
@@ -411,6 +408,7 @@ if (tags.containsKey("Orientation")) {
     issave = true;//await saveImage.saveTimeInOut(compressedFile,mk);
     ////print(issave);
     if (issave) {
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         content: new Text("Attendance marked successfully!"),
@@ -422,6 +420,7 @@ if (tags.containsKey("Orientation")) {
       );
       //showInSnackBar('Picture saved to - $filePath');
     }else{
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("!"),

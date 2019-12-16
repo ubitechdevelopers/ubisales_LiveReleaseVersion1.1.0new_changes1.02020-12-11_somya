@@ -1,16 +1,9 @@
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
-import 'offline_home.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
 class Designation extends StatefulWidget {
   @override
@@ -187,6 +180,7 @@ class _Designation extends State<Designation> {
   _showDialog(context) async {
     await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       child: new AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -340,6 +334,7 @@ class _Designation extends State<Designation> {
     new_dept.text=dept;
     await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       child: new AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

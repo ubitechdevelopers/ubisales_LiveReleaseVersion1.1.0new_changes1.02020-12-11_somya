@@ -2,35 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:Shrine/Bottomnavigationbar.dart';
+import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:Shrine/services/gethome.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/saveimage.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'askregister.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'drawer.dart';
-import 'timeoff_summary.dart';
-import 'package:Shrine/services/services.dart';
-import 'leave.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'home.dart';
-import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'askregister.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'home.dart';
 import 'punchlocation_summary.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
 import 'services/services.dart';
-import 'package:connectivity/connectivity.dart';
-import 'notifications.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/Bottomnavigationbar.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeOff_New extends StatefulWidget {
   @override
@@ -50,7 +43,6 @@ class _TimeOff_New extends State<TimeOff_New> {
   String userpwd = "new";
   String newpwd = "new";
   int Is_Delete=0;
-  bool _visible = true;
   String location_addr = "";
   String location_addr1 = "";
   String streamlocationaddr = "";
@@ -608,6 +600,7 @@ class _TimeOff_New extends State<TimeOff_New> {
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text("Visit punched successfully!"),
@@ -621,6 +614,7 @@ class _TimeOff_New extends State<TimeOff_New> {
           act1 = act;
         });
       } else {
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           title: new Text("Warning!"),
@@ -632,6 +626,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         });
       }
     }else{
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
 

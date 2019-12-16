@@ -1,7 +1,8 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:Shrine/globals.dart' as globals;
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home{
   var dio = new Dio();
@@ -72,6 +73,9 @@ class Home{
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
+
+        globals.userlimit=int.parse(timeinoutMap['User_limit']);
+        globals.registeruser=int.parse(timeinoutMap['registeremp']);
 
         print("Testing line2");
         globals.attImage=int.parse(timeinoutMap['attImage']);

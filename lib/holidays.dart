@@ -1,14 +1,12 @@
-import 'package:flutter/material.dart';
-import 'drawer.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/addHoliday.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'settings.dart';
 
 class HolidayList extends StatefulWidget {
   @override
@@ -18,11 +16,11 @@ TextEditingController dept;
 //FocusNode f_dept ;
 class _HolidayList extends State<HolidayList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _currentIndex = 2;
+  /*int _currentIndex = 2;
   String _sts = 'Active';
-  String _sts1 = 'Active';
+  String _sts1 = 'Active';*/
   String _orgName="";
-  bool _isButtonDisabled = false;
+  //bool _isButtonDisabled = false;
   String admin_sts='0';
   @override
   void initState() {

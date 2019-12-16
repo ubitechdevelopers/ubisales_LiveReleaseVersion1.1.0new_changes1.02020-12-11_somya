@@ -1,30 +1,35 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
+import 'package:Shrine/generatepdf.dart';
 import 'package:Shrine/services/services.dart';
-import 'outside_label.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'drawer.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_share/simple_share.dart';
+
 import 'Image_view.dart';
-import 'package:flutter/scheduler.dart';
+import 'drawer.dart';
 import 'globals.dart';
 // This app is a stateful, it tracks the user's current choice.
 class Designation_att extends StatefulWidget {
   @override
   _Designation_att createState() => _Designation_att();
 }
-TextEditingController today;String _orgName;
+TextEditingController today;
+String _orgName;
 class _Designation_att extends State<Designation_att> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String countP='-',countA='-',countL='-',countE='-';
+  String countP='0',countA='0',countL='0',countE='0';
   String desg='0';
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
+  bool filests = false;
+  Map<String, dynamic>  datalist = null;
+  Future<List<Attn>> _listFuture,_listFuture1,_listFuture2,_listFuture3,_listFuture4;
+  List presentlist= new List(), absentlist= new List(), latecommerlist= new List(),earlyleaverlist= new List();
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -33,21 +38,78 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
   }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _orgName= prefs.getString('org_name') ?? '';
-    });
+    if(mounted) {
+      setState(() {
+        _orgName=prefs.getString('org_name') ?? '';
+      });
+      //getCount();
+    }
   }
+
+  /*getCount() async {
+    getCDateAttnDesgWiseCount(today.text,desg).then((onValue) {
+      setState(() {
+        if(res == true) {
+          countP=onValue[0]['present'];
+          countA=onValue[0]['absent'];
+          countL=onValue[0]['latecomings'];
+          countE=onValue[0]['earlyleavings'];
+        }
+      });
+    });
+  }*/
+
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-
-appResumedPausedLogic(context);
+    appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
+    // _listFuture = getCDateAttnDesgWise('present',today.text,desg);
+    setAlldata();
+    print("Future list data");
   }
+
+  setAlldata(){
+    _listFuture1 = getCDateAttnDesgWise('present',today.text,desg);
+    _listFuture2 = getCDateAttnDesgWise('absent',today.text,desg);
+    _listFuture3 = getCDateAttnDesgWise('latecomings',today.text,desg);
+    _listFuture4 = getCDateAttnDesgWise('earlyleavings',today.text,desg);
+
+
+    _listFuture1.then((data) async{
+      setState(() {
+        presentlist = data;
+        countP = data.length.toString();
+      });
+    });
+
+    _listFuture2.then((data) async{
+      setState(() {
+        absentlist = data;
+        countA = data.length.toString();
+      });
+    });
+
+    _listFuture3.then((data) async{
+      setState(() {
+        latecommerlist = data;
+        countL = data.length.toString();
+      });
+    });
+
+    _listFuture4.then((data) async{
+      setState(() {
+        earlyleaverlist = data;
+        countE= data.length.toString();
+      });
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -62,52 +124,181 @@ appResumedPausedLogic(context);
         children: <Widget>[
           SizedBox(height:3.0),
           new Container(
-            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color:Colors.black54,),),),
           ),
-          Container(
-            child: DateTimeField(
-             // dateOnly: true,
-              format: formatter,
-              controller: today,
-              onShowPicker: (context, currentValue) {
-                return showDatePicker(
-                    context: context,
-                    firstDate: DateTime(1900),
-                    initialDate: currentValue ?? DateTime.now(),
-                    lastDate: DateTime(2100));
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: DateTimeField(
+                    // dateOnly: true,
+                    format: formatter,
+                    controller: today,
+                    onShowPicker: (context, currentValue) {
+                      return showDatePicker(
+                          context: context,
+                          firstDate: DateTime(1900),
+                          initialDate: currentValue ?? DateTime.now(),
+                          lastDate: DateTime(2100));
 
-              },
-              readOnly: true,
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: Icon(
-                    Icons.date_range,
-                    color: Colors.grey,
-                  ), // icon is 48px widget.
-                ), // icon is 48px widget.
-                labelText: 'Select Date',
+                    },
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(0.0),
+                        child: Icon(
+                          Icons.date_range,
+                          color: Colors.grey,
+                        ), // icon is 48px widget.
+                      ), // icon is 48px widget.
+                      labelText: 'Select Date',
+                    ),
+                    onChanged: (date) {
+                      if (mounted) {
+                        setState(() {
+                          if (date != null && date.toString() != '') {
+                            res=true; //showInSnackBar(date.toString());
+                            setAlldata();
+                          }
+                          else {
+                            res=false;
+                            countP='0';
+                            countA='0';
+                            countE='0';
+                            countL='0';
+                          }
+                        });
+                      }
+                    },
+                    validator: (date) {
+                      if (date == null) {
+                        return 'Please select date';
+                      }
+                    },
+                  ),
+                ),
               ),
-              onChanged: (date) {
-                setState(() {
-                  if (date != null && date.toString()!='') {
-                    res = true; //showInSnackBar(date.toString());
-                    countP='(-)';
-                    countA='(-)';
-                    countE='(-)';
-                    countL='(-)';
-                  }
-                  else
-                    res = false;
-                });
-              },
-              validator: (date) {
-                if (date == null) {
-                  return 'Please select date';
-                }
-              },
-            ),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child:(res == false)?
+                Center():Container(
+                    color: Colors.white,
+                    height: 60,
+                    width: MediaQuery.of(context).size.width * 0.40,
+                    child: new Column(
+                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          (presentlist.length > 0 || absentlist.length > 0 || latecommerlist.length > 0 || earlyleaverlist.length > 0)
+                              ?Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height:  60,
+                              ),
+                              Container(
+                                //padding: EdgeInsets.only(left: 5.0),
+                                child: InkWell(
+                                  child: Text('CSV',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Colors.blueAccent,
+                                      fontSize: 16,
+                                      //fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    //openFile(filepath);
+                                    if (mounted) {
+                                      setState(() {
+                                        filests = true;
+                                      });
+                                    }
+                                    getCsvAlldata(presentlist , absentlist , latecommerlist,earlyleaverlist, 'Designation_Wise_Report_' + today.text, 'desg')
+                                        .then((res) {
+                                      print('snapshot.data');
+
+                                      if(mounted){
+                                        setState(() {
+                                          filests = false;
+                                        });
+                                      }
+                                      // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
+                                      dialogwidget(
+                                          "CSV has been saved in internal storage in ubiattendance_files/Designation_Wise_Report_" + today.text + ".csv", res);
+
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width:8,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(
+                                    left: 5.0),
+                                child: InkWell(
+                                  child: Text('PDF',
+                                    style: TextStyle(
+                                      decoration:
+                                      TextDecoration
+                                          .underline,
+                                      color: Colors
+                                          .blueAccent,
+                                      fontSize: 16,),
+                                  ),
+                                  onTap: () {
+                                    final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Designation_Wise_Report_14-Jun-2019.pdf');
+                                    SimpleShare.share(
+                                        uri: uri.toString(),
+                                        title: "Share my file",
+                                        msg: "My message");
+                                    if (mounted) {
+                                      setState(() {
+                                        filests = true;
+                                      });
+                                    }
+                                    CreateDesgpdfAll(
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Designation Wise Summary Report',
+                                        presentlist.toString(), 'Designation_Wise_Report_' + today.text, 'desg')
+                                        .then((res) {
+                                      if(mounted) {
+                                        setState(() {
+                                          filests =
+                                          false;
+                                          // OpenFile.open("/sdcard/example.txt");
+                                        });
+                                      }
+                                      dialogwidget(
+                                          'PDF has been saved in internal storage in ubiattendance_files/' +
+                                              'Designation_Wise_Report_' +
+                                              today.text +
+                                              '.pdf',
+                                          res);
+                                      // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ):Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:12.0),
+                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                              )
+                          ),
+                        ]
+                    )
+                ),
+              )
+            ],
           ),
+          Divider(
+            color: Colors.black,
+          ),
+
           getDesignations_DD(),
 
           /* res==true?new Container(
@@ -148,6 +339,32 @@ appResumedPausedLogic(context);
               Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
             ],
           ):Center(),*/
+          SizedBox(height: 5,),
+          new Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text(
+                'Present($countP)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Absent($countA)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Late Comers($countL)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Early Leavers($countE)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+            ],
+          ),
+          //Divider(),
+          SizedBox(height: 5,),
+
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
@@ -169,6 +386,7 @@ appResumedPausedLogic(context);
               ],
             ),
           ),
+
           new Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //            crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,7 +424,7 @@ appResumedPausedLogic(context);
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttnDesgWise('present',today.text,desg),
+                        future: _listFuture1,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             /*SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
@@ -220,7 +438,7 @@ appResumedPausedLogic(context);
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                          /*(index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -231,7 +449,7 @@ appResumedPausedLogic(context);
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -305,27 +523,27 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
 
-                                                            )),
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -346,26 +564,26 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -416,10 +634,10 @@ appResumedPausedLogic(context);
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttnDesgWise('absent',today.text,desg),
+                        future: _listFuture2,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                           /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countA=snapshot.data.length.toString();
                             }));*/
                             countA=snapshot.data.length.toString();
@@ -432,7 +650,7 @@ appResumedPausedLogic(context);
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                       children: <Widget>[
-                                        (index == 0)?
+                                        /*(index == 0)?
                                           Row(
                                               children: <Widget>[
                                                 SizedBox(height: 25.0,),
@@ -443,59 +661,59 @@ appResumedPausedLogic(context);
                                               ]
                                           ):new Center(),
                                         (index == 0)?
-                                          Divider(color: Colors.black26,):new Center(),
+                                          Divider(color: Colors.black26,):new Center(),*/
                                         Row(
-                                        children: <Widget>[
-                                        SizedBox(height: 40.0,),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
-                                            ],
-                                          ),
-                                        ),
+                                          children: <Widget>[
+                                            SizedBox(height: 40.0,),
+                                            Container(
+                                              width: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width * 0.46,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: <Widget>[
+                                                  Text(snapshot.data[index].Name
+                                                      .toString(), style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16.0),),
+                                                ],
+                                              ),
+                                            ),
 
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeIn
+                                                        .toString()),
+                                                  ],
+                                                )
 
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
-                                              ],
-                                            )
+                                            ),
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeOut
+                                                        .toString()),
+                                                  ],
+                                                )
 
-                                        ),
-                                        ],
+                                            ),
+                                          ],
                                         ),
                                       ],
 
@@ -548,10 +766,10 @@ appResumedPausedLogic(context);
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttnDesgWise('latecomings',today.text,desg),
+                        future: _listFuture3,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                          /*  SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /*  SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countL=snapshot.data.length.toString();
                             }));*/
                             countL=snapshot.data.length.toString();
@@ -562,7 +780,7 @@ appResumedPausedLogic(context);
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                          /*(index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -573,7 +791,7 @@ appResumedPausedLogic(context);
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -647,26 +865,26 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -687,26 +905,26 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -760,9 +978,9 @@ appResumedPausedLogic(context);
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttnDesgWise('earlyleavings',today.text,desg),
+                        future: _listFuture4,
                         builder: (context, snapshot) {
-                         /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                          /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                             countE=snapshot.data.length.toString();
                           }));*/
 
@@ -775,7 +993,7 @@ appResumedPausedLogic(context);
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                          /*(index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -786,7 +1004,7 @@ appResumedPausedLogic(context);
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -860,26 +1078,26 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -900,26 +1118,26 @@ appResumedPausedLogic(context);
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -1004,12 +1222,15 @@ appResumedPausedLogic(context);
                         //  showInSnackBar(newValue);
                         setState(() {
                           desg = newValue;
-                          res = true;
-                          print('state set----');
-                          countP='-';
-                          countA='-';
-                          countE='-';
-                          countL='-';
+                          if(res = true){
+                            setAlldata();
+                          }else {
+                            print('state set----');
+                            countP='0';
+                            countA='0';
+                            countE='0';
+                            countL='0';
+                          }
                         });
                       });
                     },
@@ -1042,6 +1263,40 @@ appResumedPausedLogic(context);
           ),);
         });
   }
+
+  dialogwidget(msg, filename) {
+    showDialog(
+        context: context,
+        // ignore: deprecated_member_use
+        child: new AlertDialog(
+          content: new Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Later'),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Share File',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: buttoncolor,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                final uri = Uri.file(filename);
+                SimpleShare.share(
+                    uri: uri.toString(),
+                    title: "Ubiattendance Report",
+                    msg: "Ubiattendance Report");
+              },
+            ),
+          ],
+        ));
+  }
+
 
 
 }

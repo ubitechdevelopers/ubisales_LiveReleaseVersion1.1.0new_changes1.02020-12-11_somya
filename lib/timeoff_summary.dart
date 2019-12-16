@@ -1,26 +1,21 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'dart:convert';
-import 'package:Shrine/services/services.dart';
-import 'attendance_summary.dart';
-import 'home.dart';
-import 'drawer.dart';
 import 'dart:async';
-import 'package:Shrine/services/fetch_location.dart';
-import 'timeoff.dart';
-import 'package:Shrine/services/newservices.dart';
+
 import 'package:Shrine/model/model.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'home.dart';
+import 'login.dart';
+import 'timeoff.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeoffSummary extends StatefulWidget {
   @override
@@ -143,6 +138,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       setState(() {
         _isButtonDisabled=false;
       });
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),
@@ -153,6 +149,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       setState(() {
         _isButtonDisabled=false;
       });
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         title: new Text("Sorry!"),
@@ -199,7 +196,11 @@ class _TimeoffSummary extends State<TimeoffSummary> {
               ),
             )
           );
-        });
+        }
+        );
+    return Center(
+      child: CircularProgressIndicator()
+    );
 
     /*
 
@@ -361,8 +362,8 @@ class _TimeoffSummary extends State<TimeoffSummary> {
   }
 
   getMarkAttendanceWidgit(act1) {
-    double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
-    double f_width = MediaQuery.of(context).size.width*1;
+    //double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
+    //double f_width = MediaQuery.of(context).size.width*1;
 
 //print('==========================='+act1);
     return Column(

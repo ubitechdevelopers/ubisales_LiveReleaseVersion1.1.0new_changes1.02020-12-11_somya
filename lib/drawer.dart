@@ -1,28 +1,24 @@
 import 'dart:ui';
 
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/services/services.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'privacypolicy.dart';
-import 'attendance_summary.dart';
-import 'about.dart';
-import 'package:Shrine/services/services.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'globals.dart';
-import 'package:share/share.dart';
 import 'package:launch_review/launch_review.dart';
+import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'contactUs.dart';
+import 'flexi_time.dart';
+import 'globals.dart';
+import 'home.dart';
+import 'login.dart';
+import 'notifications.dart';
 import 'payment.dart';
 import 'profile.dart';
-import 'userGuide.dart';
 import 'services/services.dart';
-import 'flexi_time.dart';
-import 'notifications.dart';
-import 'contactUs.dart';
+import 'userGuide.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -97,6 +93,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
   showDialogWidget(String loginstr, String buystr){
     if(buystatus=="0") {
+      // ignore: deprecated_member_use
       return showDialog(context: context, child:
       new AlertDialog(
         title: new Text(buystr,
