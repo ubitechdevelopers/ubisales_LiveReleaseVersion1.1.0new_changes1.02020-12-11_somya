@@ -50,7 +50,9 @@ class Home{
         print('aid'+aid);
         print("Timeoutdate "+timeinoutMap['timeoutdate'].toString());
         String sstatus = timeinoutMap['sstatus'].toString();
-
+        String ReferrerDiscount = timeinoutMap['ReferrerDiscount'].toString()??"1%";
+        String ReferrenceDiscount = timeinoutMap['ReferrenceDiscount'].toString()??"1%";
+        String ReferralValidity = timeinoutMap['ReferralValidity'].toString()??"";
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
@@ -96,6 +98,10 @@ class Home{
 
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
        // print(timeinoutMap['pwd']);
+
+        prefs.setString("ReferrerDiscount", ReferrerDiscount);
+        prefs.setString("ReferrenceDiscount", ReferrenceDiscount);
+        prefs.setString("ReferralValidity", ReferralValidity);
         prefs.setString('aid', aid);
         prefs.setString('sstatus', sstatus);
         prefs.setString('mail_varified', mail_varified);

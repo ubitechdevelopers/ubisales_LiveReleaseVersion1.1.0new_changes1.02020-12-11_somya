@@ -418,22 +418,7 @@ class _AppDrawerState extends State<AppDrawer> {
               ],
             ),
             onTap: () async {
-              final DynamicLinkParameters parameters = DynamicLinkParameters(
-                uriPrefix: 'https://ubiattendance.page.link',
-                link: Uri.parse('https://ubiattendance.com/'+empId),
-                androidParameters: AndroidParameters(
-                  packageName: 'org.ubitech.attendance',
-                  minimumVersion: 50009,
-                ),
-
-              );
-
-              //final Uri dynamicUrl = await parameters.buildUrl();
-              final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
-              final Uri shortUrl = shortDynamicLink.shortUrl;
-              print("short URL"+shortUrl.toString());
-
-              Share.share(shortUrl.toString());
+              generateAndShareReferralLink();
 
             },
           ),

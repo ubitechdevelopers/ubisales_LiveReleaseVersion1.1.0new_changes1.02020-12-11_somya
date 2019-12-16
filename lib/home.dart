@@ -1,9 +1,13 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:math';
+
+import 'package:easy_dialog/easy_dialog.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as prefix0;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,6 +105,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool internetAvailable = true;
   String address = '';
   String createdDate="";
+  var ReferrerNotificationList = new List(5);
+  var ReferrerenceMessagesList = new List(7);
+
   @override
   void initState() {
     print('aintitstate');
@@ -549,12 +556,89 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
 
-  showReferralPopup(BuildContext context,String createdDate){
-    String dateToSend='';
-    if(createdDate==''){
-      dateToSend='12';
-    }
+  showReferralPopup(BuildContext context,String cDateS)async{
+    int dateToSend=0;
+    var prefs=await SharedPreferences.getInstance();
+    var buyStatus=int.parse(prefs.get("buysts")??"123455");
+    var createdDate = DateTime.parse("2019-12-13");
+    var currDate=DateTime.now();
+    var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
+    var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
+    ReferrerNotificationList[0]={
+      "title":"Win Win Deal",
+      "description":"Refer our App and get ${referrerAmt} off on your next payment"
+    };
+    ReferrerNotificationList[1]={
+      "title":"Refer and Earn",
+      "description":"Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay"
+    };
+    ReferrerNotificationList[2]={
+      "title":"Discounts that count",
+      "description":"For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off"
+    };
+    ReferrerNotificationList[3]={
+      "title":"${referrerAmt} Off every Payment",
+      "description":"Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays."
+    };
+    ReferrerNotificationList[4]={
+      "title":"Discounts to smile about",
+      "description":"Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase"
+    };
 
+    var referrerName="";
+    var validity=prefs.getString("ReferralValidity");
+
+
+    var rng = new Random();
+    var referrerRandom=rng.nextInt(4);
+   double height=220;
+    if(referrerRandom==2||referrerRandom==4)
+      height=260;
+    if(referrerRandom==0)
+      height=170;
+
+
+
+    if(createdDate==''){
+      dateToSend=12;
+    }
+    if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+      //print("difference dates"+currDate.difference(cDate).inDays.toString());
+      //print("created date"+createdDate);
+
+    } // for other organizations i.e pop up for every created date day of the month
+    else{
+      dateToSend=createdDate.day;
+
+      if(dateToSend==currDate.day){
+        EasyDialog(
+            title: Text(ReferrerNotificationList[referrerRandom]['title'].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30,),textAlign: TextAlign.center,),
+            description: Text(ReferrerNotificationList[referrerRandom]['description'].toString(),textAlign: TextAlign.center,style: TextStyle(fontSize: 16,),),
+            height: height,
+            contentList:[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 40,),
+                  RaisedButton(
+                    child: Text("GO!" , style: TextStyle(color: Colors.white),),
+                    onPressed: (){
+                      generateAndShareReferralLink();
+
+                    },
+                      color: Colors.green,
+
+                  ),SizedBox(width: 10,height: 10,),
+
+                ],
+              )
+            ]
+            )
+            .show(context);
+      }
+
+    }
 
   }
 
@@ -593,7 +677,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print(onError);
     });
     if (response == 1) {
-      Loc lock = new Loc();
+     // Loc lock = new Loc();
 
       await syncOfflineData();
       // //print(act);
@@ -625,8 +709,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
           createdDate = prefs.getString('CreatedDate') ?? '';
+          if(referralNotificationShown==false){
+            showReferralPopup(context,createdDate);
+            //referralNotificationShown=true;
+          }
 
-          showReferralPopup(context,createdDate);
 
           print("Profile Image" + profile);
           profileimage = new NetworkImage(profile);

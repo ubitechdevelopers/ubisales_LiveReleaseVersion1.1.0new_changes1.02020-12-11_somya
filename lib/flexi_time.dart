@@ -239,7 +239,7 @@ class _Flexitime extends State<Flexitime> {
     });
 
     if (response == 1) {
-      Loc lock = new Loc();
+     // Loc lock = new Loc();
 
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir);

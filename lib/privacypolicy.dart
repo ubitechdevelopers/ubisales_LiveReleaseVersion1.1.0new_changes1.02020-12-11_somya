@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html_view/flutter_html_view.dart';
+//import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'drawer.dart';
 import 'home.dart';
@@ -66,7 +66,7 @@ class _MyAppPolicy extends State<MyAppPolicy> {
         endDrawer: new AppDrawer(),
         body: new SingleChildScrollView(
           child: new Center(
-            child: new HtmlView(data: html,),
+           // child: new HtmlView(data: html,),
           ),
         ),
       );

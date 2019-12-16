@@ -78,8 +78,8 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? 0;
     if (response == 1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+     // location_addr = await lock.initPlatformState();
       //act =await checkPunch(empid, orgdir);
 
       //act= 'PunchOut';

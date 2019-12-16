@@ -77,8 +77,8 @@ class _LeaveSummary extends State<LeaveSummary> {
     admin_sts = prefs.getString('sstatus') ?? '0';
     response = prefs.getInt('response') ?? 0;
     if (response == 1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+     // location_addr = await lock.initPlatformState();
       //act =await checkPunch(empid, orgdir);
       //act= 'PunchOut';
       setState(() {

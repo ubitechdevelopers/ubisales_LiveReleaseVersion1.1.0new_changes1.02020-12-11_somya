@@ -13,6 +13,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
     this.channel=channel;
     this.activity=activity;
 }
+
     public boolean onPermissionsUpdated(int requestCode, int[] grantResults){
     try{
         return assistant.onPermissionsUpdated(requestCode, grantResults);
@@ -21,6 +22,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
         return false;
     }
     }
+/*
     public void requestLocationPermission(){
     try{
     if(assistant!=null)
@@ -29,7 +31,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
     catch(Exception e){
 
     }
-    }
+    }*/
     public void onDestroy(){
      try{
         assistant.stop();
@@ -49,7 +51,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
 
     }
     }
-
+/*
     public void requestAndPossiblyExplainLocationPermission(){
      try{
         if(assistant!=null)
@@ -58,7 +60,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
      catch(Exception e){
 
      }
-    }
+    }*/
     /*
     public void updateCameraStatus(boolean cameraStatus){
     try{

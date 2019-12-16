@@ -186,8 +186,8 @@ class _TimeOff_New extends State<TimeOff_New> {
 
 
     if (response == 1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+     // location_addr = await lock.initPlatformState();
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir);
       ho.managePermission(empid, orgdir, desinationId);

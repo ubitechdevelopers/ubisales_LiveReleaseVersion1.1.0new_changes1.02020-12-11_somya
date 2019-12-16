@@ -247,8 +247,8 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
 
     if (response == 1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+     // location_addr = await lock.initPlatformState();
       if(prefs.getInt("OfflineModePermission")!=1){
 
 

@@ -5,6 +5,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:Shrine/globals.dart' as globals;
@@ -20,12 +21,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:location/location.dart';
-import 'dart:math' show cos, sqrt, asin;
+import 'dart:math' show Random, asin, cos, sqrt;
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:android_intent/android_intent.dart';
 import 'package:path/path.dart';
-
+import 'package:http/http.dart' as http;
 import '../home.dart';
 class Services {}
 
@@ -55,7 +56,7 @@ void initDynamicLinks() async {
 
           SharedPreferences prefs=await SharedPreferences.getInstance();
 
-          prefs.setString("referedId", refererId.toString());
+          prefs.setString("referrerId", refererId.toString());
           print("refeeeeeeeeeeeeeeeeeeeeeeeeeeee"+refererId);
         }
       },
@@ -70,7 +71,48 @@ void initDynamicLinks() async {
 
 }
 
+generateAndShareReferralLink()async{
+  List ReferrerenceMessagesList=new List(7);
+  var prefs=await SharedPreferences.getInstance();
+  var empId = prefs.getString("empid")??"0";
+  var referrerName=prefs.getString("fname")??"";
+  var validity=prefs.getString("ReferralValidity");
+  var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
+  var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
 
+  final DynamicLinkParameters parameters = DynamicLinkParameters(
+    uriPrefix: 'https://ubiattendance.page.link',
+    link: Uri.parse('https://ubiattendance.com/'+empId),
+    androidParameters: AndroidParameters(
+      packageName: 'org.ubitech.attendance',
+      minimumVersion: 50009,
+    ),
+
+  );
+
+  //final Uri dynamicUrl = await parameters.buildUrl();
+  final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+  final Uri shortUrl = shortDynamicLink.shortUrl;
+  print("short URL"+shortUrl.toString());
+  globals.referralLink=shortUrl.toString();
+
+
+  ReferrerenceMessagesList[0]="${referrerName} has invited you to try ubiAttendance App. You will get ${referrenceAmt} off on purchase. Try Now.";
+  ReferrerenceMessagesList[1]="I am using a great App to monitor attendance. Give it a try.You will get ${referrenceAmt} off on your purchase. ";
+  ReferrerenceMessagesList[2]="Attendance Analytics, Geo Fencing, Location Tracking  and more! Here’s ${referrenceAmt} off your order. Check it out!";
+  ReferrerenceMessagesList[3]="Looking for a foolproof  attendance tracker? I suggest ubiAttendance. Sign up now: ${referrenceAmt} discount! via @${referrerName}";
+  ReferrerenceMessagesList[4]="Use this link to get ${referrenceAmt} off your first purchase at ubiAttendance – the best time tracker for your employees via @${referrerName}";
+  ReferrerenceMessagesList[5]="Got headache Managing Attendance of your employees? Try ubiAttendance. Get ${referrenceAmt} off on your purchase amount via @${referrerName}";
+  ReferrerenceMessagesList[6]="Try ubiAttendance and get ${referrenceAmt} off on your purchase amount";
+
+  var rng = new Random();
+  var referrenceRandom=rng.nextInt(6);
+
+
+
+  Share.share(ReferrerenceMessagesList[referrenceRandom]+"\n"+shortUrl.toString());
+
+}
 
 
 appResumedPausedLogic(context,[bool isVisitPage]){
@@ -204,8 +246,10 @@ Future<int> checkConnectionToServer () async{
     var uri = Uri.parse(path);
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
-     final result = await InternetAddress.lookup("google.com");
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+     final result = await InternetAddress.lookup("google.com")/*.timeout(const Duration(seconds: 2))*/;
+   http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
+   // print("response code"+response.statusCode.toString());
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
       print('connected');
       serverConnected=1;
     }else{
@@ -214,7 +258,10 @@ Future<int> checkConnectionToServer () async{
   } on SocketException catch (_) {
     print('not connected');
     serverConnected=0;
+  }on TimeoutException catch(_){
+    serverConnected=0;
   }
+
   return serverConnected;
 }
 ////////////////////Shashank////////////////////////////////////////
@@ -2230,8 +2277,9 @@ addBulkAtt(List<grpattemp> data) async {
 ////////////check net
 Future<int> checkNet() async {
   try {
-    final result = await InternetAddress.lookup('google.com');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
+    final result = await InternetAddress.lookup('google.com')/*.timeout(const Duration(seconds: 2))*/;
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200) {
       print('connected');
       varCheckNet = 1;
     } else {
@@ -2239,6 +2287,8 @@ Future<int> checkNet() async {
     }
   } on SocketException catch (_) {
     print('not connected');
+    varCheckNet = 0;
+  }on TimeoutException catch(_){
     varCheckNet = 0;
   }
   return varCheckNet;

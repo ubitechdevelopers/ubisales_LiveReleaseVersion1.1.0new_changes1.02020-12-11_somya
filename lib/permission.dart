@@ -91,8 +91,8 @@ class _PermissionPageState extends State<PermissionPage> {
     });
     response = prefs.getInt('response') ?? 0;
     if(response==1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+     // location_addr = await lock.initPlatformState();
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir);
       print("this is main "+location_addr);

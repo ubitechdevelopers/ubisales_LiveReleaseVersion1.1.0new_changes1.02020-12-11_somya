@@ -79,8 +79,8 @@ class _PaymentPageState extends State<PaymentPage> {
     orgdir = prefs.getString('orgdir') ?? '';
     response = prefs.getInt('response') ?? 0;
     if(response==1) {
-      Loc lock = new Loc();
-      location_addr = await lock.initPlatformState();
+     // Loc lock = new Loc();
+    // location_addr = await lock.initPlatformState();
 
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir);

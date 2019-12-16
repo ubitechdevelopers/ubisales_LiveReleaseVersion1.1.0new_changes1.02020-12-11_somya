@@ -289,8 +289,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
     });
 
-    Loc lock = new Loc();
-    String location_addr111 = await lock.initPlatformState();
+   // Loc lock = new Loc();
+   // String location_addr111 = await lock.initPlatformState();
     int off= prefs.getInt("OfflineModePermission")??0;
     var isAlreadyLoggedIn=prefs.getInt("response")??0;
     if(off!=1){

@@ -539,10 +539,12 @@ catch(Exception e){
                 assistant.requestLocationPermission();
         });*/
  try{
+     /*
     if(listenerExecuter!=null)
    listenerExecuter.requestLocationPermission();
     if(listenerExecuter!=null)
     listenerExecuter.requestAndPossiblyExplainLocationPermission();
+      */
  }
  catch(Exception e){
 

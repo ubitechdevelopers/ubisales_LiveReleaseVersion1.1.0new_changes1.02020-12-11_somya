@@ -720,7 +720,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           textColor: Colors.white,
                           padding: EdgeInsets.all(20.0),
                           child: const Text('Register Company',style: TextStyle(fontSize: 18.0),),
-                          onPressed: (){
+                          onPressed: () async{
 
 
 
@@ -815,6 +815,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 _isButtonDisabled=true;
 
                               });
+                              var prefs=await SharedPreferences.getInstance();
+                              String referrerId=prefs.getString("referrerId")??"0";
+                              print("referrer id sent"+referrerId.toString());
                               var url = globals.path+"register_org";
                               http.post(url, body: {
                                 "org_name": _name.text,
@@ -824,7 +827,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "password": _pass.text,
                                 "country": _tempcontry,
                                 "countrycode": '',
-                                "address": _city.text
+                                "address": _city.text,
+                                "referrerId":referrerId
                               }) .then((response) {
                                 if  (response.statusCode == 200) {
 
