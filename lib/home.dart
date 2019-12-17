@@ -30,9 +30,7 @@ import 'package:location/location.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'punchlocation_summary.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
+
 import 'services/services.dart';
 import 'bulkatt.dart';
 import 'package:Shrine/globals.dart' as globals;
@@ -44,10 +42,9 @@ import 'package:connectivity/connectivity.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:flutter/services.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
-import "package:Shrine/notifications.dart";
 import "offline_home.dart";
 import 'Bottomnavigationbar.dart';
-import 'login.dart';
+import 'payment.dart';
 import 'package:Shrine/addEmployee.dart';
 
 // This app is a stateful, it tracks the user's current choice.
@@ -70,7 +67,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String newpwd = "new";
   int Is_Delete = 0;
   bool _visible = true;
-
+  String buysts = '0';
   String admin_sts = '0';
   String mail_varified = '1';
   String AbleTomarkAttendance = '1';
@@ -663,6 +660,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
+    buysts = prefs.getString('buysts') ?? 0;
     getAreaStatus().then((res) {
       // print('called again');
       if (mounted) {
@@ -859,6 +857,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   mini: false,
                   backgroundColor: buttoncolor,
                   onPressed: () {
+
+                    if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
+                      showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                    else
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => AddEmployee()),
@@ -2044,6 +2046,42 @@ var FakeLocationStatus=0;
                 ]))));
   }
   //////////////////////////////////////////////////////////////////
+
+  showDialogWidget(String loginstr){
+    return showDialog(context: context, builder:(context) {
+
+      return new AlertDialog(
+        title: new Text(
+          loginstr,
+          style: TextStyle(fontSize: 15.0),),
+        content: ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: Text('Later',style: TextStyle(fontSize: 13.0)),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Pay Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaymentPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    );
+  }
+
 
   Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
     String base64Image;

@@ -1586,6 +1586,7 @@ Future<List<Attn>> getEmpdataDepartmentWise(date) async {
 
 //******************Cdate Attn DepartmentWise//
 //******************Cdate Attn DesignationWise
+
 Future<List<Attn>> getCDateAttnDesgWise(listType, date, desg) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
@@ -2499,6 +2500,163 @@ getCsv(associateList, fname, name) async {
       rows.add(row);
     }
   }
+
+
+  PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+  print(permission);
+  Map<PermissionGroup, PermissionStatus> permissions;
+  if(permission.toString()!='PermissionStatus.granted'){
+    permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+  }
+
+  //PermissionStatus res = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
+  /*final res = await SimplePermissions.requestPermission(
+      Permission.WriteExternalStorage);
+  bool checkPermission =
+      await SimplePermissions.checkPermission(Permission.WriteExternalStorage);*/
+  if (permission.toString() == "PermissionStatus.granted") {
+//store file in documents folder
+    String dir = (await getExternalStorageDirectory()).absolute.path;
+    String file = "$dir/ubiattendance_files/";
+    await new Directory('$file').create(recursive: true);
+    print(" FILE " + file);
+    File f = new File(file + fname + ".csv");
+
+// convert rows to String and write as csv file
+    String csv = const ListToCsvConverter().convert(rows);
+    f.writeAsString(csv);
+    return file + fname + ".csv";
+  }
+}
+
+
+getCsvAlldata(associateListP,associateListA,associateListL,associateListE, fname, name) async {
+  //create an element rows of type list of list. All the above data set are stored in associate list
+//Let associate be a model class with attributes name,gender and age and associateList be a list of associate model class.
+
+  List<List<dynamic>> rows = List<List<dynamic>>();
+  List<dynamic> row1 = List();
+
+
+      row1.add('Name');
+      row1.add('TimeIn');
+      row1.add('TimeIn Location');
+      row1.add('TimeOut');
+      row1.add('TimeOut Location');
+      rows.add(row1);
+
+  row1 = List();
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  row1 = List();
+  row1.add("Presents");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+
+
+
+    for (int i = 0; i < associateListP.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+      List<dynamic> row = List();
+        row.add(associateListP[i].Name);
+        row.add(associateListP[i].TimeIn);
+        row.add(associateListP[i].CheckInLoc);
+        row.add(associateListP[i].TimeOut);
+        row.add(associateListP[i].CheckOutLoc);
+
+      rows.add(row);
+    }
+    row1 = List();
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  rows.add(row1);
+  row1 = List();
+  row1.add("Absent");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  for (int i = 0; i < associateListA.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+    List<dynamic> row = List();
+      row.add(associateListA[i].Name);
+      row.add('-');
+      row.add('-');
+      row.add('-');
+      row.add('-');
+
+    rows.add(row);
+  }
+
+
+
+   row1 = List();
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  rows.add(row1);
+  row1 = List();
+  row1.add("Late Comers");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  for (int i = 0; i < associateListL.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+    List<dynamic> row = List();
+    row.add(associateListL[i].Name);
+    row.add(associateListL[i].TimeIn);
+    row.add(associateListL[i].CheckInLoc);
+    row.add(associateListL[i].TimeOut);
+    row.add(associateListL[i].CheckOutLoc);
+      rows.add(row);
+  }
+
+  row1 = List();
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+  rows.add(row1);
+  row1 = List();
+  row1.add("Earlt Leavers");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  row1.add("  ");
+  rows.add(row1);
+
+
+  for (int i = 0; i < associateListE.length; i++){
+//row refer to each column of a row in csv file and rows refer to each row in a file
+    List<dynamic> row = List();
+      row.add(associateListE[i].Name);
+      row.add(associateListE[i].TimeIn);
+      row.add(associateListE[i].CheckInLoc);
+      row.add(associateListE[i].TimeOut);
+      row.add(associateListE[i].CheckOutLoc);
+      rows.add(row);
+  }
+
 
 
   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);

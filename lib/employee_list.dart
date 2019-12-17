@@ -1,11 +1,12 @@
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/payment.dart';
 import 'package:flutter/material.dart';
 import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:Shrine/addEmployee.dart';
-
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/editEmployee.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'Image_view.dart';
@@ -29,6 +30,7 @@ class _EmployeeList extends State<EmployeeList> {
   String _orgName = "";
   String empname = "";
   bool res = true;
+  String buysts = '0';
 
 
   final _searchController = TextEditingController();
@@ -54,8 +56,9 @@ class _EmployeeList extends State<EmployeeList> {
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _orgName= prefs.getString('org_name') ?? '';
-      admin_sts= prefs.getString('sstatus') ?? '';
+       _orgName= prefs.getString('org_name') ?? '';
+       admin_sts= prefs.getString('sstatus') ?? '';
+       buysts= prefs.getString('buysts') ?? '0';
     });
   }
   @override
@@ -153,6 +156,9 @@ class _EmployeeList extends State<EmployeeList> {
         mini: false,
         backgroundColor: buttoncolor,
         onPressed: (){
+          if(((globals.registeruser)>=(globals.userlimit+5)) && buysts !=0)
+            showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+          else
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddEmployee()),
@@ -166,6 +172,40 @@ class _EmployeeList extends State<EmployeeList> {
 
   }
 
+  showDialogWidget(String loginstr){
+    return showDialog(context: context, builder:(context) {
+
+      return new AlertDialog(
+        title: new Text(
+          loginstr,
+          style: TextStyle(fontSize: 15.0),),
+        content: ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: Text('Later',style: TextStyle(fontSize: 13.0)),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Pay Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
+              color: Colors.orangeAccent,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaymentPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    );
+  }
   loader() {
     return new Container(
       child: Center(

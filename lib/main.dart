@@ -23,7 +23,6 @@ import 'globals.dart';
 import 'services/services.dart';
 
 void main(){
-
   runApp(
       new MaterialApp(
     home: new MyApp(),

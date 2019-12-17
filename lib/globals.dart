@@ -53,6 +53,8 @@ var assigned_long = 0.0;//These are user to store geofence latitude got from ser
 var assign_radius = 0.0;
 var timeInPressedTime;
 var timeOutPressedTime;
+int userlimit = 0;
+int registeruser = 0;
 var timeWhenButtonPressed;
 const cameraChannel = const MethodChannel('update.camera.status');
 const facebookChannel= const MethodChannel('log.facebook.data');
