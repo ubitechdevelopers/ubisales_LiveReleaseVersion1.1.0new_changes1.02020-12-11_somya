@@ -1,10 +1,11 @@
+import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'drawer.dart';
-import 'home.dart';
-import 'package:Shrine/services/services.dart';
 import 'globals.dart';
+import 'home.dart';
 void main() => runApp(new UserGuide());
 
 class UserGuide extends StatefulWidget {
@@ -85,7 +86,7 @@ class _UserGuide extends State<UserGuide> {
         children: <Widget>[
 
           Center(
-            child:Text('Explore ttendance (User)',
+            child:Text('Explore Attendance (User)',
               style: new TextStyle(fontSize: 25.0, color: buttoncolor, fontWeight: FontWeight.bold)),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.01,),

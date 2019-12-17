@@ -1,23 +1,19 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/addShift.dart';
-import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'employee_list.dart';
-import 'Bottomnavigationbar.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:native_contact_picker/native_contact_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'department.dart';
-import 'designation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'employee_list.dart';
 import 'globals.dart';
-import 'services/fetch_location.dart';
 class AddEmployee extends StatefulWidget {
   @override
   _AddEmployee createState() => _AddEmployee();
@@ -443,9 +439,10 @@ class _AddEmployee extends State<AddEmployee> {
             ),]
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(left: 50.0),
+              //margin: const EdgeInsets.only(left: 50.0),
               child: ButtonBar(
                 children: <Widget>[
                   FlatButton(
@@ -527,9 +524,9 @@ class _AddEmployee extends State<AddEmployee> {
                         _countryId.text = '0';
                         _countryCode.text = '0'; // prevented by parth sir
                         addEmployee(
-                            _firstName.text,
-                            _lastName.text,
-                            _email.text,
+                            _firstName.text.trim(),
+                            _lastName.text.trim(),
+                            _email.text.trim(),
                             _countryCode.text,
                             _countryId.text,
                             updatedcontact.trim(),
@@ -548,20 +545,20 @@ class _AddEmployee extends State<AddEmployee> {
                                   builder: (context) => EmployeeList()),
                             );
                             dialogwidget(
-                                'Hello+'+_firstName.text+'%0A%0AI%E2%80%99ve+added+you+as+a+user+on+'+org_name+'+attendance+system.%0A%0ADownload+ubiAttendance+App+from+the+link+-+https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.ubitech.attendance%26hl%3Den_IN%0A%0ASign+In+to+the+App+with+the+details%3A-%0A%0AUser+Name+-+'+updatedcontact.trim()+'%0APassword+-+'+_pass.text+'%0A%0AMark+your+%E2%80%9CTime+In%E2%80%9D+now!%0A%0ARegards%0A'+admname,
+                                'Hello+'+_firstName.text+'+%0A%0ADownload+ubiAttendance+App+from+the+link+https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.ubitech.attendance%26hl%3Den_IN%0A%0ASign+In+to+the+App+with%0A%0AUser+Name%3A+'+updatedcontact.trim()+'%0APassword%3A+'+_pass.text+'%0A%0AMark+your+%E2%80%9CTime+In%E2%80%9D+now!+Start+punching+Attendance+daily.',
                                 whatscontact);
                           } else if (res == 3)
-                            showInSnackBar('Contact Already Exist');
+                            showInSnackBar('Contact already exists');
                           else if (res == 2)
-                            showInSnackBar('Email Already Exist');
+                            showInSnackBar('Email already exists');
                           else
-                            showInSnackBar('Unable to Add Employee');
+                            showInSnackBar('Unable to add this employee');
                           setState(() {
                             _isButtonDisabled = false;
                           });
                           // TimeOfDay.fromDateTime(10000);
                         }).catchError((exp) {
-                          showInSnackBar('Unable to call service');
+                          showInSnackBar('Unable to call the service');
                           print(exp.toString());
                           setState(() {
                             _isButtonDisabled = false;
@@ -699,7 +696,7 @@ class _AddEmployee extends State<AddEmployee> {
                           ),
                           validator: (value) {
                             if (value.trim().isEmpty) {
-                              return 'Please Enter Name';
+                              return 'Please enter the name';
                             }
                           },
                           onFieldSubmitted: (String value) {
@@ -737,7 +734,7 @@ class _AddEmployee extends State<AddEmployee> {
                                 if (value.isEmpty ||
                                     value.length < 6 ||
                                     value.length > 15) {
-                                  return 'Please Enter valid Contact';
+                                  return 'Please enter a valid Phone No.';
                                 }
                               },
                               onFieldSubmitted: (String value) {
@@ -772,7 +769,7 @@ class _AddEmployee extends State<AddEmployee> {
                                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                             RegExp regex = new RegExp(pattern);
                             if (value.isNotEmpty && !regex.hasMatch(value)) {
-                              return 'Enter valid email id';
+                              return 'Enter a valid Email ID';
                             }
                           },
                           onFieldSubmitted: (String value) {
@@ -987,7 +984,7 @@ class _AddEmployee extends State<AddEmployee> {
             children: <Widget>[
               SizedBox(height: 5.0),
               Center(
-                child:Text("Add Department",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                child:Text("Add a Department",style: new TextStyle(fontSize: 22.0,color: appcolor)),
               ),
               SizedBox(height: 15.0),
               new Expanded(
@@ -1076,7 +1073,7 @@ class _AddEmployee extends State<AddEmployee> {
                 {
                   if( deptctr.text.trim()==''){
                     //    FocusScope.of(context).requestFocus(f_dept);
-                    showInSnackBar('Input Department Name');
+                    showInSnackBar('Enter a Department Name');
                   }
                   else {
                     if(_isButtonDisabled)
@@ -1087,7 +1084,7 @@ class _AddEmployee extends State<AddEmployee> {
                     addDept(deptctr.text, _sts).
                     then((res) {
                       if(int.parse(res)==0) {
-                        showInSnackBar('Unable to add department');
+                        showInSnackBar('Unable to add the department');
                       }
                       else if(int.parse(res)==-1)
                         showInSnackBar('Department already exists');
@@ -1104,7 +1101,7 @@ class _AddEmployee extends State<AddEmployee> {
 
                     }
                     ).catchError((err){
-                      showInSnackBar('unable to call service');
+                      showInSnackBar('unable to call the service');
                       setState(() {
                         _isButtonDisabled=false;
                       });
@@ -1133,7 +1130,7 @@ class _AddEmployee extends State<AddEmployee> {
             children: <Widget>[
               SizedBox(height: 5.0),
               Center(
-                child:Text("Add Designation",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                child:Text("Add a Designation",style: new TextStyle(fontSize: 22.0,color: appcolor)),
               ),
               SizedBox(height: 15.0),
               new Expanded(
@@ -1218,7 +1215,7 @@ class _AddEmployee extends State<AddEmployee> {
                 {
 
                   if(desgctrl.text.trim()==''){
-                    showInSnackBar('Input Designation');
+                    showInSnackBar('Enter a Designation');
                   }
                   else {
                     if(_isButtonDisabled)
@@ -1231,7 +1228,7 @@ class _AddEmployee extends State<AddEmployee> {
                     then((res) {
                       if(int.parse(res)==0) {
                         Navigator.of(context, rootNavigator: true).pop('dialog');
-                        showInSnackBar('Unable to add designation');
+                        showInSnackBar('Unable to add this designation');
                       }
                       else if(int.parse(res)==-1) {
                         Navigator.of(context, rootNavigator: true).pop('dialog');
@@ -1250,7 +1247,7 @@ class _AddEmployee extends State<AddEmployee> {
                       });
                     }
                     ).catchError((err){
-                      showInSnackBar('unable to call service');
+                      showInSnackBar('Unable to call the service');
                       setState(() {
                         _isButtonDisabled=false;
                       });
@@ -1544,7 +1541,7 @@ class _AddEmployee extends State<AddEmployee> {
     showDialog(
         context: context,
         child: new AlertDialog(
-          content: new Text('Do you want to notify user?'),
+          content: new Text('Do you want to notify the user?'),
           actions: <Widget>[
             FlatButton(
               child: Text('Close'),
@@ -1561,6 +1558,7 @@ class _AddEmployee extends State<AddEmployee> {
               color: Colors.amber,
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
+
                 openWhatsApp(msg, number);
               },
             ),

@@ -1,7 +1,10 @@
 import 'package:flutter/services.dart';
 import 'model/timeinout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart';
+
+import 'model/timeinout.dart';
 
 Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
@@ -70,3 +73,10 @@ List responseJson = new List();
 List responseEmplist = new List();
 String referralLink="";
 bool referralNotificationShown=false;
+
+
+/*
+int total_dept = 0;
+int total_abs = 0;
+int total_pre = 0;
+int total_emp = 0;*/

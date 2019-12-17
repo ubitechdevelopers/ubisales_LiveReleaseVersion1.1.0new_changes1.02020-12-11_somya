@@ -1,17 +1,16 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/payment.dart';
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'globals.dart';
-import 'offline_home.dart';
-import 'outside_label.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
+
 import 'Image_view.dart';
+import 'drawer.dart';
+import 'globals.dart';
+import 'outside_label.dart';
 //import 'payment.dart';
 // This app is a stateful, it tracks the user's current choice.
 class YesAttendance extends StatefulWidget {
@@ -411,58 +410,90 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
-                                    return new Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
+                                    return Column(
                                       children: <Widget>[
-                                        SizedBox(height: 40.0,),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
-                                            ],
+                                        new Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .spaceAround,
+                                          children: <Widget>[
+                                            SizedBox(height: 40.0,),
+                                            Container(
+                                              width: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width * 0.46,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: <Widget>[
+                                                  Text(snapshot.data[index].Name
+                                                      .toString(), style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16.0),),
+                                                ],
+                                              ),
+                                            ),
+
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeIn
+                                                        .toString()),
+                                                  ],
+                                                )
+
+                                            ),
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeOut
+                                                        .toString()),
+                                                  ],
+                                                )
+                                            ),
+                                          ],
+                                        ),
+                                        Divider(color: Colors.black26,),
+                                        (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
+                                          //  SizedBox(height: 25.0,),
+                                          Padding(
+                                            padding: const EdgeInsets.only(bottom:4.0),
+                                            child: Container(
+                                              //  padding: EdgeInsets.only(bottom: 10.0),
+                                              child: InkWell(
+                                                child: Center(
+                                                  child: Container(
+                                                    width: MediaQuery.of(context).size.width*0.88,
+                                                    color: Colors.red[400],
+                                                    padding:EdgeInsets.only(top:3.0,bottom: 3.0),
+                                                    child:Text("For More Information Pay Now ",style: TextStyle(fontSize: 18.0,color: Colors.white),textAlign: TextAlign.center),
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => PaymentPage()),
+                                                  );
+                                                },
+                                              ),
+
+                                            ),
                                           ),
-                                        ),
-
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
-
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
-                                              ],
-                                            )
-                                        ),
+                                          SizedBox(height: 50.0,),
+                                        ]) : new Center(),
                                       ],
                                     );
                                   }
@@ -873,13 +904,6 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                             );
                                                           },
                                                         ),
-
-
-
-
-
-
-
 
                                                       ),
 

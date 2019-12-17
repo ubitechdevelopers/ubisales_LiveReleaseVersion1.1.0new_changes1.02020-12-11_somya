@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
-//import 'package:flutter_html_view/flutter_html_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
-import 'home.dart';
-import 'package:Shrine/services/services.dart';
-import 'globals.dart';
-
-import 'package:url_launcher/url_launcher.dart';
-import 'package:Shrine/services/services.dart';
 import 'dart:ui';
+
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'drawer.dart';
+import 'globals.dart';
+import 'home.dart';
 
 
 

@@ -1,27 +1,22 @@
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
-import 'home.dart';
 
-import 'package:Shrine/services/services.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'punchlocation.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'settings.dart';
-import 'globals.dart';
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/saveimage.dart';
-import 'Image_view.dart';
-import 'notifications.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'offline_home.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-//import 'package:intl/intl.dart';
+import 'Image_view.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'home.dart';
+import 'offline_home.dart';
+import 'punchlocation.dart';
+
 
 void main() => runApp(new PunchLocationSummary());
 
@@ -29,7 +24,7 @@ class PunchLocationSummary extends StatefulWidget {
   @override
   _PunchLocationSummary createState() => _PunchLocationSummary();
 }
-
+TextEditingController today;
 class _PunchLocationSummary extends State<PunchLocationSummary> {
   static const platform = const MethodChannel('location.spoofing.check');
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -41,10 +36,12 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
   String orgid="";
   String empid="";
   String admin_sts='0';
-  int _currentIndex = 1;
+  //int _currentIndex = 1;
   String streamlocationaddr = "";
  // StreamLocation sl = new StreamLocation();
-  bool _isButtonDisabled= false;
+  //bool _isButtonDisabled= false;
+  bool res = true;
+  var formatter = new DateFormat('dd-MMM-yyyy');
   final _comments=TextEditingController();
 
   Timer timer;
@@ -60,7 +57,8 @@ class _PunchLocationSummary extends State<PunchLocationSummary> {
     appResumedPausedLogic(context);
    // setLocationAddress();
     platform.setMethodCallHandler(_handleMethod);
-
+    today = new TextEditingController();
+    today.text = formatter.format(DateTime.now());
   }
   bool internetAvailable=true;
 String address="";
@@ -103,7 +101,6 @@ String address="";
         });
         break;
 
-        return new Future.value("");
     }
   }
 
@@ -234,6 +231,7 @@ String address="";
     });
     await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       child: new AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         content: Container(
@@ -318,6 +316,7 @@ String address="";
                     );
                     showDialog(
                         context: context,
+                        // ignore: deprecated_member_use
                         child: new AlertDialog(
                           content: new Text("Punch visit successfully"),
                         ));
@@ -327,6 +326,7 @@ String address="";
                     _comments.text = "";
                     showDialog(
                         context: context,
+                        // ignore: deprecated_member_use
                         child: new AlertDialog(
                           content: new Text("Unable to punch visit. Please try again!"),
                         ));
@@ -346,6 +346,7 @@ String address="";
                     );
                     showDialog(
                         context: context,
+                        // ignore: deprecated_member_use
                         child: new AlertDialog(
                           content: new Text("Punch visit successfully"),
                         ));
@@ -355,6 +356,7 @@ String address="";
                     _comments.text = "";
                     showDialog(
                         context: context,
+                        // ignore: deprecated_member_use
                         child: new AlertDialog(
                           content: new Text("Unable to punch visit. Please try again!"),
                         ));
@@ -394,246 +396,320 @@ print('visit out called for visit id:'+visit_id);
   }
   /////////////
   getWidgets(context){
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget> [
-          Container(
-            padding: EdgeInsets.only(top:12.0,bottom: 2.0),
-            child:Center(
-              child:Text("My Today's Visits",
-                  style: new TextStyle(fontSize: 22.0, color: appcolor,)),
+    return ListView(
+        physics: NeverScrollableScrollPhysics(),
+      children: <Widget>[
+      Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget> [
+            Container(
+              padding: EdgeInsets.only(top:0.0,bottom: 2.0),
+              child:Center(
+                child:Text("My Visits",
+                    style: new TextStyle(fontSize: 22.0, color: appcolor,)),
+              ),
             ),
-          ),
-          Divider(color: Colors.black54,height: 1.5,),
-          new Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            //SizedBox(height: 2.0),
+            Container(
+              child: DateTimeField(
+                //dateOnly: true,
+                format: formatter,
+                controller: today,
+                onShowPicker: (context, currentValue) {
+                  return showDatePicker(
+                      context: context,
+                      firstDate: DateTime(1900),
+                      initialDate: currentValue ?? DateTime.now(),
+                      lastDate: DateTime(2100));
+                },
+                readOnly: true,
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(0.0),
+                    child: Icon(
+                      Icons.date_range,
+                      color: Colors.grey,
+                    ), // icon is 48px widget.
+                  ), // icon is 48px widget.
+                  labelText: 'Select Date',
+                ),
+                onChanged: (date) {
+                  setState(() {
+                    if (date != null && date.toString() != '')
+                      res = true; //showInSnackBar(date.toString());
+                    else
+                      res = false;
+                  });
+                },
+                validator: (date) {
+                  if (date == null) {
+                    return 'Please select date';
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 8.0),
+            //Divider(color: Colors.black54,height: 1.5,),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.start,
 //            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: 50.0,),
-              SizedBox(width: MediaQuery.of(context).size.width*0.02),
-              Container(
-                width: MediaQuery.of(context).size.width*0.55,
-                child:Text(' Client',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-              ),
+              children: <Widget>[
+                SizedBox(height: 30.0,),
+                SizedBox(width: MediaQuery.of(context).size.width*0.02),
+                Container(
+                  width: MediaQuery.of(context).size.width*0.55,
+                  child:Text(' Client',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                ),
 
-              SizedBox(height: 50.0,),
-              Container(
-                width: MediaQuery.of(context).size.width*0.22,
-                child:Text(' Visit In',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-              ),
-              SizedBox(height: 50.0,),
-              Container(
-                width: MediaQuery.of(context).size.width*0.2,
-                child:Text(' Visit Out',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-              ),
-            ],
-          ),
-          Divider(),
-
-          Container(
-            height: MediaQuery.of(context).size.height*0.60,
-            child: new FutureBuilder<List<Punch>>(
-              future: getSummaryPunch(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return new ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        //   double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
-                        //   double f_width = MediaQuery.of(context).size.width*1; // screen's 100%
-
-
-                        return new Column(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceAround,
-                                children: <Widget>[
-                                  SizedBox(height: 40.0,),
-                                  Container(
-                                    width: MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width * 0.46,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: <Widget>[
-                                        Text(snapshot.data[index].client
-                                            .toString(), style: TextStyle(
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0),),
-
-                                        InkWell(
-                                          child: Text('Visit In: ' +
-                                              snapshot.data[index]
-                                                  .pi_loc.toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.0)),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index]
-                                                    .pi_latit ,
-                                                snapshot.data[index]
-                                                    .pi_longi);
-                                          },
-                                        ),
-                                        SizedBox(height:2.0),
-                                        InkWell(
-                                          child: Text('Visit Out: ' +
-                                              snapshot.data[index]
-                                                  .po_loc.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12.0),),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index]
-                                                    .po_latit,
-                                                snapshot.data[index]
-                                                    .po_longi);
-                                          },
-                                        ),
-                                        snapshot.data[index].po_time=='-'?Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: InkWell(
-
-                                            child: new Container(
-                                              //width: 100.0,
-                                              height: 25.0,
-                                              decoration: new BoxDecoration(
-                                                color: buttoncolor,
-                                                border: new Border.all(color: Colors.white, width: 2.0),
-                                                borderRadius: new BorderRadius.circular(10.0),
-                                              ),
-                                              child: new Center(child: new Text('Visit Out', style: new TextStyle(fontSize: 18.0, color: Colors.white),),),
-                                            ),
-                                            onTap: (){
-                                              _showDialog(snapshot.data[index].Id.toString());
-                                            },),
-                                        ):Container(),
-
-                                        SizedBox(height: 10.0,),
-
-
-                                      ],
-                                    ),
-                                  ),
-
-                                  Container(
-                                      width: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .width * 0.22,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center,
-                                        children: <Widget>[
-                                          Text(snapshot.data[index].pi_time
-                                              .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                          Container(
-                                            width: 62.0,
-                                            height: 62.0,
-                                            child:InkWell(child: Container(
-                                                decoration: new BoxDecoration(
-                                                    shape: BoxShape
-                                                        .circle,
-                                                    image: new DecorationImage(
-                                                        fit: BoxFit.fill,
-                                                        image: new NetworkImage(
-                                                            snapshot
-                                                                .data[index]
-                                                                .pi_img)
-                                                    )
-                                                )),
-                                              onTap: (){
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].pi_img,org_name: org_name)),
-                                                );
-                                              },),),
-
-                                        ],
-                                      )
-
-                                  ),
-                                  Container(
-                                      width: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .width * 0.22,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .center,
-                                        children: <Widget>[
-                                          Text(snapshot.data[index].po_time
-                                              .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                          Container(
-                                            width: 62.0,
-                                            height: 62.0,
-                                            child:InkWell(
-                                            child: Container(
-                                                decoration: new BoxDecoration(
-                                                    shape: BoxShape
-                                                        .circle,
-                                                    image: new DecorationImage(
-                                                        fit: BoxFit.fill,
-                                                        image: new NetworkImage(
-                                                            snapshot
-                                                                .data[index]
-                                                                .po_img)
-                                                    )
-                                                )),
-                                              onTap: (){
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].po_img,org_name: org_name)),
-                                                );
-                                              },
-                                            ),),
-
-                                        ],
-                                      )
-
-                                  ),
-                                ],
-                              ),//
-                              snapshot.data[index].desc==''?Container():snapshot.data[index].desc!='Visit out not punched'?
-                              Row(
-                                children: <Widget>[
-                                  SizedBox(width: 16.0,),
-                                  Text('Remark: ',style: TextStyle(fontWeight: FontWeight.bold,),),
-                                  Text(snapshot.data[index].desc)
-                                ],
-
-                              ):
-                              Row(
-                                children: <Widget>[
-                                  SizedBox(width: 16.0,),
-                                  Text('Remark: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red),),
-                                  Text(snapshot.data[index].desc,style: TextStyle(color: Colors.red),)
-                                ],
-
-                              ),
-
-                              Divider(color: Colors.black26,),
-                            ]);
-                      }
-                  );
-                } else if (snapshot.hasError) {
-                  return new Text("     You are not connected.");
-                }
-
-                // By default, show a loading spinner
-                return new Center( child: CircularProgressIndicator());
-              },
+                SizedBox(height: 30.0,),
+                Container(
+                  width: MediaQuery.of(context).size.width*0.22,
+                  child:Text('Visit In',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                ),
+                SizedBox(height: 30.0,),
+                Container(
+                  width: MediaQuery.of(context).size.width*0.2,
+                  child:Text('Visit Out',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                ),
+              ],
             ),
-          ),
-        ]
+            Divider(),
+
+            Container(
+              height: MediaQuery.of(context).size.height*0.60,
+              child: new FutureBuilder<List<Punch>>(
+                future: getSummaryPunch(today.text),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if(snapshot.data.length>0) {
+                      return new ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            //   double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
+                            //   double f_width = MediaQuery.of(context).size.width*1; // screen's 100
+                            return new Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceAround,
+                                    children: <Widget>[
+                                      SizedBox(height: 40.0,),
+                                      Container(
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width * 0.46,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: <Widget>[
+                                            Text(snapshot.data[index].client
+                                                .toString(), style: TextStyle(
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0),),
+
+                                            InkWell(
+                                              child: Text('Visit In: ' +
+                                                  snapshot.data[index]
+                                                      .pi_loc.toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.black54,
+                                                      fontSize: 12.0)),
+                                              onTap: () {
+                                                goToMap(
+                                                    snapshot.data[index]
+                                                        .pi_latit,
+                                                    snapshot.data[index]
+                                                        .pi_longi);
+                                              },
+                                            ),
+                                            SizedBox(height: 2.0),
+                                            InkWell(
+                                              child: Text('Visit Out: ' +
+                                                  snapshot.data[index]
+                                                      .po_loc.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontSize: 12.0),),
+                                              onTap: () {
+                                                goToMap(
+                                                    snapshot.data[index]
+                                                        .po_latit,
+                                                    snapshot.data[index]
+                                                        .po_longi);
+                                              },
+                                            ),
+                                            snapshot.data[index].po_time == '-' ? Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: InkWell(
+
+                                                child: new Container(
+                                                  //width: 100.0,
+                                                  height: 25.0,
+                                                  decoration: new BoxDecoration(
+                                                    color: buttoncolor,
+                                                    border: new Border.all(
+                                                        color: Colors.white, width: 2.0),
+                                                    borderRadius: new BorderRadius.circular(
+                                                        10.0),
+                                                  ),
+                                                  child: new Center(child: new Text('Visit Out',
+                                                    style: new TextStyle(fontSize: 18.0,
+                                                        color: Colors.white),),),
+                                                ),
+                                                onTap: () {
+                                                  _showDialog(
+                                                      snapshot.data[index].Id.toString());
+                                                },),
+                                            ) : Container(),
+
+                                            SizedBox(height: 10.0,),
+
+
+                                          ],
+                                        ),
+                                      ),
+
+                                      Container(
+                                          width: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .width * 0.22,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .center,
+                                            children: <Widget>[
+                                              Text(snapshot.data[index].pi_time
+                                                  .toString(),
+                                                style: TextStyle(fontWeight: FontWeight.bold),),
+                                              Container(
+                                                width: 62.0,
+                                                height: 62.0,
+                                                child: InkWell(child: Container(
+                                                    decoration: new BoxDecoration(
+                                                        shape: BoxShape
+                                                            .circle,
+                                                        image: new DecorationImage(
+                                                            fit: BoxFit.fill,
+                                                            image: new NetworkImage(
+                                                                snapshot
+                                                                    .data[index]
+                                                                    .pi_img)
+                                                        )
+                                                    )),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) =>
+                                                          ImageView(
+                                                              myimage: snapshot.data[index]
+                                                                  .pi_img, org_name: org_name)),
+                                                    );
+                                                  },),),
+
+                                            ],
+                                          )
+
+                                      ),
+                                      Container(
+                                          width: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .width * 0.22,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .center,
+                                            children: <Widget>[
+                                              Text(snapshot.data[index].po_time
+                                                  .toString(),
+                                                style: TextStyle(fontWeight: FontWeight.bold),),
+                                              Container(
+                                                width: 62.0,
+                                                height: 62.0,
+                                                child: InkWell(
+                                                  child: Container(
+                                                      decoration: new BoxDecoration(
+                                                          shape: BoxShape
+                                                              .circle,
+                                                          image: new DecorationImage(
+                                                              fit: BoxFit.fill,
+                                                              image: new NetworkImage(
+                                                                  snapshot
+                                                                      .data[index]
+                                                                      .po_img)
+                                                          )
+                                                      )),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) =>
+                                                          ImageView(
+                                                              myimage: snapshot.data[index]
+                                                                  .po_img, org_name: org_name)),
+                                                    );
+                                                  },
+                                                ),),
+
+                                            ],
+                                          )
+
+                                      ),
+                                    ],
+                                  ), //
+                                  snapshot.data[index].desc == '' ? Container() : snapshot
+                                      .data[index].desc != 'Visit out not punched' ?
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(width: 16.0,),
+                                      Text('Remark: ',
+                                        style: TextStyle(fontWeight: FontWeight.bold,),),
+                                      Text(snapshot.data[index].desc)
+                                    ],
+
+                                  ) :
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(width: 16.0,),
+                                      Text('Remark: ', style: TextStyle(
+                                          fontWeight: FontWeight.bold, color: Colors.red),),
+                                      Text(snapshot.data[index].desc,
+                                        style: TextStyle(color: Colors.red),)
+                                    ],
+
+                                  ),
+
+                                  Divider(color: Colors.black26,),
+                                ]);
+                          }
+                      );
+                    }else{
+                      return new Container(
+                          height: MediaQuery.of(context).size.height*0.25,
+                          child:Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width*1,
+                              color: appcolor.withOpacity(0.1),
+                              padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                              child:Text("No visits found on this date.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                            ),
+                          )
+                      );
+                    }
+                  } else if (snapshot.hasError) {
+                    return new Text("     You are not connected.");
+                  }
+
+                  // By default, show a loading spinner
+                  return new Center( child: CircularProgressIndicator());
+                },
+              ),
+            ),
+          ]
+      ),
+      ]
     );
 
   }

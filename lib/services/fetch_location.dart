@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:location/location.dart';
 import 'package:geocoder/geocoder.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -2,21 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:Shrine/generatepdf.dart';
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:simple_share/simple_share.dart';
-import 'outside_label.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'drawer.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_share/simple_share.dart';
+
 import 'Image_view.dart';
-import 'package:flutter/scheduler.dart';
+import 'drawer.dart';
 import 'globals.dart';
-import 'package:http/http.dart' as http;
-import 'package:Shrine/globals.dart' as globals;
-import 'dart:convert';
 // This app is a stateful, it tracks the user's current choice.
 class Designation_att extends StatefulWidget {
   @override
@@ -34,7 +29,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
   bool filests = false;
   Map<String, dynamic>  datalist = null;
   Future<List<Attn>> _listFuture,_listFuture1,_listFuture2,_listFuture3,_listFuture4;
-  List presentlist , absentlist , latecommerlist,earlyleaverlist;
+  List presentlist= new List(), absentlist= new List(), latecommerlist= new List(),earlyleaverlist= new List();
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -47,12 +42,12 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
       setState(() {
         _orgName=prefs.getString('org_name') ?? '';
       });
-      getCount();
+      //getCount();
     }
   }
 
-  getCount() async {
-    /*getCDateAttnDesgWiseCount(today.text,desg).then((onValue) {
+  /*getCount() async {
+    getCDateAttnDesgWiseCount(today.text,desg).then((onValue) {
       setState(() {
         if(res == true) {
           countP=onValue[0]['present'];
@@ -61,9 +56,8 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
           countE=onValue[0]['earlyleavings'];
         }
       });
-    });*/
-  }
-
+    });
+  }*/
 
   @override
   void initState() {
@@ -74,49 +68,46 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
-   // _listFuture = getCDateAttnDesgWise('present',today.text,desg);
-
-
+    // _listFuture = getCDateAttnDesgWise('present',today.text,desg);
     setAlldata();
-    print("Futur list data");
+    print("Future list data");
   }
 
-setAlldata(){
-  _listFuture1 = getCDateAttnDesgWise('present',today.text,desg);
-  _listFuture2 = getCDateAttnDesgWise('absent',today.text,desg);
-  _listFuture3 = getCDateAttnDesgWise('latecomings',today.text,desg);
-  _listFuture4 = getCDateAttnDesgWise('earlyleavings',today.text,desg);
+  setAlldata(){
+    _listFuture1 = getCDateAttnDesgWise('present',today.text,desg);
+    _listFuture2 = getCDateAttnDesgWise('absent',today.text,desg);
+    _listFuture3 = getCDateAttnDesgWise('latecomings',today.text,desg);
+    _listFuture4 = getCDateAttnDesgWise('earlyleavings',today.text,desg);
 
 
-  _listFuture1.then((data) async{
-    setState(() {
-      presentlist = data;
-      countP = data.length.toString();
+    _listFuture1.then((data) async{
+      setState(() {
+        presentlist = data;
+        countP = data.length.toString();
+      });
     });
-  });
 
-  _listFuture2.then((data) async{
-    setState(() {
-      absentlist = data;
-      countA=   data.length.toString();
-
+    _listFuture2.then((data) async{
+      setState(() {
+        absentlist = data;
+        countA = data.length.toString();
+      });
     });
-  });
 
-  _listFuture3.then((data) async{
-    setState(() {
-      latecommerlist = data;
-      countL= data.length.toString();
+    _listFuture3.then((data) async{
+      setState(() {
+        latecommerlist = data;
+        countL = data.length.toString();
+      });
     });
-  });
 
-  _listFuture4.then((data) async{
-    setState(() {
-      earlyleaverlist = data;
-      countE= data.length.toString();
+    _listFuture4.then((data) async{
+      setState(() {
+        earlyleaverlist = data;
+        countE= data.length.toString();
+      });
     });
-  });
-}
+  }
 
 
   @override
@@ -133,14 +124,15 @@ setAlldata(){
         children: <Widget>[
           SizedBox(height:3.0),
           new Container(
-            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color: prefix0.appcolor,),),),
+            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color:Colors.black54,),),),
           ),
           Row(
             children: <Widget>[
               Expanded(
                 child: Container(
+                  color: Colors.white,
                   child: DateTimeField(
-                   // dateOnly: true,
+                    // dateOnly: true,
                     format: formatter,
                     controller: today,
                     onShowPicker: (context, currentValue) {
@@ -168,7 +160,7 @@ setAlldata(){
                         setState(() {
                           if (date != null && date.toString() != '') {
                             res=true; //showInSnackBar(date.toString());
-                             setAlldata();
+                            setAlldata();
                           }
                           else {
                             res=false;
@@ -190,23 +182,24 @@ setAlldata(){
               ),
 
               Padding(
-                padding: const EdgeInsets.only(left: 8.0),
+                padding: const EdgeInsets.only(left: 4.0),
                 child:(res == false)?
                 Center():Container(
                     color: Colors.white,
-                    height: MediaQuery.of(context).size.height * 0.100,
-                    width: MediaQuery.of(context).size.width * 0.35,
+                    height: 60,
+                    width: MediaQuery.of(context).size.width * 0.40,
                     child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Row(
+                          (presentlist.length > 0 || absentlist.length > 0 || latecommerlist.length > 0 || earlyleaverlist.length > 0)
+                              ?Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               SizedBox(
-                                height:  MediaQuery.of(context).size.height * 0.10,
+                                height:  60,
                               ),
                               Container(
-                                padding: EdgeInsets.only(left: 5.0),
+                                //padding: EdgeInsets.only(left: 5.0),
                                 child: InkWell(
                                   child: Text('CSV',
                                     style: TextStyle(
@@ -241,7 +234,7 @@ setAlldata(){
                                 ),
                               ),
                               SizedBox(
-                                width:15,
+                                width:8,
                               ),
                               Container(
                                 padding: EdgeInsets.only(
@@ -267,8 +260,8 @@ setAlldata(){
                                         filests = true;
                                       });
                                     }
-                                    CreateDeptpdfAll(
-                                        presentlist , absentlist , latecommerlist,earlyleaverlist , 'Designation Wise Summary Report',
+                                    CreateDesgpdfAll(
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Designation Wise Summary Report',
                                         presentlist.toString(), 'Designation_Wise_Report_' + today.text, 'desg')
                                         .then((res) {
                                       if(mounted) {
@@ -290,6 +283,11 @@ setAlldata(){
                                 ),
                               ),
                             ],
+                          ):Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:12.0),
+                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                              )
                           ),
                         ]
                     )
@@ -525,27 +523,27 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
 
-                                                            )),
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -566,26 +564,26 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -639,7 +637,7 @@ setAlldata(){
                         future: _listFuture2,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                           /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countA=snapshot.data.length.toString();
                             }));*/
                             countA=snapshot.data.length.toString();
@@ -665,57 +663,57 @@ setAlldata(){
                                         (index == 0)?
                                           Divider(color: Colors.black26,):new Center(),*/
                                         Row(
-                                        children: <Widget>[
-                                        SizedBox(height: 40.0,),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
-                                            ],
-                                          ),
-                                        ),
+                                          children: <Widget>[
+                                            SizedBox(height: 40.0,),
+                                            Container(
+                                              width: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width * 0.46,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: <Widget>[
+                                                  Text(snapshot.data[index].Name
+                                                      .toString(), style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16.0),),
+                                                ],
+                                              ),
+                                            ),
 
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeIn
+                                                        .toString()),
+                                                  ],
+                                                )
 
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
-                                              ],
-                                            )
+                                            ),
+                                            Container(
+                                                width: MediaQuery
+                                                    .of(context)
+                                                    .size
+                                                    .width * 0.22,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Text(snapshot.data[index].TimeOut
+                                                        .toString()),
+                                                  ],
+                                                )
 
-                                        ),
-                                        ],
+                                            ),
+                                          ],
                                         ),
                                       ],
 
@@ -771,7 +769,7 @@ setAlldata(){
                         future: _listFuture3,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                          /*  SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                            /*  SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                               countL=snapshot.data.length.toString();
                             }));*/
                             countL=snapshot.data.length.toString();
@@ -867,26 +865,26 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -907,26 +905,26 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -982,7 +980,7 @@ setAlldata(){
                       child: new FutureBuilder<List<Attn>>(
                         future: _listFuture4,
                         builder: (context, snapshot) {
-                         /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
+                          /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
                             countE=snapshot.data.length.toString();
                           }));*/
 
@@ -1080,26 +1078,26 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -1120,26 +1118,26 @@ setAlldata(){
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -1269,6 +1267,7 @@ setAlldata(){
   dialogwidget(msg, filename) {
     showDialog(
         context: context,
+        // ignore: deprecated_member_use
         child: new AlertDialog(
           content: new Text(msg),
           actions: <Widget>[
@@ -1297,5 +1296,7 @@ setAlldata(){
           ],
         ));
   }
+
+
 
 }

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // this is testing
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
-import 'home.dart';
+
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'home.dart';
 import 'login.dart';
-import 'ask_registeration.dart';
-import 'self_register_emp.dart';
 import 'register_org.dart';
 class AskRegisterationPage extends StatefulWidget {
   @override

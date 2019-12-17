@@ -2,49 +2,32 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:Shrine/database_models/visits_offline.dart';
 import 'package:Shrine/globals.dart' as prefix0;
-import 'package:Shrine/punchlocation.dart';
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'askregister.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'drawer.dart';
-import 'offline_attendance_logs.dart';
-import 'timeoff_summary.dart';
-import 'package:Shrine/services/services.dart';
-import 'leave.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'home.dart';
-import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'genericCameraClass.dart';
 import 'globals.dart';
-import 'punchlocation_summary.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'services/services.dart';
-import 'package:connectivity/connectivity.dart';
-import 'notifications.dart';
-import 'package:flutter/services.dart';
-import 'offline_home.dart';
+import 'home.dart';
 import 'loggedOut.dart';
 import 'login.dart';
-import 'package:Shrine/database_models/database.dart';
-import 'package:Shrine/database_models/visits_offline.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'dart:convert';
+import 'offline_attendance_logs.dart';
+import 'offline_home.dart';
 import 'punch_location_summary_offline.dart';
-import 'genericCameraClass.dart';
+import 'services/services.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class PunchLocationOffline extends StatefulWidget {
@@ -784,6 +767,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           // cameraChannel.invokeMethod("cameraClosed");
           img.deleteSync();
           imageCache.clear();
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -825,6 +809,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
       print("---------------Visit in saved offline---------------");
 
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         content: new Text(
@@ -933,6 +918,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           cameraChannel.invokeMethod("cameraClosed");
           img.deleteSync();
           imageCache.clear();
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -974,6 +960,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
 
       print("---------------Visit in saved offline---------------");
 
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         content: new Text(

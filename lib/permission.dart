@@ -2,32 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'punchlocation.dart';
-import 'drawer.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-//import 'package:datetime_picker_formfield/time_picker_formfield.dart';
 import 'package:Shrine/model/model.dart' as TimeOffModal;
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
-import 'timeoff_summary.dart';
-import 'package:flutter/services.dart';
 import 'package:Shrine/services/services.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
+import 'login.dart';
+import 'timeoff_summary.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PermissionPage extends StatefulWidget {
   @override

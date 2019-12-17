@@ -1,33 +1,20 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'punchlocation.dart';
-import 'drawer.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-//import 'package:datetime_picker_formfield/time_picker_formfield.dart';
-import 'package:Shrine/model/model.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'leave_summary.dart';
-import 'settings.dart';
-import 'home.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'notifications.dart';
-import 'globals.dart';
-import 'services/services.dart';
 import 'package:Shrine/Bottomnavigationbar.dart';
+import 'package:Shrine/model/model.dart';
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/gethome.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'drawer.dart';
+import 'globals.dart';
+import 'leave_summary.dart';
+import 'login.dart';
+import 'services/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 class LeavePage extends StatefulWidget {
   @override
@@ -237,8 +224,8 @@ class _LeavePageState extends State<LeavePage> {
                        //Enter date
                       Row(
                         children: <Widget>[
-                          Expanded(
-                            /*child: DateTimePickerFormField(
+                          /*Expanded(
+                            child: DateTimePickerFormField(
 
                               firstDate: new DateTime.now(),
                               initialDate: new DateTime.now(),
@@ -267,8 +254,8 @@ class _LeavePageState extends State<LeavePage> {
                                 });
                                 print("----->Changed date------> "+Date1.toString());
                                 },
-                            ),*/
-                          ),
+                            ),
+                          ),*/
                           SizedBox(width: 10.0),
                           Expanded(
                             child: new InputDecorator(
@@ -334,8 +321,8 @@ class _LeavePageState extends State<LeavePage> {
                       SizedBox(height: 10.0,),
                       Row(
                         children: <Widget>[
-                          Expanded(
-                            /*child: DateTimePickerFormField(
+                          /*Expanded(
+                            child: DateTimePickerFormField(
                               firstDate: new DateTime.now(),
                               initialDate: new DateTime.now(),
                               dateOnly: true,
@@ -369,8 +356,8 @@ class _LeavePageState extends State<LeavePage> {
                                 }
 
                               },
-                            ),*/
-                          ),
+                            ),
+                          ),*/
                           SizedBox(width: 10.0),
                           Expanded(
                             child:new InputDecorator(

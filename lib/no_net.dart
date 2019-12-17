@@ -2,16 +2,15 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
 import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
+import 'login.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class NoNet extends StatefulWidget {
@@ -28,10 +27,10 @@ class _NoNetState extends State<NoNet> {
   String _country;
   PersistentBottomSheetController controller;
   bool _checkLoaded = true;
-  bool _isButtonDisabled= false;
-  bool _isProfileUploading= false;
-  int _currentIndex = 2;
-  bool _visible = true;
+  //bool _isButtonDisabled= false;
+  //bool _isProfileUploading= false;
+  //int _currentIndex = 2;
+  //bool _visible = true;
   String location_addr="";
   String location_addr1="";
   String admin_sts='0';

@@ -1,17 +1,17 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'employee_list.dart';
-import 'Bottomnavigationbar.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:native_contact_picker/native_contact_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'employee_list.dart';
 
 class EditEmployee extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class EditEmployee extends StatefulWidget {
 class _EditEmployee extends State<EditEmployee> {
   bool isloading = false;
   final NativeContactPicker _contactPicker = new NativeContactPicker();
-  Contact _contactpick;
+  //Contact _contactpick;
   final _firstName = TextEditingController();
   final _lastName = TextEditingController();
   final _email = TextEditingController();
@@ -41,11 +41,11 @@ class _EditEmployee extends State<EditEmployee> {
   final _department1 = TextEditingController();
   final _pass = TextEditingController();
   String admin_sts = '0';
-  FocusNode __fullName = new FocusNode();
+  /*FocusNode __fullName = new FocusNode();
   FocusNode __email = new FocusNode();
   FocusNode __country = new FocusNode();
   FocusNode __contact = new FocusNode();
-  FocusNode __pass = new FocusNode();
+  FocusNode __pass = new FocusNode();*/
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int response = 0;
@@ -312,14 +312,14 @@ class _EditEmployee extends State<EditEmployee> {
     initPlatformState();
 
 
-    final _firstName = TextEditingController();
+    /*final _firstName = TextEditingController();
     final _lastName = TextEditingController();
     final _email = TextEditingController();
     final _countryCode = TextEditingController();
     final _countryId = TextEditingController();
     final _contact = TextEditingController();
     final _department1 = TextEditingController();
-    final _pass = TextEditingController();
+    final _pass = TextEditingController();*/
     //  shiftList= getShifts();
   }
 
@@ -452,9 +452,10 @@ class _EditEmployee extends State<EditEmployee> {
             ),]
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(left: 50.0),
+              //margin: const EdgeInsets.only(left: 50.0),
               child: ButtonBar(
                 children: <Widget>[
                   FlatButton(

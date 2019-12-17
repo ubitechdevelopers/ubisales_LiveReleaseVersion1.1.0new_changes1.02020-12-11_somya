@@ -1,14 +1,8 @@
 import 'database.dart';
-import 'dart:io';
-import 'package:intl/intl.dart';
 
 
 class VisitsOffline{
-
-
   int Id ;
-
-
   int EmployeeId;
   String VisitInLatitude;
   String VisitInLongitude;

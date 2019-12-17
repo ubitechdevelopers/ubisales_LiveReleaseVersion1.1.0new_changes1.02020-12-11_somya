@@ -1,17 +1,15 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
+import 'package:Shrine/generatepdf.dart';
 import 'package:Shrine/services/services.dart';
-import 'outside_label.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'drawer.dart';
+import 'package:simple_share/simple_share.dart';
+
 import 'Image_view.dart';
+import 'drawer.dart';
 import 'globals.dart';
-import 'package:flutter/scheduler.dart';
 // This app is a stateful, it tracks the user's current choice.
 class EmployeeWise_att extends StatefulWidget {
   @override
@@ -22,22 +20,44 @@ String _orgName = "";
 class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String countP='-',countA='-',countL='-',countE='-';
+  String countP='0',countA='0',countL='0',countE='0';
   String emp='0';
+  bool filests = false;
 //  var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
+  Future<List<Attn>> _listFuture1, _listFuture2,_listFuture3,_listFuture4;
+  List presentlist= new List(), absentlist= new List(), latecommerlist= new List(), earlyleaverlist= new List();
   List<Map<String,String>> chartData;
+
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
         content: Text(value,textAlign: TextAlign.center,));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _orgName= prefs.getString('org_name') ?? '';
-    });
+    if(mounted) {
+      setState(() {
+        _orgName=prefs.getString('org_name') ?? '';
+      });
+      //getCount();
+    }
   }
+
+  /*getCount() async {
+    getEmpHistoryOf30Count(emp).then((onValue) {
+      setState(() {
+        if(res == true) {
+          countP=onValue[0]['present'];
+          countA=onValue[0]['absent'];
+          countL=onValue[0]['latecomings'];
+          countE=onValue[0]['earlyleavings'];
+        }
+      });
+    });
+  }*/
+
   @override
   void initState() {
     super.initState();
@@ -45,9 +65,44 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
     appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
- //   today = new TextEditingController();
-   // today.text = formatter.format(DateTime.now());
+    setAlldata();
   }
+
+  setAlldata(){
+    _listFuture1 = getEmpHistoryOf30('present',emp);
+    _listFuture2 = getEmpHistoryOf30('absent',emp);
+    _listFuture3 = getEmpHistoryOf30('latecomings',emp);
+    _listFuture4 = getEmpHistoryOf30('earlyleavings',emp);
+
+    _listFuture1.then((data) async{
+      setState(() {
+        presentlist = data;
+        countP = data.length.toString();
+      });
+    });
+
+    _listFuture2.then((data) async{
+      setState(() {
+        absentlist = data;
+        countA = data.length.toString();
+      });
+    });
+
+    _listFuture3.then((data) async{
+      setState(() {
+        latecommerlist = data;
+        countL = data.length.toString();
+      });
+    });
+
+    _listFuture4.then((data) async{
+      setState(() {
+        earlyleaverlist = data;
+        countE= data.length.toString();
+      });
+    });
+  }
+
   void _updateText() {
     setState(() {
       // update the text
@@ -69,10 +124,152 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
         children: <Widget>[
           SizedBox(height:3.0),
           new Container(
-            child: Center(child:Text("Employee Wise Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Employee Wise Attendance",style: TextStyle(fontSize: 22.0,color:Colors.black54,),),),
           ),
-          Divider(height: 2.0,),
-          getEmployee_DD(),
+          //Divider(height: 2.0,),
+          Row(
+            children: <Widget>[
+              Expanded(child: getEmployee_DD()),
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child:(emp != '0')?Container(
+                    color: Colors.white,
+                    height: 65,
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: new Column(
+                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          (presentlist.length > 0 || absentlist.length > 0 || latecommerlist.length > 0 || earlyleaverlist.length > 0)?
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height:  65,
+                              ),
+                              Container(
+                                //padding: EdgeInsets.only(left: 5.0),
+                                child: InkWell(
+                                  child: Text('CSV',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Colors.blueAccent,
+                                      fontSize: 16,
+                                      //fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    //openFile(filepath);
+                                    if (mounted) {
+                                      setState(() {
+                                        filests = true;
+                                      });
+                                    }
+                                    getCsvAlldata(presentlist, absentlist, latecommerlist, earlyleaverlist,
+                                          'Employee_Wise_Report', 'emp')
+                                          .then((res) {
+                                        print('snapshot.data');
+
+                                        if (mounted) {
+                                          setState(() {
+                                            filests=false;
+                                          });
+                                        }
+                                        // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
+                                        dialogwidget(
+                                            "CSV has been saved in internal storage in ubiattendance_files/Employee_Wise_Report" +
+                                                ".csv", res);
+                                      }
+                                      );
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width:6,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(
+                                    left: 5.0),
+                                child: InkWell(
+                                  child: Text('PDF',
+                                    style: TextStyle(
+                                      decoration:
+                                      TextDecoration
+                                          .underline,
+                                      color: Colors
+                                          .blueAccent,
+                                      fontSize: 16,),
+                                  ),
+                                  onTap: () {
+                                    final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
+                                    SimpleShare.share(
+                                        uri: uri.toString(),
+                                        title: "Share my file",
+                                        msg: "My message");
+                                    if (mounted) {
+                                      setState(() {
+                                        filests = true;
+                                      });
+                                    }
+
+                                    CreateDesgpdfAll(
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Wise Summary Report',
+                                        presentlist.toString(), 'Employee_Wise_Report', 'desg')
+                                        .then((res) {
+                                      if(mounted) {
+                                        setState(() {
+                                          filests =
+                                          false;
+                                          // OpenFile.open("/sdcard/example.txt");
+                                        });
+                                      }
+                                      dialogwidget(
+                                          'PDF has been saved in internal storage in ubiattendance_files/Employee_Wise_Report'+
+                                              '.pdf',
+                                          res);
+                                      // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ):Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:12.0),
+                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                              )
+                          )
+                        ]
+                    )
+                ):Center()
+              )
+            ],
+          ),
+          Divider(height: 10,color: Colors.black,),
+          //SizedBox(height: 5,),
+          new Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text(
+                'Present($countP)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Absent($countA)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Late Comers($countL)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+              Text(
+                'Early Leavers($countE)',
+                style: TextStyle(color: Colors.orange, fontSize: 12.0),
+              ),
+            ],
+          ),
+          //Divider(),
+          SizedBox(height: 5,),
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
@@ -101,7 +298,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.50,
-                child:Text('        Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
@@ -133,7 +330,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                          future: getEmpHistoryOf30('present',emp),
+                          future: _listFuture1,
 
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -150,7 +347,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                         /* (index == 0)?
                                             Row(
                                                   children: <Widget>[
                                                     SizedBox(height: 25.0,),
@@ -161,7 +358,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                    ]
                                                ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -172,7 +369,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 width: MediaQuery
                                                     .of(context)
                                                     .size
-                                                    .width * 0.38,
+                                                    .width * 0.47,
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment
                                                       .start,
@@ -353,7 +550,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getEmpHistoryOf30('absent',emp),
+                        future: _listFuture2,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                            /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
@@ -367,7 +564,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                        children: <Widget>[
-                                         (index == 0)?
+                                        /* (index == 0)?
                                            Row(
                                                children: <Widget>[
                                                  SizedBox(height: 25.0,),
@@ -378,7 +575,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                ]
                                            ):new Center(),
                                          (index == 0)?
-                                           Divider(color: Colors.black26,):new Center(),
+                                           Divider(color: Colors.black26,):new Center(),*/
                                        Row(
                                            mainAxisAlignment: MainAxisAlignment
                                                .spaceAround,
@@ -484,7 +681,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getEmpHistoryOf30('latecomings',emp),
+                        future: _listFuture3,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             /*SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
@@ -498,7 +695,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                          /*(index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -509,7 +706,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -697,7 +894,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        future: getEmpHistoryOf30('earlyleavings',emp),
+                        future: _listFuture4,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                            /* SchedulerBinding.instance.addPostFrameCallback((_) => setState(() {
@@ -711,7 +908,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          (index == 0)?
+                                          /*(index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -722,7 +919,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
+                                            Divider(color: Colors.black26,):new Center(),*/
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -917,12 +1114,15 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
           if (snapshot.hasData) {
             try {
               return new Container(
-                //    width: MediaQuery.of(context).size.width*.45,
+                color: Colors.white,
+                //width: MediaQuery.of(context).size.width*.45,
                 child: InputDecorator(
+
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     labelText: 'Select Employee',
                     prefixIcon: Padding(
-                      padding: EdgeInsets.all(1.0),
+                      padding: EdgeInsets.all(0.0),
                       child: Icon(
                         Icons.person,
                         color: Colors.grey,
@@ -930,30 +1130,42 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                     ),
                   ),
 
-                  child: new DropdownButton<String>(
-                    isDense: true,
-                    style: new TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: new DropdownButton<String>(
+                      isExpanded: true,
+                      isDense: true,
+                      style: new TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black
+                      ),
+                      value: emp,
+                      onChanged: (String newValue) {
+                          setState(() {
+                            emp = newValue;
+                            if(res = true) {
+                              //getCount();
+                              setAlldata();
+                            }else{
+                              print('state set----');
+                              countP='0';
+                              countA='0';
+                              countE='0';
+                              countL='0';
+                            }
+                          });
+                      },
+                      items: snapshot.data.map((Map map) {
+                        return new DropdownMenuItem<String>(
+                          value: map["Id"].toString(),
+                          child: new SizedBox(
+                              width: 300.0,
+                              child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
+                                new Text(map["Name"],)),
+                        );
+                      }).toList(),
+
                     ),
-                    value: emp,
-                    onChanged: (String newValue) {
-                        setState(() {
-                          emp = newValue;
-                          res = true;
-
-                        });
-                    },
-                    items: snapshot.data.map((Map map) {
-                      return new DropdownMenuItem<String>(
-                        value: map["Id"].toString(),
-                        child: new SizedBox(
-                            width: 200.0,
-                            child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
-                              new Text(map["Name"],)),
-                      );
-                    }).toList(),
-
                   ),
                 ),
               );
@@ -975,5 +1187,36 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
         });
   }
 
+  dialogwidget(msg, filename) {
+    showDialog(
+        context: context,
+        child: new AlertDialog(
+          content: new Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Later'),
+              shape: Border.all(),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                'Share File',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: buttoncolor,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                final uri = Uri.file(filename);
+                SimpleShare.share(
+                    uri: uri.toString(),
+                    title: "Ubiattendance Report",
+                    msg: "Ubiattendance Report");
+              },
+            ),
+          ],
+        ));
+  }
 
 }

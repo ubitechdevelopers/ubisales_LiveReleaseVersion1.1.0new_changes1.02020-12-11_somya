@@ -1,21 +1,17 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
 import 'package:Shrine/drawer.dart';
-import 'package:flutter/material.dart' as prefix1;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'holidays.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix1;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
+import 'holidays.dart';
 class addHoliday extends StatefulWidget {
   @override
   _addHoliday createState() => _addHoliday();
@@ -112,9 +108,10 @@ class _addHoliday extends State<addHoliday> {
             ),]
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(left: 50.0),
+              //margin: const EdgeInsets.only(left: 50.0),
               child: ButtonBar(
 
                 children: <Widget>[

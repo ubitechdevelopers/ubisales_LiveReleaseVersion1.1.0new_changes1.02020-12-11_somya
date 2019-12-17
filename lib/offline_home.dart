@@ -2,37 +2,32 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Shrine/services/services.dart';
-import 'database_models/qr_offline.dart';
-import 'globals.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:url_launcher/url_launcher.dart';
-
-//import 'services/services.dart';
-
-import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
-import 'dart:io';
 import 'dart:convert';
-import 'package:Shrine/database_models/attendance_offline.dart';
-import 'package:intl/intl.dart';
+import 'dart:io';
 
-import 'package:Shrine/login.dart';
+import 'package:Shrine/database_models/attendance_offline.dart';
+import 'package:Shrine/genericCameraClass.dart';
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/home.dart';
 import 'package:Shrine/loggedOut.dart';
+import 'package:Shrine/login.dart';
+import 'package:Shrine/services/fetch_location.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'database_models/qr_offline.dart';
+import 'globals.dart';
 import 'offline_attendance_logs.dart';
 import 'punch_location_summary_offline.dart';
-import 'package:Shrine/genericCameraClass.dart';
 
 
 // This app is a stateful, it tracks the user's current choice.
@@ -52,7 +47,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
 
   String attendanceFound='Time In Not Marked';
-  bool _visible = true;
+  //bool _visible = true;
 
   String act = "";
   String act1 = "";
@@ -292,7 +287,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
    // Loc lock = new Loc();
    // String location_addr111 = await lock.initPlatformState();
     int off= prefs.getInt("OfflineModePermission")??0;
-    var isAlreadyLoggedIn=prefs.getInt("response")??0;
+    //var isAlreadyLoggedIn=prefs.getInt("response")??0;
     if(off!=1){
 
 
@@ -843,6 +838,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               /*
                */
               Future.delayed(const Duration(milliseconds: 2000), () {
+                // ignore: deprecated_member_use
                 showDialog(context: context, child:
                 new AlertDialog(
                   content: new Text(
@@ -925,6 +921,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           timeInPressedTime=null;
           timeOutPressedTime=null;
           Future.delayed(const Duration(milliseconds: 2000), () {
+            // ignore: deprecated_member_use
             showDialog(context: context, child:
             new AlertDialog(
               content: new Text(
@@ -1106,6 +1103,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               /*
                */
               Future.delayed(const Duration(milliseconds: 2000), () {
+                // ignore: deprecated_member_use
                 showDialog(context: context, child:
                 new AlertDialog(
                   content: new Text(
@@ -1190,6 +1188,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           timeInPressedTime=null;
           timeOutPressedTime=null;
           Future.delayed(const Duration(milliseconds: 2000), () {
+            // ignore: deprecated_member_use
             showDialog(context: context, child:
             new AlertDialog(
               content: new Text(
@@ -1389,6 +1388,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         setState(() {
           loading=false;
         });
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text("Sorry You are not connected to internet!"),
@@ -1872,6 +1872,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             img.deleteSync();
             imageCache.clear();
 
+            // ignore: deprecated_member_use
             showDialog(context: context, child:
             new AlertDialog(
               content: new Text(
@@ -1943,6 +1944,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         timeInPressedTime=null;
         timeOutPressedTime=null;
 
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text(
@@ -2083,6 +2085,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             img.deleteSync();
             imageCache.clear();
 
+            // ignore: deprecated_member_use
             showDialog(context: context, child:
             new AlertDialog(
               content: new Text(
@@ -2154,6 +2157,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         timeInPressedTime=null;
         timeOutPressedTime=null;
 
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text(

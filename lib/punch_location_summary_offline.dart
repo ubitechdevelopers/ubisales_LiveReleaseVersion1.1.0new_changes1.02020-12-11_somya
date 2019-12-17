@@ -1,36 +1,22 @@
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:Shrine/punchlocation_summary.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'drawer.dart';
-import 'home.dart';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:Shrine/database_models/visits_offline.dart';
+import 'package:Shrine/genericCameraClass.dart';
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'offline_attendance_logs.dart';
-import 'punchlocation.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'settings.dart';
-import 'globals.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'Image_view.dart';
-import 'notifications.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Image_view.dart';
+import 'globals.dart';
+import 'offline_attendance_logs.dart';
 import 'offline_home.dart';
 import 'punch_location_offline.dart';
-import 'package:Shrine/database_models/visits_offline.dart';
-import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'punch_location_summary_offline.dart';
-import 'package:Shrine/genericCameraClass.dart';
-//import 'package:intl/intl.dart';
-
 
 void main() => runApp(new PunchLocationSummaryOffline());
 
@@ -53,7 +39,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
   int _currentIndex = 1;
 
   //StreamLocation sl = new StreamLocation();
-  bool _isButtonDisabled= false;
+  //bool _isButtonDisabled= false;
   final _comments=TextEditingController();
 
   Timer timer;
@@ -310,6 +296,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
     });
     await showDialog<String>(
       context: context,
+      // ignore: deprecated_member_use
       child: new AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
         content: Container(
@@ -414,6 +401,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           img.deleteSync();
           imageCache.clear();
 
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -447,6 +435,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
       print("---------------Visit in saved offline---------------");
       Navigator.of(context, rootNavigator: true).pop();
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
         content: new Text(
@@ -530,6 +519,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           img.deleteSync();
           imageCache.clear();
 
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -563,6 +553,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
 
           print("---------------Visit in saved offline---------------");
           Navigator.of(context, rootNavigator: true).pop();
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(

@@ -1,11 +1,10 @@
-import 'package:sqflite/sqflite.dart';
-import 'dart:io' as io;
 import 'dart:async';
+import 'dart:io' as io;
+
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 class DbHelper{
   static Database _db;
   Future<Database> get db async{

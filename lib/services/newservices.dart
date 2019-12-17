@@ -1,18 +1,20 @@
 
-import 'package:dio/dio.dart';
-import 'dart:convert';
-import 'package:Shrine/model/model.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:Shrine/genericCameraClass.dart';
+import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/globals.dart';
+import 'package:Shrine/model/model.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
-import 'package:Shrine/globals.dart';
+
 import 'services.dart';
-import 'package:Shrine/genericCameraClass.dart';
 
 class RequestTimeOffService{
 

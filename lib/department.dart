@@ -1,16 +1,9 @@
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'drawer.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
-import 'offline_home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+
 import 'Bottomnavigationbar.dart';
-import 'notifications.dart';
+import 'drawer.dart';
 import 'globals.dart';
 class Department extends StatefulWidget {
   @override

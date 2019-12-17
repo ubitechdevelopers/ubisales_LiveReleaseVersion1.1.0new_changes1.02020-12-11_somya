@@ -1,7 +1,8 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:Shrine/globals.dart' as globals;
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home{
   var dio = new Dio();

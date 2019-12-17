@@ -1,13 +1,13 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
 import 'package:Shrine/services/services.dart';
-import 'outside_label.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'drawer.dart';
 import 'globals.dart';
+import 'outside_label.dart';
 // This app is a stateful, it tracks the user's current choice.
 class LastSeven extends StatefulWidget {
   @override
@@ -52,7 +52,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
           new Container(
-            child: Center(child:Text("Attendance Snap - Last Seven Days",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Attendance Snap - Last 7 Days",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
           ),
           new Container(
             padding: EdgeInsets.all(0.1),

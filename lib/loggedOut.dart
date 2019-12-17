@@ -3,29 +3,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
 import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'punchlocation.dart';
-import 'drawer.dart';
-import 'package:Shrine/model/model.dart';
-import 'timeoff_summary.dart';
-import 'package:Shrine/services/services.dart';
 import 'package:Shrine/services/newservices.dart';
-import 'home.dart';
-import 'dart:io';
-import 'dart:async';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
+import 'login.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class LoggedOut extends StatefulWidget {
@@ -42,10 +28,10 @@ class _LoggedOutState extends State<LoggedOut> {
   String _country;
   PersistentBottomSheetController controller;
   bool _checkLoaded = true;
-  bool _isButtonDisabled= false;
+ /*bool _isButtonDisabled= false;
   bool _isProfileUploading= false;
   int _currentIndex = 2;
-  bool _visible = true;
+  bool _visible = true;*/
   String location_addr="";
   String location_addr1="";
   String admin_sts='0';

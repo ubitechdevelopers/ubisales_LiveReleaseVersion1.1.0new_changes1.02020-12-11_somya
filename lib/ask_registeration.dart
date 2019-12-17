@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'askregister.dart';
-import 'services/services.dart';
-import 'self_register_emp.dart';
-import 'register_org.dart';
 import 'globals.dart';
+import 'register_org.dart';
+import 'self_register_emp.dart';
+import 'services/services.dart';
 class AskRegisteration extends StatefulWidget {
   AskRegisteration({Key key, this.title}) : super(key: key);
   final String title;

@@ -1,23 +1,15 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
+import 'package:Shrine/Bottomnavigationbar.dart';
 import 'package:Shrine/drawer.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home.dart';
-import 'offline_home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'notifications.dart';
 import 'globals.dart';
-import 'package:Shrine/Bottomnavigationbar.dart';
 
 class NotificationSettings extends StatefulWidget {
   @override

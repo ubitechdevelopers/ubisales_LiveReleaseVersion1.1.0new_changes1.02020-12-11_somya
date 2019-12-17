@@ -1,16 +1,12 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:Shrine/globals.dart' as prefix0;
-import 'package:flutter/material.dart';
-import 'package:Shrine/drawer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:intl/intl.dart';
-import 'home.dart';
-import 'login.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
+import 'login.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -185,6 +181,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                                     err=false;
                                     _isButtonDisabled=false;
                                   });
+                                  // ignore: deprecated_member_use
                                   showDialog(context: context, child:
                                   new AlertDialog(
                                     title: new Text("Alert"),

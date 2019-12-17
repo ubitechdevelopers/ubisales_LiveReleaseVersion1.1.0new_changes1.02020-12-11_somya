@@ -1,9 +1,9 @@
 import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
 
 CreateDeptpdf(pdata, HeaderText, Total, pdfName, name) async {
 
@@ -116,7 +116,7 @@ CreateDeptpdf(pdata, HeaderText, Total, pdfName, name) async {
   return 'false';
 }
 
-CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) async {
+CreateDesgpdfAll(pdata, adata, ldata, edata, HeaderText, Total, pdfName, name) async {
 
   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
   //print(permission);
@@ -138,37 +138,37 @@ CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) asy
     List<String> a2 = new List<String>();
 
 
-        a2.add('Name');
-        a2.add('TimeIn');
-        a2.add('TimeIn Location');
-        a2.add('TimeOut');
-        a2.add('TimeOut Location');
-        list.add(a2);
-        a2 = new List<String>();
-        a2.add(' ');
-        a2.add(' ');
-        a2.add(' ');
-        a2.add(' ');
-        a2.add(' ');
-        list.add(a2);
-      a2 = new List<String>();
-      a2.add(' Present ');
-      a2.add(' ');
-      a2.add(' ');
-      a2.add(' ');
-      a2.add(' ');
-      list.add(a2);
+    a2.add('Name');
+    a2.add('TimeIn');
+    a2.add('TimeIn Location');
+    a2.add('TimeOut');
+    a2.add('TimeOut Location');
+    list.add(a2);
+    a2 = new List<String>();
+    a2.add(' ');
+    a2.add(' ');
+    a2.add(' ');
+    a2.add(' ');
+    a2.add(' ');
+    list.add(a2);
+    a2 = new List<String>();
+    a2.add(' Present ');
+    a2.add(' ');
+    a2.add(' ');
+    a2.add(' ');
+    a2.add(' ');
+    list.add(a2);
 
-      for (var i = 0; i < pdata.length; i++) {
-        List<String> a1 = new List<String>();
-        a1.add(pdata[i].Name.toString());
+    for (var i = 0; i < pdata.length; i++) {
+      List<String> a1 = new List<String>();
+      a1.add(pdata[i].Name.toString());
 
-          a1.add(pdata[i].TimeIn.toString());
-          a1.add(pdata[i].CheckInLoc.toString());
-          a1.add(pdata[i].TimeOut.toString());
-          a1.add(pdata[i].CheckOutLoc.toString());
-        list.add(a1);
-      }
+      a1.add(pdata[i].TimeIn.toString());
+      a1.add(pdata[i].CheckInLoc.toString());
+      a1.add(pdata[i].TimeOut.toString());
+      a1.add(pdata[i].CheckOutLoc.toString());
+      list.add(a1);
+    }
 
 
     a2 = new List<String>();
@@ -189,10 +189,10 @@ CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) asy
     for (var i = 0; i < adata.length; i++) {
       List<String> a1 = new List<String>();
       a1.add(adata[i].Name.toString());
-        a1.add('-');
-        a1.add('-');
-        a1.add('-');
-        a1.add('-');
+      a1.add('-');
+      a1.add('-');
+      a1.add('-');
+      a1.add('-');
 
       list.add(a1);
     }
@@ -214,11 +214,11 @@ CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) asy
 
     for (var i = 0; i < ldata.length; i++) {
       List<String> a1 = new List<String>();
-        a1.add(ldata[i].Name.toString());
-        a1.add(ldata[i].TimeIn.toString());
-        a1.add(ldata[i].CheckInLoc.toString());
-        a1.add(ldata[i].TimeOut.toString());
-        a1.add(ldata[i].CheckOutLoc.toString());
+      a1.add(ldata[i].Name.toString());
+      a1.add(ldata[i].TimeIn.toString());
+      a1.add(ldata[i].CheckInLoc.toString());
+      a1.add(ldata[i].TimeOut.toString());
+      a1.add(ldata[i].CheckOutLoc.toString());
 
       list.add(a1);
     }
@@ -241,10 +241,10 @@ CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) asy
     for (var i = 0; i < edata.length; i++) {
       List<String> a1 = new List<String>();
       a1.add(pdata[i].Name.toString());
-        a1.add(edata[i].TimeIn.toString());
-        a1.add(edata[i].CheckInLoc.toString());
-        a1.add(edata[i].TimeOut.toString());
-        a1.add(edata[i].CheckOutLoc.toString());
+      a1.add(edata[i].TimeIn.toString());
+      a1.add(edata[i].CheckInLoc.toString());
+      a1.add(edata[i].TimeOut.toString());
+      a1.add(edata[i].CheckOutLoc.toString());
 
       list.add(a1);
     }
@@ -302,6 +302,3 @@ CreateDeptpdfAll(pdata, adata,ldata,edata, HeaderText, Total, pdfName, name) asy
   }
   return 'false';
 }
-
-
-

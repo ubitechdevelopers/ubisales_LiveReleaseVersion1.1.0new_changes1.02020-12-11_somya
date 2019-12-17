@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
+import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'check_update.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:location/location.dart';
-import 'dart:async';
-import 'check_update.dart';
-import 'package:Shrine/services/services.dart';
-
-import 'offline_home.dart';
 
 class ShrineApp extends StatefulWidget {
   @override

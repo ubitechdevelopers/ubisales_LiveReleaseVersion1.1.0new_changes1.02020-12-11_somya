@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // this is testing
-import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
-import 'login.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Shrine/services/services.dart';
+
 import 'globals.dart';
+import 'home.dart';
+import 'login.dart';
 class CheckUpdate extends StatefulWidget {
   @override
 
@@ -44,14 +44,16 @@ class _CheckUpdate extends State<CheckUpdate> {
   void initState() {
   //  print('55555555555555555555555555555555555555');
     checkMandUpdate().then((res){
-      setState(() {
-   //     print('************************'+res.toString()+'***********************************');
-        mand_update=res;
-      });
+      if(mounted) {
+        setState(() {
+          //     print('************************'+res.toString()+'***********************************');
+          mand_update=res;
+        });
+      }
     });
     super.initState();
     getShared();
-    }
+  }
   getShared() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {

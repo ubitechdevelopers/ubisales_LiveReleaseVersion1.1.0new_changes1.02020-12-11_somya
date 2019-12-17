@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // this is testing
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:Shrine/database_models/qr_offline.dart';
 import 'package:Shrine/globals.dart' as prefix0;
-import 'package:dio/dio.dart';
+import 'package:Shrine/model/user.dart';
+import 'package:Shrine/offline_home.dart';
+import 'package:Shrine/services/checklogin.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'askregister.dart';
+import 'forgot_password.dart';
 import 'globals.dart';
 import 'home.dart';
-import 'package:Shrine/model/user.dart';
-import 'package:Shrine/services/checklogin.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'forgot_password.dart';
-import 'askregister.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity/connectivity.dart';
-import 'package:Shrine/offline_home.dart';
-import 'package:Shrine/database_models/qr_offline.dart';
-import 'genericCameraClass.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -459,6 +458,7 @@ class _LoginPageState extends State<LoginPage> {
               img.deleteSync();
               imageCache.clear();
 
+              // ignore: deprecated_member_use
               showDialog(context: context, child:
               new AlertDialog(
                 content: new Text(
@@ -534,6 +534,7 @@ class _LoginPageState extends State<LoginPage> {
           timeInPressedTime=null;
           timeOutPressedTime=null;
 
+          // ignore: deprecated_member_use
           showDialog(context: context, child:
           new AlertDialog(
             content: new Text(
@@ -573,6 +574,7 @@ class _LoginPageState extends State<LoginPage> {
       if(islogin=="success" )
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               content: new Text("TimeIn marked successfully"),
             ));
@@ -582,6 +584,7 @@ class _LoginPageState extends State<LoginPage> {
       else
         showDialog(
             context: context,
+            // ignore: deprecated_member_use
             child: new AlertDialog(
               content: new Text("TimeOut marked successfully"),
             ));
@@ -609,6 +612,7 @@ class _LoginPageState extends State<LoginPage> {
           SnackBar(content: Text("Problem Getting Location! Please turn on GPS and try again")));*/
       showDialog(
           context: context,
+          // ignore: deprecated_member_use
           child: new AlertDialog(
             content: new Text("Problem Getting Location! Please turn on GPS and try again"),
           ));
@@ -656,6 +660,7 @@ class _LoginPageState extends State<LoginPage> {
             SnackBar(content: Text("Poor network connection.")));
       }
     }else{
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
 

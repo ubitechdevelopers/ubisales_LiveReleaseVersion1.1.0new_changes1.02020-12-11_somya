@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'Bottomnavigationbar.dart';
 import 'cameraSettings.dart';
-import 'drawer.dart';
+import 'change_password.dart';
 import 'department.dart';
 import 'designation.dart';
-import 'custom_icons.dart';
+import 'drawer.dart';
 import 'employee_list.dart';
-import 'notification_settings.dart';
-import 'shift_list.dart';
-import 'change_password.dart';
-import 'permission.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
-import 'profile.dart';
 import 'globals.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'payment.dart';
-import 'reports.dart';
-import 'services/services.dart';
-import 'notifications.dart';
-import 'Bottomnavigationbar.dart';
 import 'holidays.dart';
+import 'home.dart';
+import 'notification_settings.dart';
+import 'payment.dart';
+import 'permission.dart';
+import 'profile.dart';
+import 'services/services.dart';
+import 'shift_list.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -63,6 +61,7 @@ class _Settings extends State<Settings> {
 
   showDialogWidget(String loginstr){
     if(buystatus=="0") {
+      // ignore: deprecated_member_use
       return showDialog(context: context, child:
       new AlertDialog(
         title: new Text("This feature is only available in the premium plan.",

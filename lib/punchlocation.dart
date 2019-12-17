@@ -2,38 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:Shrine/globals.dart' as prefix0;
-import 'package:Shrine/punch_location_offline.dart';
-import 'package:flutter/material.dart';
+import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/fetch_location.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
+import 'package:Shrine/services/gethome.dart';
+import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/saveimage.dart';
+import 'package:Shrine/services/services.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'askregister.dart';
-import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/model/timeinout.dart';
-import 'attendance_summary.dart';
-import 'drawer.dart';
-import 'timeoff_summary.dart';
-import 'package:Shrine/services/services.dart';
-import 'leave.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'home.dart';
-import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
-import 'globals.dart';
-import 'punchlocation_summary.dart';
-import 'settings.dart';
-import 'profile.dart';
-import 'reports.dart';
-import 'services/services.dart';
-import 'package:connectivity/connectivity.dart';
-import 'notifications.dart';
-import 'package:flutter/services.dart';
-import 'offline_home.dart';
 
 import 'Bottomnavigationbar.dart';
+import 'askregister.dart';
+import 'drawer.dart';
+import 'globals.dart';
+import 'home.dart';
+import 'offline_home.dart';
+import 'punchlocation_summary.dart';
+import 'services/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PunchLocation extends StatefulWidget {
   @override
@@ -148,7 +140,6 @@ var FakeLocationStatus=0;
         });
         break;
 
-        return new Future.value("");
     }
   }
 
@@ -617,7 +608,6 @@ var FakeLocationStatus=0;
         ),
       ]);
     }
-    return Container(width: 0.0, height: 0.0);
   }
 
   getVisitInButton() {
@@ -642,6 +632,7 @@ var FakeLocationStatus=0;
           return false;
         }else
           saveVisitImage();
+          return true;
       },
     );
   }
@@ -682,6 +673,7 @@ var FakeLocationStatus=0;
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text("Visit punched successfully!"),
@@ -695,6 +687,7 @@ var FakeLocationStatus=0;
           act1 = act;
         });
       } else {
+        // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           title: new Text("Warning!"),
@@ -706,6 +699,7 @@ var FakeLocationStatus=0;
         });
       }
     }else{
+      // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
 
