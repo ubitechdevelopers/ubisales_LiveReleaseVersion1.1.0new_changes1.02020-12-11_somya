@@ -283,7 +283,7 @@ class _AppDrawerState extends State<AppDrawer> {
           new ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.notifications,size: 20.0),SizedBox(width: 5.0),
+                Icon(Icons.shuffle,size: 20.0),SizedBox(width: 5.0),
                 new Text("Rejected Attendance Log", style: new TextStyle(fontSize: 15.0)),
               ],
             ),
@@ -409,7 +409,7 @@ class _AppDrawerState extends State<AppDrawer> {
           ):new ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.star,size: 20.0),SizedBox(width: 5.0),
+                Icon(Icons.share,size: 20.0),SizedBox(width: 5.0),
                 new Text("Share and Earn", style: new TextStyle(fontSize: 15.0)),
               ],
             ),
@@ -450,7 +450,7 @@ class _AppDrawerState extends State<AppDrawer> {
           new ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.security,size: 20.0),SizedBox(width: 5.0),
+                Icon(Icons.import_contacts,size: 20.0),SizedBox(width: 5.0),
                 new Text("User Guide", style: new TextStyle(fontSize: 14.0)),
               ],
             ),
@@ -491,7 +491,7 @@ class _AppDrawerState extends State<AppDrawer> {
           new ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.help_outline,size: 20.0),SizedBox(width: 5.0),
+                Icon(Icons.contact_phone,size: 20.0),SizedBox(width: 5.0),
                 new Text("Contact Us", style: new TextStyle(fontSize: 15.0)),
               ],
             ),
@@ -506,7 +506,7 @@ class _AppDrawerState extends State<AppDrawer> {
           new ListTile(
             title: Row(
               children: <Widget>[
-                Icon(Icons.lock_open,size: 20.0),SizedBox(width: 5.0),
+                Icon(Icons.exit_to_app,size: 20.0),SizedBox(width: 5.0),
                 new Text("Log out", style: new TextStyle(fontSize: 15.0)),
               ],
             ),

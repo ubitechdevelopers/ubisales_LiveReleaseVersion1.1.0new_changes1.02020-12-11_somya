@@ -243,25 +243,21 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                                                         fontSize: 16,),
                                                     ),
                                                     onTap: () {
-                                                      final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Early_Leavers_Report_14-Jun-2019.pdf');
+                                                     /* final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Early_Leavers_Report_14-Jun-2019.pdf');
                                                       SimpleShare.share(
                                                           uri: uri.toString(),
                                                           title: "Share my file",
-                                                          msg: "My message");
+                                                          msg: "My message");*/
                                                       if (mounted) {
                                                         setState(() {
                                                           filests = true;
                                                         });
                                                       }
-                                                      CreateDeptpdf(
+                                                      Createpdf(
                                                           snapshot.data,
-                                                          'Early Leavers Report',
-                                                          snapshot.data
-                                                              .length
-                                                              .toString(),
-                                                          'Early_Leavers_Report_' +
-                                                              today
-                                                                  .text,
+                                                          'Early Leavers Report\n' + today.text,
+                                                          snapshot.data.length.toString(),
+                                                          'Early_Leavers_Report_' + today.text,
                                                           'earlyLeavers')
                                                           .then((res) {
                                                         if(mounted) {
