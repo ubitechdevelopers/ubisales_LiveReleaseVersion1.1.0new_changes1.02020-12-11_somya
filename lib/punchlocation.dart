@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/model/timeinout.dart';
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';

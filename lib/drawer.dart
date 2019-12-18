@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:share/share.dart';

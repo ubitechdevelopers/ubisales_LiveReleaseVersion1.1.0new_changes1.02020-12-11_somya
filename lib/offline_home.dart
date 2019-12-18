@@ -12,7 +12,6 @@ import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/home.dart';
 import 'package:Shrine/loggedOut.dart';
 import 'package:Shrine/login.dart';
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';

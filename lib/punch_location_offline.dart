@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:Shrine/database_models/visits_offline.dart';
 import 'package:Shrine/globals.dart' as prefix0;
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';

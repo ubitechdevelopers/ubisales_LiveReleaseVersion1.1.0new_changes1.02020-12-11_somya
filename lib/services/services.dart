@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' show cos, sqrt, asin;
+import 'dart:math' show Random, asin, cos, sqrt;
 
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/globals.dart';
@@ -20,27 +21,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:Shrine/globals.dart';
-import 'package:Shrine/offline_home.dart';
-import 'dart:io';
-import 'package:flutter/scheduler.dart';
-import 'package:Shrine/no_net.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:csv/csv.dart';
-import 'package:location/location.dart';
-import 'dart:math' show Random, asin, cos, sqrt;
-import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:android_intent/android_intent.dart';
-import 'package:path/path.dart';
-import 'package:http/http.dart' as http;
 import '../home.dart';
 
 class Services {}
@@ -262,10 +246,11 @@ Future<int> checkConnectionToServer () async{
     var uri = Uri.parse(path);
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
-     final result = await InternetAddress.lookup("google.com")/*.timeout(const Duration(seconds: 2))*/;
+   //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
    http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
    // print("response code"+response.statusCode.toString());
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
+    //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
+    if (response.statusCode==200 ) {
       print('connected');
       serverConnected=1;
     }else{
@@ -2546,8 +2531,8 @@ addBulkAtt(List<grpattemp> data) async {
 Future<int> checkNet() async {
   try {
     http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
-    final result = await InternetAddress.lookup('google.com')/*.timeout(const Duration(seconds: 2))*/;
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200) {
+    //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
+    if (response.statusCode==200) {
       print('connected');
       varCheckNet = 1;
     } else {

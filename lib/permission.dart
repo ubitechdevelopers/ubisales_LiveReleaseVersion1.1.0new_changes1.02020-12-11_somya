@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:Shrine/model/model.dart' as TimeOffModal;
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/services.dart';

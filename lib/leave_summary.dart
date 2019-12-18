@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 import 'package:Shrine/Bottomnavigationbar.dart';
 import 'package:Shrine/model/model.dart';
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
