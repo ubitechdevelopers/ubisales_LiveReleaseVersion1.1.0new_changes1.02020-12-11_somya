@@ -281,11 +281,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                         filests = true;
                                                       });
 
-                                                      getCsv(
-                                                              snapshot.data,
-                                                              'Today_present_$todaydate',
-                                                              'present')
-                                                          .then((res) {
+                                                      getCsv(snapshot.data, 'Today_present_$todaydate', 'present').then((res) {
                                                         setState(() {
                                                           filests = false;
                                                         });
