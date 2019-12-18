@@ -832,8 +832,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "country": _tempcontry,
                                 "countrycode": '',
                                 "address": _city.text,
-                                "referrerId":referrerId
-
+                                "referrerId":referrerId,
                                 "platform":'android'
                               }) .then((response) {
                                 if  (response.statusCode == 200) {

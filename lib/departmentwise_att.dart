@@ -256,11 +256,11 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                   fontSize: 16,),
                                               ),
                                               onTap: () {
-                                                final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Department_Report_14-Jun-2019.pdf');
+                                                /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Department_Report_14-Jun-2019.pdf');
                                                 SimpleShare.share(
                                                     uri: uri.toString(),
                                                     title: "Share my file",
-                                                    msg: "My message");
+                                                    msg: "My message");*/
                                                 if (mounted) {
                                                   setState(() {
                                                     filests = true;
@@ -268,13 +268,9 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                 }
                                                 CreateDeptpdf(
                                                     snapshot.data,
-                                                    'Department Summary Report',
-                                                    snapshot.data
-                                                        .length
-                                                        .toString(),
-                                                    'Department_Report_' +
-                                                        today
-                                                            .text,
+                                                    'Department Summary Report\n'+ today.text,
+                                                    snapshot.data.length.toString(),
+                                                    'Department_Report_' + today.text,
                                                     'dept')
                                                     .then((res) {
                                                   if(mounted) {

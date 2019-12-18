@@ -250,19 +250,25 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                       fontSize: 16,),
                                   ),
                                   onTap: () {
-                                    final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Designation_Wise_Report_14-Jun-2019.pdf');
+                                    /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Designation_Wise_Report_14-Jun-2019.pdf');
                                     SimpleShare.share(
                                         uri: uri.toString(),
                                         title: "Share my file",
-                                        msg: "My message");
+                                        msg: "My message");*/
                                     if (mounted) {
                                       setState(() {
                                         filests = true;
                                       });
                                     }
                                     CreateDesgpdfAll(
-                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Designation Wise Summary Report',
-                                        presentlist.toString(), 'Designation_Wise_Report_' + today.text, 'desg')
+                                        presentlist,
+                                        absentlist,
+                                        latecommerlist,
+                                        earlyleaverlist,
+                                        'Designation Wise Summary Report\n' + today.text,
+                                        presentlist.toString(),
+                                        'Designation_Wise_Report_' + today.text,
+                                        'desg')
                                         .then((res) {
                                       if(mounted) {
                                         setState(() {

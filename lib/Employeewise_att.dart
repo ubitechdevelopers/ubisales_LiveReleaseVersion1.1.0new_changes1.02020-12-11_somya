@@ -23,6 +23,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
   String countP='0',countA='0',countL='0',countE='0';
   String emp='0';
   bool filests = false;
+  String empname= '';
 //  var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
   Future<List<Attn>> _listFuture1, _listFuture2,_listFuture3,_listFuture4;
@@ -103,12 +104,12 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
     });
   }
 
-  void _updateText() {
+  /*void _updateText() {
     setState(() {
       // update the text
       countP = countP;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -200,20 +201,19 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                       fontSize: 16,),
                                   ),
                                   onTap: () {
-                                    final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
+                                    /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
                                     SimpleShare.share(
                                         uri: uri.toString(),
                                         title: "Share my file",
-                                        msg: "My message");
+                                        msg: "My message");*/
                                     if (mounted) {
                                       setState(() {
                                         filests = true;
                                       });
                                     }
-
-                                    CreateDesgpdfAll(
-                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Wise Summary Report',
-                                        presentlist.toString(), 'Employee_Wise_Report', 'desg')
+                                    CreateEmployeeWisepdf(
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
+                                        'Employee_Wise_Report', 'employeewise')
                                         .then((res) {
                                       if(mounted) {
                                         setState(() {
@@ -1141,6 +1141,17 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                       ),
                       value: emp,
                       onChanged: (String newValue) {
+                        for(int i=0;i<snapshot.data.length;i++)
+                        {
+                          if(snapshot.data[i]['Id'].toString()==newValue)
+                          {
+                            setState(() {
+                              empname = snapshot.data[i]['Name'].toString();
+                            });
+                            break;
+                          }
+                          print(i);
+                        }
                           setState(() {
                             emp = newValue;
                             if(res = true) {
@@ -1163,8 +1174,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                               child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
                                 new Text(map["Name"],)),
                         );
-                      }).toList(),
 
+                      }).toList(),
                     ),
                   ),
                 ),

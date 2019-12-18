@@ -249,34 +249,27 @@ class _LateComers extends State<LateComers> {
                                                         fontSize: 16,),
                                                     ),
                                                     onTap: () {
-                                                      final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Late_Comers_Report_14-Jun-2019.pdf');
-                                                      SimpleShare.share(
+                                                      //final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Late_Comers_Report_14-Jun-2019.pdf');
+                                                      /*SimpleShare.share(
                                                           uri: uri.toString(),
                                                           title: "Share my file",
-                                                          msg: "My message");
+                                                          msg: "My message");*/
                                                       if (mounted) {
                                                         setState(() {
                                                           filests = true;
                                                         });
                                                       }
-                                                      CreateDeptpdf(
+                                                      Createpdf(
                                                           snapshot.data,
-                                                          'Late Comers Report',
-                                                          snapshot.data
-                                                              .length
-                                                              .toString(),
-                                                          'Late_Comers_Report_' +
-                                                              today
-                                                                  .text,
+                                                          'Late Comers Report for\n' + today.text,
+                                                          snapshot.data.length.toString(),
+                                                          'Late_Comers_Report_' + today.text,
                                                           'lateComers')
                                                           .then((res) {
-                                                        if(mounted) {
                                                           setState(() {
-                                                            filests =
-                                                            false;
+                                                            filests =false;
                                                             // OpenFile.open("/sdcard/example.txt");
                                                           });
-                                                        }
                                                         dialogwidget(
                                                             'PDF has been saved in internal storage in ubiattendance_files/' +
                                                                 'Late_Comers_Report_' +
