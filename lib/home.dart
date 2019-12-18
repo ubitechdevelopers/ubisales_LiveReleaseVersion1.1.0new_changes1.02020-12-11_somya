@@ -1,30 +1,24 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'dart:math';
-
-import 'package:easy_dialog/easy_dialog.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/timeinout.dart';
-import 'package:Shrine/services/fetch_location.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_dialog/easy_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:Shrine/services/fetch_location.dart';
-import 'package:intl/intl.dart';
-import 'package:pdf/widgets.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geocoder/geocoder.dart';
@@ -46,23 +40,8 @@ import "offline_home.dart";
 import 'payment.dart';
 import 'punchlocation.dart';
 import 'punchlocation_summary.dart';
-
 import 'services/services.dart';
 import 'timeoff_summary.dart';
-import 'bulkatt.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:image_picker/image_picker.dart';
-import 'package:dio/dio.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:connectivity/connectivity.dart';
-import 'package:Shrine/database_models/attendance_offline.dart';
-import 'package:flutter/services.dart';
-import 'package:Shrine/database_models/visits_offline.dart';
-import "offline_home.dart";
-import 'Bottomnavigationbar.dart';
-import 'payment.dart';
-import 'package:Shrine/addEmployee.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
@@ -579,7 +558,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     int dateToSend=0;
     var prefs=await SharedPreferences.getInstance();
     var buyStatus=int.parse(prefs.get("buysts")??"123455");
-    var createdDate = DateTime.parse("2019-12-13");
+    var createdDate = DateTime.parse("2019-12-18");
     var currDate=DateTime.now();
     var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
     var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
@@ -682,7 +661,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
-    buysts = prefs.getString('buysts') ?? 0;
+    buysts = prefs.getString('buysts') ?? '0';
     getAreaStatus().then((res) {
       // print('called again');
       if (mounted) {

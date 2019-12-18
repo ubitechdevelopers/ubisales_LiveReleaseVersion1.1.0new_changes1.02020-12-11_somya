@@ -42,7 +42,7 @@ class Home{
       print(globals.path+"getInfo?uid=$empid&refno=$orgid");
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
       Response response = await dio.post(globals.path+"getInfo", data: formData);
-      //print("<<------------------GET HOME-------------------->>");
+      print("<<------------------GET HOME-------------------->>");
       print(response.toString());
       //print("this is status "+response.statusCode.toString());
       if (response.statusCode == 200) {
@@ -121,11 +121,11 @@ class Home{
         prefs.setString('CreatedDate',createdDate);
         return timeinoutMap['act'];
       } else {
-      //  print('8888');
+        print('8888');
         return "Poor network connection";
       }
     }catch(e){
-     // print('9999');
+      print('9999');
      print(e.toString());
       return "Poor network connection";
     }

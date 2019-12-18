@@ -1,4 +1,5 @@
-import 'package:Shrine/Image_view.dart';
+import 'dart:math' as math;
+
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/editEmployee.dart';
 import 'package:Shrine/globals.dart' as globals;
@@ -12,7 +13,6 @@ import 'Bottomnavigationbar.dart';
 import 'drawer.dart';
 import 'globals.dart';
 import 'settings.dart';
-import 'dart:math' as math;
 //import 'package:material_search/material_search.dart';
 
 class EmployeeList extends StatefulWidget {
