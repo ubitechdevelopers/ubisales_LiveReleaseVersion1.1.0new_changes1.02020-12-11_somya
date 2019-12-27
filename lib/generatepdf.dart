@@ -221,7 +221,7 @@ Createpdf(pdata, HeaderText, Total, pdfName, name) async {
   return 'false';
 }
 
-CreateDesgpdfAll(pdata, adata, ldata, edata, HeaderText, Total, pdfName, name) async {
+CreateDesgpdfAll(pdata, adata, ldata, edata, HeaderText, pdfName, name) async {
 
   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
   //print(permission);
@@ -392,7 +392,7 @@ CreateDesgpdfAll(pdata, adata, ldata, edata, HeaderText, Total, pdfName, name) a
                     Text(HeaderText, textScaleFactor: 2),
                     PdfLogo()
                   ])),
-          Bullet(text: "Total: " + Total),
+          //Bullet(text: "Total: " + Total),
           Table.fromTextArray(context: context, data: list),
         ]));
     /*String dir =
@@ -430,7 +430,6 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
     List<String> a2 = new List<String>();
 
 
-    a2.add('Name');
     a2.add('Date');
     a2.add('TimeIn');
     a2.add('TimeIn Location');
@@ -443,11 +442,9 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    a2.add(' ');
     list.add(a2);
     a2 = new List<String>();
     a2.add(' Present ');
-    a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
@@ -456,7 +453,6 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
 
     for (var i = 0; i < pdata.length; i++) {
       List<String> a1 = new List<String>();
-      a1.add(pdata[i].Name.toString());
       a1.add(pdata[i].Name.toString());
       a1.add(pdata[i].TimeIn.toString());
       a1.add(pdata[i].CheckInLoc.toString());

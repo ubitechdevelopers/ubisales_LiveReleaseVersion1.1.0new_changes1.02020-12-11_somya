@@ -212,7 +212,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                       });
                                     }
                                     CreateEmployeeWisepdf(
-                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report of ' + empname,
                                         'Employee_Wise_Report', 'employeewise')
                                         .then((res) {
                                       if(mounted) {

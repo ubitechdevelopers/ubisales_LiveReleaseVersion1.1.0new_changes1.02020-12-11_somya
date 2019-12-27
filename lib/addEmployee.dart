@@ -643,6 +643,11 @@ class _AddEmployee extends State<AddEmployee> {
                   child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
                 ),*/
               ),
+
+              Center(
+                child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:appcolor)),
+              ),
+              SizedBox(height: 20.0),
               new Expanded(
                 // padding: EdgeInsets.only(left:10.0,right:10.0),
                 //    margin: EdgeInsets.only(top:25.0),
@@ -651,9 +656,9 @@ class _AddEmployee extends State<AddEmployee> {
                     Padding(
                       padding: const EdgeInsets.only(left:15.0,right: 15.0),
                       child: Text(
-                        'Details',
+                        'Employee Details',
                         style: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 15.0,
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.w500,
                         ),

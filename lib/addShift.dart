@@ -461,7 +461,7 @@ class _addShift extends State<addShift> {
                     child:Text("Add Shift",style: new TextStyle(fontSize: 22.0,color:appcolor)),
                   ),
                   SizedBox(height: 20.0),
-                  Text('Shift Details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
+                  Text('Choose Shift',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0),),
                   SizedBox(height: 15.0),
                   //  Text("Shift Starts and Ends within",style: new TextStyle(fontSize: 16.0,color: Colors.black54,fontWeight:FontWeight.bold),textAlign: TextAlign.left),
                   Container(
@@ -537,7 +537,7 @@ class _addShift extends State<addShift> {
                     ),
                   ), //Enter date
                   SizedBox(height: 20.0),
-                  Text('Shift Timings',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
+                  Text('Shift Timings',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0),),
                   SizedBox(height: 15.0),
                   Row(
                     children: <Widget>[
@@ -611,7 +611,7 @@ class _addShift extends State<addShift> {
                     ],
                   ),
                   SizedBox(height: 20.0),
-                  Text('Break Hours',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),),
+                  Text('Break Time',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0),),
                   SizedBox(height: 15.0),
                   Row(
                     children: <Widget>[

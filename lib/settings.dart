@@ -582,7 +582,7 @@ class _Settings extends State<Settings> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
-                        child: Text('Choose from android default or app\'s personalized camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                        child: Text('Choose Android\'s default or ubiAttendance camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                     ),
                   ),
                 ],
@@ -648,7 +648,7 @@ class _Settings extends State<Settings> {
       },
     ));
     list.add(SizedBox(height: 0.0));
-
+/*
     list.add(new RaisedButton(
       child: Container(
         padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
@@ -688,7 +688,7 @@ class _Settings extends State<Settings> {
           MaterialPageRoute(builder: (context) => NotificationSettings()),
         );
       },
-    ));
+    ));*/
     return list;
   }
 

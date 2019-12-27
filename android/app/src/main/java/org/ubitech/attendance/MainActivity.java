@@ -194,18 +194,18 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 }
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
+                 /* WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
-                  startTimeOutNotificationWorker(ShiftTimeOut);
+                  startTimeOutNotificationWorker(ShiftTimeOut);*/
                 }
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
+                  /*WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
                   String ShiftTimeIn = call.argument("ShiftTimeIn");
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
-                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);*/
                 }
                 if (call.method.equals("openLocationDialog")) {
                   openLocationDialog();
@@ -478,7 +478,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 try{
         if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&listenerExecuter!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
-          if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
+         // if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
+
+            manuallyStartAssistant();
 
         }
 }

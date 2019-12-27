@@ -709,7 +709,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           profile = prefs.getString('profile') ?? '';
           createdDate = prefs.getString('CreatedDate') ?? '';
           if(referralNotificationShown==false){
-            showReferralPopup(context,createdDate);
+            //showReferralPopup(context,createdDate);
             //referralNotificationShown=true;
           }
 
