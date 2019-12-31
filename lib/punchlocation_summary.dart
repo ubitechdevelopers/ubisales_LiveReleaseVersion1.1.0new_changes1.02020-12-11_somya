@@ -205,7 +205,7 @@ String address="";
               MaterialPageRoute(builder: (context) => PunchLocation()),
             );
           },
-          tooltip: 'Mark New Visit',
+          tooltip: 'Punch Visit',
           child: new Icon(Icons.add),
         ),
 
@@ -318,7 +318,7 @@ String address="";
                         context: context,
                         // ignore: deprecated_member_use
                         child: new AlertDialog(
-                          content: new Text("Punch visit successfully"),
+                          content: new Text("\"Visit Out\" punched successfully"),
                         ));
                   }
                   else
@@ -328,7 +328,7 @@ String address="";
                         context: context,
                         // ignore: deprecated_member_use
                         child: new AlertDialog(
-                          content: new Text("Unable to punch visit. Please try again!"),
+                          content: new Text("Visit was not punched. Please try again"),
                         ));
                   }
                 }).catchError((ett){
@@ -348,7 +348,7 @@ String address="";
                         context: context,
                         // ignore: deprecated_member_use
                         child: new AlertDialog(
-                          content: new Text("Punch visit successfully"),
+                          content: new Text("\"Visit Out\" punched successfully"),
                         ));
                   }
                   else
@@ -358,11 +358,11 @@ String address="";
                         context: context,
                         // ignore: deprecated_member_use
                         child: new AlertDialog(
-                          content: new Text("Unable to punch visit. Please try again!"),
+                          content: new Text("Visit was not punched. Please try again"),
                         ));
                   }
                 }).catchError((ett){
-                  showInSnackBar('Unable to punch visit');
+                  showInSnackBar('Visit was not punched. Please try again');
                 });
                 /*       //  Loc lock = new Loc();
                 //   location_addr1 = await lock.initPlatformState();
@@ -549,6 +549,7 @@ print('visit out called for visit id:'+visit_id);
                                                 child: new Container(
                                                   //width: 100.0,
                                                   height: 25.0,
+                                                  width:100,
                                                   decoration: new BoxDecoration(
                                                     color: buttoncolor,
                                                     border: new Border.all(
@@ -558,7 +559,7 @@ print('visit out called for visit id:'+visit_id);
                                                   ),
                                                   child: new Center(child: new Text('Visit Out',
                                                     style: new TextStyle(fontSize: 18.0,
-                                                        color: Colors.white),),),
+                                                        color: Colors.white,),),),
                                                 ),
                                                 onTap: () {
                                                   _showDialog(
@@ -660,7 +661,7 @@ print('visit out called for visit id:'+visit_id);
                                     ],
                                   ), //
                                   snapshot.data[index].desc == '' ? Container() : snapshot
-                                      .data[index].desc != 'Visit out not punched' ?
+                                      .data[index].desc != 'Visit was not punched. Please try again' ?
                                   Row(
                                     children: <Widget>[
                                       SizedBox(width: 16.0,),
@@ -693,7 +694,7 @@ print('visit out called for visit id:'+visit_id);
                               width: MediaQuery.of(context).size.width*1,
                               color: appcolor.withOpacity(0.1),
                               padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                              child:Text("No visits found on this date.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                              child:Text("No visits on this date.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                             ),
                           )
                       );

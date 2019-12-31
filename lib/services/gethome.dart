@@ -54,6 +54,8 @@ class Home{
         String ReferrerDiscount = timeinoutMap['ReferrerDiscount'].toString()??"1%";
         String ReferrenceDiscount = timeinoutMap['ReferrenceDiscount'].toString()??"1%";
         String ReferralValidity = timeinoutMap['ReferralValidity'].toString()??"";
+        String ReferralValidFrom = timeinoutMap['ReferralValidFrom'].toString()??"";
+        String ReferralValidTo = timeinoutMap['ReferralValidTo'].toString()??"";
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
@@ -102,6 +104,8 @@ class Home{
         prefs.setString("ReferrerDiscount", ReferrerDiscount);
         prefs.setString("ReferrenceDiscount", ReferrenceDiscount);
         prefs.setString("ReferralValidity", ReferralValidity);
+        prefs.setString("ReferralValidFrom", ReferralValidFrom);
+        prefs.setString("ReferralValidTo", ReferralValidTo);
         prefs.setString('aid', aid);
         prefs.setString('sstatus', sstatus);
         prefs.setString('mail_varified', mail_varified);

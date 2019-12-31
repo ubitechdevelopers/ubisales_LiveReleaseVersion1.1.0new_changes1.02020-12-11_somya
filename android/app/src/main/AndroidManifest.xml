@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.ubitech.attendance"
-    android:versionCode="50106"
-    android:versionName="5.1.6">
+    android:versionCode="50108"
+    android:versionName="5.1.8">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -58,6 +58,7 @@
                     android:pathPattern="/attendance-app" />
             </intent-filter>
         </activity>
+        <service android:name="org.ubitech.attendance.BackgroundLocationService" />
         <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity" />
        <!--
         <meta-data

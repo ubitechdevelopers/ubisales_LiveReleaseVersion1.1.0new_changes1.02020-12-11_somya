@@ -512,7 +512,7 @@ var FakeLocationStatus=0;
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 35.0),
+            SizedBox(height: 1.0),
             getwidget(location_addr1),
           ]),
     );
@@ -526,7 +526,7 @@ var FakeLocationStatus=0;
           height: 45.0,
           child: getVisitInButton(),
         ),
-        SizedBox(height: MediaQuery.of(context).size.height * .04),
+        SizedBox(height: MediaQuery.of(context).size.height * .01),
         Padding(
           padding: const EdgeInsets.only(left:8.0,right: 8.0),
           child: Card(
@@ -558,7 +558,7 @@ var FakeLocationStatus=0;
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
 
-                          SizedBox(width: 5.0,),
+                          SizedBox(width: 1.0,),
                           new InkWell(
                             child:Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -675,7 +675,7 @@ var FakeLocationStatus=0;
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          content: new Text("Visit punched successfully!"),
+          content: Text("\"Visit In\" punched successfully"),
         )
         );
         Navigator.push(
@@ -762,7 +762,7 @@ var FakeLocationStatus=0;
     return Center(
       child: Form(
         child: Padding(
-          padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 10.0),
+          padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 40.0),
           child: TextFormField(
             controller: _clientname,
             keyboardType: TextInputType.text,

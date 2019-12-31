@@ -165,6 +165,26 @@ Createpdf(pdata, HeaderText, Total, pdfName, name) async {
         a1.add(pdata[i].diff.toString());
         list.add(a1);
       }
+    }else if(name == 'visitlist'){
+      a2.add('Name');
+      a2.add('Client Name');
+      a2.add('Visit In');
+      a2.add('Visit In Location');
+      a2.add('Visit Out');
+      a2.add('Visit Out Location');
+      a2.add('Remarks');
+      list.add(a2);
+      for (var i = 0; i < pdata.length; i++) {
+        List<String> a1 = new List<String>();
+        a1.add(pdata[i].Emp.toString());
+        a1.add(pdata[i].client.toString());
+        a1.add(pdata[i].pi_time.toString());
+        a1.add(pdata[i].pi_loc.toString());
+        a1.add(pdata[i].po_time.toString());
+        a1.add(pdata[i].po_loc.toString());
+        a1.add(pdata[i].desc.toString());
+        list.add(a1);
+      }
     }
 
     pdf.addPage(MultiPage(

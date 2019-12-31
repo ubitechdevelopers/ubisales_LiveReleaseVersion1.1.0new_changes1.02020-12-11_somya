@@ -39,6 +39,11 @@ var refererId="0";
 void initDynamicLinks() async {
   final PendingDynamicLinkData data = await FirebaseDynamicLinks.instance.getInitialLink();
   final Uri deepLink = data?.link;
+  String ReferralValidFrom;
+  String ReferralValidTo;
+  String referrerAmt;
+  String referrenceAmt;
+
 
   if (deepLink != null) {
     print("Deep Link"+deepLink.path);
@@ -53,10 +58,14 @@ void initDynamicLinks() async {
 
           refererId=deepLink.path.split("/")[1];
 
+           ReferralValidFrom=deepLink.path.split("/")[2];
+           ReferralValidTo=deepLink.path.split("/")[3];
+           referrerAmt=deepLink.path.split("/")[4];
+           referrenceAmt=deepLink.path.split("/")[5];
           SharedPreferences prefs=await SharedPreferences.getInstance();
 
           prefs.setString("referrerId", refererId.toString());
-          print("refeeeeeeeeeeeeeeeeeeeeeeeeeeee"+refererId);
+          print("refeeeeeeeeeeeeeeeeeeeeeeeeeeee:   "+refererId+" "+ReferralValidFrom+" "+ReferralValidTo+" "+referrerAmt+" "+referrenceAmt);
         }
       },
       onError: (OnLinkErrorException e) async {
@@ -78,10 +87,12 @@ generateAndShareReferralLink()async{
   var validity=prefs.getString("ReferralValidity");
   var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
   var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
+  var ReferralValidFrom=prefs.getString("ReferralValidFrom")??"1%";
+  var ReferralValidTo=prefs.getString("ReferralValidTo")??"1%";
 
   final DynamicLinkParameters parameters = DynamicLinkParameters(
     uriPrefix: 'https://ubiattendance.page.link',
-    link: Uri.parse('https://ubiattendance.com/'+empId),
+    link: Uri.parse('https://ubiattendance.com/'+empId+"/"+ReferralValidFrom+"/"+ReferralValidTo+"/"+referrerAmt+"/"+referrenceAmt),
     androidParameters: AndroidParameters(
       packageName: 'org.ubitech.attendance',
       minimumVersion: 50009,
@@ -97,7 +108,7 @@ generateAndShareReferralLink()async{
 
 
   ReferrerenceMessagesList[0]="${referrerName} has invited you to try ubiAttendance App. You will get ${referrenceAmt} off on purchase. Try Now.";
-  ReferrerenceMessagesList[1]="I am using a great App to monitor attendance. Give it a try.You will get ${referrenceAmt} off on your purchase. ";
+  ReferrerenceMessagesList[1]="I am using a great App to monitor attendance. Give it a try. You will get ${referrenceAmt} off on your purchase. ";
   ReferrerenceMessagesList[2]="Attendance Analytics, Geo Fencing, Location Tracking  and more! Here’s ${referrenceAmt} off your order. Check it out!";
   ReferrerenceMessagesList[3]="Looking for a foolproof  attendance tracker? I suggest ubiAttendance. Sign up now: ${referrenceAmt} discount! via @${referrerName}";
   ReferrerenceMessagesList[4]="Use this link to get ${referrenceAmt} off your first purchase at ubiAttendance – the best time tracker for your employees via @${referrerName}";
@@ -2926,6 +2937,27 @@ getCsv1(associateList, fname, name) async {
     row.add(associateList[i].timeAct);
     row.add(associateList[i].diff);
     rows.add(row);
+    }
+  }else if(name == 'visitlist') {
+    row1.add('Name');
+    row1.add('Client Name');
+    row1.add('Visit In');
+    row1.add('Visit In Location');
+    row1.add('Visit Out');
+    row1.add('Visit Out Location');
+    row1.add('Remarks');
+    rows.add(row1);
+    for (int i = 0; i < associateList.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+      List<dynamic> row = List();
+      row.add(associateList[i].Emp);
+      row.add(associateList[i].client);
+      row.add(associateList[i].pi_time);
+      row.add(associateList[i].pi_loc);
+      row.add(associateList[i].po_time);
+      row.add(associateList[i].po_loc);
+      row.add(associateList[i].desc);
+      rows.add(row);
     }
   }
 

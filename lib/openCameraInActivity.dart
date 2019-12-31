@@ -121,6 +121,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
       ):
       Column(
         children: <Widget>[
+      AspectRatio(
+      aspectRatio: controller.value.aspectRatio,
+        child:
           Expanded(
             child: Container(
               child: Padding(
@@ -139,7 +142,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> {
                 ),
               ),
             ),
-          ),
+          )),
           _captureControlRowWidget1(),
 
           /* Padding(
