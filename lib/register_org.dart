@@ -11,6 +11,9 @@ import 'askregister.dart';
 import 'globals.dart' as globals;
 import 'globals.dart';
 import 'home.dart';
+
+import 'localization/app_translations.dart';
+import 'localization/application.dart';
 import 'services/services.dart';
 void main() => runApp(new MyApp());
 
@@ -30,6 +33,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static final List<String> languagesList = application.supportedLanguages;
+  static final List<String> languageCodesList =application.supportedLanguagesCodes;
+
+  final Map<dynamic, dynamic> languagesMap = {
+    languagesList[0]: languageCodesList[0],
+    languagesList[1]: languageCodesList[1],
+  };
+
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _name,_cname,_email,_pass,_cont,_phone,_city,_contcode;
   var phone ="";
@@ -284,13 +295,11 @@ class _MyHomePageState extends State<MyHomePage> {
     { "ind":"235"    ,      "id": "236" ,   "name": "Zambia" ,   "countrycode": "+260"}      ,
     { "ind":"236"    ,      "id": "238" ,   "name": "Zimbabwe" ,   "countrycode": "+263"} ];
 
-
-
-
   String _country;
   bool _obscureText = true;
   String  _tempcontry  = '';
   @override
+
   void initState() {
     _name = new TextEditingController();
     _cname = new TextEditingController();
@@ -300,20 +309,30 @@ class _MyHomePageState extends State<MyHomePage> {
     _cont = new TextEditingController();
     _city = new TextEditingController();
     _contcode = new TextEditingController();
-
     super.initState();
+    application.onLocaleChanged = onLocaleChange;
+    onLocaleChange(Locale(languagesMap["English"]));
   }
+
+  void onLocaleChange(Locale locale) async {
+    setState(() {
+      AppTranslations.load(locale);
+    });
+  }
+
   setLocal(var fname, var empid, var  orgid) async {
     prefs = await SharedPreferences.getInstance();
     await prefs.setString('fname',fname);
     await prefs.setString('empid',empid.toString());
     await prefs.setString('orgid',orgid.toString());
   }
+
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -321,7 +340,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("ubiAttendance", style: new TextStyle(fontSize: 20.0)),
+            //new Text("ubiAttendance", style: new TextStyle(fontSize: 20.0)),
+            new Text(AppTranslations.of(context).text("key_app_title"), style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
@@ -345,13 +365,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: new Text('Register Your Company',
+                    child: new Text(AppTranslations.of(context).text("key_register_company_title"),
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: appcolor ),
                     ),
                   ),
 
-                  new Text('Note: This is not Employee registration form. The Employees should Sign In & not register here',
+                  new Text(AppTranslations.of(context).text("key_note"),
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize:14.0, color: Colors.orange[900], ),
                   ),
@@ -377,7 +397,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration:  InputDecoration(
                             border: InputBorder.none,
                             prefixIcon:  Icon(Icons.business, color: Colors.black38,),
-                            hintText: 'Company',
+                            hintText: AppTranslations.of(context).text("key_company_name"),
+                            //hintText: 'Company',
 //                          labelText: 'Company',
                             hintStyle: TextStyle(
                               color: Colors.black45,
@@ -413,8 +434,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               Icons.person_outline,
                               color: Colors.black38,
                             ),
-//                      hintText: 'Contact Person',
-                            hintText: 'Name',
+                            hintText: AppTranslations.of(context).text("key_contact_person_name"),
+                            //hintText: 'Name',
                             hintStyle: TextStyle(
                               color: Colors.black45,
                             )
@@ -446,8 +467,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: Icon(Icons.mail_outline),
-//                      hintText: 'Email',
-                            hintText: 'Email',
+                            //hintText: 'Email',
+                            hintText: AppTranslations.of(context).text("key_email"),
                             hintStyle: TextStyle(
                               color: Colors.black45,
                             )
@@ -495,7 +516,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   iconSize: 20,
                                   icon: Icon(Icons.arrow_drop_down),
                                   isDense: true,
-                                  hint: new Text("Select Country"),
+                                  //hint: new Text("Select Country"),
+                                  hint: new Text(AppTranslations.of(context).text("key_country")),
                                   value: _country,
                                   onChanged: (String newValue) {
                                     setState(() {
@@ -520,8 +542,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   items: _myJson.map((Map map) {
                                     return new DropdownMenuItem<String>(
                                       value:  map['ind'].toString(),
-                                      child: new Text(
-                                        map["name"].toString(),
+                                      child: SizedBox(
+                                        width: 200.0,
+                                        child: new Text(
+                                          map["name"].toString(),
+                                        ),
                                       ),
                                     );
                                   }).toList(),
@@ -606,8 +631,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               border: InputBorder.none,
 
                               // icon: const Icon(Icons.phone),
-//                            hintText: 'Phone',
-                              hintText: 'Phone',
+                              //hintText: 'Phone',
+                              hintText: AppTranslations.of(context).text("key_phone"),
                               hintStyle: TextStyle(
                                 color: Colors.black45,
                               ),
@@ -645,7 +670,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         focusNode: __pass,
                         decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Set Password',
+                            //hintText: 'Set Password',
+                            hintText: AppTranslations.of(context).text("key_password"),
                             hintStyle: TextStyle(
                                 color: Colors.black45
                             ),
@@ -687,8 +713,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               Icons.location_city,
                               color: Colors.black38,
                             ),
-//                      hintText: 'City(optional)',
-                            hintText: 'City',
+                            //hintText: 'City(optional)',
+                            hintText: AppTranslations.of(context).text("key_city"),
                             hintStyle: TextStyle(
                               color: Colors.black45,
                             )
@@ -706,7 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: buttoncolor,
                             textColor: Colors.white,
                             padding: EdgeInsets.all(20.0),
-                            child: const Text('Please wait...',style: TextStyle(fontSize: 18.0),),
+                            child: Text(AppTranslations.of(context).text("key_please_wait"),style: TextStyle(fontSize: 18.0),),
                             onPressed: (){}
                         ):new RaisedButton(
                           elevation: 1.0,
@@ -720,7 +746,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: buttoncolor,
                           textColor: Colors.white,
                           padding: EdgeInsets.all(20.0),
-                          child: const Text('Register Company',style: TextStyle(fontSize: 18.0),),
+                          child: Text(AppTranslations.of(context).text("key_register_button"),style: TextStyle(fontSize: 18.0),),
                           onPressed: () async{
 
 
@@ -755,8 +781,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Company's name"),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please enter the Company's name"),
+                                content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
                               ));
                               FocusScope.of(context).requestFocus(__name);
                             }
@@ -764,8 +791,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Contact Person's name"),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please enter the Contact Person's name"),
+                                content: new Text(AppTranslations.of(context).text("key_enter_contact_person_name")),
                               ));
                               FocusScope.of(context).requestFocus(__cname);
                             }
@@ -783,8 +811,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Email ID"),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please enter the Email ID"),
+                                content: new Text(AppTranslations.of(context).text("key_please_enter_email")),
                               ));
                               FocusScope.of(context).requestFocus(__email);
                               return null;
@@ -793,24 +822,27 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if(_pass.text.length<6) {
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Password of at least 6 characters"),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please enter the Password of at least 6 characters"),
+                                content: new Text(AppTranslations.of(context).text("key_must_be_at_least_6_characters")),
                               ));
                               FocusScope.of(context).requestFocus(__pass);
                             }
                             else if(_tempcontry=='' ) {
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please Select a Country."),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please Select a Country."),
+                                content: new Text(AppTranslations.of(context).text("key_select_country")),
                               ));
                               FocusScope.of(context).requestFocus(__phone);
                             }
                             else if(_phone.text.length<6) {
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter a valid Phone No."),
+                                title: new Text(AppTranslations.of(context).text("key_alert")),
+                                //content: new Text("Please enter a valid Phone No."),
+                                content: new Text(AppTranslations.of(context).text("key_please_enter_valid_phone")),
                               ));
                               FocusScope.of(context).requestFocus(__phone);
                             }
@@ -898,26 +930,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text(
-                                          "Email ID is already registered"),
+                                      title: new Text(AppTranslations.of(context).text("key_app_title")),
+                                      //content: new Text("Email ID is already registered"),
+                                      content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
                                     ));
-                                  } else if (res['sts'] == 'false2' ||
-                                      res['sts'] == 'false4') {
+                                  } else if (res['sts'] == 'false2' || res['sts'] == 'false4') {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text(
-                                          "Phone No. is already registered"),
+                                      title: new Text(AppTranslations.of(context).text("key_app_title")),
+                                      //content: new Text("Phone No. is already registered"),
+                                      content: new Text(AppTranslations.of(context).text("key_phone_already_registered")),
                                     ));
                                   } else {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text(
-                                          "Oops!! Poor network connection. Company could not be registered."),
+                                      title: new Text(AppTranslations.of(context).text("key_app_title")),
+                                      //content: new Text("Oops!! Poor network connection. Company could not be registered."),
+                                      content: new Text(AppTranslations.of(context).text("key_poor_network_connection")),
                                     ));
                                   }
                                   setState(() {
@@ -932,7 +963,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   // ignore: deprecated_member_use
                                   showDialog(context: context, child:
                                   new AlertDialog(
-                                    title: new Text("Error"),
+                                    title: new Text(AppTranslations.of(context).text("key_error")),
                                     // content: new Text("Unable to call service"),
                                     content: new Text("Response status: ${response
                                         .statusCode} \n Response body: ${response
@@ -950,8 +981,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 // ignore: deprecated_member_use
                                 showDialog(context: context, child:
                                 new AlertDialog(
-                                  title: new Text("Error"),
-                                  content: new Text("Poor network connection."),
+                                  title: new Text(AppTranslations.of(context).text("key_error")),
+                                  content: new Text(AppTranslations.of(context).text("key_poor_network")),
                                 )
                                 );
                               });
@@ -990,14 +1021,14 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text("Invalid login credentials")));
+          SnackBar(content: Text(AppTranslations.of(context).text("key_invalid_credentials"))));
     }else{
       setState(() {
         loader = false;
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text("Poor network connection.")));
+          SnackBar(content: Text(AppTranslations.of(context).text("key_poor_network"))));
     }
   }
 
