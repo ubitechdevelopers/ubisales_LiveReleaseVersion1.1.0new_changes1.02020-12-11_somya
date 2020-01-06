@@ -104,12 +104,12 @@ class _LoginPageState extends State<LoginPage> {
 
 
   initPlatformState() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs=await SharedPreferences.getInstance();
     // syncOfflineQRData();
     var isAlreadyLoggedIn=prefs.getInt("response");
-    var isConnected=await checkConnectionToServer ();
+    var isConnected=await checkConnectionToServer();
 
-    if(isAlreadyLoggedIn==1){
+    if (isAlreadyLoggedIn == 1) {
       /*if(isConnected==1){
         Navigator.push(
           context,
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       else */
-      if(prefs.getInt("OfflineModePermission")==1 && isConnected!=1){
+      if (prefs.getInt("OfflineModePermission") == 1 && isConnected != 1) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),
@@ -126,11 +126,12 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
 
-    setState(() {
-      loginuser = prefs.getString('username') ?? "";
-      _usernameController.text=loginuser;
-    });
-
+    if (mounted) {
+      setState(() {
+        loginuser=prefs.getString('username') ?? "";
+        _usernameController.text=loginuser;
+      });
+    }
   }
 
   @override
