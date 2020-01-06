@@ -107,6 +107,8 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       }
 */
 
+
+
     MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
 
     //facebookLogger.logCompleteRegistrationEvent("");
@@ -232,14 +234,14 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                   Log.i("Assistant","Assistant Start Called");
 
                   manuallyStartAssistant();
-                }
+                }else
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
                   WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
                   startTimeOutNotificationWorker(ShiftTimeOut);
-                }
+                }else
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
                   WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
@@ -247,10 +249,19 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
                   startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
-                }
+                }else
                 if (call.method.equals("openLocationDialog")) {
                   openLocationDialog();
                 }
+                else if (call.method.equals("showNotification")) {
+
+                    String notiTitle = call.argument("title");
+                    String notiDescription = call.argument("description");
+                    DisplayNotification displayNotification=new DisplayNotification(getApplicationContext());
+
+                    displayNotification.displayNotification(notiTitle,notiDescription);
+                }
+
               }
             });
 

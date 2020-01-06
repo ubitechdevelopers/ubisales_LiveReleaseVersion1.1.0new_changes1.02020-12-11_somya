@@ -63,6 +63,13 @@ dependencies:
   firebase_core: ^0.4.0+9
   easy_dialog: ^1.0.5
   http: 0.12.0+2
+  dependencies:
+  firebase_auth: ^0.11.1+6
+  cloud_firestore: ^0.12.5
+  firebase_messaging: 5.1.6
+  flutter_local_notifications:
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

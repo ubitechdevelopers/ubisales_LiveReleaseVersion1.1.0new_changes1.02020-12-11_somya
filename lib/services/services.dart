@@ -49,6 +49,9 @@ void initDynamicLinks() async {
     print("Deep Link"+deepLink.path);
   }
 
+
+
+
   FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
         final Uri deepLink = dynamicLink?.link;
@@ -78,6 +81,33 @@ void initDynamicLinks() async {
 
 
 }
+
+Future<Map<String, dynamic>> sendPushNotification(String url, String token,String nBody,String title) async {
+
+
+  var body = json.encode({
+    'to': token,
+    'notification': {'body': nBody,
+      'title': title,
+    }
+  });
+
+  print('Body: $body');
+
+  var response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization':'key=AAAAsVdW418:APA91bH-KAyzItecPhs8jP95ZlFNOzDKjmzmeMd2iH1HyUpO_T-_Baed-uIkuyYlosgLStcJZBqQFZuu7UdepvKX6lJcHjU__7FV19LLGn0nbveDBcTBJRJulb5fj_iOlsVRURzsu1Ch'
+    },
+    body: body,
+  );
+
+  // todo - handle non-200 status code, etc
+
+  return json.decode(response.body);
+}
+
 
 generateAndShareReferralLink()async{
   List ReferrerenceMessagesList=new List(7);

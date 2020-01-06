@@ -13,11 +13,11 @@ Color buttoncolor =  Colors.orangeAccent;
 Color headingcolor =  Colors.orange;
 Color iconcolor =  Colors.black45;
 
-/*
+
 String path="http://192.168.0.200/ubiattendance/index.php/Att_services/";
 String internetConnectivityURL="http://192.168.0.200/ubiattendance/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services";
-*/
+
 
 /*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
@@ -25,11 +25,11 @@ String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
 
-
+/*
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
-
+*/
 
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
 
@@ -71,6 +71,7 @@ List responseJson = new List();
 List responseEmplist = new List();
 String referralLink="";
 bool referralNotificationShown=false;
+String currentOrgStatus='';
 
 
 /*

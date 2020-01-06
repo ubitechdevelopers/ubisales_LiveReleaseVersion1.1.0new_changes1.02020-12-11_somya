@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:convert';
+
 import 'package:Shrine/app.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ import 'package:splashscreen/splashscreen.dart';
 
 import 'globals.dart';
 import 'services/services.dart';
+import 'package:http/http.dart' as http;
 
 void main(){
   runApp(
@@ -39,8 +42,11 @@ class _MyAppState extends State<MyApp> {
     //checknetonpage(context);
    // StreamLocation sl = new StreamLocation();
    // sl.startStreaming(10);
+    cameraChannel.invokeMethod("showNotification",{"title":"Welcome to ubiAttendance","description":"Cleck out help videos!"});
     platform.setMethodCallHandler(_handleMethod);
   }
+
+
   static const platform = const MethodChannel('location.spoofing.check');
   String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
