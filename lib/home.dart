@@ -18,6 +18,7 @@ import 'package:Shrine/services/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_dialog/easy_dialog.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -100,17 +101,61 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String createdDate="";
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
+  var token="";
 
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   @override
   void initState() {
     print('aintitstate');
     super.initState();
+    firebaseCloudMessaging_Listeners();
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
+
     initPlatformState();
     //setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
+  }
+
+  void firebaseCloudMessaging_Listeners()async {
+
+    var prefs=await SharedPreferences.getInstance();
+    var country=prefs.getString("CountryName");
+     if(globals.currentOrgStatus.isNotEmpty){
+       var previousOrgStatus=prefs.get("CurrentOrgStatus");
+
+       _firebaseMessaging.unsubscribeFromTopic(previousOrgStatus);
+      _firebaseMessaging.subscribeToTopic(globals.currentOrgStatus);
+
+      prefs.setString("CurrentOrgStatus", globals.currentOrgStatus);
+      globals.currentOrgStatus='';
+    }
+    _firebaseMessaging.getToken().then((token){
+      _firebaseMessaging.subscribeToTopic("AllOrg");
+     //_firebaseMessaging.subscribeToTopic("ALL_COUNTRY");
+      _firebaseMessaging.subscribeToTopic(country);
+
+
+      this.token=token;
+
+      sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
+
+
+      print("token--------------->"+token+"-------------"+country);
+    });
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+      },
+    );
   }
 
   syncOfflineQRData() async {

@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.0"
+  cloud_firestore:
+    dependency: "direct main"
+    description:
+      name: cloud_firestore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.11"
   collection:
     dependency: transitive
     description:
@@ -143,6 +150,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.3"
+  dependencies:
+    dependency: "direct main"
+    description:
+      name: dependencies
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5"
   dio:
     dependency: "direct main"
     description:
@@ -150,6 +164,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.17"
+  disposables:
+    dependency: transitive
+    description:
+      name: disposables
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   easy_dialog:
     dependency: "direct main"
     description:
@@ -164,6 +185,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0+3"
+  firebase_auth:
+    dependency: "direct main"
+    description:
+      name: firebase_auth
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.1+12"
   firebase_core:
     dependency: "direct main"
     description:
@@ -185,6 +213,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.0+6"
+  firebase_messaging:
+    dependency: "direct main"
+    description:
+      name: firebase_messaging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.6"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -204,11 +239,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
-  flutter_localizations:
+  flutter_local_notifications:
     dependency: "direct main"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
+    description:
+      name: flutter_local_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.4+3"
   flutter_native_image:
     dependency: "direct main"
     description:
