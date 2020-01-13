@@ -550,6 +550,13 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
           Container(
+            padding: EdgeInsets.only(top:12.0,bottom: 2.0),
+            child:Center(
+              child:Text('Punch Visit',
+                  style: new TextStyle(fontSize: 22.0,color:appcolor)),
+            ),
+          ),
+          Container(
             // foregroundDecoration: BoxDecoration(color:Colors.red ),
             height: MediaQuery.of(context).size.height * 0.80,
             child: Column(

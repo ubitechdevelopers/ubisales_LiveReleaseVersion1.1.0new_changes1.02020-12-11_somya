@@ -2927,6 +2927,27 @@ getCsv1(associateList, fname, name) async {
     row.add(associateList[i].diff);
     rows.add(row);
     }
+  }else if(name == 'visitlist') {
+    row1.add('Name');
+    row1.add('Client Name');
+    row1.add('Visit In');
+    row1.add('Visit In Location');
+    row1.add('Visit Out');
+    row1.add('Visit Out Location');
+    row1.add('Remarks');
+    rows.add(row1);
+    for (int i = 0; i < associateList.length; i++) {
+//row refer to each column of a row in csv file and rows refer to each row in a file
+      List<dynamic> row = List();
+      row.add(associateList[i].Emp);
+      row.add(associateList[i].client);
+      row.add(associateList[i].pi_time);
+      row.add(associateList[i].pi_loc);
+      row.add(associateList[i].po_time);
+      row.add(associateList[i].po_loc);
+      row.add(associateList[i].desc);
+      rows.add(row);
+    }
   }
 
   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
@@ -2956,6 +2977,7 @@ getCsv1(associateList, fname, name) async {
     return file + fname + ".csv";
   }
 }
+
 
 
 

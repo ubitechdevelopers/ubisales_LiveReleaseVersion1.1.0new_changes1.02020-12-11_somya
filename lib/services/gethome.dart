@@ -54,6 +54,8 @@ class Home{
         String ReferrerDiscount = timeinoutMap['ReferrerDiscount'].toString()??"1%";
         String ReferrenceDiscount = timeinoutMap['ReferrenceDiscount'].toString()??"1%";
         String ReferralValidity = timeinoutMap['ReferralValidity'].toString()??"";
+        String ReferralValidFrom = timeinoutMap['ReferralValidFrom'].toString()??"";
+        String ReferralValidTo = timeinoutMap['ReferralValidTo'].toString()??"";
         String mail_varified = timeinoutMap['mail_varified'].toString();
         String profile = timeinoutMap['profile'].toString();
         String newpwd = timeinoutMap['pwd'].toString();
@@ -89,6 +91,8 @@ class Home{
         print("Area Id :"+globals.areaId.toString()+" geofence :"+globals.geoFence.toString());
         prefs.setString('buysts', timeinoutMap["buysts"]);
         prefs.setString("nextWorkingDay", timeinoutMap['nextWorkingDay']);
+        prefs.setString("ReferralValidFrom", ReferralValidFrom);
+        prefs.setString("ReferralValidTo", ReferralValidTo);
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
         prefs.setInt("VisitImageRequired", int.parse(timeinoutMap['visitImage']));

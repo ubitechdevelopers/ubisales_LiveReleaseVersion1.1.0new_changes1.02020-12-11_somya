@@ -88,12 +88,13 @@ class _FlexiList extends State<FlexiList> {
                 'Flexi Attendance',
                 style: new TextStyle(
                   fontSize: 22.0,
-                  color: Colors.black54,
+                  color: appcolor,
                 ),
               ),
             ),
             Divider(
-              height: 10.0, 
+                color: Colors.black87,
+                height: 1.5
             ),
             SizedBox(height: 2.0),
            /* Container(
@@ -162,20 +163,20 @@ class _FlexiList extends State<FlexiList> {
                     width: MediaQuery.of(context).size.width * 0.38,
                     child: Text(
                       'Location',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,fontSize: 16.0,fontWeight: FontWeight.bold),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.30,
                     child: Text('In',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontSize: 16.0,fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.30,
                     child: Text('Out ',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontSize: 16.0,fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),
                 ],

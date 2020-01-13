@@ -87,20 +87,18 @@ class _EarlyLeavers extends State<EarlyLeavers> {
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             Center(
               child: Text(
                 'Early Leavers',
                 style: new TextStyle(
                   fontSize: 22.0,
-                  color:Colors.black54
+                  color:appcolor
                 ),
               ),
             ),
-           /* Divider(
-              height: 10.0,
-            ),*/
-            SizedBox(height: 2.0),
+            Divider(color: Colors.black54,height: 1.5,),
+            SizedBox(height: 10.0),
             Row(
               children: <Widget>[
               Expanded(
@@ -306,7 +304,9 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                     width: MediaQuery.of(context).size.width * 0.36,
                     child: Text(
                       '   Name',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -314,22 +314,28 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text(
                       '    Shift',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text('Time Out',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left
                     ),
                   ),
                   Flexible(
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.18,
-                      child: Text('EarlyBy',
-                          style: TextStyle(color: headingcolor),
+                      child: Text('Early By',
+                          style: TextStyle(color: appcolor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0),
                           textAlign: TextAlign.left),
                     ),
                   ),
@@ -439,7 +445,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                   });
             } else {
               return new Center(
-                child: Text("No early leavers on this date"),
+                child: Text("No early leavers on this date", style: TextStyle(fontSize: 18.0)),
               );
             }
           } else if (snapshot.hasError) {

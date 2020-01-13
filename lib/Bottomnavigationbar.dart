@@ -1,7 +1,9 @@
 
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'globals.dart';
 import 'home.dart';
 import 'profile.dart';
 import 'reports.dart';
@@ -14,6 +16,9 @@ class Bottomnavigationbar extends StatefulWidget {
 class _Bottomnavigationbar extends State<Bottomnavigationbar> {
   String admin_sts='0';
   var _currentIndex=1;
+
+
+
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     final prefs = await SharedPreferences.getInstance();
@@ -23,6 +28,7 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
 
     });
   }
+
   void initState() {
     initPlatformState();
   }
@@ -87,8 +93,8 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
         ),
         BottomNavigationBarItem(
             icon: Icon(Icons.settings,color: Colors.white,size: 30.0),
-            title: Text('Settings',style: TextStyle(color: Colors.white,))
-        ),
+            title: Text('Settings',style: TextStyle(color: Colors.white,)
+        )),
         /* BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications

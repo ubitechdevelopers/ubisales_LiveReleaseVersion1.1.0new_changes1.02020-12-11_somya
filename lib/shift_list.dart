@@ -1,6 +1,7 @@
 import 'package:Shrine/addShift.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/widgets.dart' as prefix0;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Bottomnavigationbar.dart';
@@ -94,8 +95,9 @@ class _ShiftList extends State<ShiftList> {
                 SizedBox(height: 8.0),
                 Center(
                   child: Text('Shifts',
-                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
+                    style: new TextStyle(fontSize: 22.0, color: appcolor,),),
                 ),
+                Divider(height: 1.5, color: Colors.black,),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
                 Container(
@@ -107,19 +109,19 @@ class _ShiftList extends State<ShiftList> {
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width*0.30,
-                        child: Text('Shifts', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
+                        child: Text('Shifts', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time in', style: TextStyle(color: headingcolor),textAlign: TextAlign.left,),
+                        child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time out', style: TextStyle( color: headingcolor),textAlign: TextAlign.left),
+                        child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.16,
-                        child: Text('Status', style: TextStyle(color: headingcolor),textAlign: TextAlign.left),
+                        child: Text('Status', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left),
                       ),
 
                     ],

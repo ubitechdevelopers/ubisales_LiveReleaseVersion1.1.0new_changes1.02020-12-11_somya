@@ -391,7 +391,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-          //(admin_sts==0)?
+          (admin_sts==0)?
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -406,7 +406,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   box.localToGlobal(Offset.zero) &
                   box.size);
             },
-          ),/*:new ListTile(
+          ):new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.share,size: 20.0),SizedBox(width: 5.0),
@@ -417,7 +417,7 @@ class _AppDrawerState extends State<AppDrawer> {
               generateAndShareReferralLink();
 
             },
-          ),*/
+          ),
           new ListTile(
             title: Row(
               children: <Widget>[

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
@@ -19,6 +20,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_dialog/easy_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geocoder/geocoder.dart';
@@ -41,7 +43,10 @@ import 'payment.dart';
 import 'punchlocation.dart';
 import 'punchlocation_summary.dart';
 import 'services/services.dart';
+import 'settings.dart';
 import 'timeoff_summary.dart';
+import 'avatar_glow.dart';
+import 'super_tooltip.dart' ;
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
@@ -65,6 +70,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _visible = true;
   String buysts = '0';
   String admin_sts = '0';
+  bool istooltipsts = false;
   String mail_varified = '1';
   String AbleTomarkAttendance = '1';
   String act = "";
@@ -98,8 +104,204 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool internetAvailable = true;
   String address = '';
   String createdDate="";
+  String datetoShow="";
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
+
+  var tooltiptimein = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -200,
+    y: -380,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 250.0,
+          height: 100.0,
+          child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text("Welcome to ubiAttendance\n Click here to mark time in",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  RaisedButton(
+                    child: Text('Next'),
+                    onPressed: (){
+                      //print('jshjsh');
+
+                      SuperTooltip.a.close();
+                      tooltiptimeinClicked(SuperTooltip.ctx);
+                      istooltiptimeinshown=true;
+
+
+                    },
+                  ),
+
+                ],
+              )
+          ),
+        )),
+  );
+
+  static var tooltiptimeout = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -200,
+    y: -380,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 250.0,
+          height: 100.0,
+          child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text("Welcome to ubiAttendance\n Click here to mark time out",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  RaisedButton(
+                    child: Text('Next'),
+                    onPressed: (){
+                      //print('jshjsh');
+
+                      SuperTooltip.a.close();
+                      //tooltipClicked(SuperTooltip.ctx);
+                      istooltiponeshown=true;
+
+                    },
+                  ),
+
+                ],
+              )
+          ),
+        )),
+  );
+
+  static var tooltipone = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -40,
+    y: -170,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 200.0,
+          height: 120.0,
+          child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Column(
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text("Welcome to \nubiAttendance\n"
+                      "Start by adding Employees",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  RaisedButton(
+                    child: Text('Next'),
+                    onPressed: (){
+                      //print('jshjsh');
+
+                      SuperTooltip.a.close();
+                      //tooltipClicked(SuperTooltip.ctx);
+                      istooltiponeshown=true;
+
+                    },
+                  ),
+
+                ],
+              )
+          ),
+        )),
+  );
+
+  static var tooltiptwo = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -70,
+    y: -30,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 300.0,
+          height: 150.0,
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: <Widget>[
+                Text("Go to Settings where you can add your Shift timings,\nDepartments and Designation",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                RaisedButton(
+                  child: Text("Next"),
+                  onPressed: () {
+                    SuperTooltip.a.close();
+                    tooltiptwoClicked(SuperTooltip.ctx);
+                    istooltiptwoshown=true;
+                  },
+                ),
+              ],
+            ),
+          ),
+        )),
+  );
+  static tooltiptimeinClicked(context) async{
+    // HomePage h=new HomePage();
+    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
+    //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('tool',true );
+    var admin_sts_static = prefs.getString('sstatus').toString() ?? '0';
+    print('hello'+admin_sts_static);
+    if(admin_sts_static=='1' || admin_sts_static=='2') {
+      tooltipone.show(context);
+    }
+
+  }
+
+  static tooltipClicked(context) async{
+   // HomePage h=new HomePage();
+   // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
+    //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
+    tooltiptwo.show(context);
+
+  }
+
+  static tooltiptwoClicked(var context) async{
+    //HomePage h=new HomePage();
+    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => Settings(),maintainState: false));
+
+  }
+
+//  static tooltiptimeinClicked(context) async{
+//    // HomePage h=new HomePage();
+//    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
+//    Future.delayed(Duration(seconds: 3), () => tooltiptimeout.show(context));
+//    //tooltiptimeout.show(context);
+//
+//  }
+
+
+
 
   @override
   void initState() {
@@ -111,6 +313,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
+
+    //Future.delayed(Duration(seconds: 5), () => tooltiptimeout.show(context));
+
   }
 
   syncOfflineQRData() async {
@@ -131,7 +336,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (qrs.isNotEmpty) {
         for (int i = 0; i < qrs.length; i++) {
           var address =
-              await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
+          await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
           print(address);
           jsonList.add({
             "Id": qrs[i].Id,
@@ -558,8 +763,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     int dateToSend=0;
     var prefs=await SharedPreferences.getInstance();
     var buyStatus=int.parse(prefs.get("buysts")??"123455");
-    var createdDate = DateTime.parse("2019-12-18");
+    var createdDate = DateTime.parse("2019-12-26");
+    print("datetime.parse"+prefs.get("ReferralValidFrom"));
+    var startDate = DateTime.parse(prefs.get("ReferralValidFrom")??"2019-12-26");
+    var endDate = DateTime.parse(prefs.get("ReferralValidTo")??"2019-12-26");
     var currDate=DateTime.now();
+    datetoShow=prefs.getString('date')??"";
+    if(datetoShow=="")
+    {
+      datetoShow=startDate.toString();
+    }
+
+    // print("hello"+datetoShow);
     var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
     var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
     ReferrerNotificationList[0]={
@@ -589,7 +804,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     var rng = new Random();
     var referrerRandom=rng.nextInt(4);
-   double height=220;
+    double height=220;
     if(referrerRandom==2||referrerRandom==4)
       height=260;
     if(referrerRandom==0)
@@ -608,32 +823,53 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     } // for other organizations i.e pop up for every created date day of the month
     else{
       dateToSend=createdDate.day;
+//      print('startDate');
+//      print(startDate);
+//      print(currDate);
+//      print(prefs.getString('date'));
+      if(currDate.isAfter(startDate)&& currDate.isBefore(endDate) || datetoShow==startDate.toString()) {
+//        prefs.setString('date',currDate.toString());
+        // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+        //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+        //print(currDate);
+        if(datetoShow==currDate.toString()){
+          var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+          datetoShow=newDate.toString();
+          prefs.setString('date',datetoShow);
 
-      if(dateToSend==currDate.day){
-        EasyDialog(
-            title: Text(ReferrerNotificationList[referrerRandom]['title'].toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30,),textAlign: TextAlign.center,),
-            description: Text(ReferrerNotificationList[referrerRandom]['description'].toString(),textAlign: TextAlign.center,style: TextStyle(fontSize: 16,),),
-            height: height,
-            contentList:[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: 40,),
-                  RaisedButton(
-                    child: Text("GO!" , style: TextStyle(color: Colors.white),),
-                    onPressed: (){
-                      generateAndShareReferralLink();
-
-                    },
+          EasyDialog(
+              title: Text(
+                ReferrerNotificationList[referrerRandom]['title'].toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30,),
+                textAlign: TextAlign.center,),
+              description: Text(
+                ReferrerNotificationList[referrerRandom]['description']
+                    .toString(), textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16,),),
+              height: height,
+              contentList: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 40,),
+                    RaisedButton(
+                      child: Text("GO!", style: TextStyle(color: Colors.white),),
+                      onPressed: () {
+                        generateAndShareReferralLink();
+                      },
                       color: Colors.green,
 
-                  ),SizedBox(width: 10,height: 10,),
+                    ), SizedBox(width: 10, height: 10,),
 
-                ],
-              )
-            ]
-            )
-            .show(context);
+                  ],
+                )
+              ]
+          )
+              .show(context);
+        }
       }
 
     }
@@ -676,7 +912,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print(onError);
     });
     if (response == 1) {
-     // Loc lock = new Loc();
+      // Loc lock = new Loc();
 
       await syncOfflineData();
       // //print(act);
@@ -693,6 +929,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           print("New pwd" + newpwd + "  User ped" + userpwd);
 
           admin_sts = prefs.getString('sstatus').toString() ?? '0';
+          istooltipsts= prefs.getBool('tool');
           mail_varified = prefs.getString('mail_varified').toString() ?? '0';
           alertdialogcount = globalalertcount;
           print('aid again');
@@ -709,7 +946,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           profile = prefs.getString('profile') ?? '';
           createdDate = prefs.getString('CreatedDate') ?? '';
           if(referralNotificationShown==false){
-            //showReferralPopup(context,createdDate);
+            showReferralPopup(context,createdDate);
             //referralNotificationShown=true;
           }
 
@@ -740,7 +977,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
     }
     appResumedPausedLogic(context);
+
+    if((admin_sts == '1' || admin_sts == '2') && (istooltiponeshown!=true)){
+      //if(istooltiponeshown!=true){
+      //Future.delayed(Duration(seconds: 1), () => tooltipone.show(context));
+      //Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
+      print(istooltiponeshown);
+     // istooltiponeshown=true;
+      print(istooltiponeshown);
+    }
+    istooltipsts= prefs.getBool('tool');
+    if(istooltipsts!=true){
+      Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
+    }
   }
+
+
 
   setaddress() async {
     globalstreamlocationaddr = await getAddressFromLati(
@@ -828,50 +1080,83 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   getmainhomewidget() {
-    return new WillPopScope(
-        onWillPop: () async => true,
-        child: new Scaffold(
-          backgroundColor: Colors.white,
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+    return Stack(
+      children: <Widget>[
+        new WillPopScope(
+            onWillPop: () async => true,
+            child: new Scaffold(
+              backgroundColor: Colors.white,
+              key: _scaffoldKey,
+              appBar: AppBar(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+                  ],
+                ),
+                automaticallyImplyLeading: false,
+                backgroundColor: appcolor,
+                // backgroundColor: Color.fromARGB(255,63,163,128),
+              ),
+              //bottomSheet: getQuickLinksWidget(),
+              persistentFooterButtons: <Widget>[
+                quickLinkList1(),
               ],
-            ),
-            automaticallyImplyLeading: false,
-            backgroundColor: appcolor,
-            // backgroundColor: Color.fromARGB(255,63,163,128),
-          ),
-          //bottomSheet: getQuickLinksWidget(),
-          persistentFooterButtons: <Widget>[
-            quickLinkList1(),
-          ],
 
-          bottomNavigationBar: Bottomnavigationbar(),
+              bottomNavigationBar: Bottomnavigationbar(),
 
-          endDrawer: new AppDrawer(),
-          body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-          floatingActionButton: (admin_sts == '1' || admin_sts == '2')
-              ? new FloatingActionButton(
-            mini: false,
-            backgroundColor: buttoncolor,
-            onPressed: () {
+              endDrawer: new AppDrawer(),
+              body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
+              floatingActionButton:(istooltipsts == true && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
+                mini: false,
+                backgroundColor: buttoncolor,
+                onPressed: () {
+                  print('hello');
+                  print(istooltipsts);
+                  if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
+                    showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                  else
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddEmployee()),
+                    );
+                },
+                tooltip: 'Add Employee',
+                child: new Icon(Icons.person_add),
+              ):Container(
+                alignment: Alignment(1.55,1.25),
+                child:
+                (admin_sts == '1' || admin_sts == '2')
+                    ?  AvatarGlow(
+                  glowColor: Colors.blue,
+                  child: new FloatingActionButton(
+                    mini: false,
+                    backgroundColor: buttoncolor,
+                    onPressed: () {
+                      print('hellowassup');
+                      if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
+                        showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                      else
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AddEmployee()),
+                        );
+                      // tooltiptwo.close();
+                      istooltiponeshown=true;
+                      print(istooltiponeshown);
+                    },
+                    tooltip: 'Add Employee',
+                    child: new Icon(Icons.person_add),
+                  )
+                  , endRadius: 90.0,
+                ): new Center(),
+              ),
+            )),              // First child
+       // BlurryEffect(0.5,0.1,Colors.grey.shade200)    //  Second Child
+      ],
+    )
 
-              if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
-                showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-              else
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddEmployee()),
-                );
-            },
-            tooltip: 'Add Employee',
-            child: new Icon(Icons.person_add),
-          )
-              : new Center(),
-        ));
+    ;
   }
 
   checkalreadylogin() {
@@ -2379,4 +2664,27 @@ var FakeLocationStatus=0;
     super.dispose();
   }
 //////////////////////////////////////////////////////////////////
+}
+
+class BlurryEffect extends StatelessWidget {
+  final double opacity;
+  final double blurry;
+  final Color shade;
+
+  BlurryEffect(this.opacity,this.blurry,this.shade);
+
+  @override  Widget build(BuildContext context) {
+    return Container(
+      child: ClipRect(
+        child:  BackdropFilter(
+          filter:  ImageFilter.blur(sigmaX:blurry, sigmaY:blurry),
+          child:  Container(
+            width: double.infinity,
+            height:  double.infinity,
+            decoration:  BoxDecoration(color: shade.withOpacity(opacity)),
+          ),
+        ),
+      ),
+    );
+  }
 }

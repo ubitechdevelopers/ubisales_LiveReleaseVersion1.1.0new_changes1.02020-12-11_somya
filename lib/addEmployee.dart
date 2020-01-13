@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'package:Shrine/drawer.dart';
 import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/home.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class AddEmployee extends StatefulWidget {
   @override
   _AddEmployee createState() => _AddEmployee();
 }
+String _orgName = "";
 
 class _AddEmployee extends State<AddEmployee> {
   bool isloading = false;
@@ -320,6 +322,7 @@ class _AddEmployee extends State<AddEmployee> {
 
     final prefs = await SharedPreferences.getInstance();
     response = prefs.getInt('response') ?? 0;
+    _orgName = prefs.getString('org_name') ?? '';
     _pass.text = '123456';
     if (response == 1) {
       Home ho = new Home();
@@ -413,17 +416,17 @@ class _AddEmployee extends State<AddEmployee> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("Add Employee", style: new TextStyle(fontSize: 20.0)),
+            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
-            /*  Navigator.push(
+             /* Navigator.push(
             context,
-           MaterialPageRoute(builder: (context) => TimeoffSummary()),
-          );*/
+           MaterialPageRoute(builder: (context) => HomePage()),
+          ); */
           },
         ),
         backgroundColor: globals.appcolor,
@@ -643,11 +646,6 @@ class _AddEmployee extends State<AddEmployee> {
                   child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
                 ),*/
               ),
-
-              Center(
-                child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:appcolor)),
-              ),
-              SizedBox(height: 20.0),
               new Expanded(
                 // padding: EdgeInsets.only(left:10.0,right:10.0),
                 //    margin: EdgeInsets.only(top:25.0),
@@ -656,14 +654,15 @@ class _AddEmployee extends State<AddEmployee> {
                     Padding(
                       padding: const EdgeInsets.only(left:15.0,right: 15.0),
                       child: Text(
-                        'Employee Details',
+                        'Add Employee',
                         style: TextStyle(
-                          fontSize: 15.0,
+                          fontSize: 20.0,
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
+                    //Divider(color: Colors.black87,height: 1.5),
                     SizedBox(height: 10,),
                     Padding(
                       padding: const EdgeInsets.only(left:15.0,right: 15.0),

@@ -182,7 +182,7 @@ class _changePassword extends State<changePassword> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Change your login Password",style: new TextStyle(fontSize: 22.0,color: prefix0.buttoncolor)),
+                    child:Text("Change your login Password",style: new TextStyle(fontSize: 22.0,color: appcolor)),
                   ),
                   SizedBox(height: 30.0),
                   Container(

@@ -90,20 +90,18 @@ class _LateComers extends State<LateComers> {
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             Center(
               child: Text(
                 'Late Comers',
                 style: new TextStyle(
                   fontSize: 22.0,
-                  color: Colors.black54,
+                  color: appcolor,
                 ),
               ),
             ),
-           /* Divider(
-              height: 10.0,
-            ),*/
-            SizedBox(height: 2.0),
+            Divider(color: Colors.black54,height: 1.5,),
+            SizedBox(height: 10.0),
             Row(
               children: <Widget>[
               Expanded(
@@ -310,7 +308,9 @@ class _LateComers extends State<LateComers> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -318,20 +318,26 @@ class _LateComers extends State<LateComers> {
                     width: MediaQuery.of(context).size.width * 0.20,
                     child: Text(
                       'Shift',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.18,
                     child: Text('Time In',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Late By',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -444,7 +450,7 @@ class _LateComers extends State<LateComers> {
                 });
           } else {
               return new Center(
-                child: Text("No late comers on this date "),
+                child: Text("No late comers on this date ",style: TextStyle(fontSize: 18.0)),
               );
             }
           } else if (snapshot.hasError) {

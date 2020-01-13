@@ -306,6 +306,11 @@ class _Flexitime extends State<Flexitime> {
                 new Text(org_name, style: new TextStyle(fontSize: 20.0)),
               ],
             ),
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
             automaticallyImplyLeading: false,
             backgroundColor: appcolor,
             // backgroundColor: Color.fromARGB(255,63,163,128),
@@ -509,7 +514,7 @@ class _Flexitime extends State<Flexitime> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(height: MediaQuery.of(context).size.height * .03),
-                  Text("Flexi Time", style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold,color: appcolor)),
+                  Text("Flexi Time", style: new TextStyle(fontSize: 22.0,fontWeight: FontWeight.bold,color: appcolor)),
                   SizedBox(height: MediaQuery.of(context).size.height * .03),
                   new GestureDetector(
                     onTap: () {
@@ -974,7 +979,7 @@ print('visit out called for visit id:'+visit_id);
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          content: new Text("Attendance punched successfully!"),
+          content: new Text("Attendance marked successfully!"),
         )
         );
         Navigator.push(
