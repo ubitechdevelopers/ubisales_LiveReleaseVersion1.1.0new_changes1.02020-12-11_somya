@@ -101,12 +101,11 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
                 new Text(org_name, style: new TextStyle(fontSize: 20.0)),
               ],
             ),
-            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-            },),
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
             backgroundColor: appcolor,
           ),
           bottomNavigationBar: Bottomnavigationbar(),
@@ -140,17 +139,17 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
             SizedBox(height: 70.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.22,
-              child:Text('  Selfie',style: TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('  Selfie',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 70.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.44,
-              child:Text('Event',style: TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Event',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 70.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.22,
-              child:Text('Reason',style: TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Reason',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
           ],
         ),

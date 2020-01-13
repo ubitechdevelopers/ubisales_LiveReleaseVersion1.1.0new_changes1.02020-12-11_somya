@@ -122,10 +122,12 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          SizedBox(height:3.0),
+          SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color:Colors.black54,),),),
+            child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color:appcolor,),),),
           ),
+          Divider(color: Colors.black54,height: 1.5,),
+          SizedBox(height: 10.0),
           Row(
             children: <Widget>[
               Expanded(
@@ -266,6 +268,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                         latecommerlist,
                                         earlyleaverlist,
                                         'Designation Wise Summary Report\n' + today.text,
+                                        presentlist.toString(),
                                         'Designation_Wise_Report_' + today.text,
                                         'desg')
                                         .then((res) {
@@ -345,28 +348,28 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
             ],
           ):Center(),*/
           SizedBox(height: 5,),
-          new Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                'Present($countP)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Absent($countA)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Late Comers($countL)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Early Leavers($countE)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-            ],
-          ),
+//          new Row(
+//            crossAxisAlignment: CrossAxisAlignment.center,
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            children: <Widget>[
+//              Text(
+//                'Present($countP)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Absent($countA)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Late Comers($countL)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Early Leavers($countE)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//            ],
+//          ),
           //Divider(),
           SizedBox(height: 5,),
 
@@ -443,7 +446,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          /*(index == 0)?
+                                          (index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -454,7 +457,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -655,7 +658,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                       children: <Widget>[
-                                        /*(index == 0)?
+                                        (index == 0)?
                                           Row(
                                               children: <Widget>[
                                                 SizedBox(height: 25.0,),
@@ -666,7 +669,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                               ]
                                           ):new Center(),
                                         (index == 0)?
-                                          Divider(color: Colors.black26,):new Center(),*/
+                                          Divider(color: Colors.black26,):new Center(),
                                         Row(
                                           children: <Widget>[
                                             SizedBox(height: 40.0,),
@@ -785,7 +788,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          /*(index == 0)?
+                                          (index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -796,7 +799,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -998,7 +1001,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          /*(index == 0)?
+                                          (index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -1009,7 +1012,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,

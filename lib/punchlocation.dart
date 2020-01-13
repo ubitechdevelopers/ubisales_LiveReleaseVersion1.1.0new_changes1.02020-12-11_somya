@@ -290,6 +290,12 @@ var FakeLocationStatus=0;
                 new Text(org_name, style: new TextStyle(fontSize: 20.0)),
               ],
             ),
+            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+              );
+            },),
             automaticallyImplyLeading: false,
             backgroundColor: appcolor,
             // backgroundColor: Color.fromARGB(255,63,163,128),
@@ -480,6 +486,7 @@ var FakeLocationStatus=0;
     if (act1 == "Poor network connection") {
       return poorNetworkWidget();
     } else {
+      var globals;
       return SafeArea(
         child: ListView(
           physics: NeverScrollableScrollPhysics(),
@@ -490,7 +497,14 @@ var FakeLocationStatus=0;
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .06),
+                  Container(
+                    padding: EdgeInsets.only(top:12.0,bottom: 2.0),
+                    child:Center(
+                      child:Text('Punch Visit',
+                          style: new TextStyle(fontSize: 22.0,color:appcolor)),
+                    ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * .03),
                   //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
                   // SizedBox(height: 5.0),
                   getClients_DD(),

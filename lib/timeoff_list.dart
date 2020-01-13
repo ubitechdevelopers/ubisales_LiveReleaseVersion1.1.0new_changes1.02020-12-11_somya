@@ -87,9 +87,12 @@ class _TimeOffList extends State<TimeOffList> {
                 'Time Off History',
                 style: new TextStyle(
                   fontSize: 22.0,
-                  color: Colors.black54,
+                  color: appcolor,
                 ),
               ),
+            ),
+            Divider(
+              height: 1.5,color: Colors.black87,
             ),
             Divider(
               height: 10.0,
@@ -145,7 +148,7 @@ class _TimeOffList extends State<TimeOffList> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor, fontSize: 16.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -153,20 +156,20 @@ class _TimeOffList extends State<TimeOffList> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text(
                       'From',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text('To',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.12,
                     child: Text('Total Time',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left),
                   ),
                 ],

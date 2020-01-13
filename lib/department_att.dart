@@ -95,7 +95,7 @@ class _Department_att extends State<Department_att>
                       widget.dname,
                       style: TextStyle(
                         fontSize: 22.0,
-                        color: Colors.black54,
+                        color: appcolor,
                       ),
                     ),
                   ),
@@ -107,7 +107,7 @@ class _Department_att extends State<Department_att>
                       widget.date,
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.black54,
+                        color: appcolor,
                       ),
                     ),
                   ),

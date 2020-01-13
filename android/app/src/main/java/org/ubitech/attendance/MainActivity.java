@@ -14,6 +14,7 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.provider.Settings;
@@ -42,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
@@ -75,6 +77,19 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+
+    Intent i=getIntent();
+      final Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+              onNewIntent(i);
+          }
+      }, 7000);
+
+    //onNewIntent(i);
+
+
   //showLocationDialog();
    // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
 /*
@@ -106,6 +121,12 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
           startActivity(intent1);
       }
 */
+
+
+      Intent intent111 = new Intent(getApplicationContext(), MainActivity.class);
+      intent111.setAction(Intent.ACTION_RUN);
+      intent111.putExtra("route", "settings");
+      getApplicationContext().startActivity(intent111);
 
 
 
@@ -237,18 +258,18 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                 }else
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
-                  String ShiftTimeOut = call.argument("ShiftTimeOut");
-                  Log.i("ShiftTimeout",ShiftTimeOut);
-                  startTimeOutNotificationWorker(ShiftTimeOut);
+                 // WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
+                  //String ShiftTimeOut = call.argument("ShiftTimeOut");
+                  //Log.i("ShiftTimeout",ShiftTimeOut);
+                  //startTimeOutNotificationWorker(ShiftTimeOut);
                 }else
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
-                  String ShiftTimeIn = call.argument("ShiftTimeIn");
-                    String nextWorkingDay = call.argument("nextWorkingDay");
-                  Log.i("nextWorkingDay",nextWorkingDay);
-                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+                  //WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
+                 // String ShiftTimeIn = call.argument("ShiftTimeIn");
+                   // String nextWorkingDay = call.argument("nextWorkingDay");
+                 // Log.i("nextWorkingDay",nextWorkingDay);
+                 // startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
                 }else
                 if (call.method.equals("openLocationDialog")) {
                   openLocationDialog();
@@ -257,9 +278,11 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 
                     String notiTitle = call.argument("title");
                     String notiDescription = call.argument("description");
+                    String pageToOpenOnClick = call.argument("pageToOpenOnClick");
+
                     DisplayNotification displayNotification=new DisplayNotification(getApplicationContext());
 
-                    displayNotification.displayNotification(notiTitle,notiDescription);
+                    displayNotification.displayNotification(notiTitle,notiDescription,pageToOpenOnClick);
                 }
 
               }
@@ -693,5 +716,27 @@ catch(Exception e){
   public void onError(LocationAssistant.ErrorType type, String message) {
     // tvLocation.setText(getString(R.string.error));
   }
+
+    @Override
+    public void onNewIntent(Intent intent){
+        Bundle extras = intent.getExtras();
+
+  Log.e("INTENT","Notification Recieved");
+
+
+        if(extras != null){
+            if(extras.containsKey("whereToGo"))
+            {
+                Log.i("WhereToGo",extras.getString("whereToGo"));
+                HashMap<String, String> responseMap = new HashMap<String, String>();
+                responseMap.put("page",extras.getString("whereToGo"));
+                if(channel!=null){
+                    channel.invokeMethod("navigateToPage", responseMap);
+                }
+            }
+        }
+
+
+    }
 
 }

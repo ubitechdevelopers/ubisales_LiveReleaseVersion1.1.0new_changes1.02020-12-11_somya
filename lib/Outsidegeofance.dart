@@ -87,16 +87,17 @@ class _Outsidegeofance extends State<Outsidegeofance> {
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 8.0),
+            SizedBox(height: 10.0),
             Center(
               child: Text(
                 'Outside the geo fence',
                 style: new TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.black54,
+                  fontSize: 22.0,
+                  color: appcolor,
                 ),
               ),
             ),
+            Divider(color: Colors.black54,height: 1.5,),
             Divider(
               height: 10.0,
             ),
@@ -155,7 +156,9 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                     child:  Container(
                       child: Text(
                         '  Name',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left,
                       ),
                     ),
@@ -166,7 +169,9 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       '    In',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                    ),
@@ -177,7 +182,9 @@ class _Outsidegeofance extends State<Outsidegeofance> {
                   child:Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('    Out',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                   ),
@@ -439,7 +446,7 @@ class _Outsidegeofance extends State<Outsidegeofance> {
             else
             {
               return new Center(
-                child: Text("No Attendance",style: TextStyle(color: buttoncolor,fontSize: 18.0),),
+                child: Text("No Attendance",style: TextStyle(fontSize: 18.0),),
               );
             }
           }

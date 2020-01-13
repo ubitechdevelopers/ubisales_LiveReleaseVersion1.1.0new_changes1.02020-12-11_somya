@@ -51,9 +51,11 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
+          SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Attendance Snap - Last 7 Days",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Attendance Snap - Last 7 Days",style: TextStyle(fontSize: 22.0,color: appcolor,),),),
           ),
+          Divider(color: Colors.black54,height: 1.5,),
           new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
@@ -81,10 +83,10 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('Early Leavers(EL)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Late Comers(LC)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Absent(A)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
+              Text('Present(P)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Absent(A)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Late Comers(LC)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Early Leavers(EL)',style: TextStyle(color:appcolor,fontSize: 12.0),),
             ],
           ),
           Divider(),

@@ -123,11 +123,11 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          SizedBox(height:3.0),
+          SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Employee Wise Attendance",style: TextStyle(fontSize: 22.0,color:Colors.black54,),),),
+            child: Center(child:Text("Employee Wise Attendance",style: TextStyle(fontSize: 22.0,color:appcolor,),),),
           ),
-          //Divider(height: 2.0,),
+          Divider(color: Colors.black54,height: 1.5,),
           Row(
             children: <Widget>[
               Expanded(child: getEmployee_DD()),
@@ -212,7 +212,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                       });
                                     }
                                     CreateEmployeeWisepdf(
-                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report of ' + empname,
+                                        presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
                                         'Employee_Wise_Report', 'employeewise')
                                         .then((res) {
                                       if(mounted) {
@@ -246,28 +246,28 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
           ),
           Divider(height: 10,color: Colors.black,),
           //SizedBox(height: 5,),
-          new Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                'Present($countP)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Absent($countA)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Late Comers($countL)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-              Text(
-                'Early Leavers($countE)',
-                style: TextStyle(color: Colors.orange, fontSize: 12.0),
-              ),
-            ],
-          ),
+//          new Row(
+//            crossAxisAlignment: CrossAxisAlignment.center,
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            children: <Widget>[
+//              Text(
+//                'Present($countP)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Absent($countA)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Late Comers($countL)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//              Text(
+//                'Early Leavers($countE)',
+//                style: TextStyle(color: appcolor, fontSize: 12.0),
+//              ),
+//            ],
+//          ),
           //Divider(),
           SizedBox(height: 5,),
           new Container(
@@ -347,7 +347,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                         /* (index == 0)?
+                                          (index == 0)?
                                             Row(
                                                   children: <Widget>[
                                                     SizedBox(height: 25.0,),
@@ -358,7 +358,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                    ]
                                                ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -564,7 +564,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                        children: <Widget>[
-                                        /* (index == 0)?
+                                         (index == 0)?
                                            Row(
                                                children: <Widget>[
                                                  SizedBox(height: 25.0,),
@@ -575,7 +575,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                ]
                                            ):new Center(),
                                          (index == 0)?
-                                           Divider(color: Colors.black26,):new Center(),*/
+                                           Divider(color: Colors.black26,):new Center(),
                                        Row(
                                            mainAxisAlignment: MainAxisAlignment
                                                .spaceAround,
@@ -695,7 +695,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          /*(index == 0)?
+                                          (index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -706,7 +706,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
@@ -908,7 +908,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Column(
                                         children: <Widget>[
-                                          /*(index == 0)?
+                                          (index == 0)?
                                             Row(
                                                 children: <Widget>[
                                                   SizedBox(height: 25.0,),
@@ -919,7 +919,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                                 ]
                                             ):new Center(),
                                           (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),*/
+                                            Divider(color: Colors.black26,):new Center(),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,

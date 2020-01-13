@@ -63,12 +63,11 @@ class _UserGuide extends State<UserGuide> {
               new Text(org_name, style: new TextStyle(fontSize: 20.0)),
             ],
           ),
-          leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          },),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
           backgroundColor: appcolor,
         ),
         endDrawer: new AppDrawer(),

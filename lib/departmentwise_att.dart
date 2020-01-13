@@ -100,18 +100,20 @@ class _Departmentwise_att extends State<Departmentwise_att>
         : new ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              SizedBox(height: 3.0),
+              SizedBox(height: 10.0),
               new Container(
                 child: Center(
                   child: Text(
                     "Department Wise Attendance",
                     style: TextStyle(
                       fontSize: 22.0,
-                      color: Colors.black54,
+                      color: appcolor,
                     ),
                   ),
                 ),
               ),
+              Divider(color: Colors.black54,height: 1.5,),
+              SizedBox(height: 10.0),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -322,7 +324,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                     child: Text(
                       ' Departments\n         ($countD)',
                       style: TextStyle(
-                          color: Colors.orange,
+                          color: appcolor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0),
                     ),
@@ -335,7 +337,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                     child: Text(
                       'Total\n ($countT)',
                       style: TextStyle(
-                          color: Colors.orange,
+                          color: appcolor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0),
                     ),
@@ -348,7 +350,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                     child: Text(
                       'Present\n     ($countP)',
                       style: TextStyle(
-                          color: Colors.orange,
+                          color: appcolor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0),
                     ),
@@ -361,7 +363,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                     child: Text(
                       'Absent\n    ($countA)',
                       style: TextStyle(
-                          color: Colors.orange,
+                          color: appcolor,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0),
                     ),

@@ -30,7 +30,6 @@ class ShrineApp extends StatefulWidget {
 }
 class _ShrineAppState extends State<ShrineApp> {
   Map<String, double> _currentLocation;
-
  // StreamSubscription<Map<String, double>> _locationSubscription;
  // Location _location = new Location();
   String streamlocationaddr="";
@@ -45,7 +44,6 @@ class _ShrineAppState extends State<ShrineApp> {
   @override
   void initState() {
     super.initState();
-
     getShared();
     checkNow().then((res){
       setState(() {
@@ -59,11 +57,6 @@ class _ShrineAppState extends State<ShrineApp> {
     });
     platform.setMethodCallHandler(_handleMethod);
   }
-
-
-
-
-
   static const platform = const MethodChannel('location.spoofing.check');
   String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {

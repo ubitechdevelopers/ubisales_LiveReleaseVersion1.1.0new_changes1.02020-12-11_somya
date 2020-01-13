@@ -72,8 +72,9 @@ class _Designation extends State<Designation> {
                 SizedBox(height: 8.0),
                 Center(
                   child: Text('Designations',
-                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
+                    style: new TextStyle(fontSize: 22.0, color: appcolor,),),
                 ),
+                Divider(height: 1.5, color: Colors.black87,),
                 Divider(height: 10.0,),
                 SizedBox(height: 2.0),
                 Container(
@@ -83,9 +84,9 @@ class _Designation extends State<Designation> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text('Designations', style: TextStyle(
-                          color: Colors.orange),),
+                          color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold ),),
                       Text('Status', style: TextStyle(
-                          color: Colors.orange),),
+                          color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),),
                     ],
                   ),
                 ),

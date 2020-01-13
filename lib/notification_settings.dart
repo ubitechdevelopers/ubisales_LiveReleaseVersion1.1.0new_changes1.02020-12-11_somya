@@ -178,7 +178,7 @@ class _NotificationSettings extends State<NotificationSettings> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Modify your Notification Settings",style: new TextStyle(fontSize: 22.0,color: buttoncolor)),
+                    child:Text("Modify your Notification Settings",style: new TextStyle(fontSize: 22.0,color: appcolor)),
                   ),
                   SizedBox(height: 30.0),
                   Container(

@@ -86,18 +86,19 @@ class _TodayAttendance extends State<TodayAttendance>
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          SizedBox(height: 3.0),
+          SizedBox(height: 10.0),
           new Container(
             child: Center(
               child: Text(
                 "Today's Attendance",
                 style: TextStyle(
                   fontSize: 22.0,
-                  color: Colors.black54,
+                  color: appcolor,
                 ),
               ),
             ),
           ),
+          Divider(color: Colors.black54,height: 1.5,),
           new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
@@ -128,20 +129,20 @@ class _TodayAttendance extends State<TodayAttendance>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                'Early Leavers(EL)',
-                style: TextStyle(color: Colors.black87, fontSize: 12.0),
-              ),
-              Text(
-                'Late Comers(LC)',
-                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+                'Present(P)',
+                style: TextStyle(color: appcolor, fontSize: 12.0),
               ),
               Text(
                 'Absent(A)',
-                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+                style: TextStyle(color: appcolor, fontSize: 12.0),
               ),
               Text(
-                'Present(P)',
-                style: TextStyle(color: Colors.black87, fontSize: 12.0),
+                'Late Comers(LC)',
+                style: TextStyle(color: appcolor, fontSize: 12.0),
+              ),
+              Text(
+                'Early Leavers(EL)',
+                style: TextStyle(color: appcolor, fontSize: 12.0),
               ),
             ],
           ),
@@ -281,7 +282,11 @@ class _TodayAttendance extends State<TodayAttendance>
                                                         filests = true;
                                                       });
 
-                                                      getCsv(snapshot.data, 'Today_present_$todaydate', 'present').then((res) {
+                                                      getCsv(
+                                                              snapshot.data,
+                                                              'Today_present_$todaydate',
+                                                              'present')
+                                                          .then((res) {
                                                         setState(() {
                                                           filests = false;
                                                         });
@@ -576,7 +581,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                   });
                             } else {
                               return new Center(
-                                child: Text("No one is present today "),
+                                child: Text("No one is present today ",style: TextStyle(fontSize: 18.0)),
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -625,7 +630,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                     padding: EdgeInsets.only(
                                                         left: 5.0),
                                                     child: Text(
-                                                      "Total absent: " +
+                                                      "Total Absent: " +
                                                           snapshot.data.length
                                                               .toString(),
                                                       style: TextStyle(
@@ -847,7 +852,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                   });
                             } else {
                               return new Center(
-                                child: Text("No one is absent today"),
+                                child: Text("No one is absent today",style: TextStyle(fontSize: 18.0)),
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -896,7 +901,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                 padding:
                                                     EdgeInsets.only(left: 5.0),
                                                 child: Text(
-                                                  "Total latecomings: " +
+                                                  "Total Latecomings: " +
                                                       snapshot.data.length
                                                           .toString(),
                                                   style: TextStyle(
@@ -1211,7 +1216,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                   });
                             } else {
                               return new Center(
-                                child: Text("No one is late today"),
+                                child: Text("No one is late today",style: TextStyle(fontSize: 18.0)),
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -1258,7 +1263,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                                 padding:
                                                     EdgeInsets.only(left: 5.0),
                                                 child: Text(
-                                                  "Total earlyleavings: " +
+                                                  "Total Early leavings: " +
                                                       snapshot.data.length
                                                           .toString(),
                                                   style: TextStyle(

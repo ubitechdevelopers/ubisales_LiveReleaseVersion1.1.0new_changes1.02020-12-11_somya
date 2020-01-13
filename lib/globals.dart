@@ -71,6 +71,12 @@ List responseJson = new List();
 List responseEmplist = new List();
 String referralLink="";
 bool referralNotificationShown=false;
+bool istooltiptimeinshown=false;
+bool istooltiponeshown=false;
+bool istooltiptwoshown=false;
+bool istooltipthreeshown=false;
+bool istooltipfourshown=false;
+bool istooltipfiveshown=false;
 String currentOrgStatus='';
 
 

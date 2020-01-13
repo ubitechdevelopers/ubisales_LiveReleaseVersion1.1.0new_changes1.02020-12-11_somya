@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +92,11 @@ class _FlexiReport extends State<FlexiReport> {
                 'Flexi Attendance',
                 style: new TextStyle(
                   fontSize: 22.0,
-                  color: Colors.black54,
+                  color: appcolor,
                 ),
               ),
             ),
+            Divider(color: Colors.black54,height: 1.5,),
             Divider(
               height: 10.0,
             ),
@@ -152,7 +154,9 @@ class _FlexiReport extends State<FlexiReport> {
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -160,20 +164,26 @@ class _FlexiReport extends State<FlexiReport> {
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
                       'Location',
-                      style: TextStyle(color: headingcolor),
+                      style: TextStyle(color: appcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('In',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -429,7 +439,7 @@ class _FlexiReport extends State<FlexiReport> {
              else
               {
                 return new Center(
-                child: Text("No Attendance",style: TextStyle(color: buttoncolor,fontSize: 18.0),),
+                child: Text("No Attendance",style: TextStyle(fontSize: 18.0),),
               );
             }
           }

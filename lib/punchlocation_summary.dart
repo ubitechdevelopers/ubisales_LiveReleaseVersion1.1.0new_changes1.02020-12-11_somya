@@ -402,6 +402,7 @@ print('visit out called for visit id:'+visit_id);
       Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget> [
+            SizedBox(height:10.0),
             Container(
               padding: EdgeInsets.only(top:0.0,bottom: 2.0),
               child:Center(
@@ -409,6 +410,7 @@ print('visit out called for visit id:'+visit_id);
                     style: new TextStyle(fontSize: 22.0, color: appcolor,)),
               ),
             ),
+            Divider(color: Colors.black54,height: 1.5,),
             //SizedBox(height: 2.0),
             Container(
               child: DateTimeField(
@@ -458,18 +460,18 @@ print('visit out called for visit id:'+visit_id);
                 SizedBox(width: MediaQuery.of(context).size.width*0.02),
                 Container(
                   width: MediaQuery.of(context).size.width*0.55,
-                  child:Text(' Client',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  child:Text(' Client',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
                 ),
 
                 SizedBox(height: 30.0,),
                 Container(
                   width: MediaQuery.of(context).size.width*0.22,
-                  child:Text('Visit In',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  child:Text('Visit In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
                 ),
                 SizedBox(height: 30.0,),
                 Container(
                   width: MediaQuery.of(context).size.width*0.2,
-                  child:Text('Visit Out',style: TextStyle(color: buttoncolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  child:Text('Visit Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
                 ),
               ],
             ),

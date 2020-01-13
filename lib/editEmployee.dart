@@ -542,20 +542,20 @@ class _EditEmployee extends State<EditEmployee> {
                             showDialog(
                                 context: context,
                                 child: new AlertDialog(
-                                  content: new Text("Employee details updated successfully"),
+                                  content: new Text("Employee details update successfully."),
                                 ));
                           } else if (res == 3)
-                            showInSnackBar('Contact already exists');
+                            showInSnackBar('Contact Already Exist');
                           else if (res == 2)
-                            showInSnackBar('Email already exists');
+                            showInSnackBar('Email Already Exist');
                           else
-                            showInSnackBar('Unable to add the employee');
+                            showInSnackBar('Unable to Add Employee');
                           setState(() {
                             _isButtonDisabled = false;
                           });
                           // TimeOfDay.fromDateTime(10000);
                         }).catchError((exp) {
-                          showInSnackBar('Unable to call this service');
+                          showInSnackBar('Unable to call service');
                           print(exp.toString());
                           setState(() {
                             _isButtonDisabled = false;

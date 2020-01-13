@@ -7,7 +7,7 @@ packages:
       name: android_intent
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.4+8"
+    version: "0.3.4+7"
   archive:
     dependency: transitive
     description:
@@ -28,7 +28,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.2.0"
   barcode:
     dependency: transitive
     description:
@@ -49,14 +49,14 @@ packages:
       name: boolean_selector
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.4"
   camera:
     dependency: "direct main"
     description:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.7+2"
+    version: "0.5.7+1"
   charcode:
     dependency: transitive
     description:
@@ -198,14 +198,7 @@ packages:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.2+2"
-  firebase_core_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_core_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
+    version: "0.4.0+9"
   firebase_dynamic_links:
     dependency: "direct main"
     description:
@@ -246,6 +239,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.4+3"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_native_image:
     dependency: "direct main"
     description:
@@ -371,7 +369,7 @@ packages:
       name: meta
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.7"
+    version: "1.1.6"
   native_contact_picker:
     dependency: "direct main"
     description:
@@ -392,7 +390,7 @@ packages:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.6.2"
   path_provider:
     dependency: "direct main"
     description:
@@ -413,7 +411,7 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0+1"
+    version: "1.7.0"
   permission_handler:
     dependency: "direct main"
     description:
@@ -442,13 +440,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
-  plugin_platform_interface:
-    dependency: transitive
-    description:
-      name: plugin_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   qr:
     dependency: transitive
     description:
@@ -462,7 +453,7 @@ packages:
       name: quiver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.5"
+    version: "2.0.3"
   share:
     dependency: "direct main"
     description:
@@ -530,7 +521,7 @@ packages:
       name: string_scanner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.4"
   synchronized:
     dependency: transitive
     description:
@@ -565,14 +556,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.2.7"
-  url_launcher_platform_interface:
-    dependency: transitive
-    description:
-      name: url_launcher_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
+    version: "5.2.1"
   utf:
     dependency: transitive
     description:
@@ -610,4 +594,4 @@ packages:
     version: "2.2.0"
 sdks:
   dart: ">=2.4.0 <3.0.0"
-  flutter: ">=1.10.0 <2.0.0"
+  flutter: ">=1.6.7 <2.0.0"

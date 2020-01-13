@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,6 +19,7 @@ import 'permission.dart';
 import 'profile.dart';
 import 'services/services.dart';
 import 'shift_list.dart';
+import 'super_tooltip.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -32,6 +34,134 @@ class _Settings extends State<Settings> {
   String trialstatus = "";
   String orgmail = "";
 
+   var tooltipthree = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -375,
+    y: -450,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 200.0,
+          height: 80.0,
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: <Widget>[
+                Text("Add Shifts from here",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                RaisedButton(
+                  onPressed: (){
+                    SuperTooltip.a.close();
+                    tooltipthreeClicked(SuperTooltip.ctx);
+                    istooltipthreeshown=true;
+                  },
+                  child: Text("Next"),
+                ),
+              ],
+            ),
+          ),
+        )),
+  );
+  static var tooltipfour = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -375,
+    y: -380,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 200.0,
+          height: 100.0,
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: <Widget>[
+                Text("Add Departments from here",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                RaisedButton(
+                  onPressed: (){
+                    SuperTooltip.a.close();
+                    tooltipfourClicked(SuperTooltip.ctx);
+                    istooltipfourshown=true;
+                  } ,
+                  child: Text(
+                    "Next",
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )),
+  );
+
+  static var tooltipfive = SuperTooltip(
+    popupDirection: TooltipDirection.up,
+    arrowTipDistance: 20.0,
+    x: -375,
+    y: -310,
+    //arrowLength: 40.0,
+    //top: 50.0,
+    //right: 1.0,
+    // left: 50.0,
+    //bottom: 100.0,
+    //showCloseButton: ShowCloseButton.outside,
+    hasShadow: false,
+    content: new Material(
+        child: Container(
+          width: 200.0,
+          height: 100.0,
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: <Widget>[
+                Text("Add Designations from here",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                RaisedButton(
+                  onPressed: (){
+                    SuperTooltip.a.close();
+                    tooltipfiveClicked(SuperTooltip.ctx);
+                    istooltipfiveshown=true;
+                  },
+                  child: Text(
+                    "Next",
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )),
+  );
+  static tooltipthreeClicked(var context) async{
+    //HomePage h=new HomePage();
+    //Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => ShiftList(),maintainState: false));
+    //Future.delayed(Duration(seconds: 2), () => tooltipfour.show(context));
+    tooltipfour.show(context);
+
+  }
+  static tooltipfourClicked(var context) async{
+    //HomePage h=new HomePage();
+    //Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => Department(),maintainState: false));
+    tooltipfive.show(context);
+
+  }
+  static tooltipfiveClicked(var context) async{
+    //HomePage h=new HomePage();
+    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => HomePage(),maintainState: false));
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +169,18 @@ class _Settings extends State<Settings> {
 
     checknetonpage(context);
     getOrgName();
+    if((istooltiptwoshown==true) && (istooltipthreeshown!=true)){
+      Future.delayed(Duration(seconds: 1), () => tooltipthree.show(context));
+      //istooltipthreeshown=true;
+    }
+//    if((istooltipthreeshown==true) && (istooltipfourshown!=true)){
+//      Future.delayed(Duration(seconds: 2), () => tooltipfour.show(context));
+//      //istooltipfourshown=true;
+//    }
+//    if((istooltipfourshown==true) && (istooltipfiveshown!=true)){
+//      Future.delayed(Duration(seconds: 2), () => tooltipfive.show(context));
+//      //istooltipfiveshown=true;
+//    }
   }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
@@ -287,6 +429,7 @@ class _Settings extends State<Settings> {
             MaterialPageRoute(builder: (context) => ShiftList()),
           );
           // Perform some action
+          istooltipthreeshown=true;
         },
       ) );
 
@@ -335,6 +478,7 @@ class _Settings extends State<Settings> {
             context,
             MaterialPageRoute(builder: (context) => Department()),
           );
+          istooltipfourshown=true;
         },
       ));
 
@@ -384,6 +528,7 @@ class _Settings extends State<Settings> {
             MaterialPageRoute(builder: (context) => Designation()),
           );
           // Perform some action
+          istooltipfiveshown=true;
         },
       ));
       list.add( SizedBox(height: 0.0));
@@ -582,7 +727,7 @@ class _Settings extends State<Settings> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
-                        child: Text('Choose Android\'s default or ubiAttendance camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                        child: Text('Choose from android default or app\'s personalized camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                     ),
                   ),
                 ],
@@ -648,7 +793,7 @@ class _Settings extends State<Settings> {
       },
     ));
     list.add(SizedBox(height: 0.0));
-/*
+
     list.add(new RaisedButton(
       child: Container(
         padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
@@ -688,7 +833,7 @@ class _Settings extends State<Settings> {
           MaterialPageRoute(builder: (context) => NotificationSettings()),
         );
       },
-    ));*/
+    ));
     return list;
   }
 

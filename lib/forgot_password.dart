@@ -95,6 +95,15 @@ class _ForgotPassword extends State<ForgotPassword> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 24.0),
             children: <Widget>[
+//              SizedBox(height: 50.0),
+//              Column(
+//                children: <Widget>[
+//                  Image.asset(
+//                    'assets/logo.png', height: 150.0, width: 150.0,),
+//                  //(loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 2.0),
+//                  /*Text('Log In', style: new TextStyle(fontSize: 20.0)),*/
+//                ],
+//              ),
           Center(
             child:Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -119,7 +128,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                                   prefixIcon: Padding(
                                     padding: EdgeInsets.all(0.0),
                                     child: Icon(
-                                      Icons.person_outline,
+                                      Icons.mail,
                                       color: Colors.grey,
                                     ), // icon is 48px widget.
                                   )
@@ -185,7 +194,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                                   showDialog(context: context, child:
                                   new AlertDialog(
                                     title: new Text("Alert"),
-                                    content: new Text("Please check your mail for the Password reset link."),
+                                    content: new Text("Please check your mail for the reset Password link."),
                                   ));
                                 }
                                 else {
@@ -214,7 +223,7 @@ class _ForgotPassword extends State<ForgotPassword> {
                       ),
                     ],
                   ):Center(),
-                  err==true?Text('Invalid Email.',style: TextStyle(color: Colors.red,fontSize: 16.0),):Center(),
+                  //err==true?Text('Invalid Email.',style: TextStyle(color: Colors.red,fontSize: 16.0),):Center(),
                   succ==true?Text('Please check your mail for the Password reset link. After you have reset the password, please click below link to login.',style: TextStyle(fontSize: 16.0),):Center(),
                   login==true?InkWell(
                     child: Text('\nClick here to Login',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16.0,color: appcolor),),

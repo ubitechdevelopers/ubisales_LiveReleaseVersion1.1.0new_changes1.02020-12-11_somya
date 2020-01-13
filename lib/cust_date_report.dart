@@ -94,10 +94,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          SizedBox(height:3.0),
+          SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Custom Date Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Custom Date Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
           ),
+          Divider(color: Colors.black54,height: 1.5,),
           Container(
             child: DateTimeField(
               //dateOnly: true,
@@ -171,10 +172,10 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('Early Leavers(EL)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Late Comers(LC)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Absent(A)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
+              Text('Present(P)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Absent(A)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Late Comers(LC)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Early Leavers(EL)',style: TextStyle(color:appcolor,fontSize: 12.0),)
             ],
           ):Center(),
 

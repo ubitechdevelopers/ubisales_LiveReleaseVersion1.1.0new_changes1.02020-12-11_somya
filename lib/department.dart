@@ -26,7 +26,7 @@ class _Department extends State<Department> {
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     dept = new TextEditingController();
-   // f_dept = FocusNode();
+    // f_dept = FocusNode();
     getOrgName();
 
   }
@@ -51,75 +51,76 @@ class _Department extends State<Department> {
 
   getmainhomewidget() {
     return new Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
 
-                new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
 
-                /*  Image.asset(
+            /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
-              ],
-            ),
-            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-            Navigator.pop(context);}),
-            backgroundColor: appcolor,
-          ),
+          ],
+        ),
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+          Navigator.pop(context);}),
+        backgroundColor: appcolor,
+      ),
       bottomNavigationBar: Bottomnavigationbar(),
 
-          endDrawer: new AppDrawer(),
-          body:
-          Container(
-            padding: EdgeInsets.only(left: 2.0, right: 2.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 8.0),
-                Center(
-                  child: Text('Departments',
-                    style: new TextStyle(fontSize: 22.0, color: buttoncolor,),),
-                ),
-                Divider(height: 10.0,),
-                SizedBox(height: 2.0),
-                Container(
-                  padding: EdgeInsets.only(left: 30.0,right: 30.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('Departments', style: TextStyle(
-                          color: Colors.orange),),
-                      Text('Status', style: TextStyle(
-                          color: Colors.orange),),
-                    ],
-                  ),
-                ),
-                Divider(),
-                SizedBox(height: 5.0),
-                new Expanded(
-                  child: getDeptWidget(),
+      endDrawer: new AppDrawer(),
+      body:
+      Container(
+        padding: EdgeInsets.only(left: 2.0, right: 2.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 8.0),
+            Center(
+              child: Text('Departments',
+                style: new TextStyle(fontSize: 22.0, color: appcolor,),),
+            ),
+            Divider(color: Colors.black54,height: 1.5,),
+            Divider(height: 10.0,),
+            SizedBox(height: 2.0),
+            Container(
+              padding: EdgeInsets.only(left: 30.0,right: 30.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Departments', style: TextStyle(
+                      color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  Text('Status', style: TextStyle(
+                      color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                ],
+              ),
+            ),
+            Divider(),
+            SizedBox(height: 5.0),
+            new Expanded(
+              child: getDeptWidget(),
 
-                ),
-
-              ],
             ),
 
-          ),
-          floatingActionButton: new FloatingActionButton(
-            mini: false,
-            backgroundColor: buttoncolor,
-            onPressed: (){
-              setState(() {
-                _isButtonDisabled=false;
-              });
-              _showDialog(context);
-            },
-            tooltip: 'Add Department',
-            child: new Icon(Icons.add),
-          ),
-        );
-}
+          ],
+        ),
+
+      ),
+      floatingActionButton: new FloatingActionButton(
+        mini: false,
+        backgroundColor: buttoncolor,
+        onPressed: (){
+          setState(() {
+            _isButtonDisabled=false;
+          });
+          _showDialog(context);
+        },
+        tooltip: 'Add Department',
+        child: new Icon(Icons.add),
+      ),
+    );
+  }
 
 
   loader() {
@@ -145,38 +146,38 @@ class _Department extends State<Department> {
                 padding: EdgeInsets.only(left: 15.0,right: 15.0),
                 itemBuilder: (BuildContext context, int index) {
                   return  new Column(
-                    children: <Widget>[
-                      new FlatButton(
-                      child : new Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      new Container(
-                       // color: Colors.amber.shade400,
-                     //   padding: EdgeInsets.only(top:5.0,bottom: 5.0),
-                        //margin: EdgeInsets.only(top:5.0),
-                        alignment: FractionalOffset.center,
-                        child: new Text(snapshot.data[index].dept.toString()),
-                      ),
-                      new Container(
-                        // color: Colors.amber.shade400,
-                      //  padding: EdgeInsets.only(top:7.0,bottom: 7.0),
-                        alignment: FractionalOffset.center,
-                        child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
-                      ),
-                    ],
-                  ),
-                      onPressed: (){
-                        //null;
-                       editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
-                      },),
-                    Divider(color: Colors.blueGrey.withOpacity(0.25),height: 0.2,),
-                    ]
+                      children: <Widget>[
+                        new FlatButton(
+                          child : new Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              new Container(
+                                // color: Colors.amber.shade400,
+                                //   padding: EdgeInsets.only(top:5.0,bottom: 5.0),
+                                //margin: EdgeInsets.only(top:5.0),
+                                alignment: FractionalOffset.center,
+                                child: new Text(snapshot.data[index].dept.toString()),
+                              ),
+                              new Container(
+                                // color: Colors.amber.shade400,
+                                //  padding: EdgeInsets.only(top:7.0,bottom: 7.0),
+                                alignment: FractionalOffset.center,
+                                child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
+                              ),
+                            ],
+                          ),
+                          onPressed: (){
+                            //null;
+                            editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
+                          },),
+                        Divider(color: Colors.blueGrey.withOpacity(0.25),height: 0.2,),
+                      ]
                   );
                 }
             );
           }
-         return loader();
+          return loader();
         }
     );
   }

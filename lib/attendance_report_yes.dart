@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/payment.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
@@ -91,9 +92,11 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
+          SizedBox(height: 10.0),
           new Container(
-            child: Center(child:Text("Yesterday's Attendance",style: TextStyle(fontSize: 22.0,color: Colors.black54,),),),
+            child: Center(child:Text("Yesterday's Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
           ),
+          Divider(color: Colors.black54,height: 1.5,),
           new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
@@ -121,10 +124,10 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('Early Leavers(EL)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Late Comers(LC)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Absent(A)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
-              Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
+              Text('Present(P)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Absent(A)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Late Comers(LC)',style: TextStyle(color:appcolor,fontSize: 12.0),),
+              Text('Early Leavers(EL)',style: TextStyle(color:appcolor,fontSize: 12.0),),
             ],
           ),
           Divider(),
