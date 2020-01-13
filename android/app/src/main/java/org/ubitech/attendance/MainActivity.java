@@ -2,15 +2,19 @@ package org.ubitech.attendance;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.view.View;
@@ -38,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +60,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
   private static final String CAMERA_CHANNEL = "update.camera.status";
   private static final String FACEBOOK_CHANNEL = "log.facebook.data";
   private boolean cameraOpened=false;
+  private BackgroundLocationService gpsService;
 
 
   private SettingsClient mSettingsClient;
@@ -64,13 +70,45 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
 
 
   MethodChannel channel;
-  LocationListenerExecuter listenerExecuter;
+  //LocationListenerExecuter listenerExecuter;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
   //showLocationDialog();
    // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
+/*
+      Intent intent1 = new Intent();
+
+      String manufacturer = android.os.Build.MANUFACTURER;
+
+      switch (manufacturer) {
+
+          case "xiaomi":
+              intent1.setComponent(new ComponentName("com.miui.securitycenter",
+                      "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+              break;
+          case "oppo":
+              intent1.setComponent(new ComponentName("com.coloros.safecenter",
+                      "com.coloros.safecenter.permission.startup.StartupAppListActivity"));
+
+              break;
+          case "vivo":
+              intent1.setComponent(new ComponentName("com.vivo.permissionmanager",
+                      "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+              break;
+      }
+
+      List<ResolveInfo> arrayList =  getPackageManager().queryIntentActivities(intent1,
+              PackageManager.MATCH_DEFAULT_ONLY);
+
+      if (arrayList.size() > 0) {
+          startActivity(intent1);
+      }
+*/
+
+
+
     MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
 
     //facebookLogger.logCompleteRegistrationEvent("");
@@ -118,18 +156,23 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       StrictMode.setThreadPolicy(policy);
     }
       ActivityCompat.requestPermissions(this,
-              new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS}, 1);
+             new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS}, 1);
 
     channel=new MethodChannel(getFlutterView(), CHANNEL);
     GeneratedPluginRegistrant.registerWith(this);
-    listenerExecuter=new LocationListenerExecuter(channel,this);
+
     try{
+        final Intent intent = new Intent(this.getApplication(), BackgroundLocationService.class);
+        this.getApplication().startService(intent);
+
+        //this.getApplication().startForegroundService(intent);
+
+     this.getApplication().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 
-    listenerExecuter.execute("");
     }
     catch(Exception e){
-
+        Log.e("AsyncTask",e.getMessage());
     }
       Timer timer = new Timer();
 
@@ -191,31 +234,71 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
                   Log.i("Assistant","Assistant Start Called");
 
                   manuallyStartAssistant();
-                }
+                }else
                 if (call.method.equals("startTimeOutNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                 /* WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
                   String ShiftTimeOut = call.argument("ShiftTimeOut");
                   Log.i("ShiftTimeout",ShiftTimeOut);
-                  startTimeOutNotificationWorker(ShiftTimeOut);*/
-                }
+                  startTimeOutNotificationWorker(ShiftTimeOut);
+                }else
                 if (call.method.equals("startTimeInNotificationWorker")) {
                   // Log.i("Assistant","Assistant Start Called");
-                  /*WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
+                  WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
                   String ShiftTimeIn = call.argument("ShiftTimeIn");
                     String nextWorkingDay = call.argument("nextWorkingDay");
                   Log.i("nextWorkingDay",nextWorkingDay);
-                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);*/
-                }
+                  startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+                }else
                 if (call.method.equals("openLocationDialog")) {
                   openLocationDialog();
                 }
+                else if (call.method.equals("showNotification")) {
+
+                    String notiTitle = call.argument("title");
+                    String notiDescription = call.argument("description");
+                    DisplayNotification displayNotification=new DisplayNotification(getApplicationContext());
+
+                    displayNotification.displayNotification(notiTitle,notiDescription);
+                }
+
               }
             });
 
 
 
   }
+    public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                if (service.foreground) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            String name = className.getClassName();
+            Log.i("abc","serviceConnected "+name);
+            if (name.endsWith("BackgroundLocationService")) {
+                gpsService = ((BackgroundLocationService.LocationServiceBinder) service).getService();
+
+                    gpsService.startTracking(channel);
+
+
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            if (className.getClassName().equals("BackgroundLocationService")) {
+                gpsService = null;
+            }
+        }
+    };
 
     public static void triggerRebirth(Context context) {
         PackageManager packageManager = context.getPackageManager();
@@ -417,8 +500,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
   public void manuallyStartAssistant(){
     try{
-    if(listenerExecuter!=null)
-    listenerExecuter.manuallyStartAssistant();
+        if(gpsService!=null&&channel!=null)
+       // if(!listenerExecuter.isCancelled())
+            gpsService.startTracking(channel);
     }
     catch(Exception e){
 
@@ -433,8 +517,8 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   @Override
   public void onDestroy() {
     try{
-    if(listenerExecuter!=null)
-    listenerExecuter.onDestroy();
+    if(gpsService!=null)
+    gpsService.stopTracking();
     }
     catch(Exception e){
 
@@ -445,10 +529,15 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   @Override
   protected void onResume() {
     super.onResume();
+    if(gpsService!=null)
+    Log.i("serviceRunning", String.valueOf(isServiceRunningInForeground(getApplicationContext(),gpsService.getClass() )));
     try{
    if(!cameraOpened)
-     if(listenerExecuter!=null)
-    listenerExecuter.startAssistant();
+       startService(new Intent(this,BackgroundLocationService.class));
+     if(gpsService!=null&&channel!=null){
+         gpsService.startTracking(channel);
+     }
+
     }
     catch(Exception e){
 
@@ -461,8 +550,12 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
    // assistant.stop();
   //if(!cameraOpened)
     try {
-      if (listenerExecuter != null)
-        listenerExecuter.stopAssistant();
+      if (gpsService != null)
+      {
+          stopService(new Intent(this,BackgroundLocationService.class));
+
+      }
+
     }
     catch(Exception e){
 
@@ -470,17 +563,19 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
     super.onPause();
   }
 
+
+
+
+
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     if(permissions!=null&&permissions.length>0) {
       for (int i = 0; i < permissions.length; i++) {
 
 try{
-        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&listenerExecuter!=null) {
+        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&gpsService!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
-         // if (listenerExecuter.onPermissionsUpdated(requestCode, grantResults)) ;
-
-            manuallyStartAssistant();
+          manuallyStartAssistant(); ;
 
         }
 }

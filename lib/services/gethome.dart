@@ -106,6 +106,8 @@ class Home{
         prefs.setString("ReferrerDiscount", ReferrerDiscount);
         prefs.setString("ReferrenceDiscount", ReferrenceDiscount);
         prefs.setString("ReferralValidity", ReferralValidity);
+        prefs.setString("ReferralValidFrom", ReferralValidFrom);
+        prefs.setString("ReferralValidTo", ReferralValidTo);
         prefs.setString('aid', aid);
         prefs.setString('sstatus', sstatus);
         prefs.setString('mail_varified', mail_varified);
@@ -117,9 +119,12 @@ class Home{
         prefs.setString('ShiftTimeOut', timeinoutMap['ShiftTimeOut']);
         prefs.setString('ShiftTimeIn', timeinoutMap['ShiftTimeIn']);
         prefs.setString('nextWorkingDay', timeinoutMap['nextWorkingDay']);
+        prefs.setString('CountryName', timeinoutMap['CountryName']);
         print("Next working day"+timeinoutMap['nextWorkingDay']);
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));
+
+        globals.currentOrgStatus=timeinoutMap['CurrentOrgStatus'];
 
         String createdDate = timeinoutMap['CreatedDate'].toString();
         prefs.setString('CreatedDate',createdDate);

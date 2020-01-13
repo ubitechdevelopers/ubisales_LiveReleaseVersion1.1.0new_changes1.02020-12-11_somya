@@ -25,7 +25,7 @@ class _VisitList extends State<VisitList> {
   String admin_sts='0';
   bool res = true;
   bool filests = false;
-  Future<List<Punch>> _listFuture;
+  //Future<List<Punch>> _listFuture;
   var formatter = new DateFormat('dd-MMM-yyyy');
 
   @override
@@ -37,7 +37,7 @@ class _VisitList extends State<VisitList> {
     today.text = formatter.format(DateTime.now());
     // f_dept = FocusNode();
     getOrgName();
-    _listFuture = getVisitsDataList(today.text,emp);
+    //_listFuture = getVisitsDataList(today.text,emp);
   }
 
   getOrgName() async {
@@ -88,17 +88,19 @@ class _VisitList extends State<VisitList> {
         //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
         child: Column(
           children: <Widget>[
-            SizedBox(height: 10.0),
+            SizedBox(height: 8.0),
             Center(
               child: Text(
                 'Visits',
                 style: new TextStyle(
-                  fontSize: 24.0,
-                  color: appcolor,
+                  fontSize: 22.0,
+                  color: Colors.black54,
                 ),
               ),
             ),
-            Divider(color: Colors.black54,height: 1.5,),
+            Divider(
+              height: 10.0,
+            ),
             getEmployee_DD(),
             SizedBox(height: 2.0),
             Row(
@@ -155,7 +157,7 @@ class _VisitList extends State<VisitList> {
                       height: 60,
                       width: MediaQuery.of(context).size.width * 0.40,
                       child: new FutureBuilder<List<Punch>>(
-                          future: _listFuture,
+                          future: getVisitsDataList(today.text,emp),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data.length > 0) {
@@ -295,7 +297,7 @@ class _VisitList extends State<VisitList> {
             //SizedBox(height: 12.0),
             Container(
               //  padding: EdgeInsets.only(bottom:10.0,top: 10.0),
-       //       width: MediaQuery.of(context).size.width * .9,
+              //       width: MediaQuery.of(context).size.width * .9,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -305,9 +307,7 @@ class _VisitList extends State<VisitList> {
                     width: MediaQuery.of(context).size.width * 0.22,
                     child: Text(
                       'Name',
-                      style: TextStyle(color: appcolor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -315,26 +315,20 @@ class _VisitList extends State<VisitList> {
                     width: MediaQuery.of(context).size.width * 0.38,
                     child: Text(
                       'Client',
-                      style: TextStyle(color: appcolor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0),
+                      style: TextStyle(color: headingcolor),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.18,
                     child: Text('In',
-                        style: TextStyle(color: appcolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
-                        style: TextStyle(color: appcolor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0),
+                        style: TextStyle(color: headingcolor),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -433,7 +427,7 @@ class _VisitList extends State<VisitList> {
 
   getEmpDataList(date) {
     return new FutureBuilder<List<Punch>>(
-        future: _listFuture,
+        future: getVisitsDataList(today.text,emp),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             print('snapshot.hasData');
@@ -446,9 +440,9 @@ class _VisitList extends State<VisitList> {
                   //    padding: EdgeInsets.only(left: 15.0,right: 15.0),
                   itemBuilder: (BuildContext context, int index) {
                     return new Container(
-            //          width: MediaQuery.of(context).size.width * .9,
-                        child:Column(children: <Widget>[
-                      new Row(
+                      //          width: MediaQuery.of(context).size.width * .9,
+                      child:Column(children: <Widget>[
+                        new Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -459,7 +453,7 @@ class _VisitList extends State<VisitList> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     new Text(
-                                        snapshot.data[index].Emp.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
+                                      snapshot.data[index].Emp.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
                                   ],
                                 )),
                             new Container(
@@ -473,12 +467,12 @@ class _VisitList extends State<VisitList> {
                                   ),
                                   InkWell(
                                     child:Text("In: "+
-                                      snapshot.data[index].pi_loc.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                                        snapshot.data[index].pi_loc.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
                                     onTap: () {goToMap(snapshot.data[index].pi_latit,snapshot.data[index].pi_longi.toString());},
                                   ),
                                   InkWell(
                                     child:Text("Out: "+
-                                      snapshot.data[index].po_loc.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                                        snapshot.data[index].po_loc.toString(),style: TextStyle(color: Colors.black54,fontSize: 12.0),),
                                     onTap: () {goToMap(snapshot.data[index].po_latit.toString(),snapshot.data[index].po_longi.toString());},
                                   ),
                                 ],
@@ -499,18 +493,18 @@ class _VisitList extends State<VisitList> {
                                       width: 62.0,
                                       height: 62.0,
                                       child:InkWell(
-                                      child: Container(
-                                          decoration: new BoxDecoration(
-                                              shape: BoxShape
-                                                  .circle,
-                                              image: new DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: new NetworkImage(
-                                                      snapshot
-                                                          .data[index]
-                                                          .pi_img)
-                                              )
-                                          )),
+                                        child: Container(
+                                            decoration: new BoxDecoration(
+                                                shape: BoxShape
+                                                    .circle,
+                                                image: new DecorationImage(
+                                                    fit: BoxFit.fill,
+                                                    image: new NetworkImage(
+                                                        snapshot
+                                                            .data[index]
+                                                            .pi_img)
+                                                )
+                                            )),
                                         onTap: (){
                                           Navigator.push(
                                             context,
@@ -518,7 +512,7 @@ class _VisitList extends State<VisitList> {
                                           );
                                         },
                                       ),
-                                      ),
+                                    ),
 
                                   ],
                                 )
@@ -538,18 +532,18 @@ class _VisitList extends State<VisitList> {
                                       width: 62.0,
                                       height: 62.0,
                                       child:InkWell(
-                                      child: Container(
-                                          decoration: new BoxDecoration(
-                                              shape: BoxShape
-                                                  .circle,
-                                              image: new DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: new NetworkImage(
-                                                      snapshot
-                                                          .data[index]
-                                                          .po_img)
-                                              )
-                                          )),
+                                        child: Container(
+                                            decoration: new BoxDecoration(
+                                                shape: BoxShape
+                                                    .circle,
+                                                image: new DecorationImage(
+                                                    fit: BoxFit.fill,
+                                                    image: new NetworkImage(
+                                                        snapshot
+                                                            .data[index]
+                                                            .po_img)
+                                                )
+                                            )),
                                         onTap: (){
                                           Navigator.push(
                                             context,
@@ -557,7 +551,7 @@ class _VisitList extends State<VisitList> {
                                           );
                                         },
                                       ),
-                                      ),
+                                    ),
 
                                   ],
                                 )
@@ -566,42 +560,42 @@ class _VisitList extends State<VisitList> {
                           ],
                         ),
 
-                          snapshot.data[index].desc == '' ? Container() : snapshot
-                              .data[index].desc != 'Visit out not punched' ?
-                          Row(
-                            children: <Widget>[
-                              SizedBox(width: 10.0,),
-                              Text('Remark:  ',
-                                style: TextStyle(fontWeight: FontWeight.bold,),),
-                              Text(snapshot.data[index].desc)
-                            ],
+                        snapshot.data[index].desc == '' ? Container() : snapshot
+                            .data[index].desc != 'Visit out not punched' ?
+                        Row(
+                          children: <Widget>[
+                            SizedBox(width: 10.0,),
+                            Text('Remark:  ',
+                              style: TextStyle(fontWeight: FontWeight.bold,),),
+                            Text(snapshot.data[index].desc)
+                          ],
 
-                          ) :
-                          Row(
-                            children: <Widget>[
-                              SizedBox(width: 10.0,),
-                              Text('Remark:  ', style: TextStyle(
-                                  fontWeight: FontWeight.bold, color: Colors.red),),
-                              Text(snapshot.data[index].desc,
-                                style: TextStyle(color: Colors.red),)
-                            ],
+                        ) :
+                        Row(
+                          children: <Widget>[
+                            SizedBox(width: 10.0,),
+                            Text('Remark:  ', style: TextStyle(
+                                fontWeight: FontWeight.bold, color: Colors.red),),
+                            Text(snapshot.data[index].desc,
+                              style: TextStyle(color: Colors.red),)
+                          ],
 
-                          ),
+                        ),
 
-                      Divider(
-                        color: Colors.blueGrey.withOpacity(0.25),
-                        height: 0.2,
-                      ),
-                    ]),
+                        Divider(
+                          color: Colors.blueGrey.withOpacity(0.25),
+                          height: 0.2,
+                        ),
+                      ]),
                     );
                   });
             } else {
               return new Center(
-                child: Text("No Visits ", style: TextStyle(fontSize: 18.0),),
+                child: Text("No Visits ", style: TextStyle(color: headingcolor,fontSize: 18.0),),
               );
             }
           } else if (snapshot.hasError) {
-		   return new Text("Unable to connect server");
+            return new Text("Unable to connect server");
           }
           // return loader();
           return new Center(child: CircularProgressIndicator());

@@ -43,15 +43,29 @@ import io.flutter.plugin.common.MethodChannel;
 /**
  * A helper class that monitors the available location info on behalf of a requesting activity or application.
  */
-public class LocationAssistant
+public class LocationAssistantOld
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     /**
      * Delivers relevant events required to obtain (valid) location info.
      */
     public interface Listener {
+        /**
+         * Called when the user needs to grant the app location permission at run time.
+         * This is only necessary on newer Android systems (API level >= 23).
+         * If you want to show some explanation up front, do that, then call {@link #requestLocationPermission()}.
+         * Alternatively, you can call {@link #requestAndPossiblyExplainLocationPermission()}, which will request the
+         * location permission right away and invoke {@link #onExplainLocationPermission()} only if the user declines.
+         * Both methods will bring up the system permission dialog.
+         */
         void onNeedLocationPermission();
 
+        /**
+         * Called when the user has declined the location permission and might need a better explanation as to why
+         * your app really depends on it.
+         * You can show some sort of dialog or info window here and then - if the user is willing - ask again for
+         * permission with {@link #requestLocationPermission()}.
+         */
         void onExplainLocationPermission();
 
         /**
@@ -66,6 +80,11 @@ public class LocationAssistant
          */
         void onLocationPermissionPermanentlyDeclined(View.OnClickListener fromView, DialogInterface.OnClickListener fromDialog);
 
+        /**
+         * Called when a change of the location provider settings is necessary.
+         * You can optionally show some informative dialog and then request the settings change with
+         * {@link #changeLocationSettings()}.
+         */
         void onNeedLocationSettingsChange();
 
         /**
@@ -181,7 +200,6 @@ public class LocationAssistant
     private Context ctx;
     private long previousTime=0,currentTime=0;
     boolean timeSpoofed=false;
-    LocationListenerExecuter executerThread;
     /**
      * Constructs a LocationAssistant instance that will listen for valid location updates.
      *
@@ -191,9 +209,8 @@ public class LocationAssistant
      * @param updateInterval     the interval (in milliseconds) at which the activity can process updates
      * @param allowMockLocations whether or not mock locations are acceptable
      */
-    public LocationAssistant(final Context context, Listener listener, Accuracy accuracy, long updateInterval,
-                             boolean allowMockLocations, MethodChannel methodChannel, int iterationCount,LocationListenerExecuter executerThread) {
-        this.executerThread=executerThread;
+    public LocationAssistantOld(final Context context, Listener listener, Accuracy accuracy, long updateInterval,
+                             boolean allowMockLocations, MethodChannel methodChannel, int iterationCount) {
         this.context = context;
         this.iterationCount=iterationCount;
         this.methodChannel=methodChannel;
@@ -322,15 +339,11 @@ public class LocationAssistant
      * Call this method right before your application or activity goes to sleep.
      */
     public void stop() {
-        Log.i("shashankcccc","Stop called"+assistantStarted);
         if(assistantStarted){
             iterationCounter=0;
             if (googleApiClient.isConnected()) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-
                 googleApiClient.disconnect();
-                executerThread.endThread();
-                Log.i("shashankcccc","disconnected");
             }
             permissionGranted = false;
             locationRequested = false;
@@ -374,14 +387,141 @@ public class LocationAssistant
         return bestLocation;
     }
 
+    /**
+     * The first time you call this method, it brings up a system dialog asking the user to give location permission to
+     * the app. On subsequent calls, if the user has previously declined permission, this method invokes
+     * {@link Listener#onExplainLocationPermission()}.
+     */
+    public void requestAndPossiblyExplainLocationPermission() {
+        if (permissionGranted) return;
+        if (activity == null) {
+            if (!quiet){
+                Log.i(getClass().getSimpleName(), "Need location permission, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
 
+                stop();
+            }
+
+            return;
+        }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+                && listener != null)
+            listener.onExplainLocationPermission();
+        else
+            requestLocationPermission();
+        requestCameraPermission();
+    }
+
+    /**
+     * Brings up a system dialog asking the user to give location permission to the app.
+     */
+    public void requestLocationPermission() {
+        if (activity == null) {
+            if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need location permission, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+
+            }
+            return;
+        }
+        ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_LOCATION_PERMISSION);
+
+    }
+    public void requestCameraPermission() {
+
+        ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.CAMERA}, 1);
+
+    }
+    /**
+     * Call this method at the end of your {@link Activity#onRequestPermissionsResult} implementation to notify the
+     * LocationAssistant of an update in permissions.
+     *
+     * @param requestCode  the request code returned to the activity (simply pass it on)
+     * @param grantResults the results array returned to the activity (simply pass it on)
+     * @return {@code true} if the location permission was granted, {@code false} otherwise
+     */
+    public boolean onPermissionsUpdated(int requestCode, int[] grantResults) {
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            acquireLocation();
+
+        }
+        return true;
+    }
+
+    /**
+     * Call this method at the end of your  implementation to notify the
+     * LocationAssistant of a change in location provider settings.
+     *
+     * @param requestCode the request code returned to the activity (simply pass it on)
+     * @param resultCode  the result code returned to the activity (simply pass it on)
+     */
+    public void onActivityResult(int requestCode, int resultCode) {
+        if (requestCode != REQUEST_CHECK_SETTINGS) return;
+        if (resultCode == Activity.RESULT_OK) {
+            changeSettings = false;
+            locationStatusOk = true;
+        }
+        acquireLocation();
+    }
+
+    /**
+     * Brings up an in-app system dialog that requests a change in location provider settings.
+     * The settings change may involve switching on GPS and/or network providers and depends on the accuracy and
+     * update interval that was requested when constructing the LocationAssistant.
+     * Call this method only from within {@link Listener#onNeedLocationSettingsChange()}.
+     */
+    public void changeLocationSettings() {
+        if (locationStatus == null) return;
+        if (activity == null) {
+            if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need to resolve location status issues, but no activity is " +
+                        "registered! Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+
+            }
+            return;
+        }
+        try {
+            locationStatus.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS);
+        } catch (IntentSender.SendIntentException e) {
+            if (!quiet)
+            {
+                stop();
+                Log.i(getClass().getSimpleName(), "Error while attempting to resolve location status issues:\n" +
+                        e.toString());
+            }
+
+            if (listener != null){
+                listener.onError(ErrorType.SETTINGS, "Could not resolve location settings issue:\n" +
+                        e.getMessage());
+                stop();
+            }
+
+            changeSettings = false;
+            acquireLocation();
+        }
+    }
 
     protected void acquireLocation() {
         Log.i("shashank","permission granted"+permissionGranted+" Location Requested"+locationRequested+" locationStatusOk"+locationStatusOk+" updatesRequested"+updatesRequested+" checkLocationAvailability()"+checkLocationAvailability());
         if (!permissionGranted) checkLocationPermission();
         if (!permissionGranted) {
             if (numTimesPermissionDeclined >= 2) return;
-
+            if (listener != null)
+                listener.onNeedLocationPermission();
+            else if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need location permission, but no listener is registered! " +
+                        "Specify a valid listener when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
 
             return;
         }
@@ -391,7 +531,14 @@ public class LocationAssistant
         }
         if (!locationStatusOk) {
             if (changeSettings) {
-
+                if (listener != null)
+                    listener.onNeedLocationSettingsChange();
+                else if (!quiet){
+                    stop();
+                    Log.e(getClass().getSimpleName(), "Need location settings change, but no listener is " +
+                            "registered! Specify a valid listener when constructing " + getClass().getSimpleName() +
+                            " or register it explicitly with register().");
+                }
 
             } else
                 checkProviders();
@@ -424,14 +571,16 @@ public class LocationAssistant
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             onLocationChanged(location);
         } catch (SecurityException e) {
-            if (true)
+            if (!quiet)
             {
                 stop();
                 Log.i(getClass().getSimpleName(), "Error while requesting last location:\n " +
                         e.toString());
             }
 
-
+            if (listener != null)
+                listener.onError(ErrorType.RETRIEVAL, "Could not retrieve initial location:\n" +
+                        e.getMessage());
         }
         catch (Exception e){
             e.printStackTrace();
@@ -450,7 +599,8 @@ public class LocationAssistant
                 !Settings.Secure.getString(context.getContentResolver(), Settings
                         .Secure.ALLOW_MOCK_LOCATION).equals("0")) {
             mockLocationsEnabled = true;
-
+            if (listener != null)
+                listener.onMockLocationsDetected(onGoToDevSettingsFromView, onGoToDevSettingsFromDialog);
         } else
             mockLocationsEnabled = false;
 
@@ -484,12 +634,14 @@ public class LocationAssistant
             LocationAvailability la = LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
             return (la != null && la.isLocationAvailable());
         } catch (SecurityException e) {
-            if (true){
+            if (!quiet){
                 stop();
                 Log.i(getClass().getSimpleName(), "Error while checking location availability:\n " + e.toString());
             }
 
-
+            if (listener != null)
+                listener.onError(ErrorType.RETRIEVAL, "Could not check location availability:\n" +
+                        e.getMessage());
             return false;
         }
     }
@@ -500,7 +652,14 @@ public class LocationAssistant
         boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         if (gps || network) return;
-
+        if (listener != null)
+            listener.onFallBackToSystemSettings(onGoToLocationSettingsFromView, onGoToLocationSettingsFromDialog);
+        else if (!quiet){
+            stop();
+            Log.i(getClass().getSimpleName(), "Location providers need to be enabled, but no listener is " +
+                    "registered! Specify a valid listener when constructing " + getClass().getSimpleName() +
+                    " or register it explicitly with register().");
+        }
 
     }
 
@@ -510,16 +669,119 @@ public class LocationAssistant
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
             updatesRequested = true;
         } catch (SecurityException e) {
-
+            if (!quiet){
+                stop();
                 Log.i(getClass().getSimpleName(), "Error while requesting location updates:\n " +
                         e.toString());
+            }
 
-
+            if (listener != null)
+                listener.onError(ErrorType.RETRIEVAL, "Could not request location updates:\n" +
+                        e.getMessage());
         }
     }
 
+    private DialogInterface.OnClickListener onGoToLocationSettingsFromDialog = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (activity != null) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
 
+        }
+    };
 
+    private View.OnClickListener onGoToLocationSettingsFromView = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (activity != null) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
+
+        }
+    };
+
+    private DialogInterface.OnClickListener onGoToDevSettingsFromDialog = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (activity != null) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
+
+        }
+    };
+
+    private View.OnClickListener onGoToDevSettingsFromView = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (activity != null) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.i(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
+
+        }
+    };
+
+    private DialogInterface.OnClickListener onGoToAppSettingsFromDialog = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (activity != null) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.e(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
+
+        }
+    };
+
+    private View.OnClickListener onGoToAppSettingsFromView = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (activity != null) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+            } else if (!quiet){
+                stop();
+                Log.e(getClass().getSimpleName(), "Need to launch an intent, but no activity is registered! " +
+                        "Specify a valid activity when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
+
+        }
+    };
 
     private boolean isLocationPlausible(Location location) {
         if (location == null) return false;
@@ -555,7 +817,7 @@ public class LocationAssistant
 
     @Override
     public void onLocationChanged(Location location) {
-assistantStarted=true;
+
 //        checkInternet();
         Log.i("shashank","iteration count inside location changed"+iterationCounter);
         if (location == null) return;
@@ -623,11 +885,20 @@ assistantStarted=true;
             }
 
             if (!allowMockLocations && !plausible) {
+                if (listener != null) listener.onMockLocationsDetected(onGoToDevSettingsFromView,
+                        onGoToDevSettingsFromDialog);
                 return;
             }
 
             bestLocation = location;
-
+            if (listener != null)
+                listener.onNewLocationAvailable(location);
+            else if (!quiet){
+                stop();
+                Log.w(getClass().getSimpleName(), "New location is available, but no listener is registered!\n" +
+                        "Specify a valid listener when constructing " + getClass().getSimpleName() +
+                        " or register it explicitly with register().");
+            }
 
         }
         catch(Exception e){
@@ -639,13 +910,15 @@ assistantStarted=true;
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i("shashank","onConnectionFailed");
-        if (true){
+        if (!quiet){
             stop();
             Log.i(getClass().getSimpleName(), "Error while trying to connect to Google API:\n" +
                     connectionResult.getErrorMessage());
         }
 
-
+        if (listener != null)
+            listener.onError(ErrorType.RETRIEVAL, "Could not connect to Google API:\n" +
+                    connectionResult.getErrorMessage());
     }
 
     ResultCallback<LocationSettingsResult> onLocationSettingsReceived = new ResultCallback<LocationSettingsResult>() {
@@ -669,6 +942,5 @@ assistantStarted=true;
             acquireLocation();
         }
     };
-
 
 }

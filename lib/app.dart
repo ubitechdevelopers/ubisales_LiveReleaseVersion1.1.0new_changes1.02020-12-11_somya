@@ -18,7 +18,7 @@ import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'check_update.dart';
 import 'globals.dart';
 import 'home.dart';
@@ -38,7 +38,7 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='5.1.4',new_ver='5.1.4';
+  String cur_ver='5.1.8',new_ver='5.1.8';
   String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override

@@ -2,6 +2,7 @@ package org.ubitech.attendance;
 
 import android.os.AsyncTask;
 
+import io.flutter.Log;
 import io.flutter.plugin.common.MethodChannel;
 
 public class LocationListenerExecuter extends AsyncTask<String, String, String> {
@@ -13,14 +14,7 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
     this.activity=activity;
 }
 
-    public boolean onPermissionsUpdated(int requestCode, int[] grantResults){
-    try{
-        return assistant.onPermissionsUpdated(requestCode, grantResults);
-    }
-    catch(Exception e){
-        return false;
-    }
-    }
+
 /*
     public void requestLocationPermission(){
     try{
@@ -87,16 +81,60 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
 
      }
     }
+
+    @Override
+    public void onPreExecute(){
+        if(assistant!=null)
+            assistant.stop();
+
+        Log.i("AsyncTask","Started............................");
+
+
+    }
+
+    @Override
+    protected void onCancelled(String result) {
+        Log.i("AsyncTask","Cancelled"+" "+result);
+        try{
+            if(assistant!=null)
+                assistant.stop();
+        }
+        catch(Exception e){
+
+        }
+    }
     @Override
     protected String doInBackground(String... strings) {
     try{
-    assistant = new LocationAssistant(activity, activity, LocationAssistant.Accuracy.HIGH, 1000, false,channel,10);
+    assistant = new LocationAssistant(activity, activity, LocationAssistant.Accuracy.HIGH, 1000, false,channel,10,this);
         //assistant.setVerbose(true);
        assistant.start();
+        Log.i("AsyncTask",strings[0]);
+        boolean started=true;
+       while(true){
+           if(isCancelled()){
+               if(assistant!=null)
+                   assistant.stop();
+              break;
+           }
+       }
+       return null;
+
     }
     catch(Exception e){
 
     }
         return null;
+    }
+    @Override
+    protected void onPostExecute(String result) {
+            Log.i("AsyncTask","completed");
+    }
+    public void endThread(){
+        if(!isCancelled()){
+            Log.i("AsyncTask","completed");
+            this.cancel(true);
+        }
+
     }
 }
