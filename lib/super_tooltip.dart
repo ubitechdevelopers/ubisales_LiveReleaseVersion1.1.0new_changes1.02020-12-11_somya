@@ -78,7 +78,7 @@ class SuperTooltip {
   ///
   /// The distance of the tip of the arrow's tip to the center of the target
   final double arrowTipDistance;
-  final double x,y;
+   double x,y;
   ///
   /// The backgroundcolor of the Tooltip
   final Color backgroundColor;
@@ -168,15 +168,19 @@ static SuperTooltip a;
   ///
   /// Displays the tooltip
   /// The center of [targetContext] is used as target of the arrow
-  void show(BuildContext targetContext) {
+  void show(BuildContext targetContext,var x1,var y1) {
+    if(x1!=0)
+      this.x=x1;
+    if(y1!=0)
+      this.y=y1;
 
     final RenderBox renderBox = targetContext.findRenderObject();
     final RenderBox overlay = Overlay.of(targetContext).context.findRenderObject();
     SuperTooltip.ctx=targetContext;
     SuperTooltip.a=this;
 
-// _targetCenter = renderBox.localToGlobal(renderBox.size.center(Offset.zero), ancestor: overlay);
-    _targetCenter = renderBox.localToGlobal(renderBox.size.bottomRight(Offset(x,y)), ancestor: overlay);
+  //_targetCenter = renderBox.localToGlobal(renderBox.size.center(Offset.zero), ancestor: overlay);
+    _targetCenter = renderBox.localToGlobal(renderBox.size.topLeft(Offset(x,y)), ancestor: overlay);
 
     // Create the background below the popup including the clipArea.
     _backGroundOverlay = OverlayEntry(
@@ -254,6 +258,95 @@ static SuperTooltip a;
     Overlay.of(targetContext).insertAll([_backGroundOverlay, _ballonOverlay]);
     isOpen = true;
   }
+
+  void showtool(BuildContext targetContext) {
+
+
+    final RenderBox renderBox = targetContext.findRenderObject();
+    final RenderBox overlay = Overlay.of(targetContext).context.findRenderObject();
+    SuperTooltip.ctx=targetContext;
+    SuperTooltip.a=this;
+
+    //_targetCenter = renderBox.localToGlobal(renderBox.size.center(Offset.zero), ancestor: overlay);
+    _targetCenter = renderBox.localToGlobal(renderBox.size.topLeft(Offset(x,y)), ancestor: overlay);
+
+    // Create the background below the popup including the clipArea.
+    _backGroundOverlay = OverlayEntry(
+        builder: (context) => _AnimationWrapper(
+          builder: (context, opacity) => AnimatedOpacity(
+            opacity: opacity,
+            duration: const Duration(milliseconds: 600),
+            child: GestureDetector(
+              onTap: () {
+                //close();
+              },
+              child: Container(
+                  decoration: ShapeDecoration(
+                      shape: _ShapeOverlay(touchThrougArea, touchThroughAreaShape,
+                          touchThroughAreaCornerRadius, outsideBackgroundColor))),
+            ),
+          ),
+        ));
+
+    /// Handling snap far away feature.
+    if (snapsFarAwayVertically) {
+      maxHeight = null;
+      left = 0.0;
+      right = 0.0;
+      if (_targetCenter.dy > overlay.size.center(Offset.zero).dy) {
+        popupDirection = TooltipDirection.up;
+        top = 0.0;
+      } else {
+        popupDirection = TooltipDirection.down;
+        bottom = 0.0;
+      }
+    } // Only one of of them is possible, and vertical has higher priority.
+    else if (snapsFarAwayHorizontally) {
+      maxWidth = null;
+      top = 0.0;
+      bottom = 0.0;
+      if (_targetCenter.dx < overlay.size.center(Offset.zero).dx) {
+        popupDirection = TooltipDirection.right;
+        right = 0.0;
+      } else {
+        popupDirection = TooltipDirection.left;
+        left = 0.0;
+      }
+    }
+
+    _ballonOverlay = OverlayEntry(
+        builder: (context) => _AnimationWrapper(
+          builder: (context, opacity) => AnimatedOpacity(
+            duration: Duration(
+              milliseconds: 300,
+            ),
+            opacity: opacity,
+            child: Center(
+                child: CustomSingleChildLayout(
+                    delegate: _PopupBallonLayoutDelegate(
+                      popupDirection: popupDirection,
+                      targetCenter: _targetCenter,
+                      minWidth: minWidth,
+                      maxWidth: maxWidth,
+                      minHeight: minHeight,
+                      maxHeight: maxHeight,
+                      outSidePadding: minimumOutSidePadding,
+                      top: top,
+                      bottom: bottom,
+                      left: left,
+                      right: right,
+                    ),
+                    child: Stack(
+                      fit: StackFit.passthrough,
+                      children: [_buildPopUp(), _buildCloseButton()],
+                    ))),
+          ),
+        ));
+
+    Overlay.of(targetContext).insertAll([_backGroundOverlay, _ballonOverlay]);
+    isOpen = true;
+  }
+
 
   Widget _buildPopUp() {
     return Positioned(

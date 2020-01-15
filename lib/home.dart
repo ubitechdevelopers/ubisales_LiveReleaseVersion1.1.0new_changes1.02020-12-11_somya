@@ -21,6 +21,8 @@ import 'package:dio/dio.dart';
 import 'package:easy_dialog/easy_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geocoder/geocoder.dart';
@@ -59,6 +61,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   AppLifecycleState state;
   // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GlobalKey _keyRed = GlobalKey();
+  GlobalKey _keyBlue = GlobalKey();
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
@@ -112,15 +116,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   var tooltiptimein = SuperTooltip(
     popupDirection: TooltipDirection.up,
     arrowTipDistance: 20.0,
-    x: -200,
-    y: -380,
+    //x: ab,
+    //y: cd,
     //arrowLength: 40.0,
-    //top: 50.0,
-    //right: 1.0,
+    //top: 150.0,
+    //right: 150.0,
     // left: 50.0,
     //bottom: 100.0,
     //showCloseButton: ShowCloseButton.outside,
-    hasShadow: false,
+    hasShadow: true,
     content: new Material(
         child: Container(
           width: 250.0,
@@ -130,9 +134,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text("Welcome to ubiAttendance\n Click here to mark time in",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  Text("Welcome to ubiAttendance\n "
+                      "     Punch your ‘Time In’",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                   RaisedButton(
-                    child: Text('Next'),
+                    child: Text('Next', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14, color: Colors.white),),
+                      color: globals.buttoncolor,
                     onPressed: (){
                       //print('jshjsh');
 
@@ -193,8 +199,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static var tooltipone = SuperTooltip(
     popupDirection: TooltipDirection.up,
     arrowTipDistance: 20.0,
-    x: -40,
-    y: -170,
+    x: ef,
+    y: gh,
     //arrowLength: 40.0,
     //top: 50.0,
     //right: 1.0,
@@ -205,16 +211,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     content: new Material(
         child: Container(
           width: 200.0,
-          height: 120.0,
+          height: 100.0,
           child: Padding(
               padding: const EdgeInsets.all(0.0),
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text("Welcome to \nubiAttendance\n"
-                      "Start by adding Employees",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  Text("Try adding an employee",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                   RaisedButton(
-                    child: Text('Next'),
+                    child: Text('Next',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14, color: Colors.white),),
+                    color: globals.buttoncolor,
                     onPressed: (){
                       //print('jshjsh');
 
@@ -251,7 +257,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(0.0),
             child: Column(
               children: <Widget>[
-                Text("Go to Settings where you can add your Shift timings,\nDepartments and Designation",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                Text("You can setup the Departments, Designations & Shifts",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                 RaisedButton(
                   child: Text("Next"),
                   onPressed: () {
@@ -274,7 +280,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     var admin_sts_static = prefs.getString('sstatus').toString() ?? '0';
     print('hello'+admin_sts_static);
     if(admin_sts_static=='1' || admin_sts_static=='2') {
-      tooltipone.show(context);
+      tooltipone.showtool(context);
     }
 
   }
@@ -283,7 +289,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
    // HomePage h=new HomePage();
    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
     //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
-    tooltiptwo.show(context);
+    //tooltiptwo.show(context);
 
   }
 
@@ -309,13 +315,74 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     print('aintitstate');
     super.initState();
+    //Future.delayed(Duration(seconds: 2), () => (_afterLayout));
+    //WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
     firebaseCloudMessaging_Listeners();
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
+
     initPlatformState();
+
     //setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
+    Future.delayed(Duration(seconds: 1), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayout));
+
+
+  }
+
+   _getPositions() {
+    final RenderBox renderBoxRed = _keyRed.currentContext.findRenderObject();
+    final positionRed = renderBoxRed.localToGlobal(Offset.zero);
+    final sizeRed = renderBoxRed.size;
+    print("POSITION of Red: $positionRed ");
+    print("Size of Red: $sizeRed");
+
+
+    print(positionRed);
+    double a = positionRed.dx;
+    double b = positionRed.dy;
+
+    double e = sizeRed.height;
+    double f = sizeRed.width;
+
+    print("this is $a and this is $b");
+    setState(() {
+      ab=a+(f/2);
+      cd=b+2*e;
+
+
+    });
+     Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context,ab,cd));
+    getPositionofFAB();
+
+  }
+   _afterLayout(_) {
+    _getPositions();
+  }
+
+  void getPositionofFAB() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var admin_sts = prefs.getString('sstatus').toString() ?? '0';
+
+    if((admin_sts == '1' || admin_sts == '2')) {
+      final RenderBox renderBoxBlue = _keyBlue.currentContext
+          .findRenderObject();
+      final positionBlue = renderBoxBlue.localToGlobal(Offset.zero);
+      final sizeBlue = renderBoxBlue.size;
+      print("POSITION of Blue: $positionBlue ");
+      print("Size of Blue: $sizeBlue");
+      double c = positionBlue.dx;
+      double d = positionBlue.dy;
+      double g = sizeBlue.height;
+      double h = sizeBlue.width;
+
+      setState(() {
+        ef = c + (h / 2);
+        gh = d + (g / 2);
+      });
+    }
   }
 
   void firebaseCloudMessaging_Listeners()async {
@@ -1027,9 +1094,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print(istooltiponeshown);
     }
     istooltipsts= prefs.getBool('tool');
-    if(istooltipsts!=true){
-      Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
-    }
+    //if(istooltipsts!=true){
+      //Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
+    //}
   }
 
 
@@ -1147,12 +1214,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
               endDrawer: new AppDrawer(),
               body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-              floatingActionButton:(istooltipsts == true && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
+              floatingActionButton:(istooltipsts == false && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
                 mini: false,
+                //key: _keyBlue,
                 backgroundColor: buttoncolor,
                 onPressed: () {
                   print('hello');
                   print(istooltipsts);
+                  _getPositions();
                   if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
                     showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
                   else
@@ -1171,6 +1240,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   glowColor: Colors.blue,
                   child: new FloatingActionButton(
                     mini: false,
+                    key: _keyBlue,
                     backgroundColor: buttoncolor,
                     onPressed: () {
                       print('hellowassup');
@@ -1470,6 +1540,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 SizedBox(height: MediaQuery.of(context).size.height * .02),
 
                 Text(fname.toUpperCase() + " " + lname.toUpperCase(),
+                    key: _keyRed,
                     style: new TextStyle(
                       color: Colors.black87,
                       fontSize: 18.0,

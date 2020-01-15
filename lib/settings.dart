@@ -147,13 +147,13 @@ class _Settings extends State<Settings> {
     //HomePage h=new HomePage();
     //Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => ShiftList(),maintainState: false));
     //Future.delayed(Duration(seconds: 2), () => tooltipfour.show(context));
-    tooltipfour.show(context);
+    //tooltipfour.show(context);
 
   }
   static tooltipfourClicked(var context) async{
     //HomePage h=new HomePage();
     //Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => Department(),maintainState: false));
-    tooltipfive.show(context);
+    //tooltipfive.show(context);
 
   }
   static tooltipfiveClicked(var context) async{
@@ -170,7 +170,7 @@ class _Settings extends State<Settings> {
     checknetonpage(context);
     getOrgName();
     if((istooltiptwoshown==true) && (istooltipthreeshown!=true)){
-      Future.delayed(Duration(seconds: 1), () => tooltipthree.show(context));
+      //Future.delayed(Duration(seconds: 1), () => tooltipthree.show(context));
       //istooltipthreeshown=true;
     }
 //    if((istooltipthreeshown==true) && (istooltipfourshown!=true)){
