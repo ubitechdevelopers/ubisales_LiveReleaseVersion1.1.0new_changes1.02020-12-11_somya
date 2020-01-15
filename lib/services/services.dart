@@ -82,11 +82,11 @@ void initDynamicLinks() async {
 
 }
 
-Future<Map<String, dynamic>> sendPushNotification(String url, String token,String nBody,String title) async {
+Future<Map<String, dynamic>> sendPushNotification(String title,String nBody,String topic) async {
 
-
+String url='https://fcm.googleapis.com/fcm/send';
   var body = json.encode({
-    'to': token,
+    'condition': topic,
     'notification': {'body': nBody,
       'title': title,
     }
@@ -2317,6 +2317,8 @@ class grpattemp {
   String Attid;
   String data_date;
   String device;
+  String InPushNotificationStatus;
+  String OutPushNotificationStatus;
 
   grpattemp(
       {this.Name,
@@ -2336,7 +2338,9 @@ class grpattemp {
       this.Id,
       this.Attid,
       this.data_date,
-      this.device});
+      this.device,
+      this.InPushNotificationStatus,
+      this.OutPushNotificationStatus});
 }
 
 Future<List<grpattemp>> getDeptEmp(value) async {
@@ -2399,6 +2403,8 @@ List<grpattemp> createDeptempList(List data) {
     String attid = data[i]["Attid"];
     String data_date = data[i]["data_date"];
     String device = data[i]["device"];
+    String InPushNotificationStatus = data[i]["InPushNotificationStatus"];
+    String OutPushNotificationStatus = data[i]["OutPushNotificationStatus"];
     //String timein='';
     //String timeout ='';
     if (data[i]["rtimein"] != '') {
@@ -2423,7 +2429,9 @@ List<grpattemp> createDeptempList(List data) {
         Id: id,
         Attid: attid,
         data_date: data_date,
-        device: device);
+        device: device,
+        InPushNotificationStatus:InPushNotificationStatus,
+        OutPushNotificationStatus:OutPushNotificationStatus);
     list.add(dpt);
   }
   return list;
@@ -2433,6 +2441,19 @@ Future<List<grpattemp>> getDeptEmp_Search($val) async {
   List<grpattemp> deptList = createDeptempList_search(responseEmplist, $val);
   return deptList;
 }
+
+
+updateEmployeePushNotificationStatus(bool valueOfSwitch,var empid,String action) async{
+  empid=empid.toString();
+  int value=valueOfSwitch?1:0;
+  print(globals.path + 'getDeptEmp?employeeId=$empid&action=$action&value=$value');
+  final response =
+  await http.get(globals.path + 'updatePushNotificationStatusForEmployee?employeeId=$empid&action=$action&value=$value');
+
+}
+
+
+
 List<grpattemp> createDeptempList_search(List data , String empname){
   List<grpattemp> list = new List();
   for (int i = 0; i < data.length; i++) {
@@ -2455,6 +2476,9 @@ List<grpattemp> createDeptempList_search(List data , String empname){
     String attid = data[i]["Attid"];
     String data_date = data[i]["data_date"];
     String device = data[i]["device"];
+    String InPushNotificationStatus = data[i]["InPushNotificationStatus"];
+    String OutPushNotificationStatus = data[i]["OutPushNotificationStatus"];
+
     //String timein='';
     //String timeout ='';
     if (data[i]["rtimein"] != '') {
@@ -2479,7 +2503,10 @@ List<grpattemp> createDeptempList_search(List data , String empname){
         Id: id,
         Attid: attid,
         data_date: data_date,
-        device: device);
+        device: device,
+        InPushNotificationStatus:InPushNotificationStatus,
+        OutPushNotificationStatus:OutPushNotificationStatus
+    );
     if(name.toLowerCase().contains(empname.toLowerCase()))
       list.add(dpt);
 

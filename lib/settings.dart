@@ -1,4 +1,5 @@
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/push_notification_for_employee_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -831,6 +832,46 @@ class _Settings extends State<Settings> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => NotificationSettings()),
+        );
+      },
+    ));
+    list.add(new RaisedButton(
+      child: Container(
+        padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Icon(const IconData(0xe80b, fontFamily: "CustomIcon"),size: 30.0,),
+            SizedBox(width: 20.0,),
+            Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                      child: Text('Employee Push Notifications',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: Container(
+                        child: Text('Manage Notifications ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.keyboard_arrow_right,size: 30.0,),
+          ],
+        ),
+      ),
+      color: Colors.white,
+      elevation: 0.0,
+      splashColor: splashcolor,
+      textColor: textcolor,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PushNotificationForEmployee()),
         );
       },
     ));

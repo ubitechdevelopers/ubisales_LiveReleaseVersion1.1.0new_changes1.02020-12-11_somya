@@ -111,6 +111,7 @@ class Home{
         prefs.setString('aid', aid);
         prefs.setString('sstatus', sstatus);
         prefs.setString('mail_varified', mail_varified);
+        prefs.setString('OrgTopic', timeinoutMap['OrgTopic']);
         prefs.setString('profile', profile);
         prefs.setString('newpwd', newpwd);
         prefs.setString('org_country',org_country);
@@ -120,6 +121,8 @@ class Home{
         prefs.setString('ShiftTimeIn', timeinoutMap['ShiftTimeIn']);
         prefs.setString('nextWorkingDay', timeinoutMap['nextWorkingDay']);
         prefs.setString('CountryName', timeinoutMap['CountryName']);
+        prefs.setString('OutPushNotificationStatus', timeinoutMap['OutPushNotificationStatus']);
+        prefs.setString('InPushNotificationStatus', timeinoutMap['InPushNotificationStatus']);
         print("Next working day"+timeinoutMap['nextWorkingDay']);
         prefs.setInt('Is_Delete', Is_Delete);
         print('lastact'+prefs.getString('aid'));
