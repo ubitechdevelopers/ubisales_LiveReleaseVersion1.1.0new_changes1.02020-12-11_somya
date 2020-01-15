@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,19 +121,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // left: 50.0,
     //bottom: 100.0,
     //showCloseButton: ShowCloseButton.outside,
-    hasShadow: false,
+    hasShadow: true,
+
     content: new Material(
         child: Container(
           width: 250.0,
-          height: 100.0,
+          height: 110.0,
           child: Padding(
-              padding: const EdgeInsets.all(0.0),
+              padding: const EdgeInsets.all(11.0),
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                 children: <Widget>[
-                  Text("Welcome to ubiAttendance\n Click here to mark time in",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  Text("Punch your \'Time In\'",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  SizedBox(height: 10,),
                   RaisedButton(
-                    child: Text('Next'),
+                    color: globals.buttoncolor,
+                    child: Text('Next',style: TextStyle(color: Colors.white),),
                     onPressed: (){
                       //print('jshjsh');
 
@@ -210,17 +215,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(0.0),
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                 children: <Widget>[
-                  Text("Welcome to \nubiAttendance\n"
-                      "Start by adding Employees",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  Text("Try adding an employee",textAlign:TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,),),
+                  SizedBox(height: 10,),
                   RaisedButton(
-                    child: Text('Next'),
+                    color: globals.buttoncolor,
+                    child: Text('Ok',style: TextStyle(color: Colors.white),),
                     onPressed: (){
                       //print('jshjsh');
 
                       SuperTooltip.a.close();
-                      //tooltipClicked(SuperTooltip.ctx);
-                      istooltiponeshown=true;
+                      //tooltiptimeinClicked(SuperTooltip.ctx);
+                     // istooltiptimeinshown=true;
+
 
                     },
                   ),
@@ -321,7 +329,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void firebaseCloudMessaging_Listeners()async {
 
     var prefs=await SharedPreferences.getInstance();
-    var country=prefs.getString("CountryName");
+    var country=prefs.getString("CountryName")??'';
+    var orgTopic=prefs.getString("OrgTopic")??'';
+    var isAdmin=admin_sts = prefs.getString('sstatus').toString() ?? '0';
+    _firebaseMessaging.subscribeToTopic('101');
+    if(isAdmin=='1'){
+      _firebaseMessaging.subscribeToTopic('admin');
+    }
+    else
+      _firebaseMessaging.subscribeToTopic('employee');
+
+
+
+    if(orgTopic.isNotEmpty){
+      _firebaseMessaging.subscribeToTopic(orgTopic);
+    }
+
+
      if(globals.currentOrgStatus.isNotEmpty){
        var previousOrgStatus=prefs.get("CurrentOrgStatus");
 
@@ -333,13 +357,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     _firebaseMessaging.getToken().then((token){
       _firebaseMessaging.subscribeToTopic("AllOrg");
-     //_firebaseMessaging.subscribeToTopic("ALL_COUNTRY");
+     // _firebaseMessaging.subscribeToTopic("UBI101");
+     _firebaseMessaging.subscribeToTopic("ALL_COUNTRY");
+      if(country.isNotEmpty)
       _firebaseMessaging.subscribeToTopic(country);
 
 
       this.token=token;
 
-      sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
+     // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
 
 
       print("token--------------->"+token+"-------------"+country);
@@ -924,6 +950,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
 
+    showEmailVerificationReminder();
+
+    //showAddingShiftReminder();
+
     Future.delayed(const Duration(milliseconds: 3000), () {
 // Here you can write your code
       if (mounted)
@@ -1027,9 +1057,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       print(istooltiponeshown);
     }
     istooltipsts= prefs.getBool('tool');
-    if(istooltipsts!=true){
+   // if(istooltipsts!=true){
+
       Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
-    }
+   // }
   }
 
 
@@ -1147,7 +1178,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
               endDrawer: new AppDrawer(),
               body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-              floatingActionButton:(istooltipsts == true && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
+              floatingActionButton:(istooltipsts == false && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
                 mini: false,
                 backgroundColor: buttoncolor,
                 onPressed: () {
@@ -1981,7 +2012,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             style: new TextStyle(
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
-        onPressed: () {
+        onPressed: () async{
+
+        var prefs=await SharedPreferences.getInstance();
+
+        String InPushNotificationStatus=await prefs.getString("InPushNotificationStatus")??'0';
+        var empId=prefs.getString('empid')??'';
+        var orgId=prefs.getString("orgid")??'';
+        var eName=prefs.getString('fname')??'User';
+        String topic=empId+'TI'+orgId;
+        if(InPushNotificationStatus=='1'){
+
+
+          sendPushNotification(eName+' has marked his Time In','',topic);
+
+
+        }
+
           globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
 
@@ -2005,7 +2052,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             style: new TextStyle(
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
-        onPressed: () {
+        onPressed: () async{
+
+          var prefs=await SharedPreferences.getInstance();
+
+          String InPushNotificationStatus=await prefs.getString("InPushNotificationStatus")??'0';
+          var empId=prefs.getString('empid')??'';
+          var orgId=prefs.getString("orgid")??'';
+          var eName=prefs.getString('fname')??'User';
+          String topic=empId+'TO'+orgId;
+          if(InPushNotificationStatus=='1'){
+
+
+            sendPushNotification(eName+' has marked his Time Out','',topic);
+
+
+          }
           globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
           saveImage();
@@ -2702,6 +2764,39 @@ var FakeLocationStatus=0;
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void showEmailVerificationReminder() async{
+    var prefs=await SharedPreferences.getInstance();
+    var createdDate=DateTime.parse(prefs.getString("CreatedDate")??'2019-01-01');
+    String mail_varified=await prefs.getString("mail_varified")??'0';
+    var shown= prefs.getBool("EmailVerifacitaionReminderShown")??false;
+    var currDate=DateTime.now();
+
+    var threeDayAfterCreated= new DateTime(createdDate.year, createdDate.month, createdDate.day+3);
+
+    if(currDate.isAfter(threeDayAfterCreated)&&mail_varified=='0'&&!shown)
+      {
+        cameraChannel.invokeMethod("showNotification",{"title":"Please verify your email address for ubiAttendance","description":""});
+        prefs.setBool("EmailVerifacitaionReminderShown", true);
+      }
+
+
+  }
+
+  void showAddingShiftReminder() async{
+    var prefs=await SharedPreferences.getInstance();
+    bool employeeAdded=prefs.getBool("EmployeeAdded");
+    bool shiftAdded=prefs.getBool("ShiftAdded");
+
+   if(employeeAdded&&!shiftAdded){
+
+      Future.delayed(Duration(seconds: 1), () => tooltiptwo.show(context));
+
+   }
+
+
+
   }
 //////////////////////////////////////////////////////////////////
 }

@@ -31,7 +31,7 @@ public class DisplayNotification {
 
             Intent notificationIntent = new Intent(ctx, MainActivity.class);
             notificationIntent.putExtra("whereToGo", pageToOpenOnClick);
-           // notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+           notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent contentIntent = PendingIntent.getActivity(ctx,0,notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
 

@@ -127,7 +127,7 @@ static SuperTooltip a;
     this.snapsFarAwayVertically = false,
     this.snapsFarAwayHorizontally = false,
     this.hasShadow = true,
-    this.borderWidth = 2.0,
+    this.borderWidth = 0.0,
     this.borderRadius = 10.0,
     this.borderColor = Colors.black,
     this.closeButtonColor = Colors.black,
@@ -136,7 +136,7 @@ static SuperTooltip a;
     this.arrowBaseWidth = 20.0,
     this.arrowTipDistance = 2.0,
     this.backgroundColor = Colors.white,
-    this.outsideBackgroundColor = const Color.fromARGB(50, 255, 255, 255),
+    this.outsideBackgroundColor = const Color.fromARGB(80, 255, 255, 255),
     this.touchThroughAreaShape = ClipAreaShape.oval,
     this.touchThroughAreaCornerRadius = 5.0,
     this.touchThrougArea,
@@ -262,7 +262,7 @@ static SuperTooltip a;
         decoration: ShapeDecoration(
             color: backgroundColor,
             shadows: hasShadow
-                ? [BoxShadow(color: Colors.black54, blurRadius: 10.0, spreadRadius: 5.0)]
+                ? [BoxShadow(color: Color.fromARGB(80, 129, 129, 129), blurRadius: 5.0, spreadRadius: 2.0)]
                 : null,
             shape: _BubbleShape(popupDirection, _targetCenter, borderRadius, arrowBaseWidth,
                 arrowTipDistance, borderColor, borderWidth, left, top, right, bottom)),

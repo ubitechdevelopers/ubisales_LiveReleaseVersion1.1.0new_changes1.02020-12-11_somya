@@ -178,7 +178,7 @@ class _addShift extends State<addShift> {
                           color: Colors.white),
                     )
                         :Text(
-                      'ADD',
+                      'ADD1',
                       style: TextStyle(
                           color: Colors.white),),
                     color: buttoncolor,
@@ -351,8 +351,15 @@ class _addShift extends State<addShift> {
                           _isButtonDisabled=true;
                         });
 
-                        createShift(_shiftName.text,shifttype,_from.text,_to.text,_from_b.text,_to_b.text).then((res){
+                        createShift(_shiftName.text,shifttype,_from.text,_to.text,_from_b.text,_to_b.text).then((res)async{
                           if(res.toString()=='1') {
+
+                            var prefs=await SharedPreferences.getInstance();
+                            var shiftAdded=prefs.getBool("ShiftAdded")??false;
+
+                            if(!shiftAdded)
+                              prefs.setBool("ShiftAdded", true);
+
                             // showInSnackBar('Shift added successfully');
 
 

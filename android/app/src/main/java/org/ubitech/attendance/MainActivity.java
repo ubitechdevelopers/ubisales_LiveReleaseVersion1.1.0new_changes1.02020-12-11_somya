@@ -126,6 +126,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       Intent intent111 = new Intent(getApplicationContext(), MainActivity.class);
       intent111.setAction(Intent.ACTION_RUN);
       intent111.putExtra("route", "settings");
+      intent111.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       getApplicationContext().startActivity(intent111);
 
 

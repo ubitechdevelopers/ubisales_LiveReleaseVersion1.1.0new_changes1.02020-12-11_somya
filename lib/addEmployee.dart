@@ -537,10 +537,17 @@ class _AddEmployee extends State<AddEmployee> {
                             dept,
                             desg,
                             shift)
-                            .then((res) {
+                            .then((res) async{
                           //showInSnackBar(res.toString());
-                          //   showInSnackBar('Employee registered Successfully');
+                          //   showInSnackBar('Employee registeed Successfully');
                           if (res == 1) {
+
+                          var prefs=await SharedPreferences.getInstance();
+                          var employeeAdded=prefs.getBool("EmployeeAdded")??false;
+
+                          if(!employeeAdded)
+                          prefs.setBool("EmployeeAdded", true);
+
                             //   showInSnackBar('Contact Already Exist');
                             Navigator.push(
                               context,
