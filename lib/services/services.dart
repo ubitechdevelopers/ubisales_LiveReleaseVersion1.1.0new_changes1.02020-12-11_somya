@@ -26,6 +26,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../home.dart';
+import '../today_attendance_report.dart';
 
 class Services {}
 
@@ -47,6 +48,21 @@ void initDynamicLinks() async {
 
   if (deepLink != null) {
     print("Deep Link"+deepLink.path);
+
+    refererId=deepLink.path.split("/")[1];
+
+    ReferralValidFrom=deepLink.path.split("/")[2];
+    ReferralValidTo=deepLink.path.split("/")[3];
+    referrerAmt=deepLink.path.split("/")[4].split('%')[0];
+    referrenceAmt=deepLink.path.split("/")[5].split('%')[0];
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+
+    prefs.setString("ReferralValidFrom", ReferralValidFrom.toString());
+    prefs.setString("ReferralValidTo", ReferralValidTo.toString());
+    prefs.setString("referrerAmt", referrerAmt.toString());
+    prefs.setString("referrenceAmt", referrenceAmt.toString());
+    prefs.setString("referrerId", refererId.toString());
+    print("refeeeeeeeeeeeeeeeeeeeeeeeeeeee:   "+refererId+" "+ReferralValidFrom+" "+ReferralValidTo+" "+referrerAmt+" "+referrenceAmt);
   }
 
 
@@ -63,8 +79,8 @@ void initDynamicLinks() async {
 
            ReferralValidFrom=deepLink.path.split("/")[2];
            ReferralValidTo=deepLink.path.split("/")[3];
-           referrerAmt=deepLink.path.split("/")[4];
-           referrenceAmt=deepLink.path.split("/")[5];
+          referrerAmt=deepLink.path.split("/")[4].split('%')[0]+'%';
+          referrenceAmt=deepLink.path.split("/")[5].split('%')[0]+'%';
           SharedPreferences prefs=await SharedPreferences.getInstance();
 
           prefs.setString("referrerId", refererId.toString());
@@ -81,6 +97,18 @@ void initDynamicLinks() async {
 
 
 }
+
+
+navigateToPageAfterNotificationClicked(var pageString, BuildContext context){
+
+  if(pageString=='reports'){
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => TodayAttendance(),maintainState: false));
+  }
+
+}
+
+
+
 
 Future<Map<String, dynamic>> sendPushNotification(String title,String nBody,String topic) async {
 
@@ -105,7 +133,7 @@ String url='https://fcm.googleapis.com/fcm/send';
 
   // todo - handle non-200 status code, etc
 
-  return json.decode(response.body);
+  //return json.decode(response.body);
 }
 
 
@@ -119,6 +147,8 @@ generateAndShareReferralLink()async{
   var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
   var ReferralValidFrom=prefs.getString("ReferralValidFrom")??"1%";
   var ReferralValidTo=prefs.getString("ReferralValidTo")??"1%";
+
+  print('https://ubiattendance.com/'+empId+"/"+ReferralValidFrom+"/"+ReferralValidTo+"/"+referrerAmt+"/"+referrenceAmt);
 
   final DynamicLinkParameters parameters = DynamicLinkParameters(
     uriPrefix: 'https://ubiattendance.page.link',
@@ -288,7 +318,7 @@ Future<int> checkConnectionToServer () async{
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
    //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
-   http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
+   http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 7));
    // print("response code"+response.statusCode.toString());
     //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
     if (response.statusCode==200 ) {
@@ -2446,9 +2476,10 @@ Future<List<grpattemp>> getDeptEmp_Search($val) async {
 updateEmployeePushNotificationStatus(bool valueOfSwitch,var empid,String action) async{
   empid=empid.toString();
   int value=valueOfSwitch?1:0;
-  print(globals.path + 'getDeptEmp?employeeId=$empid&action=$action&value=$value');
+  print(globals.path + 'updatePushNotificationStatusForEmployee?employeeId=$empid&action=$action&value=$value');
+
   final response =
-  await http.get(globals.path + 'updatePushNotificationStatusForEmployee?employeeId=$empid&action=$action&value=$value');
+  await http.get(globals.path+'updatePushNotificationStatusForEmployee?employeeId=$empid&action=$action&value=$value');
 
 }
 
@@ -2598,7 +2629,7 @@ addBulkAtt(List<grpattemp> data) async {
 ////////////check net
 Future<int> checkNet() async {
   try {
-    http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 2));
+    http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 7));
     //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
     if (response.statusCode==200) {
       print('connected');

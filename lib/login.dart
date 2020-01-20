@@ -395,7 +395,7 @@ class _LoginPageState extends State<LoginPage> {
 
           cameraChannel.invokeMethod("cameraOpened");
           ImagePicker.pickImage(
-              source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+              source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
               .then((img) async {
 
             if (img != null) {

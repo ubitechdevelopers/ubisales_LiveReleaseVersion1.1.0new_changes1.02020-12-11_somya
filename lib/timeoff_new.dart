@@ -616,8 +616,8 @@ class _TimeOff_New extends State<TimeOff_New> {
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          title: new Text("Warning!"),
-          content: new Text("Problem while punching visit, try again."),
+
+          content: new Text("Selfie was not captured. Please punch again."),
         )
         );
         setState(() {

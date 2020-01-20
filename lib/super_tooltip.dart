@@ -136,7 +136,7 @@ static SuperTooltip a;
     this.arrowBaseWidth = 20.0,
     this.arrowTipDistance = 2.0,
     this.backgroundColor = Colors.white,
-    this.outsideBackgroundColor = const Color.fromARGB(80, 255, 255, 255),
+    this.outsideBackgroundColor = const Color.fromARGB(80, 0, 0, 0),
     this.touchThroughAreaShape = ClipAreaShape.oval,
     this.touchThroughAreaCornerRadius = 5.0,
     this.touchThrougArea,

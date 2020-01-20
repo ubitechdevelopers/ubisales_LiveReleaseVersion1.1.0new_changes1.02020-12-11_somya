@@ -95,7 +95,9 @@ var FakeLocationStatus=0;
   String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(call.arguments["page"].toString(),context);
+        break;
       case "locationAndInternet":
         prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
@@ -703,8 +705,8 @@ var FakeLocationStatus=0;
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          title: new Text("Warning!"),
-          content: new Text("Problem while punching visit, try again."),
+
+          content: new Text("Selfie was not captured. Please punch again."),
         )
         );
         setState(() {

@@ -97,7 +97,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(call.arguments["page"].toString(),context);
+        break;
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
@@ -1024,7 +1026,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           cameraChannel.invokeMethod("cameraOpened");
 
           ImagePicker.pickImage(
-              source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+              source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
               .then((img) async {
 
             if (img != null) {
@@ -2007,7 +2009,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         cameraChannel.invokeMethod("cameraOpened");
 
         ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+            source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
             .then((img) async {
 
           prefix0.globalCameraOpenedStatus=false;
