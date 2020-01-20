@@ -210,7 +210,7 @@ class NewServices{
       }
       //for camera
       if(uploadtype==2){
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
       }
       //for removing photo
       if(uploadtype==3){

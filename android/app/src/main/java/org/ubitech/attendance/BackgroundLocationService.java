@@ -180,6 +180,7 @@ public class BackgroundLocationService extends Service {
     public void onDestroy()
     {
         Log.i("BackgroundService", "service destroyed");
+        stopForeground(true);
         super.onDestroy();
         if (mLocationManager != null) {
             try {
@@ -264,8 +265,8 @@ public class BackgroundLocationService extends Service {
         else {
 
             NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "simplifiedcoding")
-                    .setContentTitle("ubiAttendance is fetching gps location")
-                    .setContentText("Your location will be recorded when you mark your attendance.")
+                    .setContentTitle("Notice")
+                    .setContentText("App will be idle while in background.")
                     .setSmallIcon(R.mipmap.ic_launcher);
             PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
                     new Intent(getApplicationContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);

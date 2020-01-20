@@ -302,7 +302,7 @@ class SaveImage {
       if (globals.attImage == 1) {
 
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
 
 
 
@@ -471,7 +471,7 @@ class SaveImage {
         print("Pahunch gaya-----------------------------------------------");
 
         ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+            source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
             .then((img) async {
 
           if (imagei != null) {
@@ -755,7 +755,7 @@ class SaveImage {
       {
         print("Testing of attendance123");
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
         if (imagei != null) {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
@@ -850,7 +850,7 @@ class SaveImage {
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       if (globals.visitImage == 1) {
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -1208,7 +1208,7 @@ class SaveImage {
       imageCache.clear();
       if (globals.visitImage == 1) {
         globals.cameraChannel.invokeMethod("cameraOpened");
-        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+        imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
 
         if (imagei != null) {
           globals.globalCameraOpenedStatus=false;
@@ -1456,7 +1456,7 @@ class SaveImage {
       print('------------**vvxx');
       globals.cameraChannel.invokeMethod("cameraOpened");
 
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
 
 
       if (imagei != null) {
@@ -1697,7 +1697,7 @@ class SaveImage {
       imageCache.clear();
       globals.cameraChannel.invokeMethod("cameraOpened");
       // if (globals.FlexiImage != 1) {
-      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0);
+      imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
 
       print(imagei);
       if (imagei != null)

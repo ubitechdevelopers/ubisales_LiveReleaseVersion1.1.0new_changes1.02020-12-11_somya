@@ -74,7 +74,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
   String colorto;
   bool loaderr=false;
   bool fakeLocationDetected=false;
-
+  var orgId='0';
   var switchStatuses;
 
   List<bool> outSwitchStatuses;
@@ -93,12 +93,13 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
 /*    StreamLocation ns=new StreamLocation();
     ns.stopStreaming();*/
     final prefs = await SharedPreferences.getInstance();
+    orgId=prefs.getString("orgid")??'';
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
     admin_sts = prefs.getString('sstatus') ?? '';
     orgid = prefs.getString('orgid') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
-    getDeptEmp('Today').then((EmpList) {
+    getDeptEmp('All').then((EmpList) {
       setState(() {
         emplist = EmpList;
       });
@@ -142,7 +143,9 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
   String areaStatus="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(call.arguments["page"].toString(),context);
+        break;
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
@@ -239,6 +242,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
           },),
           backgroundColor: appcolor,
         ),
+        /*
         bottomNavigationBar: Container(
 
           height: 70.0,
@@ -402,7 +406,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
               ),
             ],
           ),
-        ),
+        ),*/
         endDrawer: new AppDrawer(),
         body: Container(
           padding: EdgeInsets.only(left: 2.0, right: 2.0),
@@ -421,7 +425,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
 
               ),*/
               SizedBox(height: 5.0),
-              Row(
+              /*Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Padding(
@@ -502,7 +506,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                     ),
                   ),*/
                 ],
-              ),
+              ),*/
               /*(showSearch == true) ?
               Padding(
                 padding: const EdgeInsets.only(left:10.0,right: 10.0),
@@ -536,8 +540,41 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                 ),
               ) : new Container(
               ),*/
+              SizedBox(height:10.0),
+              Container(
+                padding: EdgeInsets.only(top:0.0,bottom: 2.0),
+                child:Center(
+                  child:Text("Punch Notifications",
+                      style: new TextStyle(fontSize: 22.0, color: appcolor,)),
+                ),
+              ),
+              Divider(color: Colors.black54,height: 1.5,),
+              SizedBox(height: 8.0),
+              //Divider(color: Colors.black54,height: 1.5,),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+//            crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 30.0,),
+                  SizedBox(width: MediaQuery.of(context).size.width*0.02),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.25,
+                    child:Text('',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  ),
 
-              SizedBox(height: 5.0),
+                  SizedBox(height: 30.0,),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.32,
+                    child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  ),
+                  SizedBox(height: 30.0,),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.2,
+                    child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  ),
+                ],
+              ),
+              Divider(),
               new Expanded(
                 child:loaderr==false?getBulkEmpWidget():loader(),
               ),
@@ -562,8 +599,42 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
               itemBuilder: (BuildContext context, int index) {
                 final int alreadySaved = emplist[index].csts;
 
-                switchStatuses[index]=emplist[index].InPushNotificationStatus=='1';
-                outSwitchStatuses[index]=emplist[index].OutPushNotificationStatus=='1';
+                switchStatuses[index]=emplist[index].InPushNotificationStatus.toString()=='1'?true:false;
+                outSwitchStatuses[index]=emplist[index].OutPushNotificationStatus.toString()=='1'?true:false;
+
+                var empId=emplist[index].Id;
+
+
+                String topic=empId+'TI'+orgId;
+                String topic1=empId+'TO'+orgId;
+
+                if(switchStatuses[index]){
+                  //var prefs=await SharedPreferences.getInstance();
+
+                  _firebaseMessaging.subscribeToTopic(topic);
+
+
+                  // var topic=emplist[index].Name
+
+                  print("topic subscribed emp"+topic);
+                }
+                else{
+                  _firebaseMessaging.unsubscribeFromTopic(topic);
+                }
+                if(outSwitchStatuses[index]){
+                  //var prefs=await SharedPreferences.getInstance();
+
+                  _firebaseMessaging.subscribeToTopic(topic1);
+
+
+                  // var topic=emplist[index].Name
+
+                  print("topic subscribed emp"+topic1);
+                }
+                else{
+                  _firebaseMessaging.unsubscribeFromTopic(topic1);
+                }
+
 
                 //List til=emplist[index].timein.split(":");
                 //if(!til[0]){til[0]=0;};
@@ -736,7 +807,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                             value: switchStatuses[index],
                                             onChanged: (value) async{
                                             updateEmployeePushNotificationStatus(value,emplist[index].Id,"TimeIn");
-
+/*
                                             var prefs=await SharedPreferences.getInstance();
                                             var empId=emplist[index].Id;
                                             var orgId=prefs.getString("orgid")??'';
@@ -748,7 +819,8 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                               _firebaseMessaging.unsubscribeFromTopic(topic);
                                            // var topic=emplist[index].Name
 
-
+                                            print("topic subscribed emp"+topic);
+*/
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(builder: (context) => PushNotificationForEmployee()),
@@ -835,7 +907,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                             value: outSwitchStatuses[index],
                                             onChanged: (value) async{
                                               updateEmployeePushNotificationStatus(value,emplist[index].Id,"TimeOut");
-
+/*
                                               var prefs=await SharedPreferences.getInstance();
                                               var empId=emplist[index].Id;
                                               var orgId=prefs.getString("orgid")??'';
@@ -847,7 +919,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                                 _firebaseMessaging.unsubscribeFromTopic(topic);
                                               // var topic=emplist[index].Name
 
-
+*/
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(builder: (context) => PushNotificationForEmployee()),

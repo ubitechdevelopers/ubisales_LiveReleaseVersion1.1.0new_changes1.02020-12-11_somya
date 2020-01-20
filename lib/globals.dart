@@ -80,6 +80,11 @@ bool istooltipfiveshown=false;
 String currentOrgStatus='';
 double ab,cd,ef,gh;
 
+String globalOrgTopic='';
+String globalCountryTopic='';
+
+
+
 
 /*
 int total_dept = 0;

@@ -50,9 +50,11 @@ Widget build(BuildContext context) {
 
         (widget.img==null||widget.img=='')?
         Container(
+          height: 300,
             child: PhotoView(
 
-              imageProvider: NetworkImage(widget.myimage),
+              imageProvider: NetworkImage(widget.myimage,),
+
             )
         )
 

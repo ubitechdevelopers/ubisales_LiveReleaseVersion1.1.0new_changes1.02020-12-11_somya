@@ -121,6 +121,10 @@ class Home{
         prefs.setString('ShiftTimeIn', timeinoutMap['ShiftTimeIn']);
         prefs.setString('nextWorkingDay', timeinoutMap['nextWorkingDay']);
         prefs.setString('CountryName', timeinoutMap['CountryName']);
+        globals.globalCountryTopic=timeinoutMap['CountryName'].toString();
+        globals.globalOrgTopic= timeinoutMap['OrgTopic'].toString();
+        print('countru name'+timeinoutMap['CountryName'].toString());
+
         prefs.setString('OutPushNotificationStatus', timeinoutMap['OutPushNotificationStatus']);
         prefs.setString('InPushNotificationStatus', timeinoutMap['InPushNotificationStatus']);
         print("Next working day"+timeinoutMap['nextWorkingDay']);

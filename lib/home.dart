@@ -50,6 +50,7 @@ import 'settings.dart';
 import 'timeoff_summary.dart';
 import 'avatar_glow.dart';
 import 'super_tooltip.dart' ;
+import 'services/services.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {
@@ -109,7 +110,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool internetAvailable = true;
   String address = '';
   String createdDate="";
-  String datetoShow="";
+  String dateShowed="";
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
   var token="";
@@ -141,10 +142,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   SizedBox(height: 10,),
                   RaisedButton(
                     color: globals.buttoncolor,
-                    child: Text('Next',style: TextStyle(color: Colors.white),),
-                    onPressed: (){
+                    child: Text('NEXT',style: TextStyle(color: Colors.white),),
+                    onPressed: () async{
+                      var prefs=await SharedPreferences.getInstance();
                       //print('jshjsh');
-
+                      prefs.setInt("TimeInToolTipShown",1);
                       SuperTooltip.a.close();
                       tooltiptimeinClicked(SuperTooltip.ctx);
                       istooltiptimeinshown=true;
@@ -213,8 +215,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     hasShadow: false,
     content: new Material(
         child: Container(
-          width: 200.0,
-          height: 120.0,
+          width: 300.0,
+          height: 90.0,
           child: Padding(
               padding: const EdgeInsets.all(0.0),
               child: Column(
@@ -223,9 +225,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   Text("Try adding an employee",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                   RaisedButton(
                     color: globals.buttoncolor,
-                    child: Text('Ok',style: TextStyle(color: Colors.white),),
-                    onPressed: (){
+                    child: Text('OK',style: TextStyle(color: Colors.white),),
+                    onPressed: () async{
                       //print('jshjsh');
+
+                      var prefs=await SharedPreferences.getInstance();
+                      prefs.setBool("glow", true);
 
                       SuperTooltip.a.close();
                       //tooltiptimeinClicked(SuperTooltip.ctx);
@@ -319,42 +324,57 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     print('aintitstate');
     super.initState();
-    firebaseCloudMessaging_Listeners();
+
     WidgetsBinding.instance.addObserver(this);
     checknetonpage(context);
     initPlatformState();
     //setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
-    Future.delayed(Duration(seconds: 1), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayout));
+
+    Future.delayed(Duration(seconds: 5), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayout));
 
 
   }
 
-   _getPositions() {
-    final RenderBox renderBoxRed = _keyRed.currentContext.findRenderObject();
-    final positionRed = renderBoxRed.localToGlobal(Offset.zero);
-    final sizeRed = renderBoxRed.size;
-    print("POSITION of Red: $positionRed ");
-    print("Size of Red: $sizeRed");
+   _getPositions()async {
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+    var timeInToolTipShown=prefs.getInt("TimeInToolTipShown")??0;
 
 
-    print(positionRed);
-    double a = positionRed.dx;
-    double b = positionRed.dy;
-
-    double e = sizeRed.height;
-    double f = sizeRed.width;
-
-    print("this is $a and this is $b");
-    setState(() {
-      ab=a+(f/2);
-      cd=b+2*e;
+     if(_keyRed!=null)
+       if(_keyRed.currentContext!=null) {
+         if (timeInToolTipShown == 0) {
+           final RenderBox renderBoxRed = _keyRed.currentContext
+               .findRenderObject();
+           final positionRed = renderBoxRed.localToGlobal(Offset.zero);
+           final sizeRed = renderBoxRed.size;
+           print("POSITION of Red: $positionRed ");
+           print("Size of Red: $sizeRed");
 
 
-    });
-     Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context,ab,cd));
-    getPositionofFAB();
+           print(positionRed);
+           double a = positionRed.dx;
+           double b = positionRed.dy;
+
+           double e = sizeRed.height;
+           double f = sizeRed.width;
+
+           print("this is $a and this is $b");
+           setState(() {
+             ab = a + (f / 2);
+             cd = b + 2 * e;
+           });
+           Future.delayed(
+               Duration(seconds: 1), () => tooltiptimein.show(context, ab, cd));
+
+           getPositionofFAB();
+         }
+       }
+
+
+
 
   }
    _afterLayout(_) {
@@ -391,25 +411,54 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     var country=prefs.getString("CountryName")??'';
     var orgTopic=prefs.getString("OrgTopic")??'';
     var isAdmin=admin_sts = prefs.getString('sstatus').toString() ?? '0';
-    _firebaseMessaging.subscribeToTopic('101');
+    //_firebaseMessaging.subscribeToTopic('101');
     if(isAdmin=='1'){
       _firebaseMessaging.subscribeToTopic('admin');
+      print("Admin topic subscribed");
     }
-    else
+    else{
+      print("employee topic subscribed");
+      if(orgTopic.isNotEmpty)
       _firebaseMessaging.subscribeToTopic('employee');
-
-
-
-    if(orgTopic.isNotEmpty){
-      _firebaseMessaging.subscribeToTopic(orgTopic);
     }
+
+
+
+
+    if(globals.globalOrgTopic.isNotEmpty){
+      _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+      _firebaseMessaging.subscribeToTopic(globals.globalOrgTopic.replaceAll(' ', ''));
+
+      print('globals.globalOrgTopic'+globals.globalOrgTopic.toString());
+
+      prefs.setString("OrgTopic",globals.globalOrgTopic);
+
+    }
+    else{
+      if(orgTopic.isNotEmpty)
+      _firebaseMessaging.subscribeToTopic(orgTopic.replaceAll(' ', ''));
+      print('globals.globalOrgTopic11111'+orgTopic);
+
+
+    }
+
+    if(globals.globalCountryTopic.isNotEmpty){
+      _firebaseMessaging.unsubscribeFromTopic(country.replaceAll(' ', ''));
+      _firebaseMessaging.subscribeToTopic(globals.globalCountryTopic.replaceAll(' ', ''));
+      prefs.setString("CountryName", globals.globalCountryTopic);
+    }
+    else{
+      if(country.isNotEmpty)
+      _firebaseMessaging.subscribeToTopic(country.replaceAll(' ', ''));
+    }
+
 
 
      if(globals.currentOrgStatus.isNotEmpty){
-       var previousOrgStatus=prefs.get("CurrentOrgStatus");
-
-       _firebaseMessaging.unsubscribeFromTopic(previousOrgStatus);
-      _firebaseMessaging.subscribeToTopic(globals.currentOrgStatus);
+       var previousOrgStatus=prefs.get("CurrentOrgStatus")??'';
+        if(previousOrgStatus.isNotEmpty)
+       _firebaseMessaging.unsubscribeFromTopic(previousOrgStatus.replaceAll(' ', ''));
+      _firebaseMessaging.subscribeToTopic(globals.currentOrgStatus.replaceAll(' ', ''));
 
       prefs.setString("CurrentOrgStatus", globals.currentOrgStatus);
       globals.currentOrgStatus='';
@@ -417,9 +466,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _firebaseMessaging.getToken().then((token){
       _firebaseMessaging.subscribeToTopic("AllOrg");
      // _firebaseMessaging.subscribeToTopic("UBI101");
-     _firebaseMessaging.subscribeToTopic("ALL_COUNTRY");
-      if(country.isNotEmpty)
-      _firebaseMessaging.subscribeToTopic(country);
+     _firebaseMessaging.subscribeToTopic("AllCountry");
+
+
+     // print('country subscribed'+country);
 
 
       this.token=token;
@@ -432,13 +482,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print('on message $message');
+        print('on message $message'+message['data'].isEmpty.toString());
+//{notification: {title: ABC has marked his Time In, body: null}, data: {}}
+        cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
+
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
+        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+        navigateToPageAfterNotificationClicked(navigate, context);
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
+        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+        navigateToPageAfterNotificationClicked(navigate, context);
       },
     );
   }
@@ -520,6 +577,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch (call.method) {
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(call.arguments["page"].toString(),context);
+        break;
       case "locationAndInternet":
         locationThreadUpdatedLocation = true;
         // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
@@ -889,17 +949,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     var prefs=await SharedPreferences.getInstance();
     var buyStatus=int.parse(prefs.get("buysts")??"123455");
     var createdDate = DateTime.parse("2019-12-26");
-    print("datetime.parse"+prefs.get("ReferralValidFrom"));
+
     var startDate = DateTime.parse(prefs.get("ReferralValidFrom")??"2019-12-26");
     var endDate = DateTime.parse(prefs.get("ReferralValidTo")??"2019-12-26");
-    var currDate=DateTime.now();
-    datetoShow=prefs.getString('date')??"";
-    if(datetoShow=="")
-    {
-      datetoShow=startDate.toString();
-    }
 
-    // print("hello"+datetoShow);
+    var currDate=DateTime.now();
+    dateShowed=prefs.getString('date')??"2010-10-10";
+
+    print("datetime.parse"+dateShowed);
+    // print("hello"+dateShowed);
     var referrerAmt=prefs.getString("ReferrerDiscount")??"1%";
     var referrenceAmt=prefs.getString("ReferrenceDiscount")??"1%";
     ReferrerNotificationList[0]={
@@ -935,35 +993,43 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if(referrerRandom==0)
       height=170;
 
-
+    print("----> currdate"+currDate.toString());
 
     if(createdDate==''){
       dateToSend=12;
     }
-    if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+   // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
 
       //print("difference dates"+currDate.difference(cDate).inDays.toString());
       //print("created date"+createdDate);
 
-    } // for other organizations i.e pop up for every created date day of the month
-    else{
+   // } // for other organizations i.e pop up for every created date day of the month
+   // else{
       dateToSend=createdDate.day;
-//      print('startDate');
-//      print(startDate);
+   print('startDate');
+    print(startDate);
 //      print(currDate);
 //      print(prefs.getString('date'));
-      if(currDate.isAfter(startDate)&& currDate.isBefore(endDate) || datetoShow==startDate.toString()) {
-//        prefs.setString('date',currDate.toString());
+      //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+      if(currDate.isAfter(startDate)&& currDate.isBefore(endDate)||(currDate.day==startDate.day&&currDate.month==startDate.month&&currDate.year==startDate.year )||(currDate.day==endDate.day&&currDate.month==endDate.month&&currDate.year==endDate.year )) {
+print("inside referral check");
+        //        prefs.setString('date',currDate.toString());
         // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
         //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
 //        prefs.setString('date', newDate.toString());
 //        print("hello");
 //        print(prefs.getString('date'));
-        //print(currDate);
-        if(datetoShow==currDate.toString()){
-          var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
-          datetoShow=newDate.toString();
-          prefs.setString('date',datetoShow);
+
+        print(currDate);
+
+        //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+          //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+
+        if(((DateTime.parse(dateShowed).day!=currDate.day)&&((currDate.difference(startDate).inDays).abs()%3==0))){
+          //var newDate = currDate.add(new Duration(days: 3));
+          dateShowed=currDate.toString();
+          prefs.setString('date',dateShowed);
+          print("hello"+currDate.toString());
 
           EasyDialog(
               title: Text(
@@ -997,7 +1063,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         }
       }
 
-    }
+   // }
 
   }
 
@@ -1009,7 +1075,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
 
-    showEmailVerificationReminder();
+    //sendPushNotification('ABC has marked his Time In','','ALL_ORG');
+
+    //showEmailVerificationReminder();
 
     //showAddingShiftReminder();
 
@@ -1022,6 +1090,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
     SystemChannels.lifecycle.setMessageHandler((msg) async {});
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    istooltipsts=prefs.getBool('glow')??false;
+    print('is tool tip status'+istooltipsts.toString());
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
@@ -1074,10 +1145,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
           createdDate = prefs.getString('CreatedDate') ?? '';
-          if(referralNotificationShown==false){
+         if(referralNotificationShown==false&&admin_sts=='1'){
             showReferralPopup(context,createdDate);
-            //referralNotificationShown=true;
-          }
+            referralNotificationShown=true;
+         }
 
 
           print("Profile Image" + profile);
@@ -1119,6 +1190,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //if(istooltipsts!=true){
       //Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
     //}
+
+    firebaseCloudMessaging_Listeners();
+
   }
 
 
@@ -1236,7 +1310,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
               endDrawer: new AppDrawer(),
               body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-              floatingActionButton:(istooltipsts == false && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
+              floatingActionButton:(istooltipsts == true && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
                 mini: false,
                 //key: _keyBlue,
                 backgroundColor: buttoncolor,
@@ -1421,13 +1495,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     } else {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Sorry we can not continue with out location.',
+        Text('Kindly refresh the page to fetch the location.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
-          child: Text('Open Settings'),
+          child: Text('Refresh'),
+          color: globals.buttoncolor,
           onPressed: () {
-            PermissionHandler().openAppSettings();
+            cameraChannel
+                .invokeMethod("startAssistant");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage()),
+            );
           },
         ),
       ]);
@@ -2017,10 +2098,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             padding:
                             EdgeInsets.only(top: 5.0, right: 5.0),
                             child: Text(
-                              'Outside Fenced Area',
+                              ' Outside Fenced Area ',
                               style: TextStyle(
                                   fontSize: 20.0,
-                                  color: Colors.red,
+                                  color: Colors.white,
+                                  backgroundColor: Colors.red,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.0),
                             ),
@@ -2028,10 +2110,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               : Container(
                             padding: EdgeInsets.all(5.0),
                             child: Text(
-                              'Within Fenced Area',
+                              ' Within Fenced Area ',
                               style: TextStyle(
                                   fontSize: 20.0,
-                                  color: Colors.green,
+                                  color: Colors.white,
+                                  backgroundColor: Colors.green,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.0),
                             ),
@@ -2044,13 +2127,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ]);
     } else {
       return Column(children: [
-        Text('Sorry we can not continue without location',
+        Text('Kindly refresh the page to fetch the location.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
-          child: Text('Open Settings'),
+          child: Text('Refresh'),
+          color: globals.buttoncolor,
           onPressed: () {
-            PermissionHandler().openAppSettings();
+            cameraChannel
+                .invokeMethod("startAssistant");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage()),
+            );
           },
         ),
       ]);
@@ -2086,7 +2176,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         if(InPushNotificationStatus=='1'){
 
 
-          sendPushNotification(eName+' has marked his Time In','',topic);
+          sendPushNotification(eName+' has marked his Time In','','\''+topic+'\' in topics');
 
 
         }
@@ -2126,7 +2216,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           if(InPushNotificationStatus=='1'){
 
 
-            sendPushNotification(eName+' has marked his Time Out','',topic);
+            sendPushNotification(eName+' has marked his Time Out','','\''+topic+'\' in topics');
+
+            print('\''+topic+'\' in topics');
 
 
           }
@@ -2239,8 +2331,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
-              title: new Text("Warning!"),
-              content: new Text("Problem while marking attendance, try again."),
+
+              content: new Text("Selfie was not captured. Please punch again."),
             ));
         if (mounted) {
           setState(() {
@@ -2557,7 +2649,7 @@ var FakeLocationStatus=0;
       imageCache.clear();
       if (globals.attImage == 1) {
         ImagePicker.pickImage(
-            source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+            source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
             .then((img) async {
 
           if (imagei != null) {
@@ -2646,9 +2738,9 @@ var FakeLocationStatus=0;
                           context: context,
                           // ignore: deprecated_member_use
                           child: new AlertDialog(
-                            title: new Text("Warning!"),
+
                             content: new Text(
-                                "Problem while marking attendance, try again."),
+                                "Selfie was not captured. Please punch again."),
                           ));
                       if (mounted)
                         setState(() {
@@ -2782,9 +2874,9 @@ var FakeLocationStatus=0;
                       context: context,
                       // ignore: deprecated_member_use
                       child: new AlertDialog(
-                        title: new Text("Warning!"),
+
                         content: new Text(
-                            "Problem while marking attendance, try again."),
+                            "Selfie was not captured. Please punch again."),
                       ));
                   if (mounted)
                     setState(() {
@@ -2830,17 +2922,22 @@ var FakeLocationStatus=0;
 
   void showEmailVerificationReminder() async{
     var prefs=await SharedPreferences.getInstance();
-    var createdDate=DateTime.parse(prefs.getString("CreatedDate")??'2019-01-01');
+   // var createdDate=DateTime.parse(prefs.getString("CreatedDate")??'2019-01-01');
+    var createdDate=DateTime.parse('2020-01-11');
     String mail_varified=await prefs.getString("mail_varified")??'0';
     var shown= prefs.getBool("EmailVerifacitaionReminderShown")??false;
+    var isAdmin= prefs.getString("sstatus")??'0';
     var currDate=DateTime.now();
 
     var threeDayAfterCreated= new DateTime(createdDate.year, createdDate.month, createdDate.day+3);
 
-    if(currDate.isAfter(threeDayAfterCreated)&&mail_varified=='0'&&!shown)
+    if(currDate.isAfter(threeDayAfterCreated) && mail_varified=='0'&& !shown && isAdmin=='1')
       {
         cameraChannel.invokeMethod("showNotification",{"title":"Please verify your email address for ubiAttendance","description":""});
         prefs.setBool("EmailVerifacitaionReminderShown", true);
+
+        print("Emil verify notification sent");
+
       }
 
 

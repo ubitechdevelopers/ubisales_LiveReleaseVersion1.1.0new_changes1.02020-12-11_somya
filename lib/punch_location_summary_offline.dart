@@ -66,7 +66,9 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
   String address="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
-
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(call.arguments["page"].toString(),context);
+        break;
       case "locationAndInternet":
     prefix0.locationThreadUpdatedLocation=true;
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
@@ -482,7 +484,7 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
       cameraChannel.invokeMethod("cameraOpened");
 
       ImagePicker.pickImage(
-          source: ImageSource.camera, maxWidth: 400.0, maxHeight: 400.0)
+          source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
           .then((img) async {
 
             prefix0.globalCameraOpenedStatus=false;

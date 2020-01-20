@@ -852,7 +852,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
                               });
                               var prefs=await SharedPreferences.getInstance();
+
                               String referrerId=prefs.getString("referrerId")??"0";
+                              String ReferralValidFrom=prefs.getString("ReferralValidFrom")??"0000-00-00";
+                              String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
+                              String referrerAmt=prefs.getString("referrerAmt")??"0%";
+                              String referrenceAmt=prefs.getString("referrenceAmt")??"0%";
                               print("referrer id sent"+referrerId.toString());
                               var url = globals.path+"register_org";
                               http.post(url, body: {
@@ -865,6 +870,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "countrycode": '',
                                 "address": _city.text,
                                 "referrerId":referrerId,
+                                "ReferralValidFrom":ReferralValidFrom,
+                                "ReferralValidTo":ReferralValidTo,
+                                "referrerAmt":referrerAmt,
+                                "referrenceAmt":referrenceAmt,
 
                                 "platform":'android'
                               }) .then((response) {

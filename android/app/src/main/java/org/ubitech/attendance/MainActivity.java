@@ -733,6 +733,7 @@ catch(Exception e){
                 responseMap.put("page",extras.getString("whereToGo"));
                 if(channel!=null){
                     channel.invokeMethod("navigateToPage", responseMap);
+                    Log.i("togo","akah"+extras.getString("whereToGo"));
                 }
             }
         }

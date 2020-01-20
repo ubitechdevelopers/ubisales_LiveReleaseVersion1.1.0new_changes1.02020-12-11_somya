@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:share/share.dart';
@@ -545,7 +546,7 @@ class _AppDrawerState extends State<AppDrawer> {
       throw 'Could not launch Maps';
     }
   }
-
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   logout() async{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('response');
@@ -567,6 +568,14 @@ class _AppDrawerState extends State<AppDrawer> {
     prefs.remove('shiftId');
     prefs.remove('OfflineModePermission');
     prefs.remove('ImageRequired');
+    prefs.remove('glow');
+
+    _firebaseMessaging.unsubscribeFromTopic("admin");
+    _firebaseMessaging.unsubscribeFromTopic("employee");
+
+
+
+    //prefs.remove("TimeInToolTipShown");
     department_permission = 0;
     designation_permission = 0;
     leave_permission = 0;
