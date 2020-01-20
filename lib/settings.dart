@@ -240,26 +240,26 @@ class _Settings extends State<Settings> {
             title: new Text(
               loginstr,
               style: TextStyle(fontSize: 15.0),),
-            actions:[ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text('Later',style: TextStyle(fontSize: 13.0,color: Colors.black,),),
-                  shape: Border.all(),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                ),
-                RaisedButton(
-                  child: Text(
-                    'Login Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
-                  color: Colors.orangeAccent,
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                    launchMap("https://ubiattendance.ubihrm.com/");
-                  },
-                ),
-              ],
-            ),]
+//            actions:[ButtonBar(
+//              children: <Widget>[
+//                FlatButton(
+//                  child: Text('Later',style: TextStyle(fontSize: 13.0,color: Colors.black,),),
+//                  shape: Border.all(),
+//                  onPressed: () {
+//                    Navigator.of(context, rootNavigator: true).pop();
+//                  },
+//                ),
+//                RaisedButton(
+//                  child: Text(
+//                    'Login Now', style: TextStyle(color: Colors.white,fontSize: 13.0),),
+//                  color: Colors.orangeAccent,
+//                  onPressed: () {
+//                    Navigator.of(context, rootNavigator: true).pop();
+//                    launchMap("https://ubiattendance.ubihrm.com/");
+//                  },
+//                ),
+//              ],
+//            ),]
         );
       }
       );
@@ -688,7 +688,7 @@ class _Settings extends State<Settings> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
-                        child: Text('Change your login password',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                        child: Text('Change your password',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                     ),
                   ),
                 ],

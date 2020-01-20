@@ -47,73 +47,73 @@ class _Designation extends State<Designation> {
 
   getmainhomewidget() {
     return new Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
 
-                new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-                /*  Image.asset(
+            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
-              ],
-            ),
-            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-              Navigator.pop(context);}),
-            backgroundColor: appcolor,
-          ),
+          ],
+        ),
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+          Navigator.pop(context);}),
+        backgroundColor: appcolor,
+      ),
       bottomNavigationBar: Bottomnavigationbar(),
-          endDrawer: new AppDrawer(),
-          body:
-          Container(
-            padding: EdgeInsets.only(left: 2.0, right: 2.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 8.0),
-                Center(
-                  child: Text('Designations',
-                    style: new TextStyle(fontSize: 22.0, color: appcolor,),),
-                ),
-                Divider(height: 1.5, color: Colors.black87,),
-                Divider(height: 10.0,),
-                SizedBox(height: 2.0),
-                Container(
-                  padding: EdgeInsets.only(left: 25.0,right: 25.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('Designations', style: TextStyle(
-                          color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold ),),
-                      Text('Status', style: TextStyle(
-                          color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),),
-                    ],
-                  ),
-                ),
-                Divider(),
-                SizedBox(height: 5.0),
-                new Expanded(
-                  child: getDesgWidget(),
+      endDrawer: new AppDrawer(),
+      body:
+      Container(
+        padding: EdgeInsets.only(left: 2.0, right: 2.0),
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 8.0),
+            Center(
+              child: Text('Designations',
+                style: new TextStyle(fontSize: 22.0, color: appcolor,),),
+            ),
+            Divider(height: 1.5, color: Colors.black87,),
+            //Divider(height: 10.0,),
+            SizedBox(height: 8.0),
+            Container(
+              padding: EdgeInsets.only(left: 25.0,right: 25.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Designations', style: TextStyle(
+                      color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold ),),
+                  Text('Status', style: TextStyle(
+                      color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),),
+                ],
+              ),
+            ),
+            Divider(),
+            SizedBox(height: 5.0),
+            new Expanded(
+              child: getDesgWidget(),
 
-                ),
-
-              ],
             ),
 
-          ),
-          floatingActionButton: new FloatingActionButton(
-            mini: false,
-            backgroundColor: buttoncolor,
-            onPressed: (){
-              setState(() {
-                _isButtonDisabled=false;
-              });
-              _showDialog(context);
-            },
-            tooltip: 'Add Designation',
-            child: new Icon(Icons.add),
-          ),
-        );
+          ],
+        ),
+
+      ),
+      floatingActionButton: new FloatingActionButton(
+        mini: false,
+        backgroundColor: buttoncolor,
+        onPressed: (){
+          setState(() {
+            _isButtonDisabled=false;
+          });
+          _showDialog(context);
+        },
+        tooltip: 'Add Designation',
+        child: new Icon(Icons.add),
+      ),
+    );
 
   }
 
@@ -141,33 +141,33 @@ class _Designation extends State<Designation> {
                 itemBuilder: (BuildContext context, int index) {
                   return new Column(
                       children: <Widget>[
-                  new FlatButton(
-                  child : new Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      new Container(
-                        // color: Colors.amber.shade400,
-                        padding: EdgeInsets.only(top:5.0,bottom: 5.0),
-                        margin: EdgeInsets.only(top:5.0),
-                        alignment: FractionalOffset.center,
-                        child: new Text(snapshot.data[index].desg.toString()),
-                      ),
-                      new Container(
-                        // color: Colors.amber.shade400,
-                        padding: EdgeInsets.only(top:7.0,bottom: 7.0),
-                        alignment: FractionalOffset.center,
-                        child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
-                      ),
-                    ],
-                  ),
-                      onPressed: (){
-                        //null;
-                        editDesg(context,snapshot.data[index].desg.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
-                      }
+                        new FlatButton(
+                            child : new Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new Container(
+                                  // color: Colors.amber.shade400,
+                                  padding: EdgeInsets.only(top:5.0,bottom: 5.0),
+                                  margin: EdgeInsets.only(top:5.0),
+                                  alignment: FractionalOffset.center,
+                                  child: new Text(snapshot.data[index].desg.toString()),
+                                ),
+                                new Container(
+                                  // color: Colors.amber.shade400,
+                                  padding: EdgeInsets.only(top:7.0,bottom: 7.0),
+                                  alignment: FractionalOffset.center,
+                                  child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
+                                ),
+                              ],
+                            ),
+                            onPressed: (){
+                              //null;
+                              editDesg(context,snapshot.data[index].desg.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
+                            }
 
-                  ),
-                  Divider(color: Colors.blueGrey.withOpacity(0.25),),]
+                        ),
+                        Divider(color: Colors.blueGrey.withOpacity(0.25),),]
                   );
                 }
             );
@@ -326,7 +326,7 @@ class _Designation extends State<Designation> {
   }
 
 
-/******************* Editing Designation ************************************/
+  /******************* Editing Designation ************************************/
 
 //////////edit department
   editDesg(context,dept,sts,did) async {

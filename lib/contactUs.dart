@@ -95,24 +95,24 @@ class _ContactUs extends State<ContactUs> {
   }
 
   SMS(String sms) async{
-     sendsms(sms).then((res){
-       textsms.text = "";
-        setState(() {
-         _isButtonDisabled = false;
-       });
+    sendsms(sms).then((res){
+      textsms.text = "";
+      setState(() {
+        _isButtonDisabled = false;
+      });
 
-       showDialog(
-           context: context,
-           child: new AlertDialog(
-             content: new Text('Enquiry Mail sent successfully'),
-           ));
-     }).catchError((exp) {
-       showDialog(
-           context: context,
-           child: new AlertDialog(
-             content: new Text('Unable to call service. Please try later'),
-           ));
-     });
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text('Thanks. Message sent successfully'),
+          ));
+    }).catchError((exp) {
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text('Unable to call service. Please try later'),
+          ));
+    });
   }
   openWhatsApp() async{
     //prefix0.facebookChannel.invokeMethod("logContactEvent");
@@ -121,7 +121,7 @@ class _ContactUs extends State<ContactUs> {
     var name=prefs.getString("fname")??"";
     var org_name= prefs.getString('org_name') ?? '';
     var country = prefs.getString("org_country")??"";
-  //  String country=window.locale.countryCode;
+    //  String country=window.locale.countryCode;
     var message;
 
     message="Hello%20I%20am%20"+name+"%20from%20"+org_name+"%0AI%20need%20some%20help%20regarding%20ubiAttendance%20app";
@@ -157,16 +157,16 @@ class _ContactUs extends State<ContactUs> {
                 ),
               ),
               SizedBox(height: 15,),
+//              Text(
+//                'Hello There!',
+//                style: TextStyle(
+//                  fontSize: 25.0,
+//                  letterSpacing: 1.0,
+//                ),
+//              ),
+//              SizedBox(height: 10,),
               Text(
-                'Hello There!',
-                style: TextStyle(
-                  fontSize: 25.0,
-                  letterSpacing: 1.0,
-                ),
-              ),
-              SizedBox(height: 10,),
-              Text(
-                "Drop us a line in case you are facing any issue, we'd love to help you out.",
+                "Drop us a message. We'd love to hear from you.",
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w400,
@@ -216,13 +216,13 @@ class _ContactUs extends State<ContactUs> {
                       color: Colors.amber,
                       onPressed: (){
                         if(textsms.text.length<=0)
-                          {
-                            showInSnackBar("Please enter message");
-                            return null;
-                          }
-                         setState(() {
-                           _isButtonDisabled = true;
-                         });
+                        {
+                          showInSnackBar("Please enter message");
+                          return null;
+                        }
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
 
                         SMS(textsms.text);
                       },

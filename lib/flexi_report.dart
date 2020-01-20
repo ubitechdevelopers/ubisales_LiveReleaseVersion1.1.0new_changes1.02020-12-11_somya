@@ -97,9 +97,9 @@ class _FlexiReport extends State<FlexiReport> {
               ),
             ),
             Divider(color: Colors.black54,height: 1.5,),
-            Divider(
-              height: 10.0,
-            ),
+//            Divider(
+//              height: 10.0,
+//            ),
             getEmployee_DD(),
             SizedBox(height: 2.0),
             Container(
@@ -194,7 +194,17 @@ class _FlexiReport extends State<FlexiReport> {
               height: 5.2,
             ),
             new Expanded(
-              child: res == true ? getEmpDataList(today.text) : Center(),
+              child: res == true ? getEmpDataList(today.text) : Center(child: Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
+              ),),
             ),
           ],
         ),
@@ -226,7 +236,7 @@ class _FlexiReport extends State<FlexiReport> {
                 //    width: MediaQuery.of(context).size.width*.45,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Select Employee',
+                    labelText: 'Select an Employee',
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Icon(
@@ -256,8 +266,8 @@ class _FlexiReport extends State<FlexiReport> {
                       return new DropdownMenuItem<String>(
                         value: map["Id"].toString(),
                         child: new SizedBox(
-                            width: 200.0,
-                            child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
+                            width: MediaQuery.of(context).size.width * 0.80,
+                            child: map["Code"]!=''?new Text('('+map["Code"]+') '+map["Name"]):
                             new Text(map["Name"],)),
                       );
                     }).toList(),
@@ -438,9 +448,18 @@ class _FlexiReport extends State<FlexiReport> {
                 }
              else
               {
-                return new Center(
-                child: Text("No Attendance",style: TextStyle(fontSize: 18.0),),
-              );
+
+                return new Container(
+                    height: MediaQuery.of(context).size.height*0.30,
+                    child:Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width*1,
+                        color: appcolor.withOpacity(0.1),
+                        padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                        child:Text("No Attendance",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                      ),
+                    )
+                );
             }
           }
           else if (snapshot.hasError)

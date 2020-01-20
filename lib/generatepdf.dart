@@ -168,10 +168,10 @@ Createpdf(pdata, HeaderText, Total, pdfName, name) async {
     }else if(name == 'visitlist'){
       a2.add('Name');
       a2.add('Client Name');
-      a2.add('Visit In');
-      a2.add('Visit In Location');
-      a2.add('Visit Out');
-      a2.add('Visit Out Location');
+      a2.add('VisitIn');
+      a2.add('VisitIn Location');
+      a2.add('VisitOut');
+      a2.add('VisitOut Location');
       a2.add('Remarks');
       list.add(a2);
       for (var i = 0; i < pdata.length; i++) {
@@ -188,8 +188,7 @@ Createpdf(pdata, HeaderText, Total, pdfName, name) async {
     }
 
     pdf.addPage(MultiPage(
-        pageFormat:
-        PdfPageFormat.letter.copyWith(marginBottom: 1.5 * PdfPageFormat.cm),
+        pageFormat: PdfPageFormat.letter.copyWith(marginRight: 0.5*PdfPageFormat.cm, marginLeft: 0.5*PdfPageFormat.cm),
         crossAxisAlignment: CrossAxisAlignment.start,
         header: (Context context) {
           if (context.pageNumber == 1) {

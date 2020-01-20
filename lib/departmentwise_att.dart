@@ -302,7 +302,8 @@ class _Departmentwise_att extends State<Departmentwise_att>
                             }
                           }
                           return new Center(
-                            child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),);
+                           // child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                          );
                         }
                       )
                     ),
@@ -377,7 +378,17 @@ class _Departmentwise_att extends State<Departmentwise_att>
               Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: (res == false)
-                    ? Center()
+                    ? Center(child: Container(
+                    height: MediaQuery.of(context).size.height*0.50,
+                    child:Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width*1,
+                        color: appcolor.withOpacity(0.1),
+                        padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                        child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                      ),
+                    )
+                ),)
                     : new Container(
                         height: MediaQuery.of(context).size.height * 0.60,
                         //   shape: Border.all(color: Colors.deepOrange),

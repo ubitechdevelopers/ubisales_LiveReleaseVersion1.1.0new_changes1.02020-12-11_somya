@@ -233,10 +233,10 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                               ),
                             ],
                           ):Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top:12.0),
-                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
-                              )
+//                              child: Padding(
+//                                padding: const EdgeInsets.only(top:12.0),
+//                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+//                              )
                           )
                         ]
                     )
@@ -244,7 +244,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               )
             ],
           ),
-          Divider(height: 10,color: Colors.black,),
+          //Divider(height: 10,color: Colors.black,),
           //SizedBox(height: 5,),
 //          new Row(
 //            crossAxisAlignment: CrossAxisAlignment.center,
@@ -269,7 +269,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
 //            ],
 //          ),
           //Divider(),
-          SizedBox(height: 5,),
+          //SizedBox(height: 5,),
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
@@ -298,18 +298,18 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.50,
-                child:Text('  Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('   Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.20,
-                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In', textAlign: TextAlign.center,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.24,
-                child:Text('Time Out',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time Out',textAlign: TextAlign.center,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -577,8 +577,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                          (index == 0)?
                                            Divider(color: Colors.black26,):new Center(),
                                        Row(
-                                           mainAxisAlignment: MainAxisAlignment
-                                               .spaceAround,
+//                                           mainAxisAlignment: MainAxisAlignment
+//                                               .spaceAround,
                                        children: <Widget>[
                                         SizedBox(height: 40.0,),
                                         Container(
@@ -590,44 +590,47 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start,
                                             children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(snapshot.data[index].Name
+                                                    .toString(), style: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0),),
+                                              ),
                                             ],
                                           ),
                                         ),
 
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
-
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
-                                              ],
-                                            )
-                                            ),
+//                                        Container(
+//                                            width: MediaQuery
+//                                                .of(context)
+//                                                .size
+//                                                .width * 0.22,
+//                                            child: Column(
+//                                              crossAxisAlignment: CrossAxisAlignment
+//                                                  .center,
+//                                              children: <Widget>[
+//                                                Text(snapshot.data[index].TimeIn
+//                                                    .toString()),
+//                                              ],
+//                                            )
+//
+//                                        ),
+//                                        Container(
+//                                            width: MediaQuery
+//                                                .of(context)
+//                                                .size
+//                                                .width * 0.22,
+//                                            child: Column(
+//                                              crossAxisAlignment: CrossAxisAlignment
+//                                                  .center,
+//                                              children: <Widget>[
+//                                                Text(snapshot.data[index].TimeOut
+//                                                    .toString()),
+//                                              ],
+//                                            )
+//                                            ),
                                            ]
                                          )
                                           ]
@@ -1120,7 +1123,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
 
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    labelText: 'Select Employee',
+                    labelText: 'Select an Employee',
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(0.0),
                       child: Icon(
@@ -1170,8 +1173,8 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                         return new DropdownMenuItem<String>(
                           value: map["Id"].toString(),
                           child: new SizedBox(
-                              width: 300.0,
-                              child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
+                              width: MediaQuery.of(context).size.width * 0.80,
+                              child: map["Code"]!=''?new Text('('+map["Code"]+') '+map["Name"]):
                                 new Text(map["Name"],)),
                         );
 

@@ -193,7 +193,7 @@ class _TodayAttendance extends State<TodayAttendance>
               Container(
                 width: MediaQuery.of(context).size.width * 0.22,
                 child: Text(
-                  'Time In',
+                  'Time In', textAlign: TextAlign.center,
                   style: TextStyle(
                       color: appcolor,
                       fontWeight: FontWeight.bold,
@@ -580,8 +580,16 @@ class _TodayAttendance extends State<TodayAttendance>
                                     ]);
                                   });
                             } else {
-                              return new Center(
-                                child: Text("No one is present today ",style: TextStyle(fontSize: 18.0)),
+                              return new Container(
+                                  height: MediaQuery.of(context).size.height*0.30,
+                                  child:Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width*1,
+                                      color: appcolor.withOpacity(0.1),
+                                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                                      child:Text("No one is present today ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                    ),
+                                  )
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -728,8 +736,8 @@ class _TodayAttendance extends State<TodayAttendance>
                                                 )
                                               : new Center(),
                                           new Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
+//                                              mainAxisAlignment:
+//                                                  MainAxisAlignment.spaceAround,
                                               children: <Widget>[
                                                 SizedBox(
                                                   height: 40.0,
@@ -744,52 +752,55 @@ class _TodayAttendance extends State<TodayAttendance>
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: <Widget>[
-                                                      Text(
-                                                        snapshot
-                                                            .data[index].Name
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black87,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 16.0),
+                                                      Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: Text(
+                                                          snapshot
+                                                              .data[index].Name
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black87,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 16.0),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.22,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        Text(snapshot
-                                                            .data[index].TimeIn
-                                                            .toString()),
-                                                      ],
-                                                    )),
-                                                Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.22,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        Text(snapshot
-                                                            .data[index].TimeOut
-                                                            .toString()),
-                                                      ],
-                                                    )),
+//                                                Container(
+//                                                    width:
+//                                                        MediaQuery.of(context)
+//                                                                .size
+//                                                                .width *
+//                                                            0.22,
+//                                                    child: Column(
+//                                                      crossAxisAlignment:
+//                                                          CrossAxisAlignment
+//                                                              .center,
+//                                                      children: <Widget>[
+//                                                        Text(snapshot
+//                                                            .data[index].TimeIn
+//                                                            .toString()),
+//                                                      ],
+//                                                    )),
+//                                                Container(
+//                                                    width:
+//                                                        MediaQuery.of(context)
+//                                                                .size
+//                                                                .width *
+//                                                            0.22,
+//                                                    child: Column(
+//                                                      crossAxisAlignment:
+//                                                          CrossAxisAlignment
+//                                                              .center,
+//                                                      children: <Widget>[
+//                                                        Text(snapshot
+//                                                            .data[index].TimeOut
+//                                                            .toString()),
+//                                                      ],
+//                                                    )),
                                                 Divider(
                                                   color: Colors.black26,
                                                 ),
@@ -851,8 +862,16 @@ class _TodayAttendance extends State<TodayAttendance>
                                         ]);
                                   });
                             } else {
-                              return new Center(
-                                child: Text("No one is absent today",style: TextStyle(fontSize: 18.0)),
+                              return new Container(
+                                  height: MediaQuery.of(context).size.height*0.30,
+                                  child:Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width*1,
+                                      color: appcolor.withOpacity(0.1),
+                                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                                      child:Text("No one is absent today",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                    ),
+                                  )
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -1215,8 +1234,16 @@ class _TodayAttendance extends State<TodayAttendance>
                                     ]);
                                   });
                             } else {
-                              return new Center(
-                                child: Text("No one is late today",style: TextStyle(fontSize: 18.0)),
+                              return new Container(
+                                  height: MediaQuery.of(context).size.height*0.30,
+                                  child:Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width*1,
+                                      color: appcolor.withOpacity(0.1),
+                                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                                      child:Text("No one is late today",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                    ),
+                                  )
                               );
                             }
                           } else if (snapshot.hasError) {
@@ -1578,8 +1605,16 @@ class _TodayAttendance extends State<TodayAttendance>
                                     ]);
                                   });
                             } else {
-                              return new Center(
-                                child: Text("No early leavers today"),
+                              return new Container(
+                                  height: MediaQuery.of(context).size.height*0.30,
+                                  child:Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width*1,
+                                      color: appcolor.withOpacity(0.1),
+                                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                                      child:Text("No early leavers today",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                    ),
+                                  )
                               );
                             }
                           } else if (snapshot.hasError) {

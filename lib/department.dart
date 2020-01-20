@@ -81,8 +81,8 @@ class _Department extends State<Department> {
                 style: new TextStyle(fontSize: 22.0, color: appcolor,),),
             ),
             Divider(color: Colors.black54,height: 1.5,),
-            Divider(height: 10.0,),
-            SizedBox(height: 2.0),
+            //Divider(height: 10.0,),
+            SizedBox(height: 8.0),
             Container(
               padding: EdgeInsets.only(left: 30.0,right: 30.0),
               child: Row(

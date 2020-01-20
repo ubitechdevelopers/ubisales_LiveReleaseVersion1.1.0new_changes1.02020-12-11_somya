@@ -61,7 +61,7 @@ class _AppDrawerState extends State<AppDrawer> {
       sstatus = (int.parse(prefs.getString('sstatus')))==1 ? 'You have logged in as Admin':'';
       desination = prefs.getString('desination') ?? '';
       profile = prefs.getString('profile') ?? '';
-     // reportper = report_permission;
+      // reportper = report_permission;
       reportper =int.parse(prefs.getString('sstatus')) ?? 0;
       buystatus = prefs.getString('buysts') ?? '';
 
@@ -167,69 +167,69 @@ class _AppDrawerState extends State<AppDrawer> {
             height: sstatus==''?160.0:172.0,
             child: new DrawerHeader(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children:<Widget>[
-                  Center(),
-                  Column(
-                children: <Widget>[
-                  new Stack(
-                    children: <Widget>[
-                  new Container(
-                      width: 90.0,
-                      height: 90.0,
-                      decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            fit: BoxFit.fill,
-                            image: _checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
-                          )
-                      )),
-                new Positioned(
-                  right: MediaQuery.of(context).size.width*-.06,
-                  top: MediaQuery.of(context).size.height*.07,
-                  child: new RawMaterialButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-                    },
-                    child: new Icon(
-                      Icons.edit,
-                      size: 18.0,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children:<Widget>[
+                    Center(),
+                    Column(
+                      children: <Widget>[
+                        new Stack(
+                            children: <Widget>[
+                              new Container(
+                                  width: 90.0,
+                                  height: 90.0,
+                                  decoration: new BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: new DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: _checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                      )
+                                  )),
+                              new Positioned(
+                                right: MediaQuery.of(context).size.width*-.06,
+                                top: MediaQuery.of(context).size.height*.07,
+                                child: new RawMaterialButton(
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                                  },
+                                  child: new Icon(
+                                    Icons.edit,
+                                    size: 18.0,
+                                  ),
+                                  shape: new CircleBorder(),
+                                  elevation: 0.5,
+                                  fillColor: buttoncolor,
+                                  padding: const EdgeInsets.all(1.0),
+                                ),
+                              ),
+                            ]),
+                        //SizedBox(height: 2.0),
+                        //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
+                        // SizedBox(height: 5.0),
+                        Text("Hi "+fname,style: new TextStyle(fontSize: 20.0,color: Colors.white)),
+                        // SizedBox(height: 3.0),
+                        Text(desination,style: new TextStyle(fontSize: 12.0,color: Colors.white)),
+                        sstatus!=''?Text(sstatus,style: new TextStyle(fontSize: 10.0,color: Colors.white)):Center(),
+                      ],
                     ),
-                    shape: new CircleBorder(),
-                    elevation: 0.5,
-                    fillColor: buttoncolor,
-                    padding: const EdgeInsets.all(1.0),
-                  ),
-                ),
-            ]),
-                  //SizedBox(height: 2.0),
-                  //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
-                  // SizedBox(height: 5.0),
-                  Text("Hi "+fname,style: new TextStyle(fontSize: 20.0,color: Colors.white)),
-                  // SizedBox(height: 3.0),
-                  Text(desination,style: new TextStyle(fontSize: 12.0,color: Colors.white)),
-                  sstatus!=''?Text(sstatus,style: new TextStyle(fontSize: 10.0,color: Colors.white)):Center(),
-                ],
-              ),
-                  (buystatus=="0" && reportper==1)?new Column(
-                      children:<Widget>[
-                        ButtonTheme(
-                    minWidth: 60.0,
-                    height: 30.0,
-                    child:RaisedButton(
-                      child: Row(children:<Widget>[Text("Buy Now")]),
-                      color: buttoncolor,
-                      onPressed: (){
-                        Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => PaymentPage()),
-                        );
-                      },
-                      textColor: Colors.white,
-                    ),
+                    (buystatus=="0" && reportper==1)?new Column(
+                        children:<Widget>[
+                          ButtonTheme(
+                            minWidth: 60.0,
+                            height: 30.0,
+                            child:RaisedButton(
+                              child: Row(children:<Widget>[Text("Buy Now")]),
+                              color: buttoncolor,
+                              onPressed: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PaymentPage()),
+                                );
+                              },
+                              textColor: Colors.white,
+                            ),
 
-                  )]):Center(),
-        ]
+                          )]):Center(),
+                  ]
               ),
 
             ),
@@ -249,7 +249,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
-      /*  (reportper ==1 || reportper ==2)?new ListTile(
+          /*  (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.library_books,size: 20.0),SizedBox(width: 5.0),
@@ -305,7 +305,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To set Geo Fence, login to the web admin panel.", "To set Geo Fence upgrade to Premium Plan.");
             },
           ):new Center(),*/
-    /*      reportper ==1?new ListTile(
+          /*      reportper ==1?new ListTile(
            title: Row(
               children: <Widget>[
                 Icon(Icons.attach_money,size: 20.0),SizedBox(width: 5.0),
@@ -316,7 +316,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To Generate Payroll, Login to the web panel.", "To Generate Payroll upgrade to Premium Plan.");
             },
           ):new Center(),*/
-        /*  (reportper ==1 || reportper ==2)?new ListTile(
+          /*  (reportper ==1 || reportper ==2)?new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.camera,size: 20.0),SizedBox(width: 5.0),
@@ -327,7 +327,7 @@ class _AppDrawerState extends State<AppDrawer> {
               showDialogWidget("To Generate QR Code of Employee, Login to the web panel.", "To Generate QR Code of Employee upgrade to Premium Plan.");
             },
           ):new Center(),*/
-         /* new ListTile(
+          /* new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.account_box,size: 20.0),SizedBox(width: 5.0),
@@ -341,7 +341,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-     /*     new ListTile(
+          /*     new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.perm_contact_calendar,size: 20.0),SizedBox(width: 5.0),
@@ -362,7 +362,7 @@ class _AppDrawerState extends State<AppDrawer> {
 
             },
           ),*/
-       /*   new ListTile(
+          /*   new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_city,size: 20.0),SizedBox(width: 5.0),
@@ -376,7 +376,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-        /*  new ListTile(
+          /*  new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.settings,size: 20.0),SizedBox(width: 5.0),
@@ -429,11 +429,11 @@ class _AppDrawerState extends State<AppDrawer> {
               prefix0.facebookChannel.invokeMethod("logRateEvent");
               LaunchReview.launch(
                   androidAppId: "org.ubitech.attendance"
-                  );
+              );
             },
           ),
 
-        /*  new ListTile(
+          /*  new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.security,size: 20.0),SizedBox(width: 5.0),
@@ -461,7 +461,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
-        /*  new ListTile(
+          /*  new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.location_on,size: 20.0),SizedBox(width: 5.0),
@@ -475,7 +475,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-         /* (admin_sts=='1' && buystatus != '0')?
+          /* (admin_sts=='1' && buystatus != '0')?
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -535,14 +535,14 @@ class _AppDrawerState extends State<AppDrawer> {
 
     var url;
     if(country=="IN")
-    url = "https://wa.me/917067822132?text="+message;
+      url = "https://wa.me/917067822132?text="+message;
     else{
       url = "https://wa.me/971555524131?text="+message;
     }
     if (await canLaunch(url)) {
-    await launch(url);
+      await launch(url);
     } else {
-    throw 'Could not launch Maps';
+      throw 'Could not launch Maps';
     }
   }
 
@@ -576,7 +576,7 @@ class _AppDrawerState extends State<AppDrawer> {
     employee_permission = 0;
     permission_module_permission = 0;
     report_permission = 0;
-   /* Navigator.push(
+    /* Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
     );*/

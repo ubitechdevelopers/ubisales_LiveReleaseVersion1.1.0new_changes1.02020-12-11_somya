@@ -97,8 +97,8 @@ class _ShiftList extends State<ShiftList> {
                   child: Text('Shifts',
                     style: new TextStyle(fontSize: 22.0, color: appcolor,),),
                 ),
-                Divider(height: 1.5, color: Colors.black,),
-                Divider(height: 10.0,),
+                //Divider(height: 1.5,),
+                Divider(height: 10.0,color: Colors.black),
                 SizedBox(height: 2.0),
                 Container(
                   padding: EdgeInsets.only(bottom:10.0,top: 10.0),
@@ -113,15 +113,15 @@ class _ShiftList extends State<ShiftList> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
+                        child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                        child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width*0.16,
-                        child: Text('Status', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left),
+                        child: Text('Status', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
                       ),
 
                     ],
@@ -188,21 +188,21 @@ class _ShiftList extends State<ShiftList> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     new Text(snapshot.data[index].Name.toString()),
-                                    new Text('('+snapshot.data[index].Type.toString()+')',style: TextStyle(color: Colors.grey),),
+                                    new Text('('+snapshot.data[index].Type.toString()+')',style: TextStyle(color: Colors.grey)),
                                   ],
                                 )
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.22,
-                                child: new Text(formatTime(snapshot.data[index].TimeIn.toString()),),
+                                child: new Text(formatTime(snapshot.data[index].TimeIn.toString()),textAlign: TextAlign.center,),
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.22,
-                                child: new Text(formatTime(snapshot.data[index].TimeOut.toString()),),
+                                child: new Text(formatTime(snapshot.data[index].TimeOut.toString()), textAlign: TextAlign.center,),
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.16,
-                                child: new Text(snapshot.data[index].Status.toString(),style: TextStyle(color: snapshot.data[index].Status.toString()!='Active'?Colors.deepOrange:Colors.green),),
+                                child: new Text(snapshot.data[index].Status.toString(), style: TextStyle(color: snapshot.data[index].Status.toString()!='Active'?Colors.deepOrange:Colors.green), textAlign: TextAlign.center,),
                               ),
                             ],
                           ),

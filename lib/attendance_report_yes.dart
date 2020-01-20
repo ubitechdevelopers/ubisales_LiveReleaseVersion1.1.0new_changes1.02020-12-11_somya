@@ -158,13 +158,13 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
             children: <Widget>[
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.46,
+                width: MediaQuery.of(context).size.width*0.35,
                 child:Text('Name',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In',textAlign:TextAlign.center,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
@@ -273,25 +273,25 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                         height: 62.0,
                                                         child:InkWell(
                                                           child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .EntryImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -312,26 +312,26 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                                         width: 62.0,
                                                         height: 62.0,
                                                         child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .ExitImage)
-                                                                )
-                                                            )),
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .ExitImage)
+                                                                  )
+                                                              )),
                                                           onTap: (){
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
                                                             );
                                                           },
-                                    ),
-                                    ),
+                                                        ),
+                                                      ),
 
                                                     ],
                                                   )
@@ -382,7 +382,7 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                             }
                           }
                           else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -416,8 +416,8 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                     return Column(
                                       children: <Widget>[
                                         new Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceAround,
+//                                          mainAxisAlignment: MainAxisAlignment
+//                                              .spaceAround,
                                           children: <Widget>[
                                             SizedBox(height: 40.0,),
                                             Container(
@@ -438,38 +438,38 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                                               ),
                                             ),
 
-                                            Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.22,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .center,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].TimeIn
-                                                        .toString()),
-                                                  ],
-                                                )
-
-                                            ),
-                                            Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.22,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .center,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].TimeOut
-                                                        .toString()),
-                                                  ],
-                                                )
-                                            ),
+//                                            Container(
+//                                                width: MediaQuery
+//                                                    .of(context)
+//                                                    .size
+//                                                    .width * 0.22,
+//                                                child: Column(
+//                                                  crossAxisAlignment: CrossAxisAlignment
+//                                                      .center,
+//                                                  children: <Widget>[
+//                                                    Text(snapshot.data[index].TimeIn
+//                                                        .toString()),
+//                                                  ],
+//                                                )
+//
+//                                            ),
+//                                            Container(
+//                                                width: MediaQuery
+//                                                    .of(context)
+//                                                    .size
+//                                                    .width * 0.22,
+//                                                child: Column(
+//                                                  crossAxisAlignment: CrossAxisAlignment
+//                                                      .center,
+//                                                  children: <Widget>[
+//                                                    Text(snapshot.data[index].TimeOut
+//                                                        .toString()),
+//                                                  ],
+//                                                )
+//                                            ),
                                           ],
                                         ),
-                                        Divider(color: Colors.black26,),
+                                        //Divider(color: Colors.black26,),
                                         (index == snapshot.data.length-1 && trialstatus =='2') ? Row(children: <Widget>[
                                           //  SizedBox(height: 25.0,),
                                           Padding(
@@ -513,7 +513,7 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                             }
                           }
                           else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -735,7 +735,7 @@ class _YesAttendance extends State<YesAttendance> with SingleTickerProviderState
                             }
                           }
                           else if (snapshot.hasError) {
-                             return new Text("Unable to connect server");
+                            return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner

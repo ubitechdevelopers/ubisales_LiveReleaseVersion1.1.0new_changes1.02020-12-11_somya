@@ -274,7 +274,7 @@ class _EmployeeList extends State<EmployeeList> {
                                     width: MediaQuery
                                         .of(context)
                                         .size
-                                        .width * 0.60,
+                                        .width * 0.70,
                                     child: Column(
                                       children: <Widget>[
                                         Row(
@@ -412,13 +412,13 @@ class _EmployeeList extends State<EmployeeList> {
 
                                                       children: <Widget>[
                                                         new Text(
-                                                          'Department:',
+                                                          'Department',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
                                                               fontSize: 15.0,
                                                               fontWeight: FontWeight
-                                                                  .bold
+                                                                  .w400,
                                                           ),
                                                         ),
                                                       ],
@@ -437,7 +437,7 @@ class _EmployeeList extends State<EmployeeList> {
                                                                     .black87,
                                                                 fontSize: 15.0,
                                                                 fontWeight: FontWeight
-                                                                    .w400
+                                                                    .bold
                                                             ),
                                                           ),
                                                         )
@@ -452,13 +452,13 @@ class _EmployeeList extends State<EmployeeList> {
                                                     child: Row(
                                                       children: <Widget>[
                                                         new Text(
-                                                          'Designation:',
+                                                          'Designation',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
                                                               fontSize: 15.0,
                                                               fontWeight: FontWeight
-                                                                  .bold
+                                                                  .w400
                                                           ),
                                                         ),
                                                       ],
@@ -477,7 +477,7 @@ class _EmployeeList extends State<EmployeeList> {
                                                                     .black87,
                                                                 fontSize: 15.0,
                                                                 fontWeight: FontWeight
-                                                                    .w400
+                                                                    .bold
                                                             ),
                                                           ),
                                                         )
@@ -492,13 +492,13 @@ class _EmployeeList extends State<EmployeeList> {
                                                     child: Row(
                                                       children: <Widget>[
                                                         new Text(
-                                                          'Mobile:',
+                                                          'Phone',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
                                                               fontSize: 15.0,
                                                               fontWeight: FontWeight
-                                                                  .bold
+                                                                  .w400
                                                           ),
                                                         ),
                                                       ],
@@ -517,7 +517,7 @@ class _EmployeeList extends State<EmployeeList> {
                                                                     .black87,
                                                                 fontSize: 15.0,
                                                                 fontWeight: FontWeight
-                                                                    .w400
+                                                                    .bold
                                                             ),
                                                           ),
                                                         )
@@ -532,13 +532,13 @@ class _EmployeeList extends State<EmployeeList> {
                                                     child: Row(
                                                       children: <Widget>[
                                                         new Text(
-                                                          'Shift:',
+                                                          'Shift',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
                                                               fontSize: 15.0,
                                                               fontWeight: FontWeight
-                                                                  .bold
+                                                                  .w400
                                                           ),
                                                         ),
                                                       ],
@@ -556,7 +556,7 @@ class _EmployeeList extends State<EmployeeList> {
                                                                     .black87,
                                                                 fontSize: 15.0,
                                                                 fontWeight: FontWeight
-                                                                    .w400
+                                                                    .bold
                                                             ),
                                                           ),
                                                         )
@@ -571,13 +571,13 @@ class _EmployeeList extends State<EmployeeList> {
                                                     child: Row(
                                                       children: <Widget>[
                                                         new Text(
-                                                          'Permissions:',
+                                                          'Permissions',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
                                                               fontSize: 15.0,
                                                               fontWeight: FontWeight
-                                                                  .bold
+                                                                  .w400
                                                           ),
                                                         ),
                                                       ],
@@ -598,7 +598,9 @@ class _EmployeeList extends State<EmployeeList> {
                                                               maxLines: 2,
                                                               style: TextStyle(
                                                                   color: Colors
-                                                                      .green)) :
+                                                                      .green,
+                                                                  fontWeight: FontWeight
+                                                                      .bold)) :
                                                           Text(
                                                               snapshot.data[index]
                                                                   .Admin
@@ -606,7 +608,9 @@ class _EmployeeList extends State<EmployeeList> {
                                                               maxLines: 2,
                                                               style: TextStyle(
                                                                   color: Colors
-                                                                      .black)),
+                                                                      .black,
+                                                                  fontWeight: FontWeight
+                                                                      .bold)),
                                                         ),
 
                                                       ],

@@ -1,8 +1,10 @@
 import 'package:Shrine/generatepdf.dart';
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/widgets.dart' as prefix1;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_share/simple_share.dart';
 
@@ -93,13 +95,13 @@ class _VisitList extends State<VisitList> {
               child: Text(
                 'Visits',
                 style: new TextStyle(
-                  fontSize: 22.0,
-                  color: Colors.black54,
+                  fontSize: 24.0,
+                  color: appcolor,
                 ),
               ),
             ),
             Divider(
-              height: 10.0,
+              height: 10.0, color: Colors.black,
             ),
             getEmployee_DD(),
             SizedBox(height: 2.0),
@@ -254,7 +256,7 @@ class _VisitList extends State<VisitList> {
                                                       }
                                                       Createpdf(
                                                           snapshot.data,
-                                                          'Visits Report for\n' + today.text,
+                                                          'Visits Report for ' + today.text,
                                                           snapshot.data.length.toString(),
                                                           'Visits_Report_' + today.text,
                                                           'visitlist')
@@ -283,7 +285,7 @@ class _VisitList extends State<VisitList> {
                               }
                             }
                             return new Center(
-                              child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                              //child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
                             );
                           }
                       )
@@ -306,29 +308,29 @@ class _VisitList extends State<VisitList> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.22,
                     child: Text(
-                      'Name',
-                      style: TextStyle(color: headingcolor),
-                      textAlign: TextAlign.left,
+                      ' Name',
+                      style: TextStyle(color: appcolor,fontWeight: FontWeight.bold,fontSize: 16.0),
+                      //textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.38,
                     child: Text(
-                      'Client',
-                      style: TextStyle(color: headingcolor),
+                      '   Client',
+                      style: TextStyle(color: appcolor,fontWeight: FontWeight.bold,fontSize: 16.0),
                       textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.18,
                     child: Text('In',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontWeight: FontWeight.bold,fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     child: Text('Out ',
-                        style: TextStyle(color: headingcolor),
+                        style: TextStyle(color: appcolor,fontWeight: FontWeight.bold,fontSize: 16.0),
                         textAlign: TextAlign.left),
                   ),
                 ],
@@ -339,7 +341,17 @@ class _VisitList extends State<VisitList> {
               height: 5.2,
             ),
             new Expanded(
-              child: res == true ? getEmpDataList(today.text) : Center(),
+              child: res == true ? getEmpDataList(today.text) : Center(child: Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
+              ),),
             ),
           ],
         ),
@@ -397,8 +409,8 @@ class _VisitList extends State<VisitList> {
                       return new DropdownMenuItem<String>(
                         value: map["Id"].toString(),
                         child: new SizedBox(
-                            width: 200.0,
-                            child: map["Code"]!=''?new Text(map["Name"]+' ('+map["Code"]+')'):
+                            width: MediaQuery.of(context).size.width * 0.80,
+                            child: map["Code"]!=''?new Text('('+map["Code"]+') '+map["Name"]):
                             new Text(map["Name"],)),
                       );
                     }).toList(),
@@ -590,8 +602,16 @@ class _VisitList extends State<VisitList> {
                     );
                   });
             } else {
-              return new Center(
-                child: Text("No Visits ", style: TextStyle(color: headingcolor,fontSize: 18.0),),
+              return new Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("No Visits",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
               );
             }
           } else if (snapshot.hasError) {

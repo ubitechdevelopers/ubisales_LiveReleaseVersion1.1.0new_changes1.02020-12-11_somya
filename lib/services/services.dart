@@ -1302,7 +1302,7 @@ List<Shift> createShiftList(List data) {
     String id = data[i]["Id"];
     String status = data[i]["archive"] == '0' ? 'Inactive' : 'Active';
     String type =
-        data[i]["shifttype"] == '1' ? 'One Day Shift' : 'Two Day Shift';
+        data[i]["shifttype"] == '1' ? 'Single Date' : 'Multi Date';
 
     Shift shift = new Shift(
         Id: id,

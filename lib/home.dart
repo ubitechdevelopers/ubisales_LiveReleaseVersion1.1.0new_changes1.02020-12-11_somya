@@ -2853,7 +2853,7 @@ var FakeLocationStatus=0;
 
    if(employeeAdded&&!shiftAdded){
 
-      Future.delayed(Duration(seconds: 1), () => tooltiptwo.show(context));
+      Future.delayed(Duration(seconds: 1), () => tooltiptwo.showtool(context));
 
    }
 

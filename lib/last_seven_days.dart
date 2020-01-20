@@ -119,7 +119,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.18,
-                child:Text('Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
@@ -267,8 +267,8 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
+//                                      mainAxisAlignment: MainAxisAlignment
+//                                          .spaceAround,
                                       children: <Widget>[
 
                                         SizedBox(height: 40.0,),
@@ -299,26 +299,26 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                                             ],
                                           ),
                                         ),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.16,
-                                          child:  Text(snapshot.data[index].TimeIn
-                                              .toString(), style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 16.0),),
-                                        ),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.16,
-                                          child:  Text(snapshot.data[index].TimeOut
-                                              .toString(), style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 16.0),),
-                                        ),
+//                                        Container(
+//                                          width: MediaQuery
+//                                              .of(context)
+//                                              .size
+//                                              .width * 0.16,
+//                                          child:  Text(snapshot.data[index].TimeIn
+//                                              .toString(), style: TextStyle(
+//                                              color: Colors.black87,
+//                                              fontSize: 16.0),),
+//                                        ),
+//                                        Container(
+//                                          width: MediaQuery
+//                                              .of(context)
+//                                              .size
+//                                              .width * 0.16,
+//                                          child:  Text(snapshot.data[index].TimeOut
+//                                              .toString(), style: TextStyle(
+//                                              color: Colors.black87,
+//                                              fontSize: 16.0),),
+//                                        ),
 
                                       ],
 

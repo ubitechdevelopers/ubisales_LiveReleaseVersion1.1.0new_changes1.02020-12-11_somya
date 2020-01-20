@@ -178,7 +178,7 @@ class _addShift extends State<addShift> {
                           color: Colors.white),
                     )
                         :Text(
-                      'ADD1',
+                      'ADD',
                       style: TextStyle(
                           color: Colors.white),),
                     color: buttoncolor,

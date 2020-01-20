@@ -259,7 +259,7 @@ class _LateComers extends State<LateComers> {
                                                       }
                                                       Createpdf(
                                                           snapshot.data,
-                                                          'Late Comers Report for\n' + today.text,
+                                                          'Late Comers Report for ' + today.text,
                                                           snapshot.data.length.toString(),
                                                           'Late_Comers_Report_' + today.text,
                                                           'lateComers')
@@ -288,7 +288,7 @@ class _LateComers extends State<LateComers> {
                               }
                             }
                             return new Center(
-                              child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                              //child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
                             );
                           }
                       )
@@ -348,7 +348,18 @@ class _LateComers extends State<LateComers> {
               height: 5.2,
             ),
             new Expanded(
-              child: res == true ? getEmpDataList(today.text) : Center(),
+              child: res == true ? getEmpDataList(today.text) : Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
+              ),
+
             ),
           ],
         ),
@@ -449,8 +460,16 @@ class _LateComers extends State<LateComers> {
                   ]);
                 });
           } else {
-              return new Center(
-                child: Text("No late comers on this date ",style: TextStyle(fontSize: 18.0)),
+              return new Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("No late comers on this date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
               );
             }
           } else if (snapshot.hasError) {

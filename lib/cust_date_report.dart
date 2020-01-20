@@ -164,7 +164,12 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
           ): admin_sts=='1'?Container(
             height: MediaQuery.of(context).size.height*0.25,
             child: Center(
-              child:Text('No Chart Available'),
+              child: Container(
+                width: MediaQuery.of(context).size.width*1,
+                color: appcolor.withOpacity(0.1),
+                padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                child:Text("No Chart Available",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+              ),
             ),
 
           ):Center(),
@@ -213,7 +218,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('Time In',textAlign: TextAlign.center,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
@@ -440,8 +445,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return new Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceAround,
+//                                      mainAxisAlignment: MainAxisAlignment
+//                                          .spaceAround,
                                       children: <Widget>[
                                         SizedBox(height: 30.0,),
                                         Container(
@@ -453,45 +458,48 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start,
                                             children: <Widget>[
-                                              Text(snapshot.data[index].Name
-                                                  .toString(), style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.0),),
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(snapshot.data[index].Name
+                                                    .toString(), style: TextStyle(
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0),),
+                                              ),
                                             ],
                                           ),
                                         ),
 
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeIn
-                                                    .toString()),
-                                              ],
-                                            )
-
-                                        ),
-                                        Container(
-                                            width: MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width * 0.22,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut
-                                                    .toString()),
-                                              ],
-                                            )
-
-                                        ),
+//                                        Container(
+//                                            width: MediaQuery
+//                                                .of(context)
+//                                                .size
+//                                                .width * 0.22,
+//                                            child: Column(
+//                                              crossAxisAlignment: CrossAxisAlignment
+//                                                  .center,
+//                                              children: <Widget>[
+//                                                Text(snapshot.data[index].TimeIn
+//                                                    .toString()),
+//                                              ],
+//                                            )
+//
+//                                        ),
+//                                        Container(
+//                                            width: MediaQuery
+//                                                .of(context)
+//                                                .size
+//                                                .width * 0.22,
+//                                            child: Column(
+//                                              crossAxisAlignment: CrossAxisAlignment
+//                                                  .center,
+//                                              children: <Widget>[
+//                                                Text(snapshot.data[index].TimeOut
+//                                                    .toString()),
+//                                              ],
+//                                            )
+//
+//                                        ),
                                       ],
 
                                     );
@@ -926,7 +934,12 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
           ):Container(
             height: MediaQuery.of(context).size.height*0.25,
             child:Center(
-              child: Text('No Data Available'),
+              child: Container(
+                width: MediaQuery.of(context).size.width*1,
+                color: appcolor.withOpacity(0.1),
+                padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                child:Text("No Data Available",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+              ),
             ),
           ),
         ],

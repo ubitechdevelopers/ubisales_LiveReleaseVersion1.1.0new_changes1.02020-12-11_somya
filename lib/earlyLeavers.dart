@@ -285,7 +285,8 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                               }
                             }
                             return new Center(
-                              child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),);
+                              //child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+                                 );
                           }
                       )
                   ),
@@ -412,7 +413,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                                   ],
                                 )),
                             new Container(
-                              width: MediaQuery.of(context).size.width * 0.25,
+                              width: MediaQuery.of(context).size.width * 0.22,
                               child: new Text(
                                 snapshot.data[index].shift.toString(),
                               ),
@@ -444,8 +445,16 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                     ]);
                   });
             } else {
-              return new Center(
-                child: Text("No early leavers on this date", style: TextStyle(fontSize: 18.0)),
+              return new Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("No early leavers on this date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
               );
             }
           } else if (snapshot.hasError) {

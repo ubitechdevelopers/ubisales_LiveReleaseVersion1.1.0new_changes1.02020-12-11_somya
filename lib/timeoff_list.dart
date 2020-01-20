@@ -94,9 +94,9 @@ class _TimeOffList extends State<TimeOffList> {
             Divider(
               height: 1.5,color: Colors.black87,
             ),
-            Divider(
-              height: 10.0,
-            ),
+//            Divider(
+//              height: 10.0,
+//            ),
             SizedBox(height: 2.0),
             Container(
               child: DateTimeField(
@@ -149,7 +149,7 @@ class _TimeOffList extends State<TimeOffList> {
                     child: Text(
                       'Name',
                       style: TextStyle(color: appcolor, fontSize: 16.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,
+                      //textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
@@ -180,7 +180,17 @@ class _TimeOffList extends State<TimeOffList> {
               height: 5.2,
             ),
             new Expanded(
-              child: res == true ? getEmpDataList(today.text) : Center(),
+              child: res == true ? getEmpDataList(today.text) : Center(child: Container(
+                  height: MediaQuery.of(context).size.height*0.30,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
+              ),),
             ),
           ],
         ),
@@ -213,49 +223,49 @@ class _TimeOffList extends State<TimeOffList> {
                     return new Column(children: <Widget>[
                       SizedBox(height: MediaQuery.of(context).size.height*.01,),
                       new Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            new Padding(
-                                padding: EdgeInsets.only(left: 5.0),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Padding(
+                              padding: EdgeInsets.only(left: 5.0),
                               child:Container(
-                                width: MediaQuery.of(context).size.width * 0.37,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    new Text(
-                                        snapshot.data[index].name.toString(),style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ],
-                                )
-                                )),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.18,
-                              child: new Text(
+                                  width: MediaQuery.of(context).size.width * 0.37,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      new Text(
+                                          snapshot.data[index].name.toString(),style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ],
+                                  )
+                              )),
+                          new Container(
+                            width: MediaQuery.of(context).size.width * 0.18,
+                            child: new Text(
                                 snapshot.data[index].from.toString(),style: TextStyle(fontWeight: FontWeight.bold)
-                              ),
                             ),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.20,
-                              child: new Text(
+                          ),
+                          new Container(
+                            width: MediaQuery.of(context).size.width * 0.20,
+                            child: new Text(
                                 snapshot.data[index].to.toString(),style: TextStyle(fontWeight: FontWeight.bold)
-                              ),
                             ),
-                            new Container(
-                              width: MediaQuery.of(context).size.width * 0.16,
-                              child: new Text(
+                          ),
+                          new Container(
+                            width: MediaQuery.of(context).size.width * 0.16,
+                            child: new Text(
                                 snapshot.data[index].diff.toString(),
-                                  style: TextStyle(fontWeight: FontWeight.bold)
-                              ),
+                                style: TextStyle(fontWeight: FontWeight.bold)
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
                       SizedBox(height: MediaQuery.of(context).size.height*.01,),
-                    new Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Text(" Status: "),
-                      new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
-                    ]),
+                      new Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text(" Status: "),
+                            new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                          ]),
                       SizedBox(height: MediaQuery.of(context).size.height*.005,),
                       Divider(
                         color: Colors.blueGrey.withOpacity(0.25),
@@ -274,7 +284,7 @@ class _TimeOffList extends State<TimeOffList> {
               );
             }
           } else if (snapshot.hasError) {
-             return new Text("Unable to connect server");
+            return new Text("Unable to connect server");
           }
           // return loader();
           return new Center(child: CircularProgressIndicator());

@@ -126,8 +126,8 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
           new Container(
             child: Center(child:Text("Designation Wise Attendance",style: TextStyle(fontSize: 22.0,color:appcolor,),),),
           ),
-          Divider(color: Colors.black54,height: 1.5,),
-          SizedBox(height: 10.0),
+          Divider(color: Colors.black87,height: 1.5,),
+          SizedBox(height: 5.0),
           Row(
             children: <Widget>[
               Expanded(
@@ -292,10 +292,10 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                               ),
                             ],
                           ):Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top:12.0),
-                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
-                              )
+//                              child: Padding(
+//                                padding: const EdgeInsets.only(top:12.0),
+//                                child: Text("No CSV/Pdf generated", textAlign: TextAlign.center,),
+//                              )
                           ),
                         ]
                     )
@@ -347,7 +347,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               Text('Present(P)',style: TextStyle(color:Colors.black87,fontSize: 12.0),),
             ],
           ):Center(),*/
-          SizedBox(height: 5,),
+          //SizedBox(height: 5,),
 //          new Row(
 //            crossAxisAlignment: CrossAxisAlignment.center,
 //            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -371,7 +371,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
 //            ],
 //          ),
           //Divider(),
-          SizedBox(height: 5,),
+          //SizedBox(height: 5,),
 
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
@@ -407,7 +407,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Time In',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
@@ -682,45 +682,48 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                                                 crossAxisAlignment: CrossAxisAlignment
                                                     .start,
                                                 children: <Widget>[
-                                                  Text(snapshot.data[index].Name
-                                                      .toString(), style: TextStyle(
-                                                      color: Colors.black87,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16.0),),
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(8.0),
+                                                    child: Text(snapshot.data[index].Name
+                                                        .toString(), style: TextStyle(
+                                                        color: Colors.black87,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 16.0),),
+                                                  ),
                                                 ],
                                               ),
                                             ),
 
-                                            Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.22,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .center,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].TimeIn
-                                                        .toString()),
-                                                  ],
-                                                )
-
-                                            ),
-                                            Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.22,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .center,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].TimeOut
-                                                        .toString()),
-                                                  ],
-                                                )
-
-                                            ),
+//                                            Container(
+//                                                width: MediaQuery
+//                                                    .of(context)
+//                                                    .size
+//                                                    .width * 0.22,
+//                                                child: Column(
+//                                                  crossAxisAlignment: CrossAxisAlignment
+//                                                      .center,
+//                                                  children: <Widget>[
+//                                                    Text(snapshot.data[index].TimeIn
+//                                                        .toString()),
+//                                                  ],
+//                                                )
+//
+//                                            ),
+//                                            Container(
+//                                                width: MediaQuery
+//                                                    .of(context)
+//                                                    .size
+//                                                    .width * 0.22,
+//                                                child: Column(
+//                                                  crossAxisAlignment: CrossAxisAlignment
+//                                                      .center,
+//                                                  children: <Widget>[
+//                                                    Text(snapshot.data[index].TimeOut
+//                                                        .toString()),
+//                                                  ],
+//                                                )
+//
+//                                            ),
                                           ],
                                         ),
                                       ],
@@ -1187,11 +1190,16 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
               ],
             ),
           ):Container(
-            height: MediaQuery.of(context).size.height*0.25,
-            child:Center(
-              child: Text('Please select the date'),
-            ),
-          ),
+              height: MediaQuery.of(context).size.height*0.30,
+              child:Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width*1,
+                  color: appcolor.withOpacity(0.1),
+                  padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                  child:Text("Please select the date",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                ),
+              )
+          )
         ],
       ),
     );
@@ -1212,7 +1220,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Icon(
-                        Icons.attach_file,
+                        Icons.business_center ,
                         color: Colors.grey,
                       ), // icon is 48px widget.
                     ),
@@ -1246,7 +1254,7 @@ class _Designation_att extends State<Designation_att> with SingleTickerProviderS
                       return new DropdownMenuItem<String>(
                         value: map["Id"].toString(),
                         child: new SizedBox(
-                            width: 200.0,
+                            width: MediaQuery.of(context).size.width*0.80,
                             child: new Text(
                               map["Name"],
                             )
