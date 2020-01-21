@@ -38,7 +38,7 @@ class OfflineHomePage extends StatefulWidget {
 class _OfflineHomePageState extends State<OfflineHomePage>{
   //AppLifecycleState state;
   var _context1;
-  // StreamLocation sl = new StreamLocation();
+   // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
@@ -84,11 +84,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     _context1=context;
     //checkLocationEnabled(context);
     // WidgetsBinding.instance.addObserver(this);
-    //checknetonpage(context);
+     //checknetonpage(context);
 
     initPlatformState();
-    // setLocationAddress();
-    // startTimer();
+   // setLocationAddress();
+   // startTimer();
     platform.setMethodCallHandler(_handleMethod);
 
   }
@@ -103,7 +103,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
-        prefix0.locationThreadUpdatedLocation=true;
+    prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -273,27 +273,27 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     DateTime myDatetime = DateTime.parse("2018-07-10 12:04:35");
     print(myDatetime.toIso8601String());
 
-    //  StreamLocation sl = new StreamLocation();
+  //  StreamLocation sl = new StreamLocation();
 
     Future.delayed(const Duration(milliseconds: 3000), () {
 
 // Here you can write your code
       if(mounted)
-        setState(() {
-          prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
-        });
+      setState(() {
+        prefix0.locationThreadUpdatedLocation=prefix0.locationThreadUpdatedLocation;
+      });
 
     });
 
-    // Loc lock = new Loc();
-    // String location_addr111 = await lock.initPlatformState();
+   // Loc lock = new Loc();
+   // String location_addr111 = await lock.initPlatformState();
     int off= prefs.getInt("OfflineModePermission")??0;
     //var isAlreadyLoggedIn=prefs.getInt("response")??0;
     if(off!=1){
 
 
       //Navigator.popUntil(context, ModalRoute.withName('/'));
-      // Navigator.pop(context,true);// It worked for me instead of above line
+     // Navigator.pop(context,true);// It worked for me instead of above line
 
       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
@@ -341,13 +341,13 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     }
     var attendanceFound1 = await ao.findCurrentDateAttendance(Id);
     print('--------------------------Attendance Found:'+attendanceFound1.toString());
-    if(mounted)
-      setState(() {
-        fname = prefs.getString('fname') ?? "";
+  if(mounted)
+    setState(() {
+      fname = prefs.getString('fname') ?? "";
 
-        org_name=prefs.getString("org_name") ?? "";
-        attendanceFound=attendanceFound1;
-      });
+      org_name=prefs.getString("org_name") ?? "";
+      attendanceFound=attendanceFound1;
+    });
     getAreaStatus().then((res) {
       // print('called again');
       if (mounted) {
@@ -371,7 +371,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       return noLocationWidget();
     }
     else
-      return  getmainhomewidget();
+    return  getmainhomewidget();
     /*return Scaffold(
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
@@ -405,7 +405,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   void dispose() {
     // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-    // timer.cancel();
+   // timer.cancel();
     /* if(timerrefresh.isActive){
       timerrefresh.cancel();
     }*/
@@ -416,22 +416,22 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     return new WillPopScope(
         onWillPop: ()async => true,
         child: new Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              actions: [
+          key: _scaffoldKey,
+          appBar: AppBar(
+            actions: [
 
-                RaisedButton.icon(
-                    color:Colors.teal,
-                    onPressed: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
-                      );
-                    },
-                    icon: Icon(Icons.assignment,color: Colors.white,),
+              RaisedButton.icon(
+                  color:Colors.teal,
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
+                    );
+                  },
+                  icon: Icon(Icons.assignment,color: Colors.white,),
 
-                    label: Text('Logs',style: new TextStyle(color: Colors.white))),
-                /*
+                  label: Text('Logs',style: new TextStyle(color: Colors.white))),
+              /*
             RaisedButton.icon(
             color:Colors.teal,
             onPressed: (){
@@ -444,40 +444,40 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
             label: Text('Visits',style: new TextStyle(color: Colors.white)))
 */
+            ],
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text(org_name, style: new TextStyle(fontSize: 20.0)),
               ],
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Text(org_name, style: new TextStyle(fontSize: 20.0)),
-                ],
-              ),
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.teal,
-              // backgroundColor: Color.fromARGB(255,63,163,128),
             ),
-            //bottomSheet: getQuickLinksWidget(),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.teal,
+            // backgroundColor: Color.fromARGB(255,63,163,128),
+          ),
+          //bottomSheet: getQuickLinksWidget(),
 
 
 
 
 
-            /* endDrawer: new AppDrawer(),*/
-            body: Scaffold(
-                body: new Container(
-                  decoration: new BoxDecoration(),
-                  child: new Center(
-                      child: MergeSemantics(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Card(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: <Widget>[
-                                    /*
+          /* endDrawer: new AppDrawer(),*/
+          body: Scaffold(
+              body: new Container(
+                decoration: new BoxDecoration(),
+                child: new Center(
+                    child: MergeSemantics(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Card(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  /*
                                   Padding(
                                       padding: EdgeInsets.fromLTRB(20, 10.0, 20.0, 20.0),
                                       child: Column(
@@ -532,14 +532,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
                                         ],
                                       )),*/
-                                  ],
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      )),
-                ))
+                      ),
+                    )),
+              ))
         ));
   }
 
@@ -558,11 +558,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                       context,
                       MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
                     );
-                  },
+              },
                   icon: Icon(Icons.assignment,color: Colors.white,),
 
                   label: Text('Logs',style: new TextStyle(color: Colors.white))),
-              /*
+            /*
             RaisedButton.icon(
             color:appcolor,
             onPressed: (){
@@ -592,11 +592,11 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           Hero(
               tag: "bottom",
               child:BottomNavigationBar(
-                currentIndex: _currentIndex,
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: appcolor,
+            currentIndex: _currentIndex,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: appcolor,
                 onTap: (newIndex) {
-                  /*
+              /*
                   if(newIndex==0){
                     Navigator.pushReplacement(
                       context,
@@ -622,41 +622,41 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                     markAttByQROffline(context);
                     return;
                   }
-                  /*else if(newIndex == 3){
+              /*else if(newIndex == 3){
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Notifications()),
                 );
 
               }*/
-                  setState((){_currentIndex = newIndex;});
+              setState((){_currentIndex = newIndex;});
 
-                }, // this will be set when a new tab is tapped
-                items: [
+            }, // this will be set when a new tab is tapped
+            items: [
 
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.burst_mode,color: Colors.white,),
-                      title: Text('Bulk QR',style: TextStyle(color: Colors.white),)
-                  ),
-                  BottomNavigationBarItem(
-                    icon: new Icon(Icons.home,color: Colors.white,),
-                    title: new Text('Home',style: TextStyle(color: Colors.white)),
-                  ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.burst_mode,color: Colors.white,),
+                  title: Text('Bulk QR',style: TextStyle(color: Colors.white),)
+              ),
+              BottomNavigationBarItem(
+                icon: new Icon(Icons.home,color: Colors.white,),
+                title: new Text('Home',style: TextStyle(color: Colors.white)),
+              ),
 
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.location_on,color: Colors.white,),
-                      title: Text('Visits',style: TextStyle(color: Colors.white),)
-                  ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.location_on,color: Colors.white,),
+                  title: Text('Visits',style: TextStyle(color: Colors.white),)
+              ),
 
 
-                  /*  BottomNavigationBarItem(
+              /*  BottomNavigationBarItem(
                   icon: Icon(
                     Icons.notifications
                     ,color: Colors.black54,
                   ),
                   title: Text('Notifications',style: TextStyle(color: Colors.black54))),*/
-                ],
-              ))
+            ],
+          ))
           ,
 
 
@@ -688,9 +688,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: ()async {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeInPressedTime=DateTime.now();
-
+/*
                                 Navigator.of(context, rootNavigator: true)
-                                    .pop();
+                                    .pop();*/
                                 var prefs= await SharedPreferences.getInstance();
                                 prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
 
@@ -709,9 +709,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                               onPressed: ()async {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
-
+/*
                                 Navigator.of(context, rootNavigator: true)
-                                    .pop();
+                                    .pop();*/
                                 var prefs= await SharedPreferences.getInstance();
                                 prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
 
@@ -1233,7 +1233,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
       }else {
         prefix0.globalCameraOpenedStatus=false;
         setState(() {
-          // loader = false;
+         // loader = false;
         });
       }
     });
@@ -1307,50 +1307,50 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         ),
         SizedBox(height: MediaQuery.of(context).size.height * .06),
         if(attendanceFound!='Both Marked')
-          Container(
-            color: appcolor.withOpacity(0.1),
-            height: MediaQuery.of(context).size.height * .15,
-            child:
-            Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    Container(
+    color: appcolor.withOpacity(0.1),
+    height: MediaQuery.of(context).size.height * .15,
+    child:
+              Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
 
-                children: [
-                  FlatButton(
-                    child: new Text('You are at: ' + assign_lat.toString()+','+assign_long.toString(),
-                        textAlign: TextAlign.center,
-                        style: new TextStyle(fontSize: 14.0)),
-                    onPressed: () {
-                      launchMap(assign_lat.toString(), assign_long.toString());
-                      /* Navigator.push(
+             children: [
+                FlatButton(
+                  child: new Text('You are at: ' + assign_lat.toString()+','+assign_long.toString(),
+                      textAlign: TextAlign.center,
+                      style: new TextStyle(fontSize: 14.0)),
+                  onPressed: () {
+                    launchMap(assign_lat.toString(), assign_long.toString());
+                    /* Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
                   );*/
-                    },
-                  ),
-                  new Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        /* new Text('Want to go online? ',style: TextStyle(color: Colors.teal),),
+                  },
+                ),
+                new Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                     /* new Text('Want to go online? ',style: TextStyle(color: Colors.teal),),
                       SizedBox(width: 5.0,),*/
-                        new InkWell(
-                          child: new Text(
-                            "Go Online", // main  widget
-                            style: new TextStyle(
-                                color: appcolor,
-                                decoration: TextDecoration.underline),
-                          ),
+                      new InkWell(
+                        child: new Text(
+                          "Go Online", // main  widget
+                          style: new TextStyle(
+                              color: appcolor,
+                              decoration: TextDecoration.underline),
+                        ),
 
-                          onTap: () {
-                            goOnline();
-                          },
-                        )
-                      ],
-                    ),
+                        onTap: () {
+                          goOnline();
+                        },
+                      )
+                    ],
                   ),
-                  SizedBox(height: 5.0,),
+                ),
+                SizedBox(height: 5.0,),
 
-                ]),)
+              ]),)
       ]);
     } else {
       return Column(children: [
@@ -1433,16 +1433,16 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
 
               if(prefix0.showAppInbuiltCamera)
-              {
-                globalCameraOpenedStatus=true;
-                timeInPressedTime=DateTime.now();
-                if(!timeInClicked){
-                  saveOfflineAttendanceAppCamera(0);
-                  setState(() {
-                    timeInClicked =true;
-                  });
+                {
+                  globalCameraOpenedStatus=true;
+                  timeInPressedTime=DateTime.now();
+                  if(!timeInClicked){
+                    saveOfflineAttendanceAppCamera(0);
+                    setState(() {
+                      timeInClicked =true;
+                    });
+                  }
                 }
-              }
               else{
                 globalCameraOpenedStatus=true;
                 timeInPressedTime=DateTime.now();
@@ -1490,27 +1490,27 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                         prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
 
                         if(prefix0.showAppInbuiltCamera)
-                        {
-                          prefix0.globalCameraOpenedStatus=true;
-                          timeOutPressedTime=DateTime.now();
-                          if(!timeOutClicked){
-                            saveOfflineAttendanceAppCamera(1);
-                            setState(() {
-                              timeOutClicked=true;
-                            });
+                          {
+                            prefix0.globalCameraOpenedStatus=true;
+                            timeOutPressedTime=DateTime.now();
+                            if(!timeOutClicked){
+                              saveOfflineAttendanceAppCamera(1);
+                              setState(() {
+                                timeOutClicked=true;
+                              });
+                            }
                           }
-                        }
                         else
-                        {
-                          prefix0.globalCameraOpenedStatus=true;
-                          timeOutPressedTime=DateTime.now();
-                          if(!timeOutClicked){
-                            saveOfflineAttendance(1);
-                            setState(() {
-                              timeOutClicked=true;
-                            });
+                          {
+                            prefix0.globalCameraOpenedStatus=true;
+                            timeOutPressedTime=DateTime.now();
+                            if(!timeOutClicked){
+                              saveOfflineAttendance(1);
+                              setState(() {
+                                timeOutClicked=true;
+                              });
+                            }
                           }
-                        }
 
 
                       },
@@ -1519,8 +1519,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               ],
             ),
           ),
-          //
-          // ,
+        //
+         // ,
           /*
           ButtonTheme(
               minWidth: 130.0,
@@ -2017,7 +2017,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
             List<int> imageBytes = await img.readAsBytes();
             PictureBase64 = base64.encode(imageBytes);
-            /* sl.startStreaming(5);
+           /* sl.startStreaming(5);
             if (list != null && list.length > 0) {
               lat = list[list.length - 1].latitude.toString();
               long = list[list.length - 1].longitude.toString();
@@ -2057,8 +2057,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
             Latitude = await assign_lat.toString();
             Longitude = await assign_long.toString();
             var FakeLocationStatus=0;
-            if(fakeLocationDetected)
-              FakeLocationStatus=1;
+             if(fakeLocationDetected)
+               FakeLocationStatus=1;
 
             // print(lat+"lalalal"+long+location_addr);
 

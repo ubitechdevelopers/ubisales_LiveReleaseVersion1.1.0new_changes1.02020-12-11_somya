@@ -477,7 +477,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
      // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
 
 
-      print("token--------------->"+token+"-------------"+country);
+     // print("token--------------->"+token.toString()+"-------------"+country);
     });
 
     _firebaseMessaging.configure(

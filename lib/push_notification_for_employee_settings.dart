@@ -793,7 +793,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                   Row(
                                     children: <Widget>[
                                       Container(
-                                        width: MediaQuery.of(context).size.width*0.32,
+                                        width: MediaQuery.of(context).size.width*0.22,
                                       //  height: MediaQuery.of(context).size.height*.06,
                                         decoration: BoxDecoration(
                                             color: const Color(0xFFFBFBFB),
@@ -804,6 +804,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                             ),]
                                         ),
                                         child:Switch(
+
                                             value: switchStatuses[index],
                                             onChanged: (value) async{
                                             updateEmployeePushNotificationStatus(value,emplist[index].Id,"TimeIn");
@@ -891,9 +892,9 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
                                           },
                                         ),*/
                                       ),
-                                      SizedBox(width:10.0),
+                                      SizedBox(width:50.0),
                                       Container(
-                                        width: MediaQuery.of(context).size.width*0.33,
+                                        width: MediaQuery.of(context).size.width*0.23,
                                        // height: MediaQuery.of(context).size.height*.06,
                                         decoration: BoxDecoration(
                                             color: const Color(0xFFFBFBFB),
