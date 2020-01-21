@@ -931,7 +931,7 @@ class _AddEmployee extends State<AddEmployee> {
                         ),
                         labelText: 'Department',
                         prefixIcon: Icon(
-                          Icons.attach_file,
+                          Icons.group,
                           color: Colors.grey,
                         ),
                       ),
@@ -1555,8 +1555,8 @@ class _AddEmployee extends State<AddEmployee> {
           content: new Text('Do you want to notify the user?'),
           actions: <Widget>[
             FlatButton(
-              child: Text('Close'),
-              shape: Border.all(),
+              child: Text('Close',style: TextStyle(color: Colors.black),),
+              shape: Border.all( color: Colors.grey),
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pop();
               },

@@ -151,7 +151,7 @@ class _FlexiReport extends State<FlexiReport> {
                 children: <Widget>[
                   SizedBox(width: 1.0,),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.25,
                     child: Text(
                       'Name',
                       style: TextStyle(color: appcolor,
@@ -193,6 +193,7 @@ class _FlexiReport extends State<FlexiReport> {
             Divider(
               height: 5.2,
             ),
+            SizedBox(height: 5.0),
             new Expanded(
               child: res == true ? getEmpDataList(today.text) : Center(child: Container(
                   height: MediaQuery.of(context).size.height*0.30,

@@ -794,57 +794,60 @@ class _Department_att extends State<Department_att>
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: <Widget>[
-                                                            Text(
-                                                              snapshot
-                                                                  .data[index]
-                                                                  .Name
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black87,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize:
-                                                                      16.0),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Text(
+                                                                snapshot
+                                                                    .data[index]
+                                                                    .Name
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black87,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        16.0),
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
                                                       ),
-                                                      Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.22,
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              Text(snapshot
-                                                                  .data[index]
-                                                                  .TimeIn
-                                                                  .toString()),
-                                                            ],
-                                                          )),
-                                                      Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.22,
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: <Widget>[
-                                                              Text(snapshot
-                                                                  .data[index]
-                                                                  .TimeOut
-                                                                  .toString()),
-                                                            ],
-                                                          )),
+//                                                      Container(
+//                                                          width: MediaQuery.of(
+//                                                                      context)
+//                                                                  .size
+//                                                                  .width *
+//                                                              0.22,
+//                                                          child: Column(
+//                                                            crossAxisAlignment:
+//                                                                CrossAxisAlignment
+//                                                                    .center,
+//                                                            children: <Widget>[
+//                                                              Text(snapshot
+//                                                                  .data[index]
+//                                                                  .TimeIn
+//                                                                  .toString()),
+//                                                            ],
+//                                                          )),
+//                                                      Container(
+//                                                          width: MediaQuery.of(
+//                                                                      context)
+//                                                                  .size
+//                                                                  .width *
+//                                                              0.22,
+//                                                          child: Column(
+//                                                            crossAxisAlignment:
+//                                                                CrossAxisAlignment
+//                                                                    .center,
+//                                                            children: <Widget>[
+//                                                              Text(snapshot
+//                                                                  .data[index]
+//                                                                  .TimeOut
+//                                                                  .toString()),
+//                                                            ],
+//                                                          )),
                                                     ]),
                                                   ],
                                                 );

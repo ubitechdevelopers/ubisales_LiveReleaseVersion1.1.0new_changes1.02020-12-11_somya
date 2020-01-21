@@ -925,7 +925,7 @@ class _EditEmployee extends State<EditEmployee> {
                         ),
                         labelText: 'Department',
                         prefixIcon: Icon(
-                          Icons.attach_file,
+                          Icons.group,
                           color: Colors.grey,
                         ),
                       ),

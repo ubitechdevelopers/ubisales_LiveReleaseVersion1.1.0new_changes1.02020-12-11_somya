@@ -175,7 +175,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                 children: <Widget>[
                   FlatButton(
                     child: Text('CANCEL'),
-                    shape: Border.all(color: Colors.black54),
+                    shape: Border.all(color: Colors.grey),
                     onPressed: () {
                       setState(() {
                         _isButtonDisabled=false;
@@ -405,7 +405,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
           new Container(
             height: MediaQuery.of(context).size.height*.68,
             width: MediaQuery.of(context).size.width*.99,
-            //padding: EdgeInsets.only(bottom: 15.0),
+            padding: EdgeInsets.only(top: 8.0),
             color: Colors.white,
             //////////////////////////////////////////////////////////////////////---------------------------------
             child: new FutureBuilder<List<TimeOff>>(

@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:rounded_modal/rounded_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'askregister.dart';
@@ -313,7 +314,7 @@ class _LoginPageState extends State<LoginPage> {
                               fontSize: 13.0,
                               decoration: TextDecoration.underline),),
                           onTap: () {
-                           _showModalSheet();
+                           _showModalSheet(context);
 
 //                            Navigator.push(
 //                                context, new MaterialPageRoute(builder: (BuildContext context) => ForgotPassword()));
@@ -720,10 +721,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _showModalSheet() {
-    showModalBottomSheet(context: context, builder: (builder) {
+
+  _showModalSheet(context) async{
+    showRoundedModalBottomSheet(context: context, builder: (builder) {
       return Container(
-        height: 250.0,
+        height: MediaQuery.of(context).size.height*0.33,
         child: Form(
           key: _formKeyM,
           child: SafeArea(
@@ -759,7 +761,8 @@ class _LoginPageState extends State<LoginPage> {
                                   focusNode: __username,
                                   keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
-                                      labelText: 'Email',
+                                      hintText: 'Email',
+                                      //labelText: 'Email',
                                       prefixIcon: Padding(
                                         padding: EdgeInsets.all(0.0),
                                         child: Icon(
@@ -882,6 +885,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     });
   }
+
 
 
 }

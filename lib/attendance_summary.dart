@@ -177,7 +177,7 @@ getWidgets(context){
             SizedBox(height: 50.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.2,
-              child:Text('Time In',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Time In',textAlign: TextAlign.left,style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 50.0,),
             Container(
@@ -186,7 +186,8 @@ getWidgets(context){
             ),
           ],
         ),
-        Divider(),
+        Divider(height: 1.5,),
+        SizedBox(height: 5.0,),
 
         Container(
             height: MediaQuery.of(context).size.height*0.60,

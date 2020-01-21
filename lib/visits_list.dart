@@ -340,6 +340,7 @@ class _VisitList extends State<VisitList> {
             Divider(
               height: 5.2,
             ),
+            SizedBox(height: 5.0),
             new Expanded(
               child: res == true ? getEmpDataList(today.text) : Center(child: Container(
                   height: MediaQuery.of(context).size.height*0.30,
