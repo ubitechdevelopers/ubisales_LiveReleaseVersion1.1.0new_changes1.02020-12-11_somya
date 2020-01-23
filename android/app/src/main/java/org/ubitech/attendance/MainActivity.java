@@ -55,7 +55,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-public class MainActivity extends FlutterActivity implements LocationAssistant.Listener{
+public class MainActivity extends FlutterActivity {
 
   private LocationAssistant assistant;
   private static final String CHANNEL = "location.spoofing.check";
@@ -178,7 +178,7 @@ public class MainActivity extends FlutterActivity implements LocationAssistant.L
       StrictMode.setThreadPolicy(policy);
     }
       ActivityCompat.requestPermissions(this,
-             new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS}, 1);
+             new String[]{/*Manifest.permission.CAMERA,*/Manifest.permission.ACCESS_FINE_LOCATION,/*Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS*/}, 1);
 
     channel=new MethodChannel(getFlutterView(), CHANNEL);
     GeneratedPluginRegistrant.registerWith(this);
@@ -532,12 +532,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
     }
   }
-  @Override
-  public void onMockLocationsDetected(View.OnClickListener fromView, DialogInterface.OnClickListener fromDialog) {
-    //  tvLocation.setText(getString(R.string.mockLocationMessage));
-    //  tvLocation.setOnClickListener(fromView);
-   // channel.invokeMethod("message", "Location is mocked");
-  }
+
   @Override
   public void onDestroy() {
     try{
@@ -593,7 +588,8 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    if(permissions!=null&&permissions.length>0) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(permissions!=null&&permissions.length>0) {
       for (int i = 0; i < permissions.length; i++) {
 
 try{
@@ -613,110 +609,7 @@ catch(Exception e){
   // Log.i("Perrrrr",permissions[1]+grantResults);
 
   }
-/*
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    assistant.onActivityResult(requestCode, resultCode);
-  }
-*/
-  @Override
-  public void onNeedLocationPermission() {
-    //    tvLocation.setText("Need\nPermission");
-    /*    tvLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                assistant.requestLocationPermission();
-        });*/
- try{
-     /*
-    if(listenerExecuter!=null)
-   listenerExecuter.requestLocationPermission();
-    if(listenerExecuter!=null)
-    listenerExecuter.requestAndPossiblyExplainLocationPermission();
-      */
- }
- catch(Exception e){
 
- }
-  }
-
-  @Override
-  public void onExplainLocationPermission() {
-/*
-    new AlertDialog.Builder(this)
-            .setMessage(R.string.permissionExplanation)
-            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                assistant.requestLocationPermission();
-              }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                       /* tvLocation.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                assistant.requestLocationPermission();
-                            }
-                        });*/
-             /* }
-            })
-            .show();*/
-  }
-
-  @Override
-  public void onLocationPermissionPermanentlyDeclined(View.OnClickListener fromView,
-                                                      DialogInterface.OnClickListener fromDialog) {
-   /* new AlertDialog.Builder(this)
-            .setMessage(R.string.permissionPermanentlyDeclined)
-            .setPositiveButton(R.string.ok, fromDialog)
-            .show();*/
-  }
-
-  @Override
-  public void onNeedLocationSettingsChange() {
-    /*
-    new AlertDialog.Builder(this)
-            .setMessage(R.string.switchOnLocationShort)
-            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                assistant.changeLocationSettings();
-              }
-            })
-            .show();
-            */
-  }
-
-  @Override
-  public void onFallBackToSystemSettings(View.OnClickListener fromView, DialogInterface.OnClickListener fromDialog) {
-    /*
-    new AlertDialog.Builder(this)
-            .setMessage(R.string.switchOnLocationLong)
-            .setPositiveButton(R.string.ok, fromDialog)
-            .show();
-            */
-  }
-
-  @Override
-  public void onNewLocationAvailable(Location location) {
-    //    if (location == null) return;
-    //    tvLocation.setOnClickListener(null);
-    //    tvLocation.setText(location.getLongitude() + "\n" + location.getLatitude());
-    // tvLocation.setAlpha(1.0f);
-    // tvLocation.animate().alpha(0.5f).setDuration(400);
-  }
-
-
-
-  @Override
-  public void onError(LocationAssistant.ErrorType type, String message) {
-    // tvLocation.setText(getString(R.string.error));
-  }
 
     @Override
     public void onNewIntent(Intent intent){

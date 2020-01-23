@@ -876,8 +876,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "referrenceAmt":referrenceAmt,
 
                                 "platform":'android'
-                              }) .then((response) {
+                              }) .then((response)async {
                                 if  (response.statusCode == 200) {
+                                  var prefs=await SharedPreferences.getInstance();
+                                  prefs.setBool("companyFreshlyRegistered",true );
+                                 // prefs.setBool("firstTimeInMarked",false );
 
                                   print("-----------------> After Registration ---------------->");
                                   print(response.body.toString());

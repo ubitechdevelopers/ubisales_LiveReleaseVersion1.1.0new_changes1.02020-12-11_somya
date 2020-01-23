@@ -106,8 +106,8 @@ public LocationListenerExecuter(MethodChannel channel, MainActivity activity){
     @Override
     protected String doInBackground(String... strings) {
     try{
-    assistant = new LocationAssistant(activity, activity, LocationAssistant.Accuracy.HIGH, 1000, false,channel,10,this);
-        //assistant.setVerbose(true);
+  /*  assistant = new LocationAssistant(activity, activity, LocationAssistant.Accuracy.HIGH, 1000, false,channel,10,this);
+    */    //assistant.setVerbose(true);
        assistant.start();
         Log.i("AsyncTask",strings[0]);
         boolean started=true;
