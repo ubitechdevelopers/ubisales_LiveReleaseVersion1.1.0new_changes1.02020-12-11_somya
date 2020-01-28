@@ -19,11 +19,11 @@ import 'package:Shrine/services/checklogin.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'home.dart';
-import 'localization/app_translations.dart';
-import 'localization/app_translations_delegate.dart';
+//import 'localization/app_translations.dart';
+//import 'localization/app_translations_delegate.dart';
 import 'localization/application.dart';
 import 'login.dart';
 import 'register_org.dart';
@@ -33,7 +33,7 @@ class AskRegisterationPage extends StatefulWidget {
   _AskRegisterationPageState createState() => _AskRegisterationPageState();
 }
 class _AskRegisterationPageState extends State<AskRegisterationPage> {
-  AppTranslationsDelegate _newLocaleDelegate;
+  //AppTranslationsDelegate _newLocaleDelegate;
 
   String barcode = "";
   final _formKey = GlobalKey<FormState>();
@@ -42,12 +42,12 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
   bool loader = false;
   FocusNode textSecondFocusNode = new FocusNode();
 
-  @override
+  /*@override
   void initState() {
     super.initState();
     _newLocaleDelegate = AppTranslationsDelegate(newLocale: null);
     application.onLocaleChanged = onLocaleChange;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
       debugShowCheckedModeBanner: false,
       home: _buildPage(context),
 
-      localizationsDelegates: [
+     /* localizationsDelegates: [
         _newLocaleDelegate,
         //provides localised strings
         GlobalMaterialLocalizations.delegate,
@@ -80,7 +80,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
         // If the locale of the device is not supported, use the first one
         // from the list (English, in this case).
         return supportedLocales.first;
-      },
+      },*/
 
     );
   }
@@ -88,7 +88,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
   @override
   Widget _buildPage(BuildContext context) {
     return new Scaffold(
-          body:new Builder(
+          body: new Builder(
             builder: (BuildContext context) {
               return new Center(
                 child: Form(
@@ -98,9 +98,9 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                       padding: EdgeInsets.symmetric(horizontal: 24.0),
                       children: <Widget>[
                         SizedBox(height: 25.0),
-                        Center(child:Text(AppTranslations.of(context).text("key_surest_way_to_employee_attendance"),style: new TextStyle(color: Colors.black87,fontSize: 19.0,fontWeight: FontWeight.bold))),
+                        Center(child:Text("Surest way to Employee Attendance",style: new TextStyle(color: Colors.black87,fontSize: 19.0,fontWeight: FontWeight.bold))),
                         SizedBox(height: 10.0),
-                        Center(child:Text(AppTranslations.of(context).text("key_4_way_check"),style: new TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 14.0,))),
+                        Center(child:Text("4 way Check - User Id + Time + Selfie + Location",style: new TextStyle(color: Colors.black54,fontWeight:FontWeight.bold,fontSize: 14.0,))),
                         Column(
                           children: <Widget>[
                             Image.asset(
@@ -121,7 +121,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                               minWidth: MediaQuery.of(context).size.width*0.8,
                               height: 45.0,
                               child:RaisedButton(
-                                child: Text(AppTranslations.of(context).text("key_already_registered"),style: new TextStyle(color: Colors.white,fontSize: 15.0)),
+                                child: Text("Already registered? Sign In",style: new TextStyle(color: Colors.white,fontSize: 15.0)),
                                 color: Colors.orangeAccent,
                                 onPressed: () {
                                   Navigator.push(
@@ -142,7 +142,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                               height: 45.0,
                               child:FlatButton(
                                 shape: Border.all(color: Colors.orangeAccent),
-                                child: Text(AppTranslations.of(context).text("key_not_registered"),style: new TextStyle(color: Colors.orangeAccent,fontSize: 14.6),),
+                                child: Text("Company not registered? Sign Up",style: new TextStyle(color: Colors.orangeAccent,fontSize: 14.6),),
                                 color: Colors.white,
                                 onPressed: () {
                                   Navigator.push(
@@ -184,28 +184,28 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_att_marked"))));
+          SnackBar(content: Text("Attendance marked successfully.")));
     }else if(islogin=="failure"){
       setState(() {
         loader = false;
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_invalid_credentials"))));
+          SnackBar(content: Text("Invalid login credentials")));
     }else if(islogin=="imposed"){
       setState(() {
         loader = false;
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_att_already_marked"))));
+          SnackBar(content: Text("Attendance is already marked")));
     }else{
       setState(() {
         loader = false;
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_att_already_marked"))));
+          SnackBar(content: Text("Attendance is already marked")));
     }
   }
 
@@ -228,14 +228,14 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_invalid_credentials"))));
+          SnackBar(content: Text("Invalid login credentials")));
     }else{
       setState(() {
         loader = false;
       });
       Scaffold.of(context)
           .showSnackBar(
-          SnackBar(content: Text(AppTranslations.of(context).text("key_poor_network"))));
+          SnackBar(content: Text("Poor network connection.")));
     }
   }
 
@@ -263,11 +263,11 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
     }
   }
 
-  void onLocaleChange(Locale locale) {
+  /*void onLocaleChange(Locale locale) {
     setState(() {
       _newLocaleDelegate = AppTranslationsDelegate(newLocale: locale);
     });
-  }
+  }*/
 
 }
 
