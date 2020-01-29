@@ -194,8 +194,8 @@ appResumedPausedLogic(context,[bool isVisitPage]){
     {
       print("------------------------------------ App Resumed-----------------------------");
 
-      initDynamicLinks();
-
+      //initDynamicLinks();
+      cameraChannel.invokeMethod("openLocationDialog");
       var serverConnected= await checkConnectionToServer();
       if(globals.globalCameraOpenedStatus==false)
         {
@@ -318,7 +318,7 @@ Future<int> checkConnectionToServer () async{
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
    //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
-   http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 7));
+   http.Response response = await http.get('google.com')/*.timeout(const Duration(seconds: 7))*/;
    // print("response code"+response.statusCode.toString());
     //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
     if (response.statusCode==200 ) {
@@ -2629,7 +2629,7 @@ addBulkAtt(List<grpattemp> data) async {
 ////////////check net
 Future<int> checkNet() async {
   try {
-    http.Response response = await http.get(internetConnectivityURL).timeout(const Duration(seconds: 7));
+    http.Response response = await http.get('google.com')/*.timeout(const Duration(seconds: 7))*/;
     //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
     if (response.statusCode==200) {
       print('connected');

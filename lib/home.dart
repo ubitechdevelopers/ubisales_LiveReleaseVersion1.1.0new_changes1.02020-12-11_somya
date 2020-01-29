@@ -1123,7 +1123,7 @@ print("inside referral check");
     checknetonpage(context);
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
-
+    cameraChannel.invokeMethod("openLocationDialog");
     //sendPushNotification('ABC has marked his Time In','','ALL_ORG');
 
     //showEmailVerificationReminder();
@@ -1257,6 +1257,9 @@ print("inside referral check");
   setaddress() async {
     globalstreamlocationaddr = await getAddressFromLati(
         globals.assign_lat.toString(), globals.assign_long.toString());
+
+
+
     var serverConnected = await checkConnectionToServer();
     if (serverConnected != 0) if (globals.assign_lat == 0.0 ||
         globals.assign_lat == null ||

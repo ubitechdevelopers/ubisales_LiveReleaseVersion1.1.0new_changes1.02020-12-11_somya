@@ -24,7 +24,7 @@ import 'package:flutter/services.dart';
 import 'home.dart';
 //import 'localization/app_translations.dart';
 //import 'localization/app_translations_delegate.dart';
-import 'localization/application.dart';
+//import 'localization/application.dart';
 import 'login.dart';
 import 'register_org.dart';
 
