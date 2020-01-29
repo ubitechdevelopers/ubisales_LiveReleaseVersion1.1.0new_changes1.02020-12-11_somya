@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool _visible = true;
   String buysts = '0';
   String admin_sts = '0';
-  bool istooltipsts = false;
+  bool glow = true;
   String mail_varified = '1';
   String AbleTomarkAttendance = '1';
   String act = "";
@@ -138,17 +138,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
 
-                  Text("Punch your \'Time In\'",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  Text("Punch your \'Time In\'",style: TextStyle(fontSize: 20),),
                   SizedBox(height: 10,),
                   RaisedButton(
                     color: globals.buttoncolor,
-                    child: Text('NEXT',style: TextStyle(color: Colors.white),),
+                    child: Text('OK',style: TextStyle(color: Colors.white),),
                     onPressed: () async{
                       var prefs=await SharedPreferences.getInstance();
                       //print('jshjsh');
-                      prefs.setInt("TimeInToolTipShown",1);
+                     // prefs.setInt("TimeInToolTipShown",1);
                       SuperTooltip.a.close();
-                      tooltiptimeinClicked(SuperTooltip.ctx);
+
                       istooltiptimeinshown=true;
 
 
@@ -229,8 +229,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     onPressed: () async{
                       //print('jshjsh');
 
-                      var prefs=await SharedPreferences.getInstance();
-                      prefs.setBool("glow", true);
+
+
 
                       SuperTooltip.a.close();
                       //tooltiptimeinClicked(SuperTooltip.ctx);
@@ -280,12 +280,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
         )),
   );
+
+  bool companyFreshlyRegistered=false;
+
+  bool attendanceNotMarkedButEmpAdded=false;
   static tooltiptimeinClicked(context) async{
     // HomePage h=new HomePage();
     // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
     //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('tool',true );
+
     var admin_sts_static = prefs.getString('sstatus').toString() ?? '0';
     print('hello'+admin_sts_static);
     if(admin_sts_static=='1' || admin_sts_static=='2') {
@@ -333,6 +337,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     platform.setMethodCallHandler(_handleMethod);
 
     Future.delayed(Duration(seconds: 5), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayout));
+    Future.delayed(Duration(seconds: 5), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayoutAddEmp));
 
 
   }
@@ -340,12 +345,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
    _getPositions()async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-    var timeInToolTipShown=prefs.getInt("TimeInToolTipShown")??0;
+   // var timeInToolTipShown=prefs.getInt("TimeInToolTipShown")??0;
 
 
      if(_keyRed!=null)
        if(_keyRed.currentContext!=null) {
-         if (timeInToolTipShown == 0) {
+
            final RenderBox renderBoxRed = _keyRed.currentContext
                .findRenderObject();
            final positionRed = renderBoxRed.localToGlobal(Offset.zero);
@@ -366,11 +371,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
              ab = a + (f / 2);
              cd = b + 2 * e;
            });
-           Future.delayed(
-               Duration(seconds: 1), () => tooltiptimein.show(context, ab, cd));
 
-           getPositionofFAB();
-         }
+           var prefs=await SharedPreferences.getInstance();
+           var companyFreshlyRegistered=prefs.getBool("companyFreshlyRegistered")??false;
+           var firstAttendanceMarked=prefs.getBool("firstAttendanceMarked")??false;
+           // print(companyFreshlyRegistered.toString()+"companyFreshlyRegistered");
+          // print(firstAttendanceMarked.toString()+"firstAttendanceMarked");
+           if(!timeInToolTipShown)
+            if(companyFreshlyRegistered)
+             if(!firstAttendanceMarked){
+               Future.delayed(
+                   Duration(seconds: 1), () => tooltiptimein.show(context, ab, cd));
+              globals.timeInToolTipShown=true;
+             }
+
+
+
        }
 
 
@@ -381,12 +397,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _getPositions();
   }
 
+  _afterLayoutAddEmp(_){
+    getPositionofFAB();
+  }
+
   void getPositionofFAB() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     var admin_sts = prefs.getString('sstatus').toString() ?? '0';
 
     if((admin_sts == '1' || admin_sts == '2')) {
+      if(_keyBlue!=null)
+        if(_keyBlue.currentContext!=null)
+          {
+
+
       final RenderBox renderBoxBlue = _keyBlue.currentContext
           .findRenderObject();
       final positionBlue = renderBoxBlue.localToGlobal(Offset.zero);
@@ -402,102 +427,126 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ef = c + (h / 2);
         gh = d + (g / 2);
       });
+
+      var prefs=await SharedPreferences.getInstance();
+      var companyFreshlyRegistered=prefs.getBool("companyFreshlyRegistered")??false;
+      var firstAttendanceMarked=prefs.getBool("firstAttendanceMarked")??false;
+      var employeeAdded=prefs.getBool("EmployeeAdded")??false;
+
+      print('companyFreshlyRegistered'+companyFreshlyRegistered.toString()+'firstAttendanceMarked'+firstAttendanceMarked.toString()+"EmployeeAdded"+employeeAdded.toString());
+      if(!globals.addEmpToolTipShown)
+      if(companyFreshlyRegistered)
+        if(firstAttendanceMarked)
+          if(!employeeAdded){
+            tooltiptimeinClicked(context);
+            globals.addEmpToolTipShown=true;
+          }
+
+
+    }
     }
   }
 
   void firebaseCloudMessaging_Listeners()async {
 
-    var prefs=await SharedPreferences.getInstance();
-    var country=prefs.getString("CountryName")??'';
-    var orgTopic=prefs.getString("OrgTopic")??'';
-    var isAdmin=admin_sts = prefs.getString('sstatus').toString() ?? '0';
-    //_firebaseMessaging.subscribeToTopic('101');
-    if(isAdmin=='1'){
-      _firebaseMessaging.subscribeToTopic('admin');
-      print("Admin topic subscribed");
-    }
-    else{
-      print("employee topic subscribed");
-      if(orgTopic.isNotEmpty)
-      _firebaseMessaging.subscribeToTopic('employee');
-    }
+    var serverConnected= await checkConnectionToServer();
+
+    if(serverConnected==1)
+      {
+        var prefs=await SharedPreferences.getInstance();
+        var country=prefs.getString("CountryName")??'';
+        var orgTopic=prefs.getString("OrgTopic")??'';
+        var isAdmin=admin_sts = prefs.getString('sstatus').toString() ?? '0';
+        //_firebaseMessaging.subscribeToTopic('101');
+        if(isAdmin=='1'){
+          _firebaseMessaging.subscribeToTopic('admin');
+          print("Admin topic subscribed");
+        }
+        else{
+          print("employee topic subscribed");
+          if(orgTopic.isNotEmpty)
+            _firebaseMessaging.subscribeToTopic('employee');
+        }
 
 
 
 
-    if(globals.globalOrgTopic.isNotEmpty){
-      _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
-      _firebaseMessaging.subscribeToTopic(globals.globalOrgTopic.replaceAll(' ', ''));
+        if(globals.globalOrgTopic.isNotEmpty){
+          _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+          _firebaseMessaging.subscribeToTopic(globals.globalOrgTopic.replaceAll(' ', ''));
 
-      print('globals.globalOrgTopic'+globals.globalOrgTopic.toString());
+          print('globals.globalOrgTopic'+globals.globalOrgTopic.toString());
 
-      prefs.setString("OrgTopic",globals.globalOrgTopic);
+          prefs.setString("OrgTopic",globals.globalOrgTopic);
 
-    }
-    else{
-      if(orgTopic.isNotEmpty)
-      _firebaseMessaging.subscribeToTopic(orgTopic.replaceAll(' ', ''));
-      print('globals.globalOrgTopic11111'+orgTopic);
-
-
-    }
-
-    if(globals.globalCountryTopic.isNotEmpty){
-      _firebaseMessaging.unsubscribeFromTopic(country.replaceAll(' ', ''));
-      _firebaseMessaging.subscribeToTopic(globals.globalCountryTopic.replaceAll(' ', ''));
-      prefs.setString("CountryName", globals.globalCountryTopic);
-    }
-    else{
-      if(country.isNotEmpty)
-      _firebaseMessaging.subscribeToTopic(country.replaceAll(' ', ''));
-    }
+        }
+        else{
+          if(orgTopic.isNotEmpty)
+            _firebaseMessaging.subscribeToTopic(orgTopic.replaceAll(' ', ''));
+          print('globals.globalOrgTopic11111'+orgTopic);
 
 
+        }
 
-     if(globals.currentOrgStatus.isNotEmpty){
-       var previousOrgStatus=prefs.get("CurrentOrgStatus")??'';
-        if(previousOrgStatus.isNotEmpty)
-       _firebaseMessaging.unsubscribeFromTopic(previousOrgStatus.replaceAll(' ', ''));
-      _firebaseMessaging.subscribeToTopic(globals.currentOrgStatus.replaceAll(' ', ''));
-
-      prefs.setString("CurrentOrgStatus", globals.currentOrgStatus);
-      globals.currentOrgStatus='';
-    }
-    _firebaseMessaging.getToken().then((token){
-      _firebaseMessaging.subscribeToTopic("AllOrg");
-     // _firebaseMessaging.subscribeToTopic("UBI101");
-     _firebaseMessaging.subscribeToTopic("AllCountry");
+        if(globals.globalCountryTopic.isNotEmpty){
+          _firebaseMessaging.unsubscribeFromTopic(country.replaceAll(' ', ''));
+          _firebaseMessaging.subscribeToTopic(globals.globalCountryTopic.replaceAll(' ', ''));
+          prefs.setString("CountryName", globals.globalCountryTopic);
+        }
+        else{
+          if(country.isNotEmpty)
+            _firebaseMessaging.subscribeToTopic(country.replaceAll(' ', ''));
+        }
 
 
-     // print('country subscribed'+country);
+
+        if(globals.currentOrgStatus.isNotEmpty){
+          var previousOrgStatus=prefs.get("CurrentOrgStatus")??'';
+          if(previousOrgStatus.isNotEmpty)
+            _firebaseMessaging.unsubscribeFromTopic(previousOrgStatus.replaceAll(' ', ''));
+          _firebaseMessaging.subscribeToTopic(globals.currentOrgStatus.replaceAll(' ', ''));
+
+          prefs.setString("CurrentOrgStatus", globals.currentOrgStatus);
+          globals.currentOrgStatus='';
+        }
+        _firebaseMessaging.getToken().then((token){
+          _firebaseMessaging.subscribeToTopic("AllOrg");
+          // _firebaseMessaging.subscribeToTopic("UBI101");
+          _firebaseMessaging.subscribeToTopic("AllCountry");
 
 
-      this.token=token;
-
-     // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
+          // print('country subscribed'+country);
 
 
-     // print("token--------------->"+token.toString()+"-------------"+country);
-    });
+          this.token=token;
 
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('on message $message'+message['data'].isEmpty.toString());
+          // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
+
+
+          // print("token--------------->"+token.toString()+"-------------"+country);
+        });
+
+        _firebaseMessaging.configure(
+          onMessage: (Map<String, dynamic> message) async {
+            print('on message $message'+message['data'].isEmpty.toString());
 //{notification: {title: ABC has marked his Time In, body: null}, data: {}}
-        cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
+            cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
 
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('on resume $message');
-        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
-        navigateToPageAfterNotificationClicked(navigate, context);
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('on launch $message');
-        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
-        navigateToPageAfterNotificationClicked(navigate, context);
-      },
-    );
+          },
+          onResume: (Map<String, dynamic> message) async {
+            print('on resume $message');
+            var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+            navigateToPageAfterNotificationClicked(navigate, context);
+          },
+          onLaunch: (Map<String, dynamic> message) async {
+            print('on launch $message');
+            var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+            navigateToPageAfterNotificationClicked(navigate, context);
+          },
+        );
+      }
+
+
   }
 
   syncOfflineQRData() async {
@@ -1074,12 +1123,16 @@ print("inside referral check");
     checknetonpage(context);
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
-
+    cameraChannel.invokeMethod("openLocationDialog");
     //sendPushNotification('ABC has marked his Time In','','ALL_ORG');
 
     //showEmailVerificationReminder();
 
     //showAddingShiftReminder();
+    var prefs=await SharedPreferences.getInstance();
+    setState(() {
+      companyFreshlyRegistered=prefs.getBool("companyFreshlyRegistered")??false;
+    });
 
     Future.delayed(const Duration(milliseconds: 3000), () {
 // Here you can write your code
@@ -1089,10 +1142,14 @@ print("inside referral check");
         });
     });
     SystemChannels.lifecycle.setMessageHandler((msg) async {});
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    istooltipsts=prefs.getBool('glow')??false;
-    print('is tool tip status'+istooltipsts.toString());
+    setState(() {
+      glow=prefs.getBool('glow')??true;
+      attendanceNotMarkedButEmpAdded=prefs.getBool('attendanceNotMarkedButEmpAdded')??false;
+      print('is tool tip status'+glow.toString());
+    });
+
+
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
@@ -1129,7 +1186,7 @@ print("inside referral check");
           print("New pwd" + newpwd + "  User ped" + userpwd);
 
           admin_sts = prefs.getString('sstatus').toString() ?? '0';
-          istooltipsts= prefs.getBool('tool');
+          //glow= prefs.getBool('tool');
           mail_varified = prefs.getString('mail_varified').toString() ?? '0';
           alertdialogcount = globalalertcount;
           print('aid again');
@@ -1186,8 +1243,8 @@ print("inside referral check");
      // istooltiponeshown=true;
       print(istooltiponeshown);
     }
-    istooltipsts= prefs.getBool('tool');
-    //if(istooltipsts!=true){
+   // glow= prefs.getBool('tool');
+    //if(glow!=true){
       //Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
     //}
 
@@ -1200,6 +1257,9 @@ print("inside referral check");
   setaddress() async {
     globalstreamlocationaddr = await getAddressFromLati(
         globals.assign_lat.toString(), globals.assign_long.toString());
+
+
+
     var serverConnected = await checkConnectionToServer();
     if (serverConnected != 0) if (globals.assign_lat == 0.0 ||
         globals.assign_lat == null ||
@@ -1310,28 +1370,10 @@ print("inside referral check");
 
               endDrawer: new AppDrawer(),
               body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-              floatingActionButton:(istooltipsts == true && (admin_sts == '1' || admin_sts == '2'))? new FloatingActionButton(
-                mini: false,
-                //key: _keyBlue,
-                backgroundColor: buttoncolor,
-                onPressed: () {
-                  print('hello');
-                  print(istooltipsts);
-                  _getPositions();
-                  if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
-                    showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-                  else
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddEmployee()),
-                    );
-                },
-                tooltip: 'Add Employee',
-                child: new Icon(Icons.person_add),
-              ):Container(
+              floatingActionButton:(((companyFreshlyRegistered && !attendanceNotMarkedButEmpAdded) && glow)  && (admin_sts == '1' || admin_sts == '2'))? Container(
                 alignment: Alignment(1.55,1.25),
                 child:
-                (admin_sts == '1' || admin_sts == '2')
+                (admin_sts == '1' || admin_sts == '2' )
                     ?  AvatarGlow(
                   glowColor: Colors.blue,
                   child: new FloatingActionButton(
@@ -1339,7 +1381,12 @@ print("inside referral check");
                     key: _keyBlue,
                     backgroundColor: buttoncolor,
                     onPressed: () {
-                      print('hellowassup');
+                      print('hellowassup'+(((!companyFreshlyRegistered && attendanceNotMarkedButEmpAdded) || !glow)  && (admin_sts == '1' || admin_sts == '2')).toString());
+                      print('!companyFreshlyRegistered'+(companyFreshlyRegistered==false).toString());
+                      print('attendanceNotMarkedButEmpAdded'+attendanceNotMarkedButEmpAdded.toString());
+
+                      print('!glow'+(glow==false).toString());
+
                       if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
                         showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
                       else
@@ -1356,7 +1403,26 @@ print("inside referral check");
                   )
                   , endRadius: 90.0,
                 ): new Center(),
-              ),
+              ):(admin_sts == '1' || admin_sts == '2' )
+                  ?new FloatingActionButton(
+                mini: false,
+                //key: _keyBlue,
+                backgroundColor: buttoncolor,
+                onPressed: () {
+                  print('hello');
+                  print(glow);
+                  _getPositions();
+                  if(((globals.registeruser)>=(globals.userlimit+5)) && buysts != '0')
+                    showDialogWidget("You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                  else
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddEmployee()),
+                    );
+                },
+                tooltip: 'Add Employee',
+                child: new Icon(Icons.person_add),
+              ):Container(),
             )),              // First child
        // BlurryEffect(0.5,0.1,Colors.grey.shade200)    //  Second Child
       ],
@@ -2295,6 +2361,7 @@ print("inside referral check");
       issave = globals.showAppInbuiltCamera?await saveImage.saveTimeInOutImagePickerAppCamera(mk, context):await saveImage.saveTimeInOutImagePicker(mk, context);
       print(issave);
       if (issave == null) {
+
         globals.timeWhenButtonPressed = null;
         showDialog(
             context: context,
@@ -2311,6 +2378,11 @@ print("inside referral check");
       }
 
       if (issave) {
+
+        var prefs=await SharedPreferences.getInstance();
+        prefs.setBool("firstAttendanceMarked",true);
+        //prefs.setBool("companyFreshlyRegistered",false );
+
         showDialog(
             context: context,
             // ignore: deprecated_member_use

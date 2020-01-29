@@ -20,6 +20,12 @@ String path_hrm_india="http://192.168.0.200/ubiattendance/index.php/Att_services
 */
 
 /*
+String path="http://192.168.0.200/ubiattinterns/index.php/Att_services/";
+String internetConnectivityURL="http://192.168.0.200/ubiattinterns/index.php/Att_services/isInternetConnected";
+String path_hrm_india="http://192.168.0.200/ubiattinterns/index.php/Att_services";
+*/
+
+/*
 String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
@@ -79,6 +85,10 @@ bool istooltipfourshown=false;
 bool istooltipfiveshown=false;
 String currentOrgStatus='';
 double ab,cd,ef,gh;
+
+bool timeInToolTipShown=false;
+bool addEmpToolTipShown=false;
+
 
 String globalOrgTopic='';
 String globalCountryTopic='';

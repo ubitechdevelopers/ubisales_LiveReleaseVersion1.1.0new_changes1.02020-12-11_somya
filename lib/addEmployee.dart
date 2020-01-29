@@ -544,10 +544,20 @@ class _AddEmployee extends State<AddEmployee> {
 
                           var prefs=await SharedPreferences.getInstance();
                           var employeeAdded=prefs.getBool("EmployeeAdded")??false;
+                          prefs.setBool("glow", false);
+                          if(!employeeAdded) {
+                            prefs.setBool("EmployeeAdded", true);
 
-                          if(!employeeAdded)
-                          prefs.setBool("EmployeeAdded", true);
+                          }
 
+                          var firstAttendanceMarked=prefs.getBool('firstAttendanceMarked')??false;
+
+                          if(!firstAttendanceMarked)
+                            prefs.setBool("attendanceNotMarkedButEmpAdded", true);
+
+
+
+                          prefs.setBool('tool',true );
                             //   showInSnackBar('Contact Already Exist');
                             Navigator.push(
                               context,

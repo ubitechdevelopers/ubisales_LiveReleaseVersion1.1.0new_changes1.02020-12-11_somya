@@ -268,6 +268,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     appResumedPausedLogic(context);
+
+    cameraChannel.invokeMethod("openLocationDialog");
     final prefs = await SharedPreferences.getInstance();
 
     DateTime myDatetime = DateTime.parse("2018-07-10 12:04:35");
