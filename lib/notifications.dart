@@ -257,8 +257,17 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
                         }
                     );
                   }else{
-                    return new Center(
-                      child:Text("No logs found"),
+
+                    return new Container(
+                        height: MediaQuery.of(context).size.height*0.30,
+                        child:Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width*1,
+                            color: appcolor.withOpacity(0.1),
+                            padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                            child:Text("No logs found",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                          ),
+                        )
                     );
                   }
                 }
