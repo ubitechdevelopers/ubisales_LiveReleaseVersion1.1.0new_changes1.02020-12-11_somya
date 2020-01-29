@@ -111,7 +111,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           timeSpoofed=true;
 
         }
-       
+
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
 
