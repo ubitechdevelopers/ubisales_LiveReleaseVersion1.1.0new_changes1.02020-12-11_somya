@@ -108,10 +108,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           timeSpoofed=true;
 
         }
-        if(call.arguments["internet"].toString()=="Internet Available")
-        {
 
-        }
         var long=call.arguments["longitude"].toString();
         var lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);

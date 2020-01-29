@@ -111,10 +111,7 @@ class _PunchLocationOffline extends State<PunchLocationOffline> {
           timeSpoofed=true;
 
         }
-        if(call.arguments["internet"].toString()=="Internet Available")
-        {
-
-        }
+       
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
 
