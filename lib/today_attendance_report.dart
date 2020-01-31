@@ -265,7 +265,7 @@ class _TodayAttendance extends State<TodayAttendance>
                                               ),
                                               Container(
                                                 padding:
-                                                    EdgeInsets.only(left: 5.0),
+                                                    EdgeInsets.only(left: 15.0),
                                                 child: InkWell(
                                                   child: Text(
                                                     'CSV',
