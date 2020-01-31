@@ -318,10 +318,14 @@ Future<int> checkConnectionToServer () async{
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
    //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
-   http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
+   //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
    // print("response code"+response.statusCode.toString());
     //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
-    if (response.statusCode==200 ) {
+
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty){
+
+//      if (response.statusCode==200 ) {
       print('connected');
       serverConnected=1;
     }else{
@@ -2629,9 +2633,11 @@ addBulkAtt(List<grpattemp> data) async {
 ////////////check net
 Future<int> checkNet() async {
   try {
-    http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty){
+    //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
     //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
-    if (response.statusCode==200) {
+    //if (response.statusCode==200) {
       print('connected');
       varCheckNet = 1;
     } else {

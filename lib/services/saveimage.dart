@@ -11,6 +11,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -369,6 +370,9 @@ class SaveImage {
           print(formData);
           Response<String> response1 = await dio.post(
               globals.path + "saveImage", data: formData);
+          
+          
+          
           print("Response from save image:"+response1.toString());
           //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
           //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
@@ -379,8 +383,20 @@ class SaveImage {
           /*getTempImageDirectory();*/
           Map MarkAttMap = json.decode(response1.data);
           print(MarkAttMap["status"].toString());
-          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2)
+          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2){
+            var prefs=await SharedPreferences.getInstance();
+            String currentTime=DateTime.now().toString();
+            print("saved time in time"+currentTime);
+            if(mk.act=="TimeIn"){
+              prefs.setString("TimeInTime", currentTime);
+              print(currentTime+"currentTime");
+
+            }
+            else{
+              prefs.remove("TimeInTime");
+            }
             return true;
+          }
           else
             return false;
         }

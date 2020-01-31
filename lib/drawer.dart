@@ -549,6 +549,9 @@ class _AppDrawerState extends State<AppDrawer> {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   logout() async{
     final prefs = await SharedPreferences.getInstance();
+    String countryTopic=prefs.get('CountryName')??'admin';
+    String orgTopic=prefs.get('OrgTopic')??'admin';
+    String currentOrgStatus=prefs.get('CurrentOrgStatus')??'admin';
     prefs.remove('response');
     prefs.remove('fname');
     prefs.remove('lname');
@@ -569,9 +572,35 @@ class _AppDrawerState extends State<AppDrawer> {
     prefs.remove('OfflineModePermission');
     prefs.remove('ImageRequired');
     prefs.remove('glow');
+    prefs.remove('OrgTopic');
+    prefs.remove('CountryName');
+    prefs.remove('CurrentOrgStatus');
+    prefs.remove('date');
+    prefs.remove('firstAttendanceMarked');
+    prefs.remove('EmailVerifacitaionReminderShown');
+    prefs.remove('companyFreshlyRegistered');
+    prefs.remove('fname');
+    prefs.remove('empid');
+    prefs.remove('orgid');
+    prefs.remove('ReferralValidFrom');
+    prefs.remove('glow');
+    prefs.remove('ReferralValidTo');
+    prefs.remove('referrerAmt');
+    prefs.remove('referrenceAmt');
+    prefs.remove('referrerId');
+    prefs.remove('TimeInTime');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('ShiftAdded');
+    prefs.remove('EmployeeAdded');
+    prefs.remove('attendanceNotMarkedButEmpAdded');
+    prefs.remove('tool');
+    prefs.remove('companyFreshlyRegistered');
 
     _firebaseMessaging.unsubscribeFromTopic("admin");
     _firebaseMessaging.unsubscribeFromTopic("employee");
+    _firebaseMessaging.unsubscribeFromTopic(countryTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(currentOrgStatus.replaceAll(' ', ''));
 
 
 
