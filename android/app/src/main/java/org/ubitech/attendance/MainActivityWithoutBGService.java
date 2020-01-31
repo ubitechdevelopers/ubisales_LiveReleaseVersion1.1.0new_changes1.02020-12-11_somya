@@ -732,6 +732,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onPause() {
    // assistant.stop();
   //if(!cameraOpened)
+      super.onPause();
     try {
         fusedLocationClient.removeLocationUpdates(locationCallback);
 
@@ -739,7 +740,7 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
     catch(Exception e){
 
     }
-    super.onPause();
+    //super.onPause();
   }
 
 

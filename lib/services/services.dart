@@ -317,9 +317,9 @@ Future<int> checkConnectionToServer () async{
     var uri = Uri.parse(path);
     var host=uri.host;
     //final result = await InternetAddress.lookup(host);
-    //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
-    //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
-    // print("response code"+response.statusCode.toString());
+   //  final result = await InternetAddress.lookup("ubihrm.com")/*.timeout(const Duration(seconds: 2))*/;
+   //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
+   // print("response code"+response.statusCode.toString());
     //if (result.isNotEmpty && result[0].rawAddress.isNotEmpty &&response.statusCode==200 ) {
 
     final result = await InternetAddress.lookup('google.com');
@@ -2635,9 +2635,9 @@ Future<int> checkNet() async {
   try {
     final result = await InternetAddress.lookup('google.com');
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty){
-      //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
-      //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
-      //if (response.statusCode==200) {
+    //http.Response response = await http.get('https://google.com')/*.timeout(const Duration(seconds: 7))*/;
+    //final result = await InternetAddress.lookup('ubihrm.com')/*.timeout(const Duration(seconds: 2))*/;
+    //if (response.statusCode==200) {
       print('connected');
       varCheckNet = 1;
     } else {
@@ -2727,20 +2727,20 @@ getAddressFromLati_offline( double Latitude,double Longitude) async{
 
 
 checkNetForOfflineMode(context) {
-  // checkLocationEnabled(context);
+ // checkLocationEnabled(context);
   checkNet().then((value) async {
     var prefs=await SharedPreferences.getInstance();
     var isLoggedIn=prefs.getInt("response");
-    var OfflineModePermitted=prefs.getInt("OfflineModePermission")??0;
+  var OfflineModePermitted=prefs.getInt("OfflineModePermission")??0;
 
 
     if (value == 0) {
       print(
           '====================internet checked...Not connected=====================');
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        if(isLoggedIn==1 && OfflineModePermitted==1) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
-        }
+      if(isLoggedIn==1 && OfflineModePermitted==1) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
+      }
       });
     }
   });
@@ -2748,7 +2748,7 @@ checkNetForOfflineMode(context) {
 
 
 appResumedFromBackground(context){
-  appResumedPausedLogic(context);
+appResumedPausedLogic(context);
 }
 
 
@@ -2760,7 +2760,7 @@ checknetonpage(context) {
           '====================internet checked...Not connected=====================');
       SchedulerBinding.instance.addPostFrameCallback((_) {
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
-        /*  Navigator.push(
+      /*  Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OfflineHomePage()),
         );*/
@@ -2771,7 +2771,7 @@ checknetonpage(context) {
 
 Future<String> getAreaStatus() async {
   //print('getAreaStatus 1');
-  // LocationData _currentLocation = globals.list[globals.list.length - 1];
+ // LocationData _currentLocation = globals.list[globals.list.length - 1];
   double lat = globals.assign_lat;
   double long = globals.assign_long;
   double assign_lat = globals.assigned_lat;
@@ -2805,11 +2805,11 @@ Future<String> getAreaStatus() async {
     }
 
     double totalDistance =
-    calculateDistance(lat, long, assign_lat, assign_long);
+        calculateDistance(lat, long, assign_lat, assign_long);
     status = (assign_radius >= totalDistance) ? '1' : '0';
     // print("sohan ${status}");
   }
-  // print(status);
+ // print(status);
   return status;
 }
 
@@ -3024,13 +3024,13 @@ getCsv1(associateList, fname, name) async {
     row1.add('Early By');
     rows.add(row1);
     for (int i = 0; i < associateList.length; i++) {
-      //row refer to each column of a row in csv file and rows refer to each row in a file
-      List<dynamic> row = List();
-      row.add(associateList[i].name);
-      row.add(associateList[i].shift);
-      row.add(associateList[i].timeAct);
-      row.add(associateList[i].diff);
-      rows.add(row);
+  //row refer to each column of a row in csv file and rows refer to each row in a file
+    List<dynamic> row = List();
+    row.add(associateList[i].name);
+    row.add(associateList[i].shift);
+    row.add(associateList[i].timeAct);
+    row.add(associateList[i].diff);
+    rows.add(row);
     }
   }else if(name == 'visitlist') {
     row1.add('Name');
@@ -3108,21 +3108,21 @@ class FlexiAtt {
 
   FlexiAtt(
       {this.Id,
-        this.Emp,
-        this.client,
-        this.pi_time,
-        this.pi_loc,
-        this.po_time,
-        this.po_loc,
-        this.timeindate,
-        this.timeoutdate,
-        this.pi_latit,
-        this.pi_longi,
-        this.po_latit,
-        this.po_longi,
-        this.desc,
-        this.pi_img,
-        this.po_img});
+      this.Emp,
+      this.client,
+      this.pi_time,
+      this.pi_loc,
+      this.po_time,
+      this.po_loc,
+      this.timeindate,
+      this.timeoutdate,
+      this.pi_latit,
+      this.pi_longi,
+      this.po_latit,
+      this.po_longi,
+      this.desc,
+      this.pi_img,
+      this.po_img});
 }
 
 
@@ -3206,7 +3206,7 @@ Future checkTimeinflexi() async {
   String orgdir = prefs.getString('orgdir') ?? '';
   print('*--*-*-*-*-*-*-*-*-*-');
   final res =
-  await http.get(globals.path + 'getAttendanceesFlexi?empid=$empid');
+      await http.get(globals.path + 'getAttendanceesFlexi?empid=$empid');
   print("99999");
   print(res.body.toString());
   // return res.body.toString();
@@ -3379,30 +3379,30 @@ List<OutsideAttendance> createListOutsidefance(List data) {
 
 
     OutsideAttendance Outsid = new OutsideAttendance(
-      Id: id,
-      empname: empname,
-      timein: timein == '00:00' ? '-' : timein,
-      timeout: timeout == '00:00' ? '-' : timeout,
-      locationin: locationin.length > 40 ? locationin.substring(0, 40) + '...' : locationin,
-      locationout: locationout.length > 40 ? locationout.substring(0, 40) + '...' : locationout,
-      attdate: attdate,
-      latin: latin,
-      lonin: lonin,
-      latout: latout,
-      lonout: lonout,
-      outstatus: outstatus,
-      instatus: instatus,
-      incolor: incolor,
-      outcolor: outcolor,
-    );
+        Id: id,
+        empname: empname,
+        timein: timein == '00:00' ? '-' : timein,
+        timeout: timeout == '00:00' ? '-' : timeout,
+        locationin: locationin.length > 40 ? locationin.substring(0, 40) + '...' : locationin,
+        locationout: locationout.length > 40 ? locationout.substring(0, 40) + '...' : locationout,
+        attdate: attdate,
+        latin: latin,
+        lonin: lonin,
+        latout: latout,
+        lonout: lonout,
+        outstatus: outstatus,
+        instatus: instatus,
+        incolor: incolor,
+        outcolor: outcolor,
+        );
     list.add(Outsid);
   }
   return list;
 }
 
 /************************************************************************
- ****************************Start Holiday functions*********************
- ************************************************************************/
+****************************Start Holiday functions*********************
+************************************************************************/
 
 
 Future<List<Holiday>> getHolidays() async {

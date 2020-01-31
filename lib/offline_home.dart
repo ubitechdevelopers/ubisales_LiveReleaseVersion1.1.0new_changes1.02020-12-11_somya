@@ -108,14 +108,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           timeSpoofed=true;
 
         }
-        if(call.arguments["internet"].toString()=="Internet Available")
-        {
-          internetAvailable=false;
-          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
 
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
-
-        }
         var long=call.arguments["longitude"].toString();
         var lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);

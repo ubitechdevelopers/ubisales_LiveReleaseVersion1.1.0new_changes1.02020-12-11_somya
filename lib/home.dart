@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Timer timer1;
   Timer timerrefresh;
   int response;
+  var workingHoursTimer;
   final Widget removedChild = Center();
   String fname = "",
       lname = "",
@@ -160,6 +161,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
         )),
   );
+
+
+  stopWorkingHoursTimer(){
+    workingHoursTimer.cancel();
+  }
+
 
   static var tooltiptimeout = SuperTooltip(
     popupDirection: TooltipDirection.up,
@@ -284,6 +291,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool companyFreshlyRegistered=false;
 
   bool attendanceNotMarkedButEmpAdded=false;
+
+  String loggedInSince='';
   static tooltiptimeinClicked(context) async{
     // HomePage h=new HomePage();
     // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
@@ -883,7 +892,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  timerResumePause()async {
+
+    //print("app resumed paused home");
+    SystemChannels.lifecycle.setMessageHandler((msg) async {
+      print("app resumed paused home");
+      if (msg == 'AppLifecycleState.resumed') {
+        //startWorkingHoursTimer();
+        print("app resumed and timer started");
+
+      }
+
+      if (msg == 'AppLifecycleState.paused') {
+        //stopWorkingHoursTimer();
+        print("app paused and timer stopped");
+
+      }
+    });
+
+
+  }
+
+
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+
+
     /*
     setState(() {
       state = appLifecycleState;
@@ -1123,6 +1156,7 @@ print("inside referral check");
     checknetonpage(context);
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
+    timerResumePause();
     cameraChannel.invokeMethod("openLocationDialog");
     //sendPushNotification('ABC has marked his Time In','','ALL_ORG');
 
@@ -1130,6 +1164,10 @@ print("inside referral check");
 
     //showAddingShiftReminder();
     var prefs=await SharedPreferences.getInstance();
+
+
+startWorkingHoursTimer();
+
     setState(() {
       companyFreshlyRegistered=prefs.getBool("companyFreshlyRegistered")??false;
     });
@@ -2076,10 +2114,11 @@ print("inside referral check");
               padding: const EdgeInsets.all(5.0),
               child: Container(
                   color: Colors.white,
-                  height: MediaQuery.of(context).size.height * .15,
+                  height: MediaQuery.of(context).size.height * .20,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Text(loggedInSince),
                         FlatButton(
                           child: new Text(
                               globals.globalstreamlocationaddr != null
@@ -3027,6 +3066,36 @@ var FakeLocationStatus=0;
    }
 
 
+
+  }
+
+  void startWorkingHoursTimer() async{
+
+
+    var prefs=await SharedPreferences.getInstance();
+
+    var timeInTime=prefs.get("TimeInTime")??'';
+    print(timeInTime+"time in time");
+    var currentTime=DateTime.now();
+    var loggedInTime;
+    if(timeInTime.isNotEmpty){
+      loggedInTime=currentTime.difference(DateTime.parse(timeInTime));
+      print(loggedInTime.toString()+"logged in time");
+
+    var i=0;
+    workingHoursTimer=Timer.periodic(Duration(seconds: 1), (timer) {
+      //print(DateTime.now());
+      setState(() {
+        var duration = new Duration(seconds : i);
+        print("lllllengthg"+('01:22:23').length.toString());
+        //loggedInSince=(DateTime.parse( ('2020-01-01 0'+loggedInTime.toString().split(".")[0]).length==18?'2020-01-01 '+loggedInTime.toString().split(".")[0]:'2020-01-01 0'+loggedInTime.toString().split(".")[0]).add(duration).toString()).split(" ")[1].split(".")[0];
+        loggedInSince=(DateTime.parse( (loggedInTime.toString().split(".")[0]).length==8?'2020-01-01 '+loggedInTime.toString().split(".")[0]:'2020-01-01 0'+loggedInTime.toString().split(".")[0]).add(duration).toString()).split(" ")[1].split(".")[0];
+        print('testing date'+DateTime.parse("2020-01-01 0"+loggedInTime.toString().split(".")[0] ).toString());
+        i++;
+      });
+
+    });
+    }
 
   }
 //////////////////////////////////////////////////////////////////
