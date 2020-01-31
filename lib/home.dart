@@ -2114,7 +2114,7 @@ startWorkingHoursTimer();
               padding: const EdgeInsets.all(5.0),
               child: Container(
                   color: Colors.white,
-                  height: MediaQuery.of(context).size.height * .15,
+                  height: MediaQuery.of(context).size.height * .20,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
