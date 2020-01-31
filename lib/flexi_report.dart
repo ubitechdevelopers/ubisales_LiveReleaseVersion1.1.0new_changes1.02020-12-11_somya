@@ -151,7 +151,7 @@ class _FlexiReport extends State<FlexiReport> {
                 children: <Widget>[
                   SizedBox(width: 1.0,),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.23,
                     child: Text(
                       'Name',
                       style: TextStyle(color: appcolor,
@@ -171,7 +171,7 @@ class _FlexiReport extends State<FlexiReport> {
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
+                    width: MediaQuery.of(context).size.width * 0.17,
                     child: Text('In',
                         style: TextStyle(color: appcolor,
                             fontWeight: FontWeight.bold,

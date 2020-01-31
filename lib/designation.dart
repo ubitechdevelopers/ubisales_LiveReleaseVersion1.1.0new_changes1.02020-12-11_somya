@@ -91,7 +91,7 @@ class _Designation extends State<Designation> {
               ),
             ),
             Divider(),
-            SizedBox(height: 5.0),
+            //SizedBox(height: 5.0),
             new Expanded(
               child: getDesgWidget(),
 

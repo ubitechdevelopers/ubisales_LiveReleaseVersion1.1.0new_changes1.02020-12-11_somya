@@ -336,7 +336,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                   Container(
                     width: MediaQuery.of(context).size.width * 0.13,
                     child: Text(
-                      'Total\n ($countT)',
+                      'Total\n($countT)',
                       style: TextStyle(
                           color: appcolor,
                           fontWeight: FontWeight.bold,
@@ -362,7 +362,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                   Container(
                     width: MediaQuery.of(context).size.width * 0.18,
                     child: Text(
-                      'Absent\n    ($countA)',
+                      'Absent\n  ($countA)',
                       style: TextStyle(
                           color: appcolor,
                           fontWeight: FontWeight.bold,

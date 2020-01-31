@@ -176,7 +176,7 @@ getWidgets(context){
 
             SizedBox(height: 50.0,),
             Container(
-              width: MediaQuery.of(context).size.width*0.2,
+              width: MediaQuery.of(context).size.width*0.22,
               child:Text('Time In',textAlign: TextAlign.left,style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 50.0,),

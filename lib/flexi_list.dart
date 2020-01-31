@@ -1,3 +1,4 @@
+import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -351,8 +352,17 @@ class _FlexiList extends State<FlexiList> {
                     );
                   });
             } else {
-              return new Center(
-                child: Text("No Attendance ", style: TextStyle(color: buttoncolor,fontSize: 18.0),),
+
+              return new Container(
+                  height: MediaQuery.of(context).size.height*0.50,
+                  child:Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*1,
+                      color: appcolor.withOpacity(0.1),
+                      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+                      child:Text("No Attendance",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                    ),
+                  )
               );
             }
           } else if (snapshot.hasError) {

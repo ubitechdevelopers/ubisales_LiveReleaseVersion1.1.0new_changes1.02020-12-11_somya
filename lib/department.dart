@@ -97,7 +97,7 @@ class _Department extends State<Department> {
               ),
             ),
             Divider(),
-            SizedBox(height: 5.0),
+            //SizedBox(height: 5.0),
             new Expanded(
               child: getDeptWidget(),
 

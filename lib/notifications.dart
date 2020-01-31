@@ -139,7 +139,7 @@ class _Notifications extends State<Notifications> with SingleTickerProviderState
             SizedBox(height: 70.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.22,
-              child:Text('  Selfie',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('     Selfie',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
             SizedBox(height: 70.0,),
             Container(

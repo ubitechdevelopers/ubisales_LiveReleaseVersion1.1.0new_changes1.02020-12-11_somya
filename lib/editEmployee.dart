@@ -646,7 +646,7 @@ class _EditEmployee extends State<EditEmployee> {
                 child: ListView(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                      padding: const EdgeInsets.only(left:15.0,right: 15.0,top: 5.0),
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.70,
                         child: TextFormField(

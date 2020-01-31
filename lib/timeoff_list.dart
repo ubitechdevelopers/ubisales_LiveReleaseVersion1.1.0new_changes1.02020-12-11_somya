@@ -139,7 +139,7 @@ class _TimeOffList extends State<TimeOffList> {
             SizedBox(height: 12.0),
             Container(
               //  padding: EdgeInsets.only(bottom:10.0,top: 10.0),
-              width: MediaQuery.of(context).size.width * .9,
+              //width: MediaQuery.of(context).size.width * .9,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,27 +147,27 @@ class _TimeOffList extends State<TimeOffList> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.37,
                     child: Text(
-                      'Name',
+                      ' Name',
                       style: TextStyle(color: appcolor, fontSize: 16.0, fontWeight: FontWeight.bold),
                       //textAlign: TextAlign.left,
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.2,
+                    width: MediaQuery.of(context).size.width * 0.16,
                     child: Text(
                       'From',
                       style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Text('To',
                         style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left),
+                        textAlign: TextAlign.center),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.12,
+                    width: MediaQuery.of(context).size.width * 0.22,
                     child: Text('Total Time',
                         style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left),

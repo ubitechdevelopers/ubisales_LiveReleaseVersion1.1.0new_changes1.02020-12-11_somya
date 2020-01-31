@@ -381,22 +381,22 @@ class _TimeoffSummary extends State<TimeoffSummary> {
               SizedBox(width: MediaQuery.of(context).size.width*0.02),
               Container(
                 width: MediaQuery.of(context).size.width*0.30,
-                child:Text('Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' Date',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
 
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Start',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' Start',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.24,
-                child:Text('End',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text(' End',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('Status',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                child:Text('  Status',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
             ],
           ),
@@ -405,7 +405,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
           new Container(
             height: MediaQuery.of(context).size.height*.68,
             width: MediaQuery.of(context).size.width*.99,
-            padding: EdgeInsets.only(top: 8.0),
+            padding: EdgeInsets.only(top: 8.0,left: 8.0),
             color: Colors.white,
             //////////////////////////////////////////////////////////////////////---------------------------------
             child: new FutureBuilder<List<TimeOff>>(

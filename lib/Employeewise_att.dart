@@ -303,7 +303,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
 
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.20,
+                width: MediaQuery.of(context).size.width*0.18,
                 child:Text('Time In', textAlign: TextAlign.center,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),

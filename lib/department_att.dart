@@ -232,7 +232,7 @@ class _Department_att extends State<Department_att>
                       height: 50.0,
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.22,
+                      width: MediaQuery.of(context).size.width * 0.18,
                       child: Text(
                         'Time In',
                         style: TextStyle(
