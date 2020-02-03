@@ -131,7 +131,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
           Row(
             children: <Widget>[
               Expanded(child: getEmployee_DD()),
-              Padding(
+         /*     Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child:(emp != '0')?Container(
                     color: Colors.white,
@@ -242,6 +242,7 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                     )
                 ):Center()
               )
+              */
             ],
           ),
           //Divider(height: 10,color: Colors.black,),
@@ -350,11 +351,104 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                                           (index == 0)?
                                             Row(
                                                   children: <Widget>[
-                                                    SizedBox(height: 25.0,),
+                                                    //SizedBox(height: 25.0,),
                                                     Container(
-                                                      padding: EdgeInsets.only(left: 11.0),
+                                                      //padding: EdgeInsets.only(left: 11.0),
                                                       child: Text("Total Present: ${countP}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
-                                                    ),
+                                                    ),SizedBox(
+                                                      height:  10.0,
+                                                    ),Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height:  10.0,
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets.only(left: 10.0),
+                                                          child: InkWell(
+                                                            child: Text('CSV',
+                                                              style: TextStyle(
+                                                                decoration: TextDecoration.underline,
+                                                                color: Colors.blueAccent,
+                                                                fontSize: 16,
+                                                                //fontWeight: FontWeight.bold
+                                                              ),
+                                                            ),
+                                                            onTap: () {
+                                                              //openFile(filepath);
+                                                              if (mounted) {
+                                                                setState(() {
+                                                                  filests = true;
+                                                                });
+                                                              }
+                                                              getCsvAlldata(presentlist, absentlist, latecommerlist, earlyleaverlist,
+                                                                  'Employee_Wise_Report', 'emp')
+                                                                  .then((res) {
+                                                                print('snapshot.data');
+
+                                                                if (mounted) {
+                                                                  setState(() {
+                                                                    filests=false;
+                                                                  });
+                                                                }
+                                                                // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
+                                                                dialogwidget(
+                                                                    "CSV has been saved in internal storage in ubiattendance_files/Employee_Wise_Report" +
+                                                                        ".csv", res);
+                                                              }
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width:6,
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets.only(
+                                                              left: 5.0),
+                                                          child: InkWell(
+                                                            child: Text('PDF',
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                                color: Colors
+                                                                    .blueAccent,
+                                                                fontSize: 16,),
+                                                            ),
+                                                            onTap: () {
+                                                              /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
+                                    SimpleShare.share(
+                                        uri: uri.toString(),
+                                        title: "Share my file",
+                                        msg: "My message");*/
+                                                              if (mounted) {
+                                                                setState(() {
+                                                                  filests = true;
+                                                                });
+                                                              }
+                                                              CreateEmployeeWisepdf(
+                                                                  presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
+                                                                  'Employee_Wise_Report', 'employeewise')
+                                                                  .then((res) {
+                                                                if(mounted) {
+                                                                  setState(() {
+                                                                    filests =
+                                                                    false;
+                                                                    // OpenFile.open("/sdcard/example.txt");
+                                                                  });
+                                                                }
+                                                                dialogwidget(
+                                                                    'PDF has been saved in internal storage in ubiattendance_files/Employee_Wise_Report'+
+                                                                        '.pdf',
+                                                                    res);
+                                                                // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
                                                    ]
                                                ):new Center(),
                                           (index == 0)?
