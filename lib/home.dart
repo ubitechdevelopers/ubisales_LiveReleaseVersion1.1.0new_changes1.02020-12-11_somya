@@ -3062,6 +3062,9 @@ var FakeLocationStatus=0;
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+
+    workingHoursTimer.cancel();
+
     super.dispose();
   }
 
