@@ -764,7 +764,7 @@ var FakeLocationStatus=0;
           context: context,
           builder: (context) => AlertDialog(
               content: Row( children:<Widget>[
-                Text("Verification link has been sent to \nyour organization's registered Email."),
+                Text("Verification link has been sent to \nyour organization's registered \nEmail."),
               ]
               )
           )

@@ -519,14 +519,11 @@ class _Reports extends State<Reports> {
                   showDialogWidget("Upgrade to plan for this report");
                 }else {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Outsidegeofance()),
+                    context, MaterialPageRoute(builder: (context) => Outsidegeofance()),
                   );
                 }
               },
             ):Center(),
-
-
       (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?SizedBox(height: 0.0):Center(),
             (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?
             new RaisedButton(
