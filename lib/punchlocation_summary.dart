@@ -424,7 +424,7 @@ print('visit out called for visit id:'+visit_id);
                       context: context,
                       firstDate: DateTime(1900),
                       initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime(2100));
+                      lastDate: DateTime.now());
                 },
                 readOnly: true,
                 decoration: InputDecoration(

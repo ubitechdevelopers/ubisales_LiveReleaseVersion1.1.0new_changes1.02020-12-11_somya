@@ -14,9 +14,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:image/image.dart';
 import 'newservices.dart';
-
+import 'package:flutter_image_compress/flutter_image_compress.dart' as path_provider;
 class SaveImage {
   String base64Image;
   String base64Image1;
@@ -24,10 +24,7 @@ class SaveImage {
   static const platform = const MethodChannel('force.garbage.collection');
   Future<bool> saveTimeInOut(File imagefile, MarkTime mk) async {
 
-
-
     try {
-
 
       File imagei = imagefile;
       imageCache.clear();
@@ -286,12 +283,14 @@ class SaveImage {
 
 
 
+
   ////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-
   Future<bool> saveTimeInOutImagePicker(MarkTime mk,context) async {
+   // final dir = Directory.systemTemp;;
+     // print(dir.absolute.path);
 
     try{
       File imagei = null;
@@ -463,6 +462,21 @@ class SaveImage {
       return false;
     }
   }
+
+
+/*
+  Future<File> testCompressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 88,
+      rotate: 180,
+    );
+    print(file.lengthSync());
+    print(result.lengthSync());
+    return result;
+  } */
+
+
 
 
   Future<bool> saveTimeInOutImagePicker_old123(MarkTime mk,context) async {
