@@ -406,6 +406,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   _afterLayout(_) {
     print("after layout" + _keyRed.currentContext.toString());
     _getPositions();
+    getPositionofFAB();
   }
 
   _afterLayoutAddEmp() {
@@ -419,6 +420,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     if ((admin_sts == '1' || admin_sts == '2')) {
       if (_keyBlue != null) if (_keyBlue.currentContext != null) {
+        textPostionGotten = true;
         final RenderBox renderBoxBlue =
             _keyBlue.currentContext.findRenderObject();
         final positionBlue = renderBoxBlue.localToGlobal(Offset.zero);
