@@ -251,10 +251,15 @@ class _changePassword extends State<changePassword> {
                         ),
                       ),
                       validator: (value) {
-                        if (value.isEmpty || value==null || value.length<6 ) {
+                        if (value.isEmpty || value==null  ) {
                           __oldPass.notifyListeners();
-                          //                                 FocusScope.of(context).requestFocus(__newPass);
-                          return 'Password must be at least 6 characters';
+                          //    FocusScope.of(context).requestFocus(__newPass);
+
+                          return 'Please enter new password';
+                        }
+                        if(value.length<6)
+                        {
+                          return 'Password must contain at least 6 characters';
                         }
                       },
                     ),

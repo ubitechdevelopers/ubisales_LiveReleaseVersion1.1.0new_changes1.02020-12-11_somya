@@ -366,7 +366,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   _getPositions() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var timeInToolTipShown=prefs.getInt("TimeInToolTipShown")??0;
-
+    _afterLayoutAddEmp();
     if (_keyRed != null) if (_keyRed.currentContext != null) {
       textPostionGotten = true;
       final RenderBox renderBoxRed = _keyRed.currentContext.findRenderObject();
@@ -406,7 +406,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   _afterLayout(_) {
     print("after layout" + _keyRed.currentContext.toString());
     _getPositions();
-    getPositionofFAB();
+    //getPositionofFAB();
   }
 
   _afterLayoutAddEmp() {

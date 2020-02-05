@@ -287,7 +287,7 @@ class _Department extends State<Department> {
                 {
                   if( dept.text.trim()==''){
                     //    FocusScope.of(context).requestFocus(f_dept);
-                    showInSnackBar('Input Department Name');
+                    showInSnackBar('Enter Department Name');
                   }
                   else {
                     if(_isButtonDisabled)
@@ -433,7 +433,7 @@ class _Department extends State<Department> {
                 {
                   if( new_dept.text.trim()==''){
                     //  FocusScope.of(context).requestFocus(f_dept);
-                    showInSnackBar('Input Department Name');
+                    showInSnackBar('Enter Department Name');
                   }
                   else {
                     if(_isButtonDisabled)

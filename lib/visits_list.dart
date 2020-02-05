@@ -109,6 +109,7 @@ class _VisitList extends State<VisitList> {
               children: <Widget>[
                 Expanded(
                   child: Container(
+                    color: Colors.white,
                     child: DateTimeField(
                       //dateOnly: true,
                       format: formatter,
@@ -118,7 +119,7 @@ class _VisitList extends State<VisitList> {
                             context: context,
                             firstDate: DateTime(1900),
                             initialDate: currentValue ?? DateTime.now(),
-                            lastDate: DateTime(2100));
+                            lastDate: DateTime.now());
 
                       },
                       readOnly: true,

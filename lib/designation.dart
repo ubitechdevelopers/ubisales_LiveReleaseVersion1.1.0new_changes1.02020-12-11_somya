@@ -279,7 +279,7 @@ class _Designation extends State<Designation> {
                 {
 
                   if(desg.text.trim()==''){
-                    showInSnackBar('Input Designation');
+                    showInSnackBar('Enter Designation Name');
                   }
                   else {
                     if(_isButtonDisabled)
@@ -429,7 +429,7 @@ class _Designation extends State<Designation> {
                 {
                   if( new_dept.text.trim()==''){
                     //  FocusScope.of(context).requestFocus(f_dept);
-                    showInSnackBar('Input Designation Name');
+                    showInSnackBar('Enter Designation Name');
                   }
                   else {
                     if(_isButtonDisabled)

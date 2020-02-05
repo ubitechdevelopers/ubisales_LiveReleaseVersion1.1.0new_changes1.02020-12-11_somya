@@ -1005,7 +1005,7 @@ class _AddEmployee extends State<AddEmployee> {
             children: <Widget>[
               SizedBox(height: 5.0),
               Center(
-                child:Text("Add a Department",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                child:Text("Add Department",style: new TextStyle(fontSize: 22.0,color: appcolor)),
               ),
               SizedBox(height: 15.0),
               new Expanded(
@@ -1151,7 +1151,7 @@ class _AddEmployee extends State<AddEmployee> {
             children: <Widget>[
               SizedBox(height: 5.0),
               Center(
-                child:Text("Add a Designation",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                child:Text("Add  Designation",style: new TextStyle(fontSize: 22.0,color: appcolor)),
               ),
               SizedBox(height: 15.0),
               new Expanded(
