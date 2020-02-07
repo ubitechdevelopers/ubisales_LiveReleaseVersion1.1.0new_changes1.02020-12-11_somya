@@ -2307,18 +2307,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () async {
-          var prefs = await SharedPreferences.getInstance();
 
-          String InPushNotificationStatus =
-              await prefs.getString("InPushNotificationStatus") ?? '0';
-          var empId = prefs.getString('empid') ?? '';
-          var orgId = prefs.getString("orgid") ?? '';
-          var eName = prefs.getString('fname') ?? 'User';
-          String topic = empId + 'TI' + orgId;
-          if (InPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked his Time In', '',
-                '\'' + topic + '\' in topics');
-          }
 
           globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
@@ -2344,20 +2333,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () async {
-          var prefs = await SharedPreferences.getInstance();
 
-          String InPushNotificationStatus =
-              await prefs.getString("InPushNotificationStatus") ?? '0';
-          var empId = prefs.getString('empid') ?? '';
-          var orgId = prefs.getString("orgid") ?? '';
-          var eName = prefs.getString('fname') ?? 'User';
-          String topic = empId + 'TO' + orgId;
-          if (InPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked his Time Out', '',
-                '\'' + topic + '\' in topics');
-
-            print('\'' + topic + '\' in topics');
-          }
           globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
           saveImage();
@@ -2427,7 +2403,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           act1 = "";
         });
       }
-
+     
       var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
           prefs.getBool("showAppInbuiltCamera") ?? false;
@@ -2452,7 +2428,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
 
       if (issave) {
-        var prefs = await SharedPreferences.getInstance();
+
+        if(act1=='TimeIn'){
+          var prefs = await SharedPreferences.getInstance();
+
+          String InPushNotificationStatus =
+              await prefs.getString("InPushNotificationStatus") ?? '0';
+          var empId = prefs.getString('empid') ?? '';
+          var orgId = prefs.getString("orgid") ?? '';
+          var eName = prefs.getString('fname') ?? 'User';
+          String topic = empId + 'TI' + orgId;
+          if (InPushNotificationStatus == '1') {
+            sendPushNotification(eName + ' has marked his Time In', '',
+                '\'' + topic + '\' in topics');
+          }
+        }
+        else{
+
+          var prefs = await SharedPreferences.getInstance();
+
+          String OutPushNotificationStatus =
+              await prefs.getString("OutPushNotificationStatus") ?? '0';
+          var empId = prefs.getString('empid') ?? '';
+          var orgId = prefs.getString("orgid") ?? '';
+          var eName = prefs.getString('fname') ?? 'User';
+          String topic = empId + 'TO' + orgId;
+          if (OutPushNotificationStatus == '1') {
+            sendPushNotification(eName + ' has marked his Time Out', '',
+                '\'' + topic + '\' in topics');
+
+            print('\'' + topic + '\' in topics');
+          }
+
+        }
+
+
+        //var prefs = await SharedPreferences.getInstance();
         prefs.setBool("firstAttendanceMarked", true);
         //prefs.setBool("companyFreshlyRegistered",false );
 
