@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Timer timer1;
   Timer timerrefresh;
   int response;
-  var workingHoursTimer;
+ // var workingHoursTimer;
   final Widget removedChild = Center();
   String fname = "",
       lname = "",
@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool textPostionGotten = false;
 
   stopWorkingHoursTimer() {
-    workingHoursTimer.cancel();
+    //workingHoursTimer.cancel();
   }
 
   static var tooltiptimeout = SuperTooltip(
@@ -2149,7 +2149,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(5.0),
               child: Container(
                   color: Colors.white,
-                  height: MediaQuery.of(context).size.height * .20,
+                  height: MediaQuery.of(context).size.height * .18,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -2403,8 +2403,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           act1 = "";
         });
       }
-     
-      var prefs = await SharedPreferences.getInstance();
+     var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
           prefs.getBool("showAppInbuiltCamera") ?? false;
       issave = globals.showAppInbuiltCamera
@@ -2439,7 +2438,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           var eName = prefs.getString('fname') ?? 'User';
           String topic = empId + 'TI' + orgId;
           if (InPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked his Time In', '',
+            sendPushNotification(eName + ' has marked Time In', '',
                 '\'' + topic + '\' in topics');
           }
         }
@@ -2454,7 +2453,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           var eName = prefs.getString('fname') ?? 'User';
           String topic = empId + 'TO' + orgId;
           if (OutPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked his Time Out', '',
+            sendPushNotification(eName + ' has marked Time Out', '',
                 '\'' + topic + '\' in topics');
 
             print('\'' + topic + '\' in topics');
@@ -3074,9 +3073,9 @@ var FakeLocationStatus=0;
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+   // WidgetsBinding.instance.removeObserver(this);
 
-    workingHoursTimer.cancel();
+    //workingHoursTimer.cancel();
 
     super.dispose();
   }
@@ -3118,6 +3117,8 @@ var FakeLocationStatus=0;
   }
 
   void startWorkingHoursTimer() async {
+
+    /*
     var prefs = await SharedPreferences.getInstance();
 
     var timeInTime = prefs.get("TimeInTime") ?? '';
@@ -3152,7 +3153,7 @@ var FakeLocationStatus=0;
           i++;
         });
       });
-    }
+    }*/
   }
 //////////////////////////////////////////////////////////////////
 }

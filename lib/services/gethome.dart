@@ -126,6 +126,7 @@ class Home{
         print('countru name'+timeinoutMap['CountryName'].toString());
 
         prefs.setString('OutPushNotificationStatus', timeinoutMap['OutPushNotificationStatus']);
+        prefs.setString('TimeInTime', timeinoutMap['TimeInTime']);
         prefs.setString('InPushNotificationStatus', timeinoutMap['InPushNotificationStatus']);
         print("Next working day"+timeinoutMap['nextWorkingDay']);
         prefs.setInt('Is_Delete', Is_Delete);
