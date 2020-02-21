@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String admin_sts = '0';
   bool glow = true;
   String mail_varified = '1';
-  String AbleTomarkAttendance = '1';
+  String AbleTomarkAttendance = '0';
   String act = "";
   String act1 = "";
   int alertdialogcount = 0;
@@ -351,16 +351,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
 
-    /*
-    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(context));
-     // SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayoutAddEmp(context));
-    }
-*/
-/*
-    Future.delayed(Duration(seconds: 5), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayout));
-    Future.delayed(Duration(seconds: 5), () => SchedulerBinding.instance.addPostFrameCallback(_afterLayoutAddEmp));
-*/
+
   }
 
   _getPositions() async {
@@ -1825,7 +1816,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     getQuickLinksWidget()
                   ]),
             ),
-*/
+         */
           ]);
     }
   }
@@ -2398,11 +2389,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );*/
       SaveImage saveImage = new SaveImage();
       bool issave = false;
-      if (mounted) {
-        setState(() {
-          act1 = "";
-        });
-      }
+
+
      var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
           prefs.getBool("showAppInbuiltCamera") ?? false;
@@ -2429,6 +2417,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (issave) {
 
         if(act1=='TimeIn'){
+          print("This is time in block " + act1);
           var prefs = await SharedPreferences.getInstance();
 
           String InPushNotificationStatus =
@@ -2443,7 +2432,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         }
         else{
-
+          print("This is time timeout block"+ act1);
           var prefs = await SharedPreferences.getInstance();
 
           String OutPushNotificationStatus =
@@ -2461,7 +2450,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
         }
 
-
+        if (mounted) {
+          setState(() {
+            act1 = "";
+          });
+        }
         //var prefs = await SharedPreferences.getInstance();
         prefs.setBool("firstAttendanceMarked", true);
         //prefs.setBool("companyFreshlyRegistered",false );

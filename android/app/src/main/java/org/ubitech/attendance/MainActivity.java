@@ -377,8 +377,6 @@ public class MainActivity extends FlutterActivity {
               }
             });
 
-
-
   }
 
   @Override
@@ -495,18 +493,6 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     Log.i("WorkerMinutesForTimeIn",diffMinutes+"");
     final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
             .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
@@ -609,8 +595,6 @@ catch(Exception e){
   // Log.i("Perrrrr",permissions[1]+grantResults);
 
   }
-
-
     @Override
     public void onNewIntent(Intent intent){
         Bundle extras = intent.getExtras();

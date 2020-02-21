@@ -104,17 +104,13 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                         Column(
                           children: <Widget>[
                             Image.asset(
-                                'assets/landing.png', height: 300.0, width: 300.0),
-                            (loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 2.0),
-                            SizedBox(height: 60.0),
+                                'assets/landing.png', height:  MediaQuery.of(context).size.width*0.8, width:  MediaQuery.of(context).size.width*0.8),
+                            (loader) ? Center(child : new CircularProgressIndicator()) : SizedBox(height: 1.0),
+                            SizedBox(height:  MediaQuery.of(context).size.height*0.1,),
                           ],
                         ),
-
-
-
-                        SizedBox(height: 5.0),
+                       // SizedBox(height:  MediaQuery.of(context).size.height*0.008),
                         Row(
-
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             ButtonTheme(

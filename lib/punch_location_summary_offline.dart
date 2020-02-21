@@ -77,13 +77,13 @@ class _PunchLocationSummaryOffline extends State<PunchLocationSummaryOffline> {
           timeSpoofed=true;
 
         }
-        if(call.arguments["internet"].toString()=="Internet Available")
+        /*if(call.arguments["internet"].toString()=="Internet Available")
         {
           internetAvailable=false;
           print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OfflineHomePage()), (Route<dynamic> route) => false,);
 
-        }
+        }*/
         long=call.arguments["longitude"].toString();
         lat=call.arguments["latitude"].toString();
 

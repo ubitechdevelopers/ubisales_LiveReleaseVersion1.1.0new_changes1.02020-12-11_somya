@@ -62,9 +62,7 @@ class _MyAppState extends State<MyApp> {
       prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
-
         }
-
         String long=call.arguments["longitude"].toString();
         String lat=call.arguments["latitude"].toString();
         assign_lat=double.parse(lat);

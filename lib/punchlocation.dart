@@ -134,10 +134,6 @@ var FakeLocationStatus=0;
             fakeLocationDetected=false;
           }
 
-
-
-
-
         });
         break;
 
@@ -642,8 +638,8 @@ var FakeLocationStatus=0;
       color: buttoncolor,
       onPressed: () {
         globalCameraOpenedStatus=true;
-        if(_clientname.text.trim()=='') {
-          showInSnackBar('Please insert client name first');
+        if(_clientname.text.trim() == '') {
+          showInSnackBar('Please enter client name first');
           return false;
         }else
           saveVisitImage();

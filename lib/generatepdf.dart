@@ -427,6 +427,8 @@ CreateDesgpdfAll(pdata, adata, ldata, edata, HeaderText, Total, pdfName, name) a
   return 'false';
 }
 
+
+// this function only for employees report, there is no need of name column
 CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) async {
 
   PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
@@ -449,33 +451,29 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
     List<String> a2 = new List<String>();
 
 
-    a2.add('Name');
+   // a2.add('Name');
     a2.add('Date');
-    a2.add('TimeIn');
+    a2.add('TimeIn ');
     a2.add('TimeIn Location');
-    a2.add('TimeOut');
+    a2.add('TimeOut ');
     a2.add('TimeOut Location');
     list.add(a2);
-    a2 = new List<String>();
+   /* a2 = new List<String>();
+  //  a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    a2.add(' ');
-    list.add(a2);
+    list.add(a2);*/
     a2 = new List<String>();
     a2.add(' Present ');
-    a2.add(' ');
-    a2.add(' ');
-    a2.add(' ');
-    a2.add(' ');
-    a2.add(' ');
+   // a2.add(' ');
     list.add(a2);
 
     for (var i = 0; i < pdata.length; i++) {
       List<String> a1 = new List<String>();
-      a1.add(pdata[i].Name.toString());
+     // a1.add(pdata[i].Name.toString());
       a1.add(pdata[i].Name.toString());
       a1.add(pdata[i].TimeIn.toString());
       a1.add(pdata[i].CheckInLoc.toString());
@@ -485,19 +483,19 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
     }
 
 
-    a2 = new List<String>();
+   /* a2 = new List<String>();
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    list.add(a2);
+    list.add(a2);*/
     a2 = new List<String>();
     a2.add(' Absent ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    a2.add(' ');
+  //  a2.add(' ');
     list.add(a2);
 
     for (var i = 0; i < adata.length; i++) {
@@ -507,17 +505,16 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
       a1.add('-');
       a1.add('-');
       a1.add('-');
-
       list.add(a1);
     }
-
+/*
     a2 = new List<String>();
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    list.add(a2);
+    list.add(a2);*/
     a2 = new List<String>();
     a2.add(' Late Comers ');
     a2.add(' ');
@@ -537,13 +534,13 @@ CreateEmployeeWisepdf(pdata, adata, ldata, edata, HeaderText, pdfName, name) asy
       list.add(a1);
     }
 
-    a2 = new List<String>();
+ /*   a2 = new List<String>();
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
     a2.add(' ');
-    list.add(a2);
+    list.add(a2);*/
     a2 = new List<String>();
     a2.add(' Early Leavers ');
     a2.add(' ');

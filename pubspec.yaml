@@ -1,6 +1,5 @@
 name: Shrine
 description: A new Flutter application.
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional bubuild number separated by a +.
@@ -8,16 +7,13 @@ description: A new Flutter application.
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
 version: 1.0.0+1
-
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
   #flutter_localizations:
     #sdk: flutter
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2

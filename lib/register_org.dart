@@ -6,14 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'otpvarify.dart';
 import 'askregister.dart';
 import 'globals.dart' as globals;
 import 'globals.dart';
 import 'home.dart';
-
-//import 'localization/app_translations.dart';
-//import 'localization/application.dart';
 import 'services/services.dart';
 void main() => runApp(new MyApp());
 
@@ -362,7 +359,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: new ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 children: <Widget>[
-
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
                     child: new Text("Register Your Company",
@@ -370,7 +366,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: appcolor ),
                     ),
                   ),
-
                   new Text("Note: This is not Employee registration form. The Employees should Sign In & not register here",
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize:14.0, color: Colors.orange[900], ),
@@ -530,13 +525,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       _contcode.text =
                                       _myJson[int.parse(newValue)]['countrycode'];
                                       _tempcontry = _myJson[int.parse(newValue)]['id'];
-
-
                                       //   _tempcontry = _myJson[int.parse(newValue)]['id'];
-                                      /* _country = _myJson[int.parse(newValue)]['id'];
-
-
-                                      _contcode.text = _myJson[int.parse(newValue)]['countrycode'];*/
+                                      /*  _country = _myJson[int.parse(newValue)]['id'];
+                                      _contcode.text = _myJson[int.parse(newValue)]['countrycode']; */
                                     });
                                   },
                                   items: _myJson.map((Map map) {
@@ -749,11 +740,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text("Register Company",style: TextStyle(fontSize: 18.0),),
                           onPressed: () async{
 
-
-
-
-
-
                             /*
                             setLocal('Ubitech Solutions','0','0');
                             showDialog(context: context, child:
@@ -779,13 +765,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
                             if(_name.text=='') {
                               // ignore: deprecated_member_use
+                             // FocusScope.of(context).requestFocus(__name);
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
                                 content: new Text("Please enter the Company's name"),
                                 //content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
                               ));
-                              FocusScope.of(context).requestFocus(__name);
+                               return null;
                             }
                             else if(_cname.text=='') {
                               // ignore: deprecated_member_use
@@ -795,16 +782,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter the Contact Person's name"),
                                 //content: new Text(AppTranslations.of(context).text("key_enter_contact_person_name")),
                               ));
-                              FocusScope.of(context).requestFocus(__cname);
+                              //FocusScope.of(context).requestFocus(__cname);
+                              return null;
                             }
-                            /*else if(_email.text=='') {
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter valid email"),
-                              ));
-                              FocusScope.of(context).requestFocus(__email);
-                            }*/
+
                             else if(!(validateEmail(_email.text))) {
                               //print((validateEmail(_email.text)).toString());
 
@@ -815,7 +796,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter the Email ID"),
                                 //content: new Text(AppTranslations.of(context).text("key_please_enter_email")),
                               ));
-                              FocusScope.of(context).requestFocus(__email);
+                             // FocusScope.of(context).requestFocus(__email);
                               return null;
 
                             }
@@ -826,7 +807,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter the Password of at least 6 characters"),
                                 //content: new Text(AppTranslations.of(context).text("key_must_be_at_least_6_characters")),
                               ));
-                              FocusScope.of(context).requestFocus(__pass);
+                             // FocusScope.of(context).requestFocus(__pass);
+                              return null;
                             }
                             else if(_tempcontry=='' ) {
                               showDialog(context: context, child:
@@ -835,7 +817,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please Select a Country."),
                                 //content: new Text(AppTranslations.of(context).text("key_select_country")),
                               ));
-                              FocusScope.of(context).requestFocus(__phone);
+                             // FocusScope.of(context).requestFocus(__phone);
+                              return null;
                             }
                             else if(_phone.text.length<6) {
                               showDialog(context: context, child:
@@ -844,7 +827,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter a valid Phone No."),
                                 //content: new Text(AppTranslations.of(context).text("key_please_enter_valid_phone")),
                               ));
-                              FocusScope.of(context).requestFocus(__phone);
+                             // FocusScope.of(context).requestFocus(__phone);
+                              return null;
                             }
                             else {
                               setState(() {
@@ -859,6 +843,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               String referrerAmt=prefs.getString("referrerAmt")??"0%";
                               String referrenceAmt=prefs.getString("referrenceAmt")??"0%";
                               print("referrer id sent"+referrerId.toString());
+                              print(globals.path+"register_org?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}");
                               var url = globals.path+"register_org";
                               http.post(url, body: {
                                 "org_name": _name.text,
@@ -886,7 +871,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   print(response.body.toString());
                                   res = json.decode(response.body);
                                   if (res['sts'] == 'true') {
-                                    setLocal(res['f_name'],res['id'],res['org_id']);
+                                   // setLocal(res['f_name'],res['id'],res['org_id']);  // comment by sohan
                                     /*setState(() {
                                       phone = _phone.text;
                                       pass = _pass.text;
@@ -907,11 +892,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                     gethome () async{
                                       await new Future.delayed(const Duration(seconds: 1));
-                                      login(_phone.text, _pass.text, context);
+                                     // login(_phone.text, _pass.text, context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Otp()),
+                                      );
                                     }
-                                    gethome ();
-
-
+                                    gethome ();  // comment by sohan
                                     /*  showDialog(context: context,
                                         barrierDismissible: false,
                                         child: new AlertDialog(
