@@ -276,8 +276,6 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                                       .spaceAround,
                                   children: <Widget>[
                                     SizedBox(height: 40.0,),
-
-
                                     Container(
                                         width: MediaQuery
                                             .of(context)
@@ -294,15 +292,7 @@ class _OfflineAttendanceLogs extends State<OfflineAttendanceLogs> with SingleTic
                                               child:InkWell(
                                                 child: Container(
 
-                                                              child:  ClipOval(
-
-
-                                                                  child:Image.memory(base64Decode(snapshot
-                                                                    .data[index]
-                                                                    .PictureBase64),height: 100,
-                                                                    width: 100,
-                                                                    fit: BoxFit.cover,))
-
+                                                              child:  ClipOval(child:Image.memory(base64Decode(snapshot.data[index].PictureBase64),height: 100, width: 100, fit: BoxFit.cover,))
                                                     ),
                                                 onTap: (){
                                                   Navigator.push(

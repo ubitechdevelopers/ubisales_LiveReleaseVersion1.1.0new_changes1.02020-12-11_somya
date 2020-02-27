@@ -833,7 +833,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             else {
                               setState(() {
                                 _isButtonDisabled=true;
-
                               });
                               var prefs=await SharedPreferences.getInstance();
 
@@ -842,9 +841,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
                               String referrerAmt=prefs.getString("referrerAmt")??"0%";
                               String referrenceAmt=prefs.getString("referrenceAmt")??"0%";
+
                               print("referrer id sent"+referrerId.toString());
-                              print(globals.path+"register_org?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}");
-                              var url = globals.path+"register_org";
+                              print(globals.path+"register_orgnew?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}");
+                              var url = globals.path+"register_orgnew";
                               http.post(url, body: {
                                 "org_name": _name.text,
                                 "name": _cname.text,
@@ -859,12 +859,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "ReferralValidTo":ReferralValidTo,
                                 "referrerAmt":referrerAmt,
                                 "referrenceAmt":referrenceAmt,
-
                                 "platform":'android'
                               }) .then((response)async {
                                 if  (response.statusCode == 200) {
                                   var prefs=await SharedPreferences.getInstance();
                                   prefs.setBool("companyFreshlyRegistered",true );
+
                                  // prefs.setBool("firstTimeInMarked",false );
 
                                   print("-----------------> After Registration ---------------->");
@@ -887,8 +887,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     });*/
 
                                     globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
-                                    globals.facebookChannel.invokeMethod("logStartTrialEvent");
-
 
                                     gethome () async{
                                       await new Future.delayed(const Duration(seconds: 1));
@@ -918,10 +916,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                       ],
                                     ));*/
-
-
-
-
 
 
                                   } else if (res['sts'] == 'false1' ||

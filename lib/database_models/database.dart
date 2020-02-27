@@ -31,6 +31,7 @@ class DbHelper{
   }
 
   _onCreate(Database db,int version) async{
+
     await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
         "UserTableId INTEGER,"
         "EmployeeId INTEGER,"
@@ -111,16 +112,22 @@ class DbHelper{
 
         ")");
 
+    await db.execute("CREATE TABLE TempImage (	Id INTEGER PRIMARY KEY,"
+        "EmployeeId INTEGER,"
+        "Action TEXT,"
+        "PictureBase64 TEXT,"
+        "ActionId INTEGER,"
+        "OrganizationId INTEGER,"
+        "Module TEXT"
 
-
-
+        ")");
   }
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
 print("database upgraded");
       final prefs= await SharedPreferences.getInstance();
       prefs.setInt('offline_db_saved',0);
-await db.execute('DROP TABLE IF EXISTS QROffline;');
+      await db.execute('DROP TABLE IF EXISTS QROffline;');
       await db.execute('DROP TABLE IF EXISTS LoginOffline;');
       await db.execute('DROP TABLE IF EXISTS AttendanceOffline;');
       await db.execute('DROP TABLE IF EXISTS VisitsOffline;');
@@ -199,6 +206,15 @@ await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
     'FakeVisitOutTimeStatus INTEGER,'
     'FakeLocationStatusVisitOut INTEGER'
     ")");
+
+    await db.execute("CREATE TABLE TempImage (	Id INTEGER PRIMARY KEY,"
+        "EmployeeId INTEGER,"
+        "Action TEXT,"
+        "PictureBase64 TEXT,"
+        "ActionId INTEGER,"
+        "OrganizationId INTEGER, "
+        "Module TEXT"
+      ")");
 
     }
   }

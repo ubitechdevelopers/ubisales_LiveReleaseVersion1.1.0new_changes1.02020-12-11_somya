@@ -120,8 +120,8 @@ class AttendanceOffline{
 
     }
     return ams;
-
   }
+
   Future<List<Map>> selectOnlyMaps() async{
     DbHelper dbHelper=new DbHelper();
     var dbClient = await dbHelper.db;

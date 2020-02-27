@@ -55,6 +55,7 @@ class _ShrineAppState extends State<ShrineApp> {
       });
     });
     platform.setMethodCallHandler(_handleMethod);
+
   }
   static const platform = const MethodChannel('location.spoofing.check');
   String address="";

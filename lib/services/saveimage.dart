@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:Shrine/database_models/Save_Tempimage.dart';
 import 'package:Shrine/genericCameraClass.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/timeinout.dart';
@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart';
 import 'newservices.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart' as path_provider;
+import 'package:path_provider/path_provider.dart';
 class SaveImage {
   String base64Image;
   String base64Image1;
@@ -149,11 +150,9 @@ class SaveImage {
             return null;
           }
 
-          print("inside save image ckeck image");
+          List<int> imageBytes = await imagei.readAsBytes();
+          String  PictureBase64 = base64.encode(imageBytes);
 
-
-          // sl.startStreaming(5);
-          print("inside save image ckeck image");
           /*
       final tempDir = await getTemporaryDirectory();
       String path = tempDir.path;
@@ -186,7 +185,7 @@ class SaveImage {
             "refid": mk.refid,
             "latit": lat,
             "longi": long,
-            "file": new UploadFileInfo(imagei, "image.png"),
+            //"file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
             "platform":'android'
           });
@@ -203,8 +202,12 @@ class SaveImage {
           /*getTempImageDirectory();*/
           Map MarkAttMap = json.decode(response1.data);
           print(MarkAttMap["status"].toString());
-          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2)
+          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
+
+            TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
+            tempimage.save();
             return true;
+          }
           else
             return false;
         }
@@ -288,9 +291,81 @@ class SaveImage {
 
 
 
+
+
+
+  SendTempimage() async{
+    TempImage imagedata = new TempImage.empty();
+    List<TempImage> img = await imagedata.select();
+    List<Map> jsonList = [];
+    if (img.isNotEmpty) {
+      for (int i = 0; i < img.length; i++) {
+
+        jsonList.add({
+          "Id": img[i].Id,
+          "EmployeeId": img[i].EmployeeId,
+          "Action": img[i].Action, // 0 for time in and 1 for time out
+          "ActionId": img[i].ActionId,
+          "PictureBase64": img[i].PictureBase64,
+          "OrganizationId": img[i].OrganizationId,
+          "Module": img[i].Module,
+
+        });
+      }
+      var jsonList1 = json.encode(jsonList);
+      FormData formData = new FormData.from({"data": jsonList1});
+      Dio dioForSavingOfflineAttendance = new Dio();
+      dioForSavingOfflineAttendance.post(globals.path + "SendTempimage", data: formData).then((responseAfterSendTempimage) async {
+        var response = json.decode(responseAfterSendTempimage.toString());
+        for (int i = 0; i < response.length; i++) {
+          var map = response[i];
+          map.forEach((localDbId, status) {
+            TempImage imagedata = new TempImage.empty();
+            print(status);
+            imagedata.delete(int.parse(localDbId));
+          });
+        }
+      });
+    }
+  }
+
   Future<bool> saveTimeInOutImagePicker(MarkTime mk,context) async {
-   // final dir = Directory.systemTemp;;
-     // print(dir.absolute.path);
+
+ /*  int EmployeeId = 123;
+    String Action = "AttendanceTimein";
+    int ActionId = 12;
+    int OrganizationId = 10;
+    String PictureBase64 = "";
+    imageCache.clear();
+    File imagei = null;
+    imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
+    List<int> imageBytes = await imagei.readAsBytes();
+    PictureBase64 = base64.encode(imageBytes);
+
+    TempImage tempimage = new TempImage(
+      null, EmployeeId,
+      Action,
+      ActionId,
+      PictureBase64,
+      OrganizationId,
+      'Attendance',
+    );
+
+    print(tempimage.save());
+    TempImage imagedata = new TempImage.empty();
+    List<TempImage> img = await imagedata.select();
+    print(img);
+    for (int i = 0; i < img.length; i++) {
+      print(img[i].Id);
+      print(img[i].EmployeeId);
+      print(img[i].Action);
+      print(img[i].ActionId);
+      print(img[i].PictureBase64);
+      print(img[i].OrganizationId);
+      print(img[i].Module);
+    }
+      print("Succesfull saveimage");
+      return false;*/
 
     try{
       File imagei = null;
@@ -303,8 +378,6 @@ class SaveImage {
 
         globals.cameraChannel.invokeMethod("cameraOpened");
         imagei = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0);
-
-
 
         if (imagei != null) {
         //print("---------------actionb   ----->"+mk.act);
@@ -325,21 +398,13 @@ class SaveImage {
                 return null;
           }
 
-          print("inside save image ckeck image");
+
+          List<int> imageBytes = await imagei.readAsBytes();
+          String  PictureBase64 = base64.encode(imageBytes);
 
 
-         // sl.startStreaming(5);
-          print("inside save image ckeck image");
-          /*
-      final tempDir = await getTemporaryDirectory();
-      String path = tempDir.path;
-      int rand = new Math.Random().nextInt(10000);
-      im.Image image1 = im.decodeImage(imagei.readAsBytesSync());
-      imagei.deleteSync();
-      im.Image smallerImage = im.copyResize(image1, 500); // choose the size here, it will maintain aspect ratio
-      File compressedImage = new File('$path/img_$rand.jpg')..writeAsBytesSync(im.encodeJpg(smallerImage, quality: 50));
-    */
-          //// sending this base64image string +to rest api
+
+
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
 
@@ -362,27 +427,31 @@ class SaveImage {
             "refid": mk.refid,
             "latit": lat,
             "longi": long,
-            "file": new UploadFileInfo(imagei, "image.png"),
+           // "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
             "platform":'android'
           });
           print(formData);
-          Response<String> response1 = await dio.post(
-              globals.path + "saveImage", data: formData);
+          print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");
+          Response<String> response1 = await dio.post(globals.path + "saveImage", data: formData);
           
-          
-          
-          print("Response from save image:"+response1.toString());
-          //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
-          //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
-          //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
           imagei.deleteSync();
           imageCache.clear();
           globals.cameraChannel.invokeMethod("cameraClosed");
           /*getTempImageDirectory();*/
           Map MarkAttMap = json.decode(response1.data);
+          print("This is response");
+          print(MarkAttMap);
           print(MarkAttMap["status"].toString());
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2){
+
+            /*** Save temp image in local database statrt here ***/
+
+            TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
+             tempimage.save();
+             
+            /*** Save temp image in local database end here ***/
+
             var prefs=await SharedPreferences.getInstance();
             String currentTime=DateTime.now().toString();
             print("saved time in time"+currentTime);

@@ -26,6 +26,7 @@ import 'home.dart';
 //import 'localization/app_translations_delegate.dart';
 //import 'localization/application.dart';
 import 'login.dart';
+import 'otpvarify.dart';
 import 'register_org.dart';
 
 class AskRegisterationPage extends StatefulWidget {
@@ -154,7 +155,28 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                             ),
                           ],
                         ),
-
+                        SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            ButtonTheme(
+                              minWidth: MediaQuery.of(context).size.width*0.8,
+                              height: 45.0,
+                              child:FlatButton(
+                                shape: Border.all(color: Colors.orangeAccent),
+                                child: Text("Already registered? Verify mail",style: new TextStyle(color: Colors.orangeAccent,fontSize: 14.6),),
+                                color: Colors.white,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Otp()),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.0),
                       ],
                     ),
                   ),

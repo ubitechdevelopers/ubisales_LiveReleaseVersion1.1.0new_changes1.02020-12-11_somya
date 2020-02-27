@@ -565,8 +565,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       List<Map> jsonList = [];
       if (qrs.isNotEmpty) {
         for (int i = 0; i < qrs.length; i++) {
-          var address =
-              await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
+          var address = await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
           print(address);
           jsonList.add({
             "Id": qrs[i].Id,
@@ -1361,9 +1360,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
     }
 
-    (mail_varified == '0' && alertdialogcount == 0 && admin_sts == '1')
+    // mail verify code .... comment by sohan
+   /* (mail_varified == '0' && alertdialogcount == 0 && admin_sts == '1')
         ? Future.delayed(Duration.zero, () => _showAlert(context))
-        : "";
+        : "";*/
 
     return (response == 0 ||
             userpwd != newpwd ||
@@ -2378,8 +2378,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         globals.assign_lat.toString(),
         assign_long.toString(),
         FakeLocationStatus);
-    /* mk1 = mk;*/
-    print("inside saveImage Home");
+
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -2415,6 +2414,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
 
       if (issave) {
+
+        // Sync image
+        saveImage.SendTempimage();
+
 
         if(act1=='TimeIn'){
           print("This is time in block " + act1);

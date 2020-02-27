@@ -277,8 +277,7 @@ getWidgets(context){
                                                     shape: BoxShape.circle,
                                                     image: new DecorationImage(
                                                         fit: BoxFit.fill,
-                                                        image: new NetworkImage(
-                                                            snapshot.data[index].EntryImage)
+                                                        image: new NetworkImage(snapshot.data[index].EntryImage)
                                                     )
                                                 )),
                                               onTap: (){
@@ -291,8 +290,8 @@ getWidgets(context){
 
                                         ],
                                       )
-
                                   ),
+
                                   Container(
                                       width: MediaQuery.of(context).size.width * 0.22,
                                       child: Column(
@@ -315,8 +314,7 @@ getWidgets(context){
                                                         shape: BoxShape.circle,
                                                         image: new DecorationImage(
                                                             fit: BoxFit.fill,
-                                                            image: new NetworkImage(
-                                                                snapshot.data[index].ExitImage)
+                                                            image: new NetworkImage(snapshot.data[index].ExitImage)
                                                         )
                                                     )),
                                               onTap: (){

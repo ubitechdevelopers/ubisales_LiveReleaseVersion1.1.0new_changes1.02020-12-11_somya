@@ -4,6 +4,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'globals.dart';
 
+
+
+import 'dart:convert';
+
+import 'package:Shrine/model/user.dart';
+import 'package:Shrine/services/checklogin.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'otpvarify.dart';
+import 'askregister.dart';
+import 'globals.dart' as globals;
+import 'globals.dart';
+import 'home.dart';
+import 'services/services.dart';
 class Otp extends StatefulWidget {
 
   @override
@@ -12,10 +28,13 @@ class Otp extends StatefulWidget {
 
 class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   // Constants
-  final int time = 86400;
+  final int time = 10;
   AnimationController _controller;
-
+  Map<String, dynamic>res;
+  SharedPreferences prefs;
   // Variables
+  bool loader = false;
+  bool otploader = false;
   Size _screenSize;
   int _currentDigit;
   int _firstDigit;
@@ -57,7 +76,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   // Return "Verification Code" label
   get _getVerificationCodeLabel {
     return new Text(
-      "Verification Code",
+      "Code Verification",
       textAlign: TextAlign.center,
       style: new TextStyle(
           fontSize: 20.0, color: appcolor, fontWeight: FontWeight.bold),
@@ -70,7 +89,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
       "Please enter the OTP sent on your \nregistered Email ID.",
       textAlign: TextAlign.center,
       style: new TextStyle(
-          fontSize: 15.0, color: Colors.orange, fontWeight: FontWeight.w600),
+          fontSize: 16.0, color: Colors.orange, fontWeight: FontWeight.w600),
     );
   }
 
@@ -100,19 +119,21 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           width: 5.0,
         ),
         _getEmailLabel,
+        (otploader) ? Center(child :   SizedBox(
+          child: CircularProgressIndicator(), height: 30.0, width: 30.0,)) : Center(child :   SizedBox(height: 30.0, width: 30.0,)),
         _getInputField,
-        _hideResendButton ? _getTimerText : _getResendButton,
+       // _hideResendButton ? _getTimerText : _getResendButton,
+        _getTimerText,
         _getOtpKeyboard
       ],
     );
   }
 
+
   // Returns "Timer" label
   get _getTimerText {
     return Container(
       height: 32,
-      child: new Offstage(
-        offstage: !_hideResendButton,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -120,10 +141,10 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             new SizedBox(
               width: 5.0,
             ),
-            OtpTimer(_controller, 15.0, Colors.grey)
+            Text("OTP is valid for 24 hours"),
           ],
         ),
-      ),
+
     );
   }
 
@@ -264,6 +285,40 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         ));
   }
 
+
+  login(var username,var userpassword, BuildContext context) async{
+    var user = User(username,userpassword);
+    Login dologin = Login();
+    setState(() {
+      loader = true;
+    });
+    var islogin = await dologin.checkLogin(user);
+    print("islogin  " +islogin);
+    if(islogin=="success"){
+      /*Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );*/
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,
+      );
+    }else if(islogin=="failure"){
+      setState(() {
+        loader = false;
+      });
+      Scaffold.of(context)
+          .showSnackBar(
+          SnackBar(content: Text("Invalid login credentials")));
+    }else{
+      setState(() {
+        loader = false;
+      });
+      Scaffold.of(context)
+          .showSnackBar(
+          SnackBar(content: Text("Poor network connection.")));
+    }
+  }
   // Overridden methods
   @override
   void initState() {
@@ -297,7 +352,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("Verification Code", style: new TextStyle(fontSize: 20.0)),
+            new Text("Code Verification", style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
@@ -305,7 +360,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         backgroundColor: appcolor,
       ),
       //backgroundColor: Colors.white,
-      body: new Container(
+      body: loader ? runloader():new Container(
         width: _screenSize.width,
 //        padding: new EdgeInsets.only(bottom: 16.0),
         child: _getInputPart,
@@ -406,9 +461,90 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             _fifththDigit.toString()+
             _sixthDigit.toString();
         print(otp);
+        varifyotp(otp);
         // Verify your otp by here. API call
+
       }
     });
+  }
+
+  varifyotp(otp) async{
+    var prefs=await SharedPreferences.getInstance();
+    print(globals.path+"varifyotp?otp=$otp");
+    var url = globals.path+"varifyotp";
+    setState(() {
+      otploader = true;
+    });
+    http.post(url, body: {
+      "otp": otp
+    }) .then((response)async {
+     // print(response);
+
+      print(response.statusCode);
+      if  (response.statusCode == 200) {
+        var prefs=await SharedPreferences.getInstance();
+        //  prefs.setBool("companyFreshlyRegistered",true );
+        res = json.decode(response.body);
+        print("This si a return value");
+        print(res);
+        if (res['sts'] == 'true') {
+          globals.facebookChannel.invokeMethod("logStartTrialEvent");
+          gethome () async{
+            await new Future.delayed(const Duration(seconds: 1));
+            login(res['phone'], res['pass'], context);
+          }
+          gethome ();
+
+        }
+        else if(res['sts'] == 'timeout'){
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Your OTP has expired"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+        else{
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Invalid OTP, Please try again"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+
+      }
+    }).catchError((onError) {
+      setState(() {
+        setState(() {
+          otploader = false;
+        });
+        showDialog(context: context, child:
+        new AlertDialog(
+          // title: new Text("ubiAttendance"),
+          content: new Text("Unable to Connect server."),
+          //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+        ));
+      });
+    });
+  }
+  runloader(){
+    return new Container(
+      child: Center(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Image.asset(
+                  'assets/spinner.gif', height: 50.0, width: 50.0),
+            ]),
+      ),
+    );
   }
 
   Future<Null> _startCountdown() async {
