@@ -203,7 +203,7 @@ class SaveImage {
           Map MarkAttMap = json.decode(response1.data);
           print(MarkAttMap["status"].toString());
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
-
+            globals.PictureBase64Att = PictureBase64;
             TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
             tempimage.save();
             return true;
@@ -366,7 +366,6 @@ class SaveImage {
     }
       print("Succesfull saveimage");
       return false;*/
-
     try{
       File imagei = null;
       var isNextDayAWorkingDay=0;
@@ -401,8 +400,6 @@ class SaveImage {
 
           List<int> imageBytes = await imagei.readAsBytes();
           String  PictureBase64 = base64.encode(imageBytes);
-
-
 
 
           Dio dio = new Dio();
@@ -446,7 +443,7 @@ class SaveImage {
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2){
 
             /*** Save temp image in local database statrt here ***/
-
+            globals.PictureBase64Att = PictureBase64;
             TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
              tempimage.save();
              

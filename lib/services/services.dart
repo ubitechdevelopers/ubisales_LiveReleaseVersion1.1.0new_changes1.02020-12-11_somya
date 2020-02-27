@@ -825,7 +825,16 @@ Future<List<Attn>> getEmpHistoryOf30(listType, emp) async {
   return userList;
 }
 
-List<Attn> createListEmpHistoryOf30(List data) {
+navigateToPaymentsPage()async{
+  var url="https://buy.ubiattendance.com";
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    //print( 'Could not launch $url');
+  }
+}
+
+List<Attn> createListEmpHistoryOf30(List data){
   // print('Create list called/*******************');
   List<Attn> list = new List();
   for (int i = 0; i < data.length; i++) {

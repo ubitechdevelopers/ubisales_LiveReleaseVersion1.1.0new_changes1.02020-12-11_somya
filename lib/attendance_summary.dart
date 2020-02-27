@@ -40,7 +40,8 @@ class _MyApp extends State<MyApp> {
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
-
+    print('imagestring');
+    print( globals.PictureBase64Att);
     setState(() {
       fname = prefs.getString('fname') ?? '';
       lname = prefs.getString('lname') ?? '';
@@ -188,7 +189,6 @@ getWidgets(context){
         ),
         Divider(height: 1.5,),
         SizedBox(height: 5.0,),
-
         Container(
             height: MediaQuery.of(context).size.height*0.60,
             child:
@@ -203,8 +203,6 @@ getWidgets(context){
                       itemBuilder: (context, index) {
                      //   double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
                      //   double f_width = MediaQuery.of(context).size.width*1; // screen's 100%
-
-
                         return new Column(
                             children: <Widget>[
                               Row(
@@ -268,7 +266,23 @@ getWidgets(context){
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
-                                          Container(
+
+                                          (index == 0 && snapshot.data[index].TimeIn.toString().trim() != '-' && snapshot.data[index].TimeOut.toString().trim() == '-'  &&  globals.PictureBase64Att != "")?
+                                              Container(
+                                            width: 62.0,
+                                            height: 62.0,
+                                            child:InkWell(
+                                              child: Container(
+                                                  child:  ClipOval(child:Image.memory(base64Decode(globals.PictureBase64Att),height: 100, width: 100, fit: BoxFit.cover,))
+                                              ),
+                                              onTap: (){
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => ImageView.fromImage((globals.PictureBase64Att),org_name)),
+                                                );
+                                              },
+                                            ),
+                                          ): Container(
                                             width: 62.0,
                                             height: 62.0,
                                             child:InkWell(
@@ -305,7 +319,22 @@ getWidgets(context){
                                           if(snapshot.data[index].timeindate.toString() != snapshot.data[index].timeoutdate.toString())
                                             Text(" +1 \n Day",style: TextStyle(fontSize: 9.0,color: Colors.teal,fontWeight: FontWeight.bold),),
                                         ]),
+                                          (index == 0 && snapshot.data[index].TimeOut.toString().trim() != '-'  &&  globals.PictureBase64Att != "")?
                                           Container(
+                                            width: 62.0,
+                                            height: 62.0,
+                                            child:InkWell(
+                                              child: Container(
+                                                  child:  ClipOval(child:Image.memory(base64Decode(globals.PictureBase64Att),height: 100, width: 100, fit: BoxFit.cover,))
+                                              ),
+                                              onTap: (){
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => ImageView.fromImage((globals.PictureBase64Att),org_name)),
+                                                );
+                                              },
+                                            ),
+                                          ):Container(
                                             width: 62.0,
                                             height: 62.0,
                                             child:InkWell(

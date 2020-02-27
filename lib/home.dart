@@ -1010,99 +1010,182 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       //print('Could not launch $url');
     }
   }
+  void showReferralReminder() async{
+
+    var prefs=await SharedPreferences.getInstance();
+
+    String referrerId=prefs.getString("referrerId")??"0";
+
+    String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
+    var currDate=DateTime.now();
+
+    if(referrerId!='0'&&ReferralValidTo!='0000-00-00'){
+      if(DateTime.parse("ReferralValidTo").day==(currDate.day+2))
+      {
+        EasyDialog(
+            title: Text(
+              "Reminder",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            description: Text(
+              "Get 10% off your first purchase of ubiAttendance. Hurry! Offer ends in 2 days"
+                  .toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            height: 220,
+            contentList: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "GO!",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      navigateToPaymentsPage();
+                    },
+                    color: Colors.green,
+                  ),
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                ],
+              )
+            ]).show(context);
+      }
+    }
+  }
+
 
   showReferralPopup(BuildContext context, String cDateS) async {
-    int dateToSend = 0;
-    var prefs = await SharedPreferences.getInstance();
-    var buyStatus = int.parse(prefs.get("buysts") ?? "123455");
-    var createdDate = DateTime.parse("2019-12-26");
 
-    var startDate =
-        DateTime.parse(prefs.get("ReferralValidFrom") ?? "2019-12-26");
-    var endDate = DateTime.parse(prefs.get("ReferralValidTo") ?? "2019-12-26");
 
-    var currDate = DateTime.now();
-    dateShowed = prefs.getString('date') ?? "2010-10-10";
+    if(globals.currentOrgStatus=="TrialOrg"){
 
-    print("datetime.parse" + dateShowed);
-    // print("hello"+dateShowed);
-    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
-    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
-    ReferrerNotificationList[0] = {
-      "title": "Win Win Deal",
-      "description":
-          "Refer our App and get ${referrerAmt} off on your next payment"
-    };
-    ReferrerNotificationList[1] = {
-      "title": "Refer and Earn",
-      "description":
-          "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay"
-    };
-    ReferrerNotificationList[2] = {
-      "title": "Discounts that count",
-      "description":
-          "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off"
-    };
-    ReferrerNotificationList[3] = {
-      "title": "${referrerAmt} Off every Payment",
-      "description":
-          "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays."
-    };
-    ReferrerNotificationList[4] = {
-      "title": "Discounts to smile about",
-      "description":
-          "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase"
-    };
+      showTrialReferralPopup(context,cDateS);
 
-    var referrerName = "";
-    var validity = prefs.getString("ReferralValidity");
-
-    var rng = new Random();
-    var referrerRandom = rng.nextInt(4);
-    double height = 220;
-    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
-    if (referrerRandom == 0) height = 170;
-
-    print("----> currdate" + currDate.toString());
-
-    if (createdDate == '') {
-      dateToSend = 12;
     }
-    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
 
-    //print("difference dates"+currDate.difference(cDate).inDays.toString());
-    //print("created date"+createdDate);
+    else
+    if(globals.currentOrgStatus=="PremiumCustomizedOrg")
+    {
+      int dateToSend = 0;
 
-    // } // for other organizations i.e pop up for every created date day of the month
-    // else{
-    dateToSend = createdDate.day;
-    print('startDate');
-    print(startDate);
+
+      var prefs = await SharedPreferences.getInstance();
+      var buyStatus = int.parse(prefs.get("buysts") ?? "123455");
+      var createdDate = DateTime.parse("2019-12-26");
+
+      //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+
+      var startDate =
+      DateTime.parse(prefs.get("ReferralValidFrom") ?? "2019-12-26");
+      var endDate = DateTime.parse(prefs.get("ReferralValidTo") ?? "2019-12-26");
+
+/*
+        var startDate =
+        DateTime.parse( "2020-02-22");
+        var endDate = DateTime.parse("2020-02-29");
+*/
+
+
+      var currDate = DateTime.now();
+      dateShowed = prefs.getString('date') ?? "2010-10-10";
+
+      var referralValidForDays=endDate.difference(currDate).inDays;
+
+
+      print("datetime.parse" + dateShowed);
+      // print("hello"+dateShowed);
+      var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+      var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+      ReferrerNotificationList[0] = {
+        "title": "Win Win Deal",
+        "description":
+        "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[1] = {
+        "title": "Refer and Earn",
+        "description":
+        "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay.. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[2] = {
+        "title": "Discounts that count",
+        "description":
+        "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[3] = {
+        "title": "${referrerAmt} Off every Payment",
+        "description":
+        "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[4] = {
+        "title": "Discounts to smile about",
+        "description":
+        "Give managers the gift of ease in recording attendance and get ${referrerAmt} off on your next purchase. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+
+      var referrerName = "";
+      var validity = prefs.getString("ReferralValidity");
+
+      var rng = new Random();
+      var referrerRandom = rng.nextInt(4);
+      double height = 220;
+      if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+      if (referrerRandom == 0) height = 170;
+
+      print("----> currdate" + currDate.toString());
+
+      if (createdDate == '') {
+        dateToSend = 12;
+      }
+      // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+      //print("difference dates"+currDate.difference(cDate).inDays.toString());
+      //print("created date"+createdDate);
+
+      // } // for other organizations i.e pop up for every created date day of the month
+      // else{
+      dateToSend = createdDate.day;
+      print('startDate');
+      print(startDate);
 //      print(currDate);
 //      print(prefs.getString('date'));
-    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
-    if (currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
-        (currDate.day == startDate.day &&
-            currDate.month == startDate.month &&
-            currDate.year == startDate.year) ||
-        (currDate.day == endDate.day &&
-            currDate.month == endDate.month &&
-            currDate.year == endDate.year)) {
-      print("inside referral check");
-      //        prefs.setString('date',currDate.toString());
-      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
-      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+      //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+      if (currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
+          (currDate.day == startDate.day &&
+              currDate.month == startDate.month &&
+              currDate.year == startDate.year) ||
+          (currDate.day == endDate.day-2 &&
+              currDate.month == endDate.month &&
+              currDate.year == endDate.year)) {
+        print("inside referral check");
+        //        prefs.setString('date',currDate.toString());
+        // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+        //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
 //        prefs.setString('date', newDate.toString());
 //        print("hello");
 //        print(prefs.getString('date'));
 
-      print(currDate);
+        print(currDate);
 
-      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
-      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+        //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+        //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
 
-      if (((DateTime.parse(dateShowed).day != currDate.day) &&
-          ((currDate.difference(startDate).inDays).abs() % 3 == 0))) {
+
         //var newDate = currDate.add(new Duration(days: 3));
         dateShowed = currDate.toString();
         prefs.setString('date', dateShowed);
@@ -1151,10 +1234,294 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )
             ]).show(context);
       }
+
+
     }
+    else{
+      showOtherReferralPopup(context,cDateS);
+    }
+
 
     // }
   }
+
+  void showTrialReferralPopup(BuildContext context, String cDateS) async {
+    int dateToSend = 0;
+    var prefs = await SharedPreferences.getInstance();
+
+    var createdDate = DateTime.parse(cDateS);
+
+    //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+    var currDate = DateTime.now();
+    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
+
+    print("datetime.parse" + dateShowed);
+    // print("hello"+dateShowed);
+    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+    ReferrerNotificationList[0] = {
+      "title": "Win Win Deal",
+      "description":
+      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[1] = {
+      "title": "Refer and Earn",
+      "description":
+      "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[2] = {
+      "title": "Discounts that count",
+      "description":
+      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[3] = {
+      "title": "${referrerAmt} Off every Payment",
+      "description":
+      "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[4] = {
+      "title": "Discounts to smile about",
+      "description":
+      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
+    };
+
+    var referrerName = "";
+    var validity = prefs.getString("ReferralValidity");
+
+    var rng = new Random();
+    var referrerRandom = rng.nextInt(4);
+    double height = 220;
+    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+    if (referrerRandom == 0) height = 170;
+
+    print("----> currdate" + currDate.toString());
+
+    if (createdDate == '') {
+      dateToSend = 12;
+    }
+    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+    //print("difference dates"+currDate.difference(cDate).inDays.toString());
+    //print("created date"+createdDate);
+
+    // } // for other organizations i.e pop up for every created date day of the month
+    // else{
+    dateToSend = createdDate.day;
+    print('startDate');
+
+//      print(currDate);
+//      print(prefs.getString('date'));
+    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+    if (currDate.day!=DateTime.parse(dateShowed).day&&
+        (currDate.day == (createdDate.day+7) &&
+            currDate.month == createdDate.month &&
+            currDate.year == createdDate.year) ) {
+      print(">>>--- inside trial popup condition check");
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.day+10);
+      //        prefs.setString('date',currDate.toString());
+      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+
+      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+
+      dateShowed = currDate.toString();
+      prefs.setString('TrailReferralShownDate', dateShowed);
+      prefs.setString("ReferralValidFrom", cDateS);
+      prefs.setString("ReferralValidTo", DateFormat("yyyy-MM-dd").format(nextValidity));
+
+      print("hello" + currDate.toString());
+
+      EasyDialog(
+          title: Text(
+            ReferrerNotificationList[referrerRandom]['title'].toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          description: Text(
+            ReferrerNotificationList[referrerRandom]['description']
+                .toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          height: height,
+          contentList: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 40,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "GO!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    generateAndShareReferralLink();
+                  },
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 10,
+                  height: 10,
+                ),
+              ],
+            )
+          ]).show(context);
+    }
+
+  }
+
+  void showOtherReferralPopup(BuildContext context, String cDateS) async{
+    int dateToSend = 0;
+    var prefs = await SharedPreferences.getInstance();
+
+    var createdDate = DateTime.parse(cDateS);
+
+    //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+
+
+
+    var currDate = DateTime.now();
+    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
+
+    print("datetime.parse" + dateShowed);
+    // print("hello"+dateShowed);
+    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+    ReferrerNotificationList[0] = {
+      "title": "Win Win Deal",
+      "description":
+      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[1] = {
+      "title": "Refer and Earn",
+      "description":
+      "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[2] = {
+      "title": "Discounts that count",
+      "description":
+      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[3] = {
+      "title": "${referrerAmt} Off every Payment",
+      "description":
+      "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[4] = {
+      "title": "Discounts to smile about",
+      "description":
+      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
+    };
+
+    var referrerName = "";
+    var validity = prefs.getString("ReferralValidity");
+
+    var rng = new Random();
+    var referrerRandom = rng.nextInt(4);
+    double height = 220;
+    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+    if (referrerRandom == 0) height = 170;
+
+    print("----> currdate" + currDate.toString());
+
+    if (createdDate == '') {
+      dateToSend = 12;
+    }
+    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+    //print("difference dates"+currDate.difference(cDate).inDays.toString());
+    //print("created date"+createdDate);
+
+    // } // for other organizations i.e pop up for every created date day of the month
+    // else{
+    dateToSend = createdDate.day;
+    print('startDate');
+
+//      print(currDate);
+//      print(prefs.getString('date'));
+    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+    if (currDate.day!=DateTime.parse(dateShowed).day&&
+        (currDate.day == (createdDate.day) ) ) {
+      print("inside refer");
+
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.day+10);
+      //        prefs.setString('date',currDate.toString());
+      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+
+      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+
+      dateShowed = currDate.toString();
+      prefs.setString('TrailReferralShownDate', dateShowed);
+      prefs.setString("ReferralValidFrom", DateFormat("yyyy-MM-dd").format(currDate));
+      prefs.setString("ReferralValidTo", DateFormat("yyyy-MM-dd").format(nextValidity));
+
+      print("hello" + currDate.toString());
+
+      EasyDialog(
+          title: Text(
+            ReferrerNotificationList[referrerRandom]['title'].toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          description: Text(
+            ReferrerNotificationList[referrerRandom]['description']
+                .toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          height: height,
+          contentList: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 40,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "GO!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    generateAndShareReferralLink();
+                  },
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 10,
+                  height: 10,
+                ),
+              ],
+            )
+          ]).show(context);
+    }
+
+
+  }
+
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
@@ -1250,7 +1617,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             showReferralPopup(context, createdDate);
             referralNotificationShown = true;
           }
-
+          showReferralReminder();
           print("Profile Image" + profile);
           profileimage = new NetworkImage(profile);
           setaddress();
@@ -2414,7 +2781,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
 
       if (issave) {
-
         // Sync image
         saveImage.SendTempimage();
 

@@ -507,6 +507,17 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
           ));
         }
+        else if(res['sts'] == 'otpused')
+          {
+            setState(() {
+              otploader = false;
+            });
+            showDialog(context: context, child:
+            new AlertDialog(
+              // title: new Text("ubiAttendance"),
+              content: new Text("OTP already uswed, Please register again"),
+            ));
+          }
         else{
           setState(() {
             otploader = false;
