@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="true" />
+        <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
@@ -10,6 +13,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$USER_HOME$/flutter/.pub-cache/git/flutter_native_image-1c12fa71481295f01191f8ce9e4352cae2286b56/android" />
+            <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/admob_flutter-0.3.4/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.4+7/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/barcode_scan-1.0.0/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.5.7+1/android" />
@@ -19,6 +23,7 @@
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.0+9/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_dynamic_links-0.5.0+6/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-5.1.6/android" />
+            <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_exif_rotation-0.2.7/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_image_compress-0.6.3/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-0.8.4+3/android" />
             <option value="$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/geocoder-0.2.1/android" />
@@ -41,7 +46,6 @@
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>

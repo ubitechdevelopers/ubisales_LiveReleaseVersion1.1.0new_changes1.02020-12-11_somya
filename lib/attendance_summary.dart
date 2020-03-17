@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:Shrine/services/services.dart';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +24,7 @@ class MyApp extends StatefulWidget {
   _MyApp createState() => _MyApp();
 }
 String org_name="";
+AdmobBannerSize bannerSize;
 class _MyApp extends State<MyApp> {
   String fname="";
   String lname="";
@@ -33,6 +36,7 @@ class _MyApp extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    bannerSize = AdmobBannerSize.FULL_BANNER;
     initPlatformState();
   }
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -190,7 +194,7 @@ getWidgets(context){
         Divider(height: 1.5,),
         SizedBox(height: 5.0,),
         Container(
-            height: MediaQuery.of(context).size.height*0.60,
+            height: globals.currentOrgStatus=="TrialOrg"?MediaQuery.of(context).size.height*0.53:MediaQuery.of(context).size.height*0.60,
             child:
             FutureBuilder<List<User>>(
               future: getSummary(),
@@ -375,8 +379,29 @@ getWidgets(context){
               },
             )
         ),
-      ]
+  if(globals.currentOrgStatus=="TrialOrg" )
+  Container(
+  margin: EdgeInsets.only(bottom: 0.0),
+  child: AdmobBanner(
+  adUnitId: getBannerAdUnitId(),
+  adSize: bannerSize,
+  listener:
+  (AdmobAdEvent event, Map<String, dynamic> args) {
+  //handleEvent(event, args, 'Banner');
+  },
+  ),
+  )]
   );
+}
+
+
+String getBannerAdUnitId() {
+  if (Platform.isIOS) {
+    return 'ca-app-pub-3940256099942544/2934735716';
+  } else if (Platform.isAndroid) {
+    return 'ca-app-pub-3940256099942544/6300978111';
+  }
+  return null;
 }
 Future<List<User>> getSummary() async {
   final prefs = await SharedPreferences.getInstance();

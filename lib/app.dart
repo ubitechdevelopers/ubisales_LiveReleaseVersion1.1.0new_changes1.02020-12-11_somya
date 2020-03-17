@@ -37,7 +37,7 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='5.2.1',new_ver='5.2.1';
+  String cur_ver='5.2.4',new_ver='5.2.4';
   String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override
@@ -55,7 +55,6 @@ class _ShrineAppState extends State<ShrineApp> {
       });
     });
     platform.setMethodCallHandler(_handleMethod);
-
   }
   static const platform = const MethodChannel('location.spoofing.check');
   String address="";
@@ -75,7 +74,6 @@ class _ShrineAppState extends State<ShrineApp> {
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
         print(call.arguments["mocked"].toString());
-
         globalstreamlocationaddr=address;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
@@ -85,8 +83,6 @@ class _ShrineAppState extends State<ShrineApp> {
         return new Future.value("");
     }
   }
-
-
   getShared() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {

@@ -3,6 +3,7 @@
     <CLASSES>
       <root url="file://$USER_HOME$/flutter/.pub-cache/git/dart_config-a7ed88a4793e094a4d5d5c2d88a89e55510accde/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/git/flutter_native_image-1c12fa71481295f01191f8ce9e4352cae2286b56/lib" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/admob_flutter-0.3.4/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/android_intent-0.3.4+7/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/archive-2.0.13/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/args-1.5.2/lib" />
@@ -32,6 +33,7 @@
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.0+9/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_dynamic_links-0.5.0+6/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-5.1.6/lib" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_exif_rotation-0.2.7/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_image_compress-0.6.3/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_launcher_icons-0.6.1/lib" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-0.8.4+3/lib" />

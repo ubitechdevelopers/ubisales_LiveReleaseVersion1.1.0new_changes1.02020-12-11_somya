@@ -352,7 +352,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("Code Verification", style: new TextStyle(fontSize: 20.0)),
+            new Text("Email Verification", style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
@@ -515,7 +515,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             showDialog(context: context, child:
             new AlertDialog(
               // title: new Text("ubiAttendance"),
-              content: new Text("OTP already uswed, Please register again"),
+              content: new Text("OTP already used, Please register again"),
             ));
           }
         else{

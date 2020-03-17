@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
@@ -21,7 +20,6 @@ import 'package:dio/dio.dart';
 import 'package:easy_dialog/easy_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -29,7 +27,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -764,6 +762,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   syncOfflineData() async {
     int serverAvailable = await checkConnectionToServer();
     if (serverAvailable == 1) {
+
+     /*  sync only  image code  */
+      SaveImage saveImage = new SaveImage();
+      saveImage.SendTempimage(context , false);
+
       /*****************************For Attendances***********************************************/
       await syncOfflineQRData();
 
@@ -1165,13 +1168,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 //      print(currDate);
 //      print(prefs.getString('date'));
       //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
-      if (currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
-          (currDate.day == startDate.day &&
-              currDate.month == startDate.month &&
-              currDate.year == startDate.year) ||
-          (currDate.day == endDate.day-2 &&
+      if (//currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
+      (currDate.day == startDate.day &&
+          currDate.month == startDate.month &&
+          currDate.year == startDate.year) ||
+          (currDate.day == endDate.subtract(new Duration(days: 2)).day &&
               currDate.month == endDate.month &&
               currDate.year == endDate.year)) {
+
         print("inside referral check");
         //        prefs.setString('date',currDate.toString());
         // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
@@ -1179,18 +1183,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 //        prefs.setString('date', newDate.toString());
 //        print("hello");
 //        print(prefs.getString('date'));
-
         print(currDate);
-
         //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
         //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
-
-
         //var newDate = currDate.add(new Duration(days: 3));
         dateShowed = currDate.toString();
         prefs.setString('date', dateShowed);
         print("hello" + currDate.toString());
-
         EasyDialog(
             title: Text(
               ReferrerNotificationList[referrerRandom]['title'].toString(),
@@ -1234,16 +1233,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )
             ]).show(context);
       }
-
-
     }
     else{
       showOtherReferralPopup(context,cDateS);
     }
-
-
     // }
   }
+
 
   void showTrialReferralPopup(BuildContext context, String cDateS) async {
     int dateToSend = 0;
@@ -1314,11 +1310,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 //      print(prefs.getString('date'));
     //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
     if (currDate.day!=DateTime.parse(dateShowed).day&&
-        (currDate.day == (createdDate.day+7) &&
+        (currDate.day == (createdDate.add(Duration(days: 7)).day) &&
             currDate.month == createdDate.month &&
             currDate.year == createdDate.year) ) {
       print(">>>--- inside trial popup condition check");
-      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.day+10);
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
       //        prefs.setString('date',currDate.toString());
       // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
       //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
@@ -1457,7 +1453,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         (currDate.day == (createdDate.day) ) ) {
       print("inside refer");
 
-      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.day+10);
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
       //        prefs.setString('date',currDate.toString());
       // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
       //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
@@ -1521,6 +1517,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
 
   }
+
 
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -1839,6 +1836,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           //key: _keyBlue,
                           backgroundColor: buttoncolor,
                           onPressed: () {
+                          //sendNotificationtouser();
+                           // return false;
+
                             print('hello');
                             print(glow);
                             _getPositions();
@@ -2713,6 +2713,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+
+
   saveImage() async {
     timeWhenButtonPressed = DateTime.now();
     //  sl.startStreaming(5);
@@ -2755,8 +2757,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );*/
       SaveImage saveImage = new SaveImage();
       bool issave = false;
-
-
      var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
           prefs.getBool("showAppInbuiltCamera") ?? false;
@@ -2782,9 +2782,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
       if (issave) {
         // Sync image
-        saveImage.SendTempimage();
-
-
+        saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
           print("This is time in block " + act1);
           var prefs = await SharedPreferences.getInstance();
@@ -3060,7 +3058,7 @@ var FakeLocationStatus=0;
     }
   }
 
-  void _showAlert(BuildContext context) {
+ /* void _showAlert(BuildContext context) {
     globalalertcount = 1;
     if (mounted)
       setState(() {
@@ -3108,7 +3106,7 @@ var FakeLocationStatus=0;
                         ),
                       ])
                 ]))));
-  }
+  }*/
 
   //////////////////////////////////////////////////////////////////
 

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' show cos, sqrt, asin;
 import 'dart:math' show Random, asin, cos, sqrt;
-
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/globals.dart';
 import 'package:Shrine/model/model.dart';
@@ -24,9 +23,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../home.dart';
 import '../today_attendance_report.dart';
+
 
 class Services {}
 
@@ -137,6 +136,36 @@ Future<Map<String, dynamic>> sendPushNotification(String title,String nBody,Stri
 }
 
 
+sendNotificationtouser ()async
+{
+  var prefs=await SharedPreferences.getInstance();
+  var empId = "4904";
+  var phoneno="7440519273";
+  var password= "123456";
+
+  print('https://ubiattendance.com/'+empId+"/"+phoneno+"/"+password);
+
+  final DynamicLinkParameters parameters = DynamicLinkParameters(
+    uriPrefix: 'https://ubiattendance.page.link',
+    link: Uri.parse('https://ubiattendance.com/'+empId+"/"+phoneno+"/"+password),
+    androidParameters: AndroidParameters(
+      packageName: 'org.ubitech.attendance',
+      minimumVersion: 50009,
+    ),
+  );
+
+  //final Uri dynamicUrl = await parameters.buildUrl();
+  final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+  final Uri shortUrl = shortDynamicLink.shortUrl;
+  print("short URL"+shortUrl.toString());
+  globals.referralLink=shortUrl.toString();
+ var sms="Try ubiAttendance and get  off on your purchase amount";
+  Share.share(sms+"\n"+shortUrl.toString());
+}
+
+
+
+
 generateAndShareReferralLink()async{
   List ReferrerenceMessagesList=new List(7);
   var prefs=await SharedPreferences.getInstance();
@@ -157,7 +186,6 @@ generateAndShareReferralLink()async{
       packageName: 'org.ubitech.attendance',
       minimumVersion: 50009,
     ),
-
   );
 
   //final Uri dynamicUrl = await parameters.buildUrl();
@@ -899,6 +927,7 @@ List<Attn> createListEmpHistoryOf30(List data){
 Future<List<TimeOff>> getTimeOffSummary() async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
+  print(globals.path + 'fetchTimeOffList?uid=$empid');
   final response = await http.get(globals.path + 'fetchTimeOffList?uid=$empid');
   // print(response.body);
 //  print('--------------------getTimeOffList Called-----------------------');

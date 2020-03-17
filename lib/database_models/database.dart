@@ -25,13 +25,13 @@ class DbHelper{
     String path =
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
-    var db = await openDatabase(path, version: 25, onCreate: _onCreate,onUpgrade: _onUpgrade);
+    var db = await openDatabase(path, version: 31, onCreate: _onCreate,onUpgrade: _onUpgrade);
     return db;
     //}
   }
 
   _onCreate(Database db,int version) async{
-
+      print("oncreate called");
     await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
         "UserTableId INTEGER,"
         "EmployeeId INTEGER,"
@@ -124,13 +124,14 @@ class DbHelper{
   }
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-print("database upgraded");
+      print("database upgraded");
       final prefs= await SharedPreferences.getInstance();
       prefs.setInt('offline_db_saved',0);
       await db.execute('DROP TABLE IF EXISTS QROffline;');
       await db.execute('DROP TABLE IF EXISTS LoginOffline;');
       await db.execute('DROP TABLE IF EXISTS AttendanceOffline;');
       await db.execute('DROP TABLE IF EXISTS VisitsOffline;');
+      await db.execute('DROP TABLE IF EXISTS TempImage;');
 await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
           "UserTableId INTEGER,"
           "EmployeeId INTEGER,"

@@ -301,12 +301,12 @@ public class MainActivityWithoutBGService extends FlutterActivity {
               @Override
               public void onMethodCall(MethodCall call, Result result) {
                 if (call.method.equals("logCompleteRegistrationEvent")) {
-                 // if(facebookLogger!=null);
+                  //if(facebookLogger!=null);
                  // facebookLogger.logCompleteRegistrationEvent("");
                 }
                 else
                 if (call.method.equals("logContactEvent")) {
-                 // if(facebookLogger!=null);
+                  //if(facebookLogger!=null);
                  // facebookLogger.logContactEvent();
                 }
                 else
@@ -320,7 +320,7 @@ public class MainActivityWithoutBGService extends FlutterActivity {
                  // facebookLogger.logRateEvent("","","0",5,4);
                 }
                 if (call.method.equals("logStartTrialEvent")) {
-                 // if(facebookLogger!=null);
+                //  if(facebookLogger!=null);
                 // facebookLogger.logStartTrialEvent("","",0.0);
 
                 }

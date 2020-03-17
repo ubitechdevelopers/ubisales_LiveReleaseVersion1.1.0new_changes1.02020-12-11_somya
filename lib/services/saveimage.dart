@@ -185,9 +185,10 @@ class SaveImage {
             "refid": mk.refid,
             "latit": lat,
             "longi": long,
-            //"file": new UploadFileInfo(imagei, "image.png"),
+            "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
-            "platform":'android'
+            "platform":'android',
+            "tempimagestatus":1
           });
           print(formData);
           Response<String> response1 = await dio.post(
@@ -294,7 +295,7 @@ class SaveImage {
 
 
 
-  SendTempimage() async{
+  SendTempimage(context , alertstatus) async{
     TempImage imagedata = new TempImage.empty();
     List<TempImage> img = await imagedata.select();
     List<Map> jsonList = [];
@@ -318,9 +319,20 @@ class SaveImage {
       dioForSavingOfflineAttendance.post(globals.path + "SendTempimage", data: formData).then((responseAfterSendTempimage) async {
         var response = json.decode(responseAfterSendTempimage.toString());
         for (int i = 0; i < response.length; i++) {
+          print(response);
           var map = response[i];
+
           map.forEach((localDbId, status) {
             TempImage imagedata = new TempImage.empty();
+            if(!status && alertstatus )
+            {
+              showDialog(
+                  context: context,
+                  // ignore: deprecated_member_use
+                  child: new AlertDialog(
+                    content: new Text("Attendance punchedflutter  without Selfie due to poor network"),
+                  ));
+            }
             print(status);
             imagedata.delete(int.parse(localDbId));
           });
@@ -366,6 +378,19 @@ class SaveImage {
     }
       print("Succesfull saveimage");
       return false;*/
+  print("This is local db");
+  /*  TempImage imagedata = new TempImage.empty();
+    List<TempImage> img = await imagedata.select();
+    print(img);
+    for (int i = 0; i < img.length; i++) {
+      print(img[i].Id);
+      print(img[i].EmployeeId);
+      print(img[i].Action);
+      print(img[i].ActionId);
+      print(img[i].PictureBase64);
+      print(img[i].OrganizationId);
+      print(img[i].Module);
+    }*/
     try{
       File imagei = null;
       var isNextDayAWorkingDay=0;
@@ -424,21 +449,22 @@ class SaveImage {
             "refid": mk.refid,
             "latit": lat,
             "longi": long,
-           // "file": new UploadFileInfo(imagei, "image.png"),
+            "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
-            "platform":'android'
+            "platform":'android',
+            "tempimagestatus":1
           });
           print(formData);
           print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");
           Response<String> response1 = await dio.post(globals.path + "saveImage", data: formData);
-          
+          print(response1);
           imagei.deleteSync();
           imageCache.clear();
           globals.cameraChannel.invokeMethod("cameraClosed");
+          print("This is response");
           /*getTempImageDirectory();*/
           Map MarkAttMap = json.decode(response1.data);
-          print("This is response");
-          print(MarkAttMap);
+          print("This is response1");
           print(MarkAttMap["status"].toString());
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2){
 

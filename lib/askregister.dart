@@ -164,7 +164,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                               height: 45.0,
                               child:FlatButton(
                                 shape: Border.all(color: Colors.orangeAccent),
-                                child: Text("Already registered? Verify mail",style: new TextStyle(color: Colors.orangeAccent,fontSize: 14.6),),
+                                child: Text("Already registered? Verify Email",style: new TextStyle(color: Colors.orangeAccent,fontSize: 14.6),),
                                 color: Colors.white,
                                 onPressed: () {
                                   Navigator.push(

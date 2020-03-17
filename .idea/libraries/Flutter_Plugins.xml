@@ -30,6 +30,8 @@
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/image_gallery_saver-1.2.2" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.12.11" />
       <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.6+5" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/admob_flutter-0.3.4" />
+      <root url="file://$USER_HOME$/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_exif_rotation-0.2.7" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
