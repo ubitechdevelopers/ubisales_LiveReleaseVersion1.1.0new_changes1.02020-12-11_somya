@@ -69,6 +69,7 @@ dependencies:
   flutter_local_notifications:
   rounded_modal: ^1.0.0
   admob_flutter: 0.3.4
+  device_info: 0.4.2+1
 
 
 

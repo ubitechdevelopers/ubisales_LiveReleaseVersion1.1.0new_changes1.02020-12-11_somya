@@ -165,6 +165,7 @@ class SaveImage {
           //// sending this base64image string +to rest api
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
+          String deviceidmobile= prefs.getString("deviceid")??"";
 
           String lat = globals.assign_lat.toString();
           String long = globals.assign_long.toString();
@@ -188,7 +189,9 @@ class SaveImage {
             "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
             "platform":'android',
-            "tempimagestatus":1
+            "tempimagestatus":1,
+            "deviceidmobile":deviceidmobile,
+            "devicenamebrand":globals.devicenamebrand
           });
           print(formData);
           Response<String> response1 = await dio.post(
@@ -429,7 +432,7 @@ class SaveImage {
 
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
-
+          String deviceidmobile= prefs.getString("deviceid")??"";
           String lat = globals.assign_lat.toString();
           String long = globals.assign_long.toString();
           print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
@@ -452,7 +455,9 @@ class SaveImage {
             "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus" : mk.FakeLocationStatus,
             "platform":'android',
-            "tempimagestatus":1
+            "tempimagestatus":1,
+            "deviceidmobile":deviceidmobile,
+            "devicenamebrand":globals.devicenamebrand
           });
           print(formData);
           print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");

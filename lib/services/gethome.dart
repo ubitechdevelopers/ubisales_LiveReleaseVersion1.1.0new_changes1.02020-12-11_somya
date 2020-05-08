@@ -76,6 +76,8 @@ class Home{
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
+        globals.deviceverification=int.parse(timeinoutMap['Addon_DeviceVerification']);
+        globals.deviceid=timeinoutMap['deviceid'].toString();
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
 
         globals.userlimit=int.parse(timeinoutMap['User_limit']);

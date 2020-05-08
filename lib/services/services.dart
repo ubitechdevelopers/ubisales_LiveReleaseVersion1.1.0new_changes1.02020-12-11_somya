@@ -106,6 +106,24 @@ navigateToPageAfterNotificationClicked(var pageString, BuildContext context){
 
 }
 
+storeDeviceInfo(empid,deviceid,devicename) async{
+  try{
+    Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"storedeviceinfo?empid=$empid&deviceid=$deviceid&devicename=$devicename");
+    await dio.post(globals.path+"storedeviceinfo?empid=$empid&deviceid=$deviceid&devicename=$devicename");
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+
 
 
 

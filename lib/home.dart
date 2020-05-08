@@ -16,6 +16,7 @@ import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_dialog/easy_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -1071,6 +1072,105 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void deviceverification() async{
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    print('Running on ${androidInfo.brand}');
+    print('Running on ${androidInfo.model}');
+    String devicename= androidInfo.model;
+    String devicebrand= androidInfo.brand;
+    devicenamebrand = devicebrand+' '+devicename;
+
+
+
+
+    var prefs = await SharedPreferences.getInstance();
+    //deviceid= prefs.getString("deviceid") ?? '';
+    print('thisisdeviceid'+deviceid);
+    String deviceidmobile=prefs.getString("deviceid")??"";
+    bool deviceVerifyPopupShown=prefs.getBool("deviceVerifyPopupShown")??false;
+    print('thisisdeviceidmobile'+deviceidmobile);
+    if(deviceidmobile=='' && globals.deviceverification==1){
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+      String RandomString(int strlen) {
+        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+        String result = "";
+        for (var i = 0; i < strlen; i++) {
+          result += chars[rnd.nextInt(chars.length)];
+        }
+        return result;
+      }
+
+
+      print("RandomString:"+RandomString(60));
+      deviceidmobile= RandomString(60);
+      prefs.setString("deviceid",deviceidmobile);
+
+
+
+    }
+
+    if(deviceid=='' && globals.deviceverification==1){
+
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+      String RandomString(int strlen) {
+        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+        String result = "";
+        for (var i = 0; i < strlen; i++) {
+          result += chars[rnd.nextInt(chars.length)];
+        }
+        return result;
+      }
+
+
+      print("RandomString:"+RandomString(60));
+      deviceidmobile= RandomString(60);
+      if(deviceVerifyPopupShown==false && deviceid=='') {
+        // if(deviceid=='') {
+        //
+        EasyDialog(
+            title: Text(
+              'This Mobile Device has been registered as your Device ID',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            description: Text(
+              devicebrand+" "+devicename,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+            height: 180,
+            contentList: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                  ),
+
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                ],
+              )
+            ]).show(context);
+
+        prefs.setBool("deviceVerifyPopupShown",true);
+        prefs.setString("deviceid",deviceidmobile);
+        storeDeviceInfo(empid, deviceidmobile, devicebrand+' '+devicename);
+      }
+    }
+  }
+
 
   showReferralPopup(BuildContext context, String cDateS) async {
 
@@ -1654,6 +1754,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //if(glow!=true){
     //Future.delayed(Duration(seconds: 1), () => tooltiptimein.show(context));
     //}
+    deviceverification();
 
     firebaseCloudMessaging_Listeners();
   }
