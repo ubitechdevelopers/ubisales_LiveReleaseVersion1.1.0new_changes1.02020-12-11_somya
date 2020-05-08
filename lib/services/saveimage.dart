@@ -1562,10 +1562,53 @@ class SaveImage {
 
   //////////////////////////////////////////////////////////
 
+/////Start SAve flexi time in out//////
+  Future<String> marktimeoff(empid, globalstreamlocationaddr, orgdir, assign_lat, assign_long,FakeLocationStatus,timeoffid,timeoffstatus,context) async {
+    try {
+        globals.globalCameraOpenedStatus=false;
+        print('------------**vvxxbb');
+        //// sending this base64image string +to rest api
+        Dio dio = new Dio();
+        String location = globals.globalstreamlocationaddr;
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
+
+        print("5*");
+        Response<String> response1;
+        try {
+          print(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
+          response1 =
+          await dio.post(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
+          print("----->save visit image* --->" + response1.toString());
+        } catch (e) {
+          print('------------*');
+          print(e.toString());
+          print('------------*');
+        }
+
+        /*getTempImageDirectory();*/
+        Map MarkAttMap = json.decode(response1.toString());
+        print('------------1*');
+        print(MarkAttMap["res"].toString());
+        print('------------2*');
+        if (MarkAttMap["status"].toString() == 'true')
+          return 'true';
+        else if(MarkAttMap["status"].toString() == 'false1')
+          {
+             return 'false1';
+          }
+        else
+          return 'false';
+    } catch (e) {
+      print('7--');
+      globals.globalCameraOpenedStatus=false;
+      print(e.toString());
+      return 'false';
+    }
+  }
 
 
-
-
+//////////////////////
   /////Start SAve flexi time in out//////
   Future<bool> saveFlexi(MarkVisit mk,context) async {
     print('------------**v');

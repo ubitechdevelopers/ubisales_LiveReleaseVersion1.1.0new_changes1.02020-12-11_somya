@@ -264,7 +264,8 @@ class _TimeOffList extends State<TimeOffList> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             new Text(" Status: "),
-                            new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                            new Text(snapshot.data[index].to.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].to.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
+                            //new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
                           ]),
                       SizedBox(height: MediaQuery.of(context).size.height*.005,),
                       Divider(

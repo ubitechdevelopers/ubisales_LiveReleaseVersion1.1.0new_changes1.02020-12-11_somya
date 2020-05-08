@@ -361,12 +361,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: new Text("Register Your Company",
+                    child: new Text("Register Company",
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: appcolor ),
                     ),
                   ),
-                  new Text("Note: This is not Employee registration form. The Employees should Sign In & not register here",
+                  new Text("Note: This form is only for company registration. If the company is already registered, employees should not fill this form. They should  only login with admin's help.",
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize:14.0, color: Colors.orange[900], ),
                   ),

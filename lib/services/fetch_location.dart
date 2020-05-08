@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+/*import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,7 +19,7 @@ class Loc{
       // If the widget was removed from the tree while the asynchronous platform
       // message was in flight, we want to discard the reply rather than calling
       // setState to update our non-existent appearance.
-     // bool res = await SimplePermissions.checkPermission(permission);
+      // bool res = await SimplePermissions.checkPermission(permission);
       PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
 
       //print(res);
@@ -36,7 +36,7 @@ class Loc{
 
   getcontactpermission() async
   {
-      try {
+    try {
       this.permission = PermissionGroup.contacts;
 
       PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
@@ -48,8 +48,8 @@ class Loc{
         return requestCPermission();
       }
     }catch(e){
-    print(e.toString());
-    return e.toString();
+      print(e.toString());
+      return e.toString();
     }
   }
   requestCPermission() async {
@@ -77,7 +77,7 @@ class Loc{
 
   requestPermission() async {
     final permissions = await PermissionHandler().requestPermissions([this.permission]);
-      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
+    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(this.permission);
     //ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(this.permission);
 
     //print("permission status is " + res.toString());
@@ -184,10 +184,11 @@ class Loc{
       print(e.toString());
       return "Unable to fetch: Click below REFRESH link and make sure GPS is on to get location.";
     }
-    }
+  }
 
-    void handleDone(){
+  void handleDone(){
     print("done");
-    }
+  }
 
 }
+*/

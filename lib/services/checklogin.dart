@@ -103,6 +103,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
         "password": user.userPassword,
         "qr":true,
       });
+      print("attendance mark by qr");
        print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPassword+"&qr=true");
       // Response response1 = await dio.post("https://sandbox.ubiattendance.com/index.php/services/checkLogin",data: formData);
       // Response response1 = await dio.post("https://ubiattendance.ubihrm.com/index.php/services/checkLogin",data: formData);
@@ -150,7 +151,6 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
                   return "success1";
                 else
                   return "success";
-
               else
                 return "poor network";
             } else {
@@ -170,6 +170,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
   }
 
   markAttByQR(String qr,int FakeLocationStatus,context) async{
+    print("first function");
     List splitstring = qr.split("ykks==");
     User qruser = new User(splitstring[0], splitstring[1]);
     String result = await checkLoginForQr(qruser,FakeLocationStatus,context);

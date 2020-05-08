@@ -118,7 +118,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                               minWidth: MediaQuery.of(context).size.width*0.8,
                               height: 45.0,
                               child:RaisedButton(
-                                child: Text("Already registered? Sign In",style: new TextStyle(color: Colors.white,fontSize: 15.0)),
+                                child: Text("Company already registered? Log In",style: new TextStyle(color: Colors.white,fontSize: 15.0)),
                                 color: Colors.orangeAccent,
                                 onPressed: () {
                                   Navigator.push(

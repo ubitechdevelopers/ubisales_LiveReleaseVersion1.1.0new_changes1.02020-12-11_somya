@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Bottomnavigationbar.dart';
+import 'addtimeoff.dart';
 import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
@@ -285,7 +286,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         onPressed: (){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TimeOffPage()),
+            MaterialPageRoute(builder: (context) => AddTimeoff()),
           );
         },
         tooltip: 'Request TimeOff',
@@ -472,12 +473,16 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                 child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: Colors.white, fontSize: 14.0,),textAlign: TextAlign.center, ),*/
                                 child:Column(
                                   children: <Widget>[
-                                    new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                   // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+
+                                    new Text(snapshot.data[index].TimeTo.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                   // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+
 
   SizedBox(height: 7.0,),
-                                    (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?InkWell(
+                                    /*(snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?InkWell(
                                       child: Container(
-                                        height:18.5,
+                                       /* height:18.5,
                                         child:new  FlatButton(
                         shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(25.0),side: BorderSide(color: Colors.blue),),
                                         padding: EdgeInsets.only(left:1.0,right:1.0),
@@ -491,9 +496,9 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                           confirmWithdrawl(snapshot.data[index].TimeOffId.toString());
                                         },
                                         child: (_isButtonDisabled && checkProcessing==index)?Text("Processing..",style: TextStyle(color: Colors.blue),):Text("Withdraw",style: TextStyle(color: Colors.blue),),
+                                      ),*/
                                       ),
-                                      ),
-                                    ):Center(),
+                                    ):Center(),*/
 
                                   ],
                                 ),

@@ -221,6 +221,7 @@ class Home{
         "refid": orgid,
       });
       //Response response = await dio.post("https://sandbox.ubiattendance.com/index.php/services/getInfo", data: formData);
+      print(globals.path+"getInfo?uid=$empid&refid=$orgid");
       Response response = await dio.post(globals.path+"getInfo", data: formData);
 
       //Response response = await dio.post("http://192.168.0.20 0/UBIHRM/HRMINDIA/services/getInfo", data: formData);

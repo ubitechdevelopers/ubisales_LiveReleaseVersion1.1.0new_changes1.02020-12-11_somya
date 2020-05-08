@@ -34,6 +34,11 @@ String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 
+/*
+String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
+String internetConnectivityURL="http://zentylpro.com/SFUbiattendance/index.php/Att_services/isInternetConnected";
+String path_hrm_india="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
+*/
 //String path_hrm_india="https://ubitech.ubihrm.com/services/";
 
 MarkTime mk1;

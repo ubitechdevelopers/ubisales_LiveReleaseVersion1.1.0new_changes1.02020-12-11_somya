@@ -3237,7 +3237,28 @@ class Flexi {
 
   Flexi({this.fid, this.sts});
 }
+Future checkTimeOff() async {
+  final prefs = await SharedPreferences.getInstance();
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
 
+  print(globals.path + 'checkTimeOff?empid=$empid');
+  final res =
+  await http.get(globals.path + 'checkTimeOff?empid=$empid');
+  print("99999");
+  print(res.body.toString());
+  // return res.body.toString();
+  List<Flexi> list = new List();
+
+  String fid = ((json.decode(res.body.toString()))['id']).toString();
+  String sts = ((json.decode(res.body.toString()))['sts']).toString();
+  Flexi flexi = new Flexi(fid: fid, sts: sts);
+  list.add(flexi);
+  print("kkkkkk");
+  print(list);
+//return ((json.decode(res.body.toString()))['sts']).toString();
+  return list;
+}
 Future checkTimeinflexi() async {
   final prefs = await SharedPreferences.getInstance();
   String empid = prefs.getString('empid') ?? '';
