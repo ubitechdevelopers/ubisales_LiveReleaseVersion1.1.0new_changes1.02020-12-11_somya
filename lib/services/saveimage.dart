@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:Shrine/database_models/Save_Tempimage.dart';
+import 'package:Shrine/face_detection_camera.dart';
 import 'package:Shrine/genericCameraClass.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/timeinout.dart';
@@ -194,8 +195,14 @@ class SaveImage {
             "devicenamebrand":globals.devicenamebrand
           });
           print(formData);
-          Response<String> response1 = await dio.post(
-              globals.path + "saveImage", data: formData);
+          Response<String> response1;
+          if(globals.facerecognition==1){
+            response1 = await dio.post(
+                globals.path + "saveImageSandbox", data: formData);
+          }else{
+            response1 = await dio.post(
+                globals.path + "saveImage", data: formData);
+          }
           print("Response from save image:"+response1.toString());
           //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
           //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
@@ -207,9 +214,12 @@ class SaveImage {
           Map MarkAttMap = json.decode(response1.data);
           print(MarkAttMap["status"].toString());
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
-            globals.PictureBase64Att = PictureBase64;
-            TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
-            tempimage.save();
+            if(globals.facerecognition!=1){
+              globals.PictureBase64Att = PictureBase64;
+              TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
+              tempimage.save();
+            }
+
             return true;
           }
           else
@@ -266,6 +276,199 @@ class SaveImage {
         imageCache.clear();*/
         /*getTempImageDirectory();*/
         Map MarkAttMap = json.decode(response1.data);
+        print(MarkAttMap["status"].toString());
+        if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2)
+          return true;
+        else
+          return false;
+      }
+    } catch (e) {
+      print(e.toString());
+      globals.globalCameraOpenedStatus=false;
+      return false;
+    }
+  }
+
+
+  Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context) async {
+
+    try{
+      File imagei = null;
+      var isNextDayAWorkingDay=0;
+      var prefs=await SharedPreferences.getInstance();
+      isNextDayAWorkingDay=prefs.getInt("isNextDayAWorkingDay")??0;
+
+      imageCache.clear();
+      if (globals.attImage == 1) {
+
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) => new FaceDetectionFromLiveCamera(mk),
+          fullscreenDialog: true,)
+        );
+
+//          ImageProperties properties =
+//          await FlutterNativeImage.getImageProperties(imagei.path);
+//          print("image cropped successfully");
+//
+//          int width = properties.width;
+//          var offset = (properties.height - properties.width) / 2;
+//
+//          File croppedFile = await FlutterNativeImage.cropImage(
+//              imagei.path, 0, offset.round(), width, width);
+//
+//          // _resizePhoto(imagei.toString());
+//
+//          imagei= croppedFile;
+
+
+
+
+        if (imagei != null) {
+          //print("---------------actionb   ----->"+mk.act);
+          globals.globalCameraOpenedStatus=false;
+          if(mk.act=="TimeIn"&&globals.showTimeOutNotification){
+            startTimeOutNotificationWorker();
+          }
+          else{
+            if(globals.showTimeInNotification){
+              startTimeInNotificationWorker();
+            }
+          }
+
+          var currentTime=DateTime.now();
+          int timeDifference=currentTime.difference(globals.timeWhenButtonPressed).inSeconds;
+          print("--------------------------Time difference------>"+timeDifference.toString());
+          if(timeDifference>120){
+            return null;
+          }
+
+          List<int> imageBytes = await imagei.readAsBytes();
+          String  PictureBase64 = base64.encode(imageBytes);
+
+          /*
+      final tempDir = await getTemporaryDirectory();
+      String path = tempDir.path;
+      int rand = new Math.Random().nextInt(10000);
+      im.Image image1 = im.decodeImage(imagei.readAsBytesSync());
+      imagei.deleteSync();
+      im.Image smallerImage = im.copyResize(image1, 500); // choose the size here, it will maintain aspect ratio
+      File compressedImage = new File('$path/img_$rand.jpg')..writeAsBytesSync(im.encodeJpg(smallerImage, quality: 50));
+    */
+          //// sending this base64image string +to rest api
+          Dio dio = new Dio();
+          String location = globals.globalstreamlocationaddr;
+          //String deviceidmobile= prefs.getString("deviceid")??"";
+
+          String lat = globals.assign_lat.toString();
+          String long = globals.assign_long.toString();
+          print("saveImageGrpAttFace?uid=" + mk.uid + "&location=" + location + "&aid=" +
+              mk.aid + "&act=" + mk.act + "&shiftid=" + mk.shiftid + "&refid=" +
+              mk.refid + "&latit=" + lat + "&longi=" + long);
+          print("global Address: " + location);
+          print("global lat" + lat);
+          print("global long" + long);
+          print(mk.uid + " " + location + " " + mk.aid + " " + mk.act + " " +
+              mk.shiftid + " " + mk.refid + " " + lat + " " + long);
+          FormData formData = new FormData.from({
+            "uid": mk.uid,
+            "location": location,
+            "aid": mk.aid,
+            "act": mk.act,
+            "shiftid": mk.shiftid,
+            "refid": mk.refid,
+            "latit": lat,
+            "longi": long,
+            "file": new UploadFileInfo(imagei, "image.png"),
+            "FakeLocationStatus" : mk.FakeLocationStatus,
+            "platform":'android',
+            "tempimagestatus":1,
+            //"deviceidmobile":deviceidmobile,
+            //"devicenamebrand":globals.devicenamebrand
+          });
+          print(formData);
+          Response<String> response1 = await dio.post(
+              globals.path + "saveImageGrpAttFace", data: formData);
+          print("Response from save image:"+response1.toString());
+          //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
+          //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
+          //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
+          imagei.deleteSync();
+          imageCache.clear();
+          // globals.cameraChannel.invokeMethod("cameraClosed");
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print("facerecog");
+          print(MarkAttMap["facerecog"].toString());
+          if(MarkAttMap["facerecog"]=='5'){
+            globals.firstface=0;
+
+          }
+          print(MarkAttMap["status"].toString());
+          if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
+            globals.firstface=1;
+            globals.PictureBase64Att = PictureBase64;
+            TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
+            tempimage.save();
+            return true;
+          }
+          else
+            return false;
+        }
+        else {
+          globals.globalCameraOpenedStatus=false;
+          print("6");
+          return false;
+        }
+      }else{
+
+        var currentTime=DateTime.now();
+        int timeDifference=currentTime.difference(globals.timeWhenButtonPressed).inSeconds;
+        print("--------------------------Time difference------>"+timeDifference.toString());
+        if(timeDifference>120){
+          return null;
+        }
+
+        Dio dio = new Dio();
+        String location = globals.globalstreamlocationaddr;
+        String deviceidmobile= prefs.getString("deviceid")??"";
+        String lat = globals.assign_lat.toString();
+        String long = globals.assign_long.toString();
+        print("saveImageGrpAttFace?uid=" + mk.uid + "&location=" + location + "&aid=" +
+            mk.aid + "&act=" + mk.act + "&shiftid=" + mk.shiftid + "&refid=" +
+            mk.refid + "&latit=" + lat + "&longi=" + long);
+        print("global Address: " + location);
+        print("global lat" + lat);
+        print("global long" + long);
+        print(mk.uid + " " + location + " " + mk.aid + " " + mk.act + " " +
+            mk.shiftid + " " + mk.refid + " " + lat + " " + long);
+        FormData formData = new FormData.from({
+          "uid": mk.uid,
+          "location": location,
+          "aid": mk.aid,
+          "act": mk.act,
+          "shiftid": mk.shiftid,
+          "refid": mk.refid,
+          "latit": lat,
+          "longi": long,
+          "FakeLocationStatus":mk.FakeLocationStatus,
+          "platform":'android',
+          // "file": new UploadFileInfo(imagei, "image.png"),
+        });
+        print("5");
+        Response<String> response1 = await dio.post(
+            globals.path + "saveImageGrpAttFace", data: formData);
+        print(response1.toString());
+        //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
+        //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
+        //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
+        /*imagei.deleteSync();
+        imageCache.clear();*/
+        /*getTempImageDirectory();*/
+        Map MarkAttMap = json.decode(response1.data);
+        if(MarkAttMap["facerecog"]=='5'){
+          globals.firstface=0;
+
+        }
         print(MarkAttMap["status"].toString());
         if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2)
           return true;
@@ -461,7 +664,14 @@ class SaveImage {
           });
           print(formData);
           print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");
-          Response<String> response1 = await dio.post(globals.path + "saveImage", data: formData);
+          Response<String> response1;
+          if(globals.facerecognition==1){
+            response1 = await dio.post(
+                globals.path + "saveImageSandbox", data: formData);
+          }else{
+            response1 = await dio.post(
+                globals.path + "saveImage", data: formData);
+          }
           print(response1);
           imagei.deleteSync();
           imageCache.clear();
@@ -474,9 +684,12 @@ class SaveImage {
           if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2){
 
             /*** Save temp image in local database statrt here ***/
-            globals.PictureBase64Att = PictureBase64;
-            TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
-             tempimage.save();
+            if(globals.facerecognition!=1){
+              globals.PictureBase64Att = PictureBase64;
+              TempImage tempimage = new TempImage(null, int.parse(mk.uid),mk.act, MarkAttMap["insert_updateid"], PictureBase64, int.parse(mk.refid) , 'Attendance');
+              tempimage.save();
+            }
+
              
             /*** Save temp image in local database end here ***/
 

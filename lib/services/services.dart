@@ -153,6 +153,115 @@ Future<Map<String, dynamic>> sendPushNotification(String title,String nBody,Stri
   //return json.decode(response.body);
 }
 
+List<SuspiciousAttn> createTodaySuspiciousEmpList(List data) {
+  // print('Create list called/*******************');
+  List<SuspiciousAttn> list = new List();
+
+  print("Tril status");
+  print(trialstatus);
+  int length = data.length;
+  if(trialstatus=='2' && length>10)
+  {
+    length = 10;  // expired organization show only 10 records
+  }
+
+  /*int total_dept = 0;
+   int total_abs = 0;
+   int total_pre = 0;
+   int total_emp = 0;*/
+  if(length>0)
+    for (int i = 0; i < length; i++) {
+      String Id = data[i]['Id'].toString();
+      String Name = data[i]["Name"].toString();
+      String ProfileImage = data[i]["profileimage"].toString() == ''
+          ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
+          : data[i]["profileimage"].toString();
+      String TimeInOut = data[i]["TimeInOut"].toString() == '00:00'
+          ? '-'
+          : data[i]["TimeInOut"].toString();
+      String EntryExitImage = data[i]["EntryExitImage"].toString() == ''
+          ? 'https://ubiattendance.ubihrm.com/assets/img/avatar.png'
+          : data[i]["EntryExitImage"].toString();
+      String TimeInOutConfidence = data[i]["TimeInOutConfidence"].toString();
+      String Present = data[i]["present"].toString();
+      String Absent = data[i]["absent"].toString();
+
+      SuspiciousAttn tos = new SuspiciousAttn(
+        Id: Id,
+        Name: Name,
+        TimeInOut: TimeInOut,
+        EntryExitImage: EntryExitImage,
+        ProfileImage: ProfileImage,
+        TimeInOutConfidence: TimeInOutConfidence,
+        Present: Present,
+        Absent: Absent,
+      );
+
+      list.add(tos);
+    }
+  return list;
+}
+
+class SuspiciousAttn {
+  String Id;
+  String Name;
+  String TimeInOut;
+  String EntryExitImage;
+  String ProfileImage;
+  String TimeInOutConfidence;
+  String Present;
+  String Absent;
+
+  SuspiciousAttn({
+    this.Id,
+    this.Name,
+    this.TimeInOut,
+    this.EntryExitImage,
+    this.ProfileImage,
+    this.TimeInOutConfidence,
+    this.Present,
+    this.Absent,
+  });
+}
+
+Future<List<SuspiciousAttn>> getCDateSSAttn(listType, date) async {
+  final prefs = await SharedPreferences.getInstance();
+  String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
+  print(globals.path + 'getSuspiciousAttn?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
+  final response = await http.get(globals.path +
+      'getSuspiciousAttn?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
+  final res = json.decode(response.body);
+  // print(res);
+  List responseJson;
+  if (listType == 'present')
+    responseJson = res['present'];
+  else if (listType == 'absent')
+    responseJson = res['absent'];
+  else if (listType == 'latecomings')
+    responseJson = res['lateComings'];
+  else if (listType == 'earlyleavings') responseJson = res['earlyLeavings'];
+  List<SuspiciousAttn> userList = createTodaySuspiciousEmpList(responseJson);
+  return userList;
+}
+disapprovesuspiciousattn(String id) async{
+  try{
+    Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"disapprovesuspiciousattn?id=$id");
+    await dio.post(globals.path+"disapprovesuspiciousattn?id=$id");
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+
 
 sendNotificationtouser ()async
 {
@@ -253,7 +362,7 @@ appResumedPausedLogic(context,[bool isVisitPage]){
         }
         else{
           //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-          (context as Element).reassemble();
+         // (context as Element).reassemble();
           if(globals.assign_lat==0.0||globals.assign_lat==null||!locationThreadUpdatedLocation)
           {
             cameraChannel.invokeMethod("openLocationDialog");

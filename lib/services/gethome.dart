@@ -77,6 +77,8 @@ class Home{
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.deviceverification=int.parse(timeinoutMap['Addon_DeviceVerification']);
+        globals.facerecognition=int.parse(timeinoutMap['Addon_FaceRecognition']);
+        globals.persistedface=timeinoutMap['persistedface'].toString();
         globals.deviceid=timeinoutMap['deviceid'].toString();
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
 

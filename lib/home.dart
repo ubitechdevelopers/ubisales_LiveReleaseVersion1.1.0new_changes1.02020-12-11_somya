@@ -38,6 +38,7 @@ import 'attendance_summary.dart';
 import 'bulkatt.dart';
 import 'database_models/qr_offline.dart';
 import 'drawer.dart';
+import 'faceIdScreen.dart';
 import 'globals.dart';
 import 'leave_summary.dart';
 import "offline_home.dart";
@@ -1757,6 +1758,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     deviceverification();
 
     firebaseCloudMessaging_Listeners();
+
   }
 
   setaddress() async {
@@ -1816,6 +1818,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ));});
 
        */
+    }
+    print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
+    if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
     }
   }
 

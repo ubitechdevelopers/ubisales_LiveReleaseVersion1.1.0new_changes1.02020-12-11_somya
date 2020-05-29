@@ -1,4 +1,5 @@
 import 'package:Shrine/services/services.dart';
+import 'package:Shrine/suspicious_selfies.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -792,6 +793,52 @@ class _Reports extends State<Reports> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ThisMonth()),
+                  );
+                }
+              },
+            ):Center(),
+
+            admin_sts =='1' ? SizedBox(height: 0.0):Center(),
+            admin_sts =='1' && facerecognition==1 ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(58400, fontFamily: 'MaterialIcons'),size: 30.0,),
+                    SizedBox(width: 25.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Suspicious Selfies',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get all Suspicious Selfies',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check suspicious selfies.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Suspicious_selfies()),
                   );
                 }
               },
