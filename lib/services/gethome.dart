@@ -84,6 +84,8 @@ class Home{
 
         globals.userlimit=int.parse(timeinoutMap['User_limit']);
         globals.registeruser=int.parse(timeinoutMap['registeremp']);
+        globals.locationTrackingAddon=timeinoutMap['addon_livelocationtracking'];
+        globals.trackLocationForCurrentUser=timeinoutMap['TrackLocationEnabled'];
 
         print("Testing line2");
         globals.attImage=int.parse(timeinoutMap['attImage']);

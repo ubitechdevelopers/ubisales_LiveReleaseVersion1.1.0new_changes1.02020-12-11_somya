@@ -17,6 +17,7 @@ import 'flexi_report.dart';
 import  'globals.dart';
 import 'last_seven_days.dart';
 import 'late_comers.dart';
+import 'location_tracking_visits.dart';
 import 'payment.dart';
 import 'thismonth.dart';
 import 'timeoff_list.dart';
@@ -164,6 +165,53 @@ class _Reports extends State<Reports> {
       ListView(
           padding: EdgeInsets.only(top: 5.0,bottom: 5.0),
           children: <Widget>[
+            (admin_sts =='1' ||  admin_sts =='2') ? SizedBox(height: 0.0):Center(),
+            (admin_sts =='1'||  admin_sts =='2') ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(0xe80e, fontFamily: "CustomIcon"),size: 30.0,),
+                    SizedBox(width: 20.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Daily Attendance',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get Daily Attendance',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CustomDateAttendance()),
+                  );
+                }
+              },
+            ):Center(),
+            /*
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(
               child: Container(
@@ -205,6 +253,7 @@ class _Reports extends State<Reports> {
                 );
               },
             ):Center(),
+            */
 
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(
@@ -525,8 +574,8 @@ class _Reports extends State<Reports> {
                 }
               },
             ):Center(),
-      (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?SizedBox(height: 0.0):Center(),
-            (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2'))?
+      (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon!='1'))?SizedBox(height: 0.0):Center(),
+            (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon!='1'))?
             new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
@@ -567,6 +616,53 @@ class _Reports extends State<Reports> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => VisitList()),
+                  );
+                }
+              },
+            ):Center(),
+
+            (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon=='1'))?SizedBox(height: 0.0):Center(),
+            (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon=='1'))?
+            new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(0xe80d, fontFamily: "CustomIcon"),size: 30.0,),
+                    SizedBox(width: 20.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Punched Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('List of punched visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check Visited Locations records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LocationTrackingVisits()),
                   );
                 }
               },
@@ -618,53 +714,8 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            (admin_sts =='1' ||  admin_sts =='2') ? SizedBox(height: 0.0):Center(),
-            (admin_sts =='1'||  admin_sts =='2') ? new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(const IconData(0xe80e, fontFamily: "CustomIcon"),size: 30.0,),
-                    SizedBox(width: 20.0,),
-                    Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('Custom Date',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Container(
-                                child: Text('Get Specific Days Attendance',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
-                  ],
-                ),
-              ),
-              color: Colors.white,
-              elevation: 0.0,
-              splashColor: splashcolor,
-              textColor: textcolor,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
-                }else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CustomDateAttendance()),
-                  );
-                }
-              },
-            ):Center(),
 
+            /*
             admin_sts =='1'  ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(
               child: Container(
@@ -706,6 +757,7 @@ class _Reports extends State<Reports> {
                 );
               },
             ):Center(),
+            */
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(
               child: Container(

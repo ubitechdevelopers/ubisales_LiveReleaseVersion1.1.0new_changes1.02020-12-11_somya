@@ -41,6 +41,7 @@ import 'drawer.dart';
 import 'faceIdScreen.dart';
 import 'globals.dart';
 import 'leave_summary.dart';
+import 'location_tracking/home_view.dart';
 import "offline_home.dart";
 import 'payment.dart';
 import 'punchlocation.dart';
@@ -2820,7 +2821,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  void startLiveLocationTracking() {
 
+    HomeViewState tracker=HomeViewState();
+    tracker.initState();
+    tracker.onClickEnable(true);
+    tracker.onClickChangePace();
+    //tracker.onEnabledChange(true);
+
+  }
+  void stopLiveLocationTracking() {
+
+    HomeViewState tracker=HomeViewState();
+    tracker.initState();
+    tracker.onClickEnable(false);
+    //tracker.onClickChangePace();
+    //tracker.onEnabledChange(true);
+
+  }
 
   saveImage() async {
     timeWhenButtonPressed = DateTime.now();
@@ -2891,6 +2909,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         // Sync image
         saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
+          startLiveLocationTracking();
           print("This is time in block " + act1);
           var prefs = await SharedPreferences.getInstance();
 
@@ -2906,6 +2925,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         }
         else{
+          stopLiveLocationTracking();
           print("This is time timeout block"+ act1);
           var prefs = await SharedPreferences.getInstance();
 

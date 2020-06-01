@@ -698,6 +698,7 @@ List<Punch> createUserList(List data) {
         : data[i]["time_out"].toString().substring(0, 5);
     String po_loc = data[i]["loc_out"];
     String emp = data[i]["emp"];
+    String empId = data[i]["empId"];
     String latit_in = data[i]["latit"];
     String longi_in = data[i]["longi"];
     String latit_out = data[i]["latit_in"];
@@ -713,6 +714,7 @@ List<Punch> createUserList(List data) {
     Punch punches = new Punch(
         Id: id,
         Emp: emp,
+        empId: empId,
         client: client,
         pi_time: pi_time,
         pi_loc: pi_loc.length > 40 ? pi_loc.substring(0, 40) + '...' : pi_loc,
@@ -733,6 +735,7 @@ List<Punch> createUserList(List data) {
 class Punch {
   String Id;
   String Emp;
+  String empId;
   String client;
   String pi_time;
   String pi_loc;
@@ -749,6 +752,7 @@ class Punch {
   Punch(
       {this.Id,
         this.Emp,
+        this.empId,
         this.client,
         this.pi_time,
         this.pi_loc,

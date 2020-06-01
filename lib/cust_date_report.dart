@@ -96,7 +96,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
         children: <Widget>[
           SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Custom Date Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
+            child: Center(child:Text("Daily Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
           ),
           Divider(color: Colors.black54,height: 1.5,),
           Container(
