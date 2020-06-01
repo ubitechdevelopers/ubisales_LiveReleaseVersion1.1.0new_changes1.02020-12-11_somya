@@ -435,6 +435,30 @@ Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context,imag
           return false;
 
         }
+
+        else if (MarkAttMap["status"].toString() == '7')
+
+        {
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                Future.delayed(Duration(seconds: 2), () {
+
+
+                  Navigator.of(context).pop(true);
+                  alertShowing=false;
+
+
+                });
+                return AlertDialog(
+                  //title: Text('Title'),
+                  content: Text('Attendance punched recently'),
+                );
+              });
+          return false;
+
+        }
         else
           {
            // startCameraAgain();
