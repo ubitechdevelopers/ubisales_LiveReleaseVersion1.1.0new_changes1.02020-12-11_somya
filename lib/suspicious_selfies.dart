@@ -40,7 +40,7 @@ class _Suspicious_selfies extends State<Suspicious_selfies> with SingleTickerPro
       if(admin_sts == '2')
         Hightvar =  MediaQuery.of(context).size.height*0.8;
       else
-        Hightvar =  MediaQuery.of(context).size.height*1;
+        Hightvar =  MediaQuery.of(context).size.height*0.8;
     });
   }
 
@@ -494,8 +494,8 @@ print('visit out called for visit id:'+visit_id);
                                                       .of(context)
                                                       .size
                                                       .width * 0.14,
-                                                  child: Text(((double.parse(snapshot.data[index].TimeInOutConfidence
-                                                      .toString())*100).toStringAsFixed(2)), style: TextStyle(
+                                                  child: Text("     "+((double.parse(snapshot.data[index].TimeInOutConfidence
+                                                      .toString())*100).toStringAsFixed(0)), style: TextStyle(
                                                       color: Colors.black87,
                                                       fontWeight: FontWeight.bold,
                                                       fontSize: 14.0),),

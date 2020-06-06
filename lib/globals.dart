@@ -29,7 +29,7 @@ String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
-  
+
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
@@ -38,8 +38,8 @@ String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/"
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://ubiattendance.zentylpro.com/index.php/Att_services/";
+*/
 
- */
 /*
 String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
 String internetConnectivityURL="http://zentylpro.com/SFUbiattendance/index.php/Att_services/isInternetConnected";
@@ -55,10 +55,13 @@ int timeOff=0,bulkAttn = 0,geoFence=0,payroll=0,tracking=0,visitpunch=0,departme
 int globalalertcount = 0;
 var persistedface="0";
 int firstface=0;
+String globalcity='';
 var deviceid="0";
 var devicenamebrand="";
 int visitImage = 0;
 int attImage = 0;
+String mailstatus = "";   //new organization
+String mailverifiedstatus = "";   //existing organization
 int ableToMarkAttendance = 0;
 var timeoutdate = "";
 String departmentname = "";

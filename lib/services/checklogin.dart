@@ -35,6 +35,11 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
       if (response1.statusCode == 200) {
         Map employeeMap = json.decode(response1.data);
         print(employeeMap.toString());
+        globals.mailstatus=employeeMap["mailstatus"]??'0';
+
+        if(globals.mailstatus.toString()=='1'){
+          return 'MailNotVerified';
+        }
 
         if (employeeMap["response"] == 1) {
           var user = new Employee.fromJson(employeeMap);
@@ -64,6 +69,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           prefs.setString('orgmail', employeeMap["orgmail"]);
           prefs.setString('usrpwd', usrpwd);
           prefs.setString('lid', '0');
+          globals.mailverifiedstatus=employeeMap["mail_varified"];
           //print(user.orgid+" "+user.org_name +" "+user.fname+" "+user.email);
           // default 0, check punch location id
          // prefs.setString('profile', "http://ubiattendance.ubihrm.com/assets/img/avatar.png");
@@ -139,7 +145,8 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
                 timeinout["refid"].toString(),
                 timeinout["latit"].toString(),
                 timeinout["longi"].toString(),
-                FakeLocationStatus);
+                FakeLocationStatus,
+                timeinout["city"].toString());
             if (timeinout["act"] != "Imposed") {
               SaveImage mark = new SaveImage();
 

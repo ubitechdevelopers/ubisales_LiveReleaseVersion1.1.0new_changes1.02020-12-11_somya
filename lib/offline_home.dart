@@ -289,8 +289,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
       //Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pop(context,true);// It worked for me instead of above line
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+     // Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
 
 
@@ -545,7 +545,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
           key: _scaffoldKey,
           appBar: AppBar(
             actions: [
-
+/*
               RaisedButton.icon(
                   color:appcolor,
                   onPressed: (){
@@ -556,7 +556,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                   },
                   icon: Icon(Icons.assignment,color: Colors.white,),
 
-                  label: Text('Logs',style: new TextStyle(color: Colors.white))),
+                  label: Text('Logs',style: new TextStyle(color: Colors.white))),*/
               /*
             RaisedButton.icon(
             color:appcolor,
@@ -591,14 +591,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: appcolor,
                 onTap: (newIndex) {
-                  /*
+
                   if(newIndex==0){
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => OfflineAttendanceLogs()),
                     );
                     return;
-                  }else*/
+                  }else
                   if(newIndex==1){
                     Navigator.pushReplacement(
                       context,
@@ -613,10 +613,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                     );
                     return;
                   }
+                  /*
                   if(newIndex==0){
+
                     markAttByQROffline(context);
                     return;
-                  }
+
+
+                  }*/
                   /*else if(newIndex == 3){
                 Navigator.push(
                   context,
@@ -628,10 +632,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
                 }, // this will be set when a new tab is tapped
                 items: [
-
+                  /*
                   BottomNavigationBarItem(
                       icon: Icon(Icons.burst_mode,color: Colors.white,),
                       title: Text('Bulk QR',style: TextStyle(color: Colors.white),)
+                  ),*/
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.assignment,color: Colors.white,),
+                      title: Text('Logs',style: new TextStyle(color: Colors.white)),
                   ),
                   BottomNavigationBarItem(
                     icon: new Icon(Icons.home,color: Colors.white,),
@@ -1604,10 +1612,12 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     employee_permission = 0;
     permission_module_permission = 0;
     report_permission = 0;
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+    /*
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
-    );
+    );*/
     /*
     Navigator.pushAndRemoveUntil(
       context,

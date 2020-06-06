@@ -28,6 +28,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -89,6 +90,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Timer timer1;
   Timer timerrefresh;
   int response;
+  String Password_sts='';
+  String changepasswordStatus ='';
  // var workingHoursTimer;
   final Widget removedChild = Center();
   String fname = "",
@@ -118,6 +121,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
   var token = "";
+  final _formKey = GlobalKey<FormState>();
+  final _oldPass = TextEditingController();
+  final _newPass = TextEditingController();
+  FocusNode __oldPass = new FocusNode();
+  FocusNode __newPass = new FocusNode();
+
 
   var tooltiptimein = SuperTooltip(
     popupDirection: TooltipDirection.up,
@@ -1337,7 +1346,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
     }
     else{
-      showOtherReferralPopup(context,cDateS);
+     // showOtherReferralPopup(context,cDateS);
     }
     // }
   }
@@ -1665,6 +1674,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
     buysts = prefs.getString('buysts') ?? '0';
+
+
     getAreaStatus().then((res) {
       // print('called again');
       if (mounted) {
@@ -1759,6 +1770,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     deviceverification();
 
     firebaseCloudMessaging_Listeners();
+    Password_sts = prefs.getString('password_sts') ?? '0';
+    changepasswordStatus = prefs.getString('admin_password_sts') ?? '0';
+    print(changepasswordStatus);
+    print(Password_sts);
+    print("changepasswordStatus");
 
   }
 
@@ -2773,12 +2789,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () async {
-
-
           globals.globalCameraOpenedStatus = true;
-          // //print("Time out button pressed");
+          // if(changepasswordStatus == '0' || changepasswordStatus == '')
+          //saveImage();
 
-          saveImage();
+          if(changepasswordStatus == '1') {
+            if (Password_sts == '0')
+              _onAlertWithCustomContentPressed(context);
+            if (Password_sts == '1')
+              saveImage();
+          }
+          else{
+            saveImage();
+          }
+
           //Navigator.pushNamed(context, '/home');
         },
       );
@@ -2871,7 +2895,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         orgdir,
         globals.assign_lat.toString(),
         assign_long.toString(),
-        FakeLocationStatus);
+        FakeLocationStatus,
+        globalcity);
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
@@ -2909,7 +2934,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         // Sync image
         saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
-          startLiveLocationTracking();
+          if(locationTrackingAddon=='1'){
+            startLiveLocationTracking();
+          }
+
           print("This is time in block " + act1);
           var prefs = await SharedPreferences.getInstance();
 
@@ -3641,6 +3669,135 @@ var FakeLocationStatus=0;
         });
       });
     }*/
+  }
+
+  _onAlertWithCustomContentPressed(context) {
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton: false,
+      isOverlayTapDismiss: true,
+      descStyle: TextStyle(fontWeight: FontWeight.bold),
+      animationDuration: Duration(milliseconds: 400),
+
+    );
+    Alert(
+        style: alertStyle,
+        context: context,
+        title: "Change Your Password",
+        content: Container(
+          child: Form(
+            key: _formKey,
+            child:Column(
+              children: <Widget>[
+                TextFormField(
+//                  inputFormatters: [
+//                    WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
+//                  ],
+                  controller: _oldPass,
+                  obscureText: true,
+
+                  onFieldSubmitted: (String value) {
+                    FocusScope.of(context).requestFocus(__newPass);
+                  },
+                  decoration: InputDecoration(
+                    // ignore: dead_code
+                    //errorText: validatePassword ? "dasdasd" : "dasd" ,
+                    icon: Icon(Icons.lock),
+                    labelText: 'New Password',
+                  ),
+                  validator: (value){
+
+//                    Pattern pattern = '[a-zA-Z0-9]';
+//                    RegExp regex = new RegExp(pattern);
+//                    if (!regex.hasMatch(value))
+//                      return 'Password should not contain \nany special chararters';
+
+
+
+//                    if(value.contains(RegExp("[a-zA-Z0-9]"))) {
+//                      print("special");
+//                      return "Password should not contain any special chararters";
+//                    }
+
+                    if (value.isEmpty || value==null  ) {
+                      return 'Password cannot be blank';
+                    }
+                  },
+
+                  // password should not contain special char
+                ),
+                TextFormField(
+//                  inputFormatters: [
+//                    WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
+//                  ],
+                  controller: _newPass,
+                  focusNode: __newPass,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.lock),
+                    labelText: 'Confirm Password',
+                  ),
+                  validator: (value) {
+
+//                    Pattern pattern = 'a-zA-Z0-9';
+//                    RegExp regex = new RegExp(pattern);
+//                    if (!regex.hasMatch(value))
+//                      return 'Password should not contain \nany special characters';
+
+
+                    if (value.isEmpty || value==null  ) {
+                      return 'Password cannot be blank';
+                    }
+
+//                    Pattern pattern = 'a-zA-Z0-9';
+//                    RegExp regex = new RegExp(pattern);
+//                    if (!regex.hasMatch(value))
+//                      return 'Password should not contain \nany special characters';
+
+                    if(value.length<6 )
+                    {
+                      return 'Password must contain atleast \n6 characters';
+                    }
+                    if(value != _oldPass.text){
+                      return 'Password did not match!!!';
+                    }
+
+                    Pattern pattern = r'^[a-zA-Z0-9]+$';
+                    RegExp regex = new RegExp(pattern);
+                    if (!regex.hasMatch(value))
+                      return 'Password should not contain \nany special characters';
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        buttons: [
+          DialogButton(
+            width:MediaQuery.of(context).size.width * 0.27,
+            color: Colors.orangeAccent,
+            onPressed: () {
+              if (_formKey.currentState.validate()) {
+                if (_oldPass.text == _newPass.text) {
+                  setState(() {
+                    Password_sts = "1";
+                  });
+                  firstPassword(_oldPass.text, _newPass.text, Password_sts);
+                }
+//                if(_oldPass.text  == RegExp("[a-zA-Z0-9]")){
+//
+//                }
+              }
+              if(Password_sts == "1")
+                Navigator.of(context, rootNavigator: true).pop();
+            },
+            child: Text(
+              "SUBMIT",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          )
+        ]).show();
   }
 //////////////////////////////////////////////////////////////////
 }

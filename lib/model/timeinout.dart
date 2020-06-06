@@ -9,8 +9,9 @@ class MarkTime{
   String latit;
   String longi;
   int FakeLocationStatus;
+  String city;
 
-  MarkTime(this.uid, this.location, this.aid, this.act, this.shiftid, this.refid, this.latit, this.longi,this.FakeLocationStatus);
+  MarkTime(this.uid, this.location, this.aid, this.act, this.shiftid, this.refid, this.latit, this.longi,this.FakeLocationStatus,this.city);
 
   MarkTime.fromMap(Map map){
     uid = map[uid];
@@ -22,6 +23,7 @@ class MarkTime{
     latit = map[latit];
     longi = map[longi];
     FakeLocationStatus= map[FakeLocationStatus];
+    city = map[city];
   }
   MarkTime.fromJson(Map map){
     uid = map[uid];
@@ -33,6 +35,7 @@ class MarkTime{
     latit = map[latit];
     longi = map[longi];
     FakeLocationStatus=map[FakeLocationStatus];
+    city = map[city];
   }
 
 

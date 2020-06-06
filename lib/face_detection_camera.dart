@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -43,6 +45,7 @@ bool alertShowing=false;
   List<Face> faces;
   CameraController _camera;
   String statusatt="";
+  String org_name='';
 
   bool _isDetecting = false;
   CameraLensDirection _direction = CameraLensDirection.back;
@@ -52,16 +55,17 @@ bool alertShowing=false;
   void initState() {
     super.initState();
     initializeCamera();
-    //initPlatformState();
+    initPlatformState();
 
   }
   initPlatformState() async {
-    bool keptOn = await Screen.isKeptOn;
-    double brightness = await Screen.brightness;
+
+    var prefs = await SharedPreferences.getInstance();
+
+
     setState((){
-      _isKeptOn = keptOn;
-      _brightness = brightness;
-      Screen.setBrightness(1);
+      org_name = prefs.getString('org_name') ?? '';
+
     });
   }
   stopimagestream() async{
@@ -230,10 +234,11 @@ clickpicture() async{
           print("-------------------------------------------------------");
           print(takenImage);
           File imageFile=await File(path).writeAsBytes(takenImage);
+          File compressedImageFile= await testCompressAndGetFile(imageFile, path);
           print("Image File"+imageFile.toString());
           //Navigator.pop(context,imageFile);
 
-          saveTimeInOutImagePickerGroupAttFaceCamera(mk,context,imageFile);
+          saveTimeInOutImagePickerGroupAttFaceCamera(mk,context,compressedImageFile);
           //await _camera.stopImageStream();
           //await _camera.dispose();
 
@@ -303,6 +308,23 @@ Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context,imag
       File compressedImage = new File('$path/img_$rand.jpg')..writeAsBytesSync(im.encodeJpg(smallerImage, quality: 50));
     */
         //// sending this base64image string +to rest api
+
+        //For cropping image
+          ImageProperties properties =
+          await FlutterNativeImage.getImageProperties(imagei.path);
+          print("image cropped successfully");
+
+          int width = properties.width;
+          var offset = (properties.height - properties.width) / 2;
+
+          File croppedFile = await FlutterNativeImage.cropImage(
+              imagei.path, 0, offset.round(), width, width);
+
+          // _resizePhoto(imagei.toString());
+
+          imagei= croppedFile;
+
+
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
         //String deviceidmobile= prefs.getString("deviceid")??"";
@@ -453,7 +475,7 @@ Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context,imag
                 });
                 return AlertDialog(
                   //title: Text('Title'),
-                  content: Text('Attendance punched recently'),
+                  content: Text('Time Out can not be marked soon after Time In'),
                 );
               });
           return false;
@@ -527,6 +549,7 @@ Widget _buildImage() {
         children: <Widget>[
           CameraPreview(_camera),
           _buildResults(),
+          /*
           Positioned(
             bottom: 0.0,
             left: 0.0,
@@ -534,14 +557,14 @@ Widget _buildImage() {
             child: Container(
               color: Colors.white,
               height: 50.0,
-              child: ListView(
+             /* child: ListView(
                 children: faces
                     .map((face) =>
                     Text(face.boundingBox.center.toString()))
                     .toList(),
-              ),
+              ),*/
             ),
-          ),
+          ),*/
         ],
       ),
     );
@@ -593,6 +616,30 @@ void reInitialize() async {
 
 
 }
+  Future<File> testCompressAndGetFile(File file, String targetPath) async {
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path, targetPath,
+      quality: 100,
+
+      minHeight: 200,
+      minWidth: 200,
+    );
+
+    print("Length of file"+result.lengthSync().toString());
+    print(result.lengthSync());
+    final path = p.join(
+      // Store the picture in the temp directory.
+      // Find the temp directory using the `path_provider` plugin.
+      // (await getTemporaryDirectory()).path,
+      (await getApplicationDocumentsDirectory()).path,
+      '${DateTime.now()}.png',
+    );
+
+    print("-----------------------------------path of image--------------------------------->"+path);
+    result.copy(path);
+    //GallerySaver.saveImage(result.path);
+    return result;
+  }
 
 
 
@@ -601,7 +648,7 @@ void reInitialize() async {
     return Scaffold(
         backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("Group Attendance"),
+        title: Text(org_name,style: new TextStyle(fontSize: 20.0)),
           automaticallyImplyLeading: false,
           backgroundColor: appcolor
       ),
@@ -609,22 +656,24 @@ void reInitialize() async {
       floatingActionButton: Stack(
         children: <Widget>[
           Positioned(
-            bottom: 80.0,
-            right: 10.0,
+            bottom: 10.0,
+            right: 100.0,
             child: FloatingActionButton(
               heroTag: 'change camera',
               onPressed: toggleCameraDirection,
               child: _direction == CameraLensDirection.back
-                  ? const Icon(Icons.camera_front)
-                  : const Icon(Icons.camera_rear),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
-              ),
+                  ? const Icon(Icons.rotate_left)
+                  : const Icon(Icons.rotate_left),
+              backgroundColor: Colors.green,
+//              shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.circular(5.0),
+//              ),
+
             ),
           ),
           Positioned(
             bottom: 10.0,
-            right: 10.0,
+            right: 160.0,
             child: FloatingActionButton(
               heroTag: 'Done',
               onPressed: () async{
@@ -635,14 +684,15 @@ void reInitialize() async {
                       builder: (context) => HomePage()),
                 );
               },
-              child: Icon(Icons.save),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
-              ),
+              child: Icon(Icons.arrow_back),
+              backgroundColor: Colors.red,
+//              shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.circular(5.0),
+//              ),
             ),
           ),
         ],
-      )
+      ),
       /*
       floatingActionButton: FloatingActionButton(
         onPressed: _toggleCameraDirection,

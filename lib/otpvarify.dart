@@ -22,11 +22,26 @@ import 'home.dart';
 import 'services/services.dart';
 class Otp extends StatefulWidget {
 
+  String username1 ='';
+  String password1 ='';
+
+  Otp(String username, String password, BuildContext context){
+    username1 = username;
+    password1 = password;
+  }
+
   @override
-  _OtpState createState() => new _OtpState();
+  _OtpState createState() => new _OtpState(username1,password1);
 }
 
 class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
+  String username1 ='';
+  String password1 ='';
+
+  _OtpState( username,  password,){
+    username1 = username;
+    password1 = password;
+  }
   // Constants
   final int time = 10;
   AnimationController _controller;
@@ -123,6 +138,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           child: CircularProgressIndicator(), height: 30.0, width: 30.0,)) : Center(child :   SizedBox(height: 30.0, width: 30.0,)),
         _getInputField,
        // _hideResendButton ? _getTimerText : _getResendButton,
+        _getResendButton,
         _getTimerText,
         _getOtpKeyboard
       ],
@@ -154,19 +170,34 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
       child: new Container(
         height: 32,
         width: 120,
-        decoration: BoxDecoration(
-            color: Colors.black,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(32)),
+//        decoration: BoxDecoration(
+//            color: Colors.black,
+//            shape: BoxShape.rectangle,
+//            borderRadius: BorderRadius.circular(32)),
         alignment: Alignment.center,
         child: new Text(
           "Resend OTP",
           style:
-          new TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          new TextStyle(fontWeight: FontWeight.bold, color: Colors.blue,decoration: TextDecoration.underline),
         ),
       ),
-      onTap: () {
-        // Resend you OTP via API or anything
+      onTap: ()async {
+        var a = await resendOTP(username1, password1);
+        if(a){
+          showDialog(context: context, child:
+          new AlertDialog(
+            title: new Text("Alert"),
+            content: new Text("Please check your mail for OTP."),
+          ));
+        }
+        else{
+          showDialog(context: context, child:
+          new AlertDialog(
+            title: new Text("Alert"),
+            content: new Text("Poor Network Connection."),
+          ));
+        }
+        //Resend you OTP via API or anything
       },
     );
   }

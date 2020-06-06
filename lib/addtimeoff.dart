@@ -772,7 +772,7 @@ class _AddTimeoff extends State<AddTimeoff> {
           {
             showDialog(context: context, child:
             new AlertDialog(
-              content: new Text("Time Off has started"),
+              content: new Text("Time Off has ended"),
             )
             );
           }
@@ -780,7 +780,7 @@ class _AddTimeoff extends State<AddTimeoff> {
             {
               showDialog(context: context, child:
               new AlertDialog(
-                content: new Text("Time Off has ended"),
+                content: new Text("Time Off has started"),
               )
               );
             }

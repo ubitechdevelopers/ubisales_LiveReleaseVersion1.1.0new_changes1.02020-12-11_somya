@@ -893,7 +893,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                      // login(_phone.text, _pass.text, context);
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => Otp()),
+                                        MaterialPageRoute(builder: (context) => Otp(_email.text,_pass.text,context)),
                                       );
                                     }
                                     gethome ();  // comment by sohan
@@ -924,7 +924,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     showDialog(context: context, child:
                                     new AlertDialog(
                                       title: new Text("ubiAttendance"),
-                                      content: new Text("Email ID is already registered"),
+                                      content: new Text("Email ID is already registered. Please Sign In"),
                                       //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
                                     ));
                                   } else if (res['sts'] == 'false2' || res['sts'] == 'false4') {

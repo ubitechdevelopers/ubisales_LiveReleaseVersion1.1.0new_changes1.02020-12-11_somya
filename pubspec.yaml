@@ -84,6 +84,7 @@ dependencies:
   firebase_database: 3.1.3
   google_maps_flutter: ^0.5.11+1
   flutter_polyline_points: ^0.1.0
+  rflutter_alert: ^1.0.3
   #path_provider_macos: 0.0.4+3
 
 
@@ -131,6 +132,7 @@ flutter:
       - assets/icons8-offline-100.png
       - assets/Beep_Short.mp3
       - assets/facerecog.png
+      - assets/icons8-camera-50.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

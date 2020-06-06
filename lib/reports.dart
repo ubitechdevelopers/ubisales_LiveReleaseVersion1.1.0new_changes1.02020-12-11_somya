@@ -483,6 +483,52 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
+            (timeOff==1 && admin_sts=='1')?SizedBox(height: 0.0):Center(),
+            (timeOff==1 && admin_sts=='1')? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(0xe801, fontFamily: "CustomIcon"),size: 30.0,),
+                    SizedBox(width: 20.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Time Off',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get Employees Time Off List ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor:splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check Employee's Timeoff records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TimeOffList()),
+                  );
+                }
+              },
+            ):Center(),
+
 
             (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 0.0):Center(),
             (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
@@ -530,50 +576,7 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 0.0):Center(),
-            (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(const IconData(0xe808, fontFamily: "CustomIcon"),size: 30.0,),
-                    SizedBox(width: 20.0,),
-                    Expanded(
-// widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('Outside the fence',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Container(
-                                child: Text('Outside the geo fence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
-                  ],
-                ),
-              ),
-              color: Colors.white,
-              elevation: 0.0,
-              splashColor: splashcolor,
-              textColor: textcolor,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to plan for this report");
-                }else {
-                  Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Outsidegeofance()),
-                  );
-                }
-              },
-            ):Center(),
+
       (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon!='1'))?SizedBox(height: 0.0):Center(),
             (visitpunch==1 && (admin_sts=='1' ||   admin_sts =='2')&&(locationTrackingAddon!='1'))?
             new RaisedButton(
@@ -668,27 +671,27 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            (timeOff==1 && admin_sts=='1')?SizedBox(height: 0.0):Center(),
-            (timeOff==1 && admin_sts=='1')? new RaisedButton(
+            (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 0.0):Center(),
+            (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Icon(const IconData(0xe801, fontFamily: "CustomIcon"),size: 30.0,),
+                    Icon(const IconData(0xe808, fontFamily: "CustomIcon"),size: 30.0,),
                     SizedBox(width: 20.0,),
                     Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+// widthFactor: MediaQuery.of(context).size.width*0.10,
                       child:Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Time Off',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Outside the fence',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('Get Employees Time Off List ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('Outside the geo fence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],
@@ -700,19 +703,66 @@ class _Reports extends State<Reports> {
               ),
               color: Colors.white,
               elevation: 0.0,
-              splashColor:splashcolor,
+              splashColor: splashcolor,
               textColor: textcolor,
               onPressed: () {
                 if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check Employee's Timeoff records.");
+                  showDialogWidget("Upgrade to plan for this report");
                 }else {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TimeOffList()),
+                    context, MaterialPageRoute(builder: (context) => Outsidegeofance()),
                   );
                 }
               },
             ):Center(),
+
+            admin_sts =='1' ? SizedBox(height: 0.0):Center(),
+            admin_sts =='1' && facerecognition==1 ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(58400, fontFamily: 'MaterialIcons'),size: 25.0,color: Colors.black38,),
+                    SizedBox(width: 25.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Suspicious Selfies',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get all Suspicious Selfies',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check suspicious selfies.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Suspicious_selfies()),
+                  );
+                }
+              },
+            ):Center(),
+
+
 
 
             /*
@@ -850,51 +900,7 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            admin_sts =='1' ? SizedBox(height: 0.0):Center(),
-            admin_sts =='1' && facerecognition==1 ? new RaisedButton(
-              child: Container(
-                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(const IconData(58400, fontFamily: 'MaterialIcons'),size: 30.0,),
-                    SizedBox(width: 25.0,),
-                    Expanded(
-//                            widthFactor: MediaQuery.of(context).size.width*0.10,
-                      child:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              child: Text('Suspicious Selfies',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Container(
-                                child: Text('Get all Suspicious Selfies',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
-                  ],
-                ),
-              ),
-              color: Colors.white,
-              elevation: 0.0,
-              splashColor: splashcolor,
-              textColor: textcolor,
-              onPressed: () {
-                if(trialstatus=="2"){
-                  showDialogWidget("Upgrade to Premium plan to check suspicious selfies.");
-                }else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Suspicious_selfies()),
-                  );
-                }
-              },
-            ):Center(),
+
 
           ]),
     );

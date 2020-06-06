@@ -715,7 +715,9 @@ class _Settings extends State<Settings> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Icon(const IconData(0xe802, fontFamily: "CustomIcon"),size: 30.0,),
+            //Icon(const IconData(0xe802, fontFamily: "CustomIcon"),size: 30.0,),
+            Image.asset(
+                'assets/icons8-camera-50.png', height: 30.0, width: 30.0,color: Colors.black54,),
             SizedBox(width: 20.0,),
             Expanded(
 //                            widthFactor: MediaQuery.of(context).size.width*0.10,

@@ -1159,6 +1159,34 @@ Future<String> addDept(name, status) async {
   return response.body.toString();
 }
 
+resendOTP(username1, password1) async {
+  //print('RECIEVED STATUS: '+status.toString());
+
+  final prefs = await SharedPreferences.getInstance();
+  Dio dio = new Dio();
+  FormData formData = new FormData.from({
+    "username":username1,
+    "password":password1                        //to save city everytime, while marking timein and timeout
+    // "file": new UploadFileInfo(imagei, "image.png"),
+  });
+  print(globals.path + "resend_otp?username=${ username1}&password=${password1}");
+
+  try {
+    //print(globals.path + "resend_otp", data: formData);
+    Response<String> response1 = await dio.post(
+        globals.path + "resend_otp", data: formData);
+    print(response1.toString());
+    var a = await jsonDecode(response1.toString());
+
+    if (a['sts'] == 'true')
+      return true;
+    else
+      return false;
+  }catch(e){
+    return false;
+  }
+}
+
 Future<String> updateDept(dept, sts, did) async {
   //print('RECIEVED STATUS: '+status.toString());
   final prefs = await SharedPreferences.getInstance();
@@ -1578,6 +1606,28 @@ Future<int> changeMyPassword(oldPass, newPass) async {
   }
   return int.parse(response.body);
 }
+//////////////////////////////////////////////////////////sgCode/////////////////////////////////////////////////
+
+Future<int> firstPassword(oldPass, newPass, String password_sts) async {
+  final prefs = await SharedPreferences.getInstance();
+  print(oldPass);
+  print("-----------------1");
+  print(newPass);
+  print("-----------------2");
+  print(password_sts);
+
+  String empid = prefs.getString('empid') ?? '';
+  String orgdir = prefs.getString('orgdir') ?? '';
+  //  print(oldPass+'--'+newPass);
+  print("change psswrd" + globals.path + 'firstPassword?uid=$empid&refno=$orgdir&newpwd=$newPass&password_sts=$password_sts');
+  final response = await http.get(globals.path + 'firstPassword?uid=$empid&refno=$orgdir&newpwd=$newPass&password_sts=$password_sts');
+//  if (int.parse(response.body) == 1) {
+//    prefs.setString('usrpwd', newPass);
+//  }
+  //return int.parse(response.body);
+}
+
+///////////////////////////////////////////////////////sgCODE////////////////////////////////////////////////////////
 
 Future<int> resetMyPassword(username) async {
   final prefs = await SharedPreferences.getInstance();
@@ -2833,8 +2883,11 @@ getAddressFromLati( String Latitude,String Longitude) async{
       var first = addresses.first;
       //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
       var streamlocationaddr = "${first.addressLine}";
+      var city = "${first.locality}";
+      print(city);
 
       globalstreamlocationaddr = streamlocationaddr;
+      globalcity = city;
       return streamlocationaddr;
     }
     else{

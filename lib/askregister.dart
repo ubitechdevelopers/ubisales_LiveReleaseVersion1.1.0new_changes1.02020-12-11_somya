@@ -156,6 +156,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                           ],
                         ),
                         SizedBox(height: 10.0),
+                        /*
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -176,6 +177,7 @@ class _AskRegisterationPageState extends State<AskRegisterationPage> {
                             ),
                           ],
                         ),
+                         */
                         SizedBox(height: 10.0),
                       ],
                     ),

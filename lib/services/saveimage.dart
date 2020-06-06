@@ -35,7 +35,7 @@ class SaveImage {
         //// sending this base64image string +to rest api
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-
+        String city = globals.globalcity;
         String lat = globals.assign_lat.toString();
         String long = globals.assign_long.toString();
         print("global Address: " + location);
@@ -66,7 +66,8 @@ class SaveImage {
           "latit": lat,
           "longi": long,
           "file": new UploadFileInfo(imagei, "image.png"),
-          "FakeLocationStatus":mk.FakeLocationStatus
+          "FakeLocationStatus":mk.FakeLocationStatus,
+          "city": city
         });
         print("5");
         Response<String> response1 =
@@ -167,7 +168,7 @@ class SaveImage {
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
           String deviceidmobile= prefs.getString("deviceid")??"";
-
+          String city = globals.globalcity;
           String lat = globals.assign_lat.toString();
           String long = globals.assign_long.toString();
           print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
@@ -192,7 +193,8 @@ class SaveImage {
             "platform":'android',
             "tempimagestatus":1,
             "deviceidmobile":deviceidmobile,
-            "devicenamebrand":globals.devicenamebrand
+            "devicenamebrand":globals.devicenamebrand,
+            "city": city
           });
           print(formData);
           Response<String> response1;
@@ -241,7 +243,7 @@ class SaveImage {
 
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-
+        String city = globals.globalcity;
         String lat = globals.assign_lat.toString();
         String long = globals.assign_long.toString();
         print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
@@ -262,7 +264,8 @@ class SaveImage {
           "latit": lat,
           "longi": long,
           "FakeLocationStatus":mk.FakeLocationStatus,
-          "platform":'android'
+          "platform":'android',
+          "city": city
           // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -305,6 +308,7 @@ class SaveImage {
           builder: (BuildContext context) => new FaceDetectionFromLiveCamera(mk),
           fullscreenDialog: true,)
         );
+//          For cropping image
 
 //          ImageProperties properties =
 //          await FlutterNativeImage.getImageProperties(imagei.path);
@@ -536,7 +540,7 @@ class SaveImage {
                   context: context,
                   // ignore: deprecated_member_use
                   child: new AlertDialog(
-                    content: new Text("Attendance punchedflutter  without Selfie due to poor network"),
+                    content: new Text("Attendance punched without Selfie due to poor network"),
                   ));
             }
             print(status);
@@ -636,6 +640,7 @@ class SaveImage {
           Dio dio = new Dio();
           String location = globals.globalstreamlocationaddr;
           String deviceidmobile= prefs.getString("deviceid")??"";
+          String city = globals.globalcity;
           String lat = globals.assign_lat.toString();
           String long = globals.assign_long.toString();
           print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
@@ -660,7 +665,8 @@ class SaveImage {
             "platform":'android',
             "tempimagestatus":1,
             "deviceidmobile":deviceidmobile,
-            "devicenamebrand":globals.devicenamebrand
+            "devicenamebrand":globals.devicenamebrand,
+            "city": city
           });
           print(formData);
           print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");
@@ -725,7 +731,7 @@ class SaveImage {
 
         Dio dio = new Dio();
         String location = globals.globalstreamlocationaddr;
-
+        String city = globals.globalcity;
         String lat = globals.assign_lat.toString();
         String long = globals.assign_long.toString();
         print("saveImage?uid=" + mk.uid + "&location=" + location + "&aid=" +
@@ -746,7 +752,8 @@ class SaveImage {
           "latit": lat,
           "longi": long,
           "FakeLocationStatus":mk.FakeLocationStatus,
-          "platform":'android'
+          "platform":'android',
+          "city": city
          // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");

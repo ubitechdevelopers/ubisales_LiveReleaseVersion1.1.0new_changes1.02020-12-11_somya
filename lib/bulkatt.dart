@@ -134,7 +134,12 @@ class _Bulkatt extends State<Bulkatt> {
   }
 
   List<DropdownMenuItem<String>> _dropDownItem() {
-    List<String> ddl = ["Manual", "Camera Mode", "QR Mode"];
+    List<String> ddl;
+    if(prefix0.facerecognition==1)
+    ddl = ["Admin", "Face Recognition", "QR Code"];
+    else{
+      ddl = ["Admin", "QR Code"];
+    }
     return ddl.map(
             (value) =>
             DropdownMenuItem(
@@ -430,17 +435,11 @@ class _Bulkatt extends State<Bulkatt> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(height: 8.0),
-              /*Center(
-                child: Text(
-                  'Group Attendance',
-                  style: new TextStyle(
-                    fontSize: 22.0,
-                    color: Colors.black54,
-                  ),
-                ),
+            new Container(
+              child: Center(child:Text("Group Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
+            ),
 
-              ),*/
-              SizedBox(height: 5.0),
+              SizedBox(height: 8.0),
 
               Row(
                 children: <Widget>[
@@ -463,22 +462,25 @@ class _Bulkatt extends State<Bulkatt> {
                               icon: Icon(Icons.arrow_drop_down),
                               isDense: true,
                               //isExpanded: true,
-                              hint: Text('Manual'),
+                              hint: Text('Admin'),
                               value: _selectedRoute,
                               items: _dropDownItem(),
                               onChanged: (value){
                                 _selectedRoute=value;
+                                setState(() {
+                                  _selectedRoute='Admin';
+                                });
                                 switch(value){
-                                  case "Manual" :
+                                  case "Admin" :
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => Bulkatt()),
                                     );
                                     break;
-                                  case "Camera Mode" :
+                                  case "Face Recognition" :
                                     saveImageGrpAttFace();
                                     break;
-                                  case "QR Mode" :
+                                  case "QR Code" :
 
                                     if(loaderqr)
                                       return null;
@@ -1188,7 +1190,8 @@ class _Bulkatt extends State<Bulkatt> {
         orgdir,
         prefix0.assign_lat.toString(),
         assign_long.toString(),
-        FakeLocationStatus);
+        FakeLocationStatus,
+        globalcity);
 
     SaveImage saveImage = new SaveImage();
     bool issave = false;

@@ -20,6 +20,7 @@ import 'package:Shrine/database_models/qr_offline.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/offline_home.dart';
+import 'package:Shrine/otpvarify.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -670,6 +671,12 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(builder: (context) => HomePage()),
       );*/
         Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
+      }
+      else if(islogin == 'MailNotVerified') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Otp(_usernameController.text,_passwordController.text,context)),
+        );
       }else if(islogin=="failure"){
         setState(() {
           loader = false;
