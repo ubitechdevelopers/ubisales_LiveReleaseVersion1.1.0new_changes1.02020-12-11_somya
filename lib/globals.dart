@@ -35,6 +35,8 @@ String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_s
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 
 
+
+
 /*
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services/isInternetConnected";
@@ -56,7 +58,7 @@ int timeOff=0,bulkAttn = 0,geoFence=0,payroll=0,tracking=0,visitpunch=0,departme
 int globalalertcount = 0;
 var persistedface="0";
 int firstface=0;
-String globalcity='';
+String globalcity='City Not Fetched';
 var deviceid="0";
 var devicenamebrand="";
 int visitImage = 0;
@@ -85,7 +87,7 @@ bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
 bool selectimg = true;
 bool showTimeInNotification=true;
-bool showAppInbuiltCamera=false;
+bool showAppInbuiltCamera=true;
 bool timeSpoofed=false;
 bool globalCameraOpenedStatus=false;
 bool locationThreadUpdatedLocation=false;
@@ -112,6 +114,8 @@ var clickPictureCalled=false;
 var attendanceMarked=true;
 String locationTrackingAddon="0";
 String trackLocationForCurrentUser="0";
+String shiftId='';
+var timeoffRunning=false;
 /*
 int total_dept = 0;
 int total_abs = 0;

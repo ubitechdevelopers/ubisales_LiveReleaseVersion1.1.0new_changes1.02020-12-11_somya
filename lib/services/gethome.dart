@@ -68,6 +68,7 @@ class Home{
         globals.departmentname = timeinoutMap['departmentname'].toString();
         globals.timeoutdate = timeinoutMap['timeoutdate'].toString();
         globals.departmentid = int.parse(timeinoutMap['departmentid']);
+        globals.shiftId = timeinoutMap['shiftId'];
         globals.designationid = int.parse(timeinoutMap['designationid']);
         print("Testing line");
         globals.bulkAttn=int.parse(timeinoutMap['Addon_BulkAttn']);

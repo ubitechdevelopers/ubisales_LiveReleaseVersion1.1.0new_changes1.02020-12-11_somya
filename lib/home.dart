@@ -2870,10 +2870,43 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     print('aidId' + aid);
     var FakeLocationStatus = 0;
 
+    if(globals.departmentid==1||globals.departmentid==0){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Department has not been assigned"),
+          ));
+      return null;
+    }
+    if(globals.designationid==0){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Designation has not been assigned"),
+          ));
+      return null;
+    }
+    print("ssssssssssssssssshift"+shiftId.toString());
+    if(globals.shiftId==''||globals.shiftId==null||globals.shiftId=='0'){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Shift has not been assigned"),
+          ));
+      return null;
+    }
+
+
     if (AbleTomarkAttendance != '1' &&
         globals.ableToMarkAttendance == 1 &&
         geoFence == 1) {
-      showDialog(
+      await showDialog(
           context: context,
           // ignore: deprecated_member_use
           child: new AlertDialog(
@@ -2909,7 +2942,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       bool issave = false;
      var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
-          prefs.getBool("showAppInbuiltCamera") ?? false;
+          prefs.getBool("showAppInbuiltCamera") ?? true;
       issave = globals.showAppInbuiltCamera
           ? await saveImage.saveTimeInOutImagePickerAppCamera(mk, context)
           : await saveImage.saveTimeInOutImagePicker(mk, context);
@@ -2935,7 +2968,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
           if(locationTrackingAddon=='1'){
-            startLiveLocationTracking();
+           // startLiveLocationTracking();
           }
 
           print("This is time in block " + act1);
@@ -2953,7 +2986,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         }
         else{
-          stopLiveLocationTracking();
+         // stopLiveLocationTracking();
           print("This is time timeout block"+ act1);
           var prefs = await SharedPreferences.getInstance();
 

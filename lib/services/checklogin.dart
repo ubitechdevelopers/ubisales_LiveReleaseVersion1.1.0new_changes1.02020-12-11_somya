@@ -176,6 +176,90 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     }
   }
 
+
+
+  checkLoginForQrBulk(User user,int FakeLocationStatus,context) async{
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      print(user.userName + "----");
+      print(user.userPassword + "----");
+      if(user.userName=='' || user.userPassword=='')
+        return "failure";
+      FormData formData = new FormData.from({
+        "userName": user.userName,
+        "password": user.userPassword,
+        "qr":true,
+      });
+      print("attendance mark by qr");
+      print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPassword+"&qr=true");
+      // Response response1 = await dio.post("https://sandbox.ubiattendance.com/index.php/services/checkLogin",data: formData);
+      // Response response1 = await dio.post("https://ubiattendance.ubihrm.com/index.php/services/checkLogin",data: formData);
+      Response response1 = await dio.post(globals.path+"checkLogin", data: formData);
+      // Response response1 = await dio.post("http://192.168.0.200/UBIHRM/HRMINDIA/services/checkLogin", data: formData);
+      print(response1.toString());
+      print(response1.statusCode.toString());
+      if (response1.statusCode == 200) {
+        Map employeeMap = json.decode(response1.data);
+        //print(employeeMap["response"]);
+
+        if (employeeMap["response"] == 1) {
+          var user = new Employee.fromJson(employeeMap);
+          print(user.fname + " //" + user.lname);
+          globals.attImage = int.parse(user.imgstatus);
+          print(user.org_perm);
+          //prefs.setString('empid', user.empid);
+          Home ho = new Home();
+          print("no error here1");
+          Map timeinout = await ho.checkTimeInQR(user.empid, user.orgid);
+          //  print(timeinout);
+          print("no error here3");
+          if(timeinout["latit"]=='0.0' && timeinout["longi"]=='0.0'){
+            print("Location not fetched...");
+            return "nolocation";
+          }else {
+            var marktimeinout = MarkTime(
+                timeinout["uid"].toString(),
+                timeinout["location"],
+                timeinout["aid"].toString(),
+                timeinout["act"],
+                timeinout["shiftId"],
+                timeinout["refid"].toString(),
+                timeinout["latit"].toString(),
+                timeinout["longi"].toString(),
+                FakeLocationStatus,
+                timeinout["city"].toString());
+            if (timeinout["act"] != "Imposed") {
+              SaveImage mark = new SaveImage();
+
+              var prefs= await SharedPreferences.getInstance();
+              globals.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+              bool res = globals.showAppInbuiltCamera?await mark.saveTimeInOutQRAppCamera(marktimeinout,context):await mark.saveTimeInOutQR(marktimeinout,context);
+              if (res)
+                if(timeinout["aid"].toString() != '0')
+                  return "success1";
+                else
+                  return "success";
+              else
+                return "poor network";
+            } else {
+              return "imposed";
+            }
+          }
+        } else {
+          return "failure";
+        }
+      } else {
+        return "poor network";
+      }
+    }catch(e){
+      print(e.toString());
+      return "poor network";
+    }
+  }
+
+
+
+
   markAttByQR(String qr,int FakeLocationStatus,context) async{
     print("first function");
     List splitstring = qr.split("ykks==");
@@ -187,5 +271,20 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
     print(qr);
    //return "success";
   }
+
+
+
+  markAttByQRBulk(String qr,int FakeLocationStatus,context) async{
+    print("first function");
+    List splitstring = qr.split("ykks==");
+    User qruser = new User(splitstring[0], splitstring[1]);
+    String result = await checkLoginForQrBulk(qruser,FakeLocationStatus,context);
+    return result;
+    print(splitstring[0]);
+    print(splitstring[1]);
+    print(qr);
+    //return "success";
+  }
+
 
 }

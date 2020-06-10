@@ -13,6 +13,7 @@ import 'Bottomnavigationbar.dart';
 import 'addtimeoff.dart';
 import 'drawer.dart';
 import 'globals.dart';
+import 'globals.dart' as globals;
 import 'home.dart';
 import 'login.dart';
 import 'timeoff.dart';
@@ -52,6 +53,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
   bool isWithdrawPopupOpen=false;
   String lid = "";
   String shiftId = "";
+  var timeofflist;
   TextEditingController client_name,comments;
   @override
   void initState() {
@@ -61,12 +63,19 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     initPlatformState();
+
   }
   @override
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     appResumedPausedLogic(context);
+    timeofflist=await getTimeOffSummary();
+    setState(() {
+      timeoffRunning=  timeofflist[0].TimeTo.toString()=='00:00'?true:false;
+
+    });
+
     final prefs = await SharedPreferences.getInstance();
     empid = prefs.getString('empid') ?? '';
     orgdir = prefs.getString('orgdir') ?? '';
@@ -281,16 +290,15 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
       body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-      floatingActionButton: new FloatingActionButton(
-        backgroundColor: buttoncolor,
+      floatingActionButton: new RaisedButton(
+        color: buttoncolor,
         onPressed: (){
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddTimeoff()),
           );
         },
-        tooltip: 'Request TimeOff',
-        child: new Icon(Icons.add),
+       child: Text(timeoffRunning?"Stop":"Start" ,style: TextStyle(color: Colors.white),),
       ),
     ),
     );
@@ -340,7 +348,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       ),
     );
   }
-
+var timeoffRunning=false;
   mainbodyWidget() {
     return SafeArea(
       child: ListView(
@@ -387,18 +395,19 @@ class _TimeoffSummary extends State<TimeoffSummary> {
 
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.22,
+                width: MediaQuery.of(context).size.width*0.32,
                 child:Text(' Start',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.24,
+                width: MediaQuery.of(context).size.width*0.34,
                 child:Text(' End',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
+              /*
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
                 child:Text('  Status',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-              ),
+              ),*/
             ],
           ),
           new Divider(height: 1.5,),
@@ -418,6 +427,9 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index) {
+
+
+
 
                         return new Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,15 +460,16 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                   )),
 
                               new Container(
-                                  width: MediaQuery.of(context).size.width * 0.22,
+                                  width: MediaQuery.of(context).size.width * 0.32,
                                   child:  Text(
                                       snapshot.data[index].TimeFrom.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
                               ),
                               new Container(
-                                width: MediaQuery.of(context).size.width * 0.22,
+                                width: MediaQuery.of(context).size.width * 0.32,
                                 child:  Text(
                                     snapshot.data[index].TimeTo.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
                               ),
+                              /*
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.22,
                                 /*decoration: new ShapeDecoration(
@@ -475,7 +488,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                   children: <Widget>[
                                    // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
-                                    new Text(snapshot.data[index].TimeTo.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                    //new Text(snapshot.data[index].TimeTo.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
                                    // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
 
@@ -503,7 +516,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                   ],
                                 ),
                                  // child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center, )
-                              ),
+                              ),*/
                             /*  (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdraw' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?Container(
                                   height: 25.0,
                                   width: 25.0,

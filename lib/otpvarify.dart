@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Shrine/register_org.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -387,7 +388,13 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.pop(context);}),
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyHomePage()),
+          );
+          //Navigator.pop(context);
+        }),
         backgroundColor: appcolor,
       ),
       //backgroundColor: Colors.white,

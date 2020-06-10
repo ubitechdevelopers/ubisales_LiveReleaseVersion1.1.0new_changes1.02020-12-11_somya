@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'otpvarify.dart';
@@ -32,16 +32,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   /*static final List<String> languagesList = application.supportedLanguages;
   static final List<String> languageCodesList =application.supportedLanguagesCodes;
-
   final Map<dynamic, dynamic> languagesMap = {
     languagesList[0]: languageCodesList[0],
     languagesList[1]: languageCodesList[1],
   };*/
 
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   TextEditingController _name,_cname,_email,_pass,_cont,_phone,_city,_contcode;
+  TextEditingController locController1 = new TextEditingController();
+  TextEditingController locController2 = new TextEditingController();
+
+
+  Position _currentPosition;
   var phone ="";
   var pass = "";
+  String code;
   bool loader = false;
   bool _isButtonDisabled = false;
   final FocusNode __name = FocusNode();
@@ -298,6 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
 
   void initState() {
+    _getCurrentLocation();
     _name = new TextEditingController();
     _cname = new TextEditingController();
     _email = new TextEditingController();
@@ -311,11 +318,15 @@ class _MyHomePageState extends State<MyHomePage> {
     onLocaleChange(Locale(languagesMap["English"]));*/
   }
 
-  /*void onLocaleChange(Locale locale) async {
-    setState(() {
-      AppTranslations.load(locale);
-    });
-  }*/
+  SearchCountry(String country) {
+    for (int i=0; i < _myJson.length; i++) {
+      if (country == _myJson[i]["name"]) {
+        code = _myJson[i]["ind"];
+        _contcode.text = _myJson[i]['countrycode'];
+        _tempcontry = _myJson[i]['id'];
+      }
+    }
+  }
 
   setLocal(var fname, var empid, var  orgid) async {
     prefs = await SharedPreferences.getInstance();
@@ -380,29 +391,32 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.black12,
                           blurRadius: 1.0,
                         ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        /*   validator: (value) {
+                    ), child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: new TextFormField(
+                      /*   validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter company name';
                           }
                         },*/
-                        decoration:  InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon:  Icon(Icons.business, color: Colors.black38,),
-                            //hintText: AppTranslations.of(context).text("key_company_name"),
-                            hintText: 'Company',
+                      decoration:  InputDecoration(
+                          border: InputBorder.none,
+                          //prefixIcon:  Icon(Icons.business, color: Colors.black38,),
+                          prefixIcon:  Icon(
+                            Icons.person_outline,
+                            color: Colors.black38,
+                          ),
+                          //hintText: AppTranslations.of(context).text("key_company_name"),
+                          hintText: 'First name          Last name',
 //                          labelText: 'Company',
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        controller: _name,
-                        focusNode: __name,
+                          hintStyle: TextStyle(
+                            color: Colors.black45,
+                          )
                       ),
+                      controller: _name,
+                      focusNode: __name,
                     ),
+                  ),
                   ),
                   SizedBox(height: 15.0),
                   Container(
@@ -430,48 +444,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: Colors.black38,
                             ),
                             //hintText: AppTranslations.of(context).text("key_contact_person_name"),
-                            hintText: 'Name',
+                            hintText: 'Company Name',
                             hintStyle: TextStyle(
                               color: Colors.black45,
                             )
                         ),
                         controller: _cname,
                         focusNode: __cname,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        /*    validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter valid email';
-                          }
-                        },*/
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(Icons.mail_outline),
-                            hintText: 'Email',
-                            //hintText: AppTranslations.of(context).text("key_email"),
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        //obscureText: true,
-                        controller: _email,
-                        focusNode: __email,
-                        keyboardType: TextInputType.emailAddress,
                       ),
                     ),
                   ),
@@ -492,39 +471,33 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.all(5.0),
                           child: new InputDecorator(
                             decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.outlined_flag,
-                                  color: Colors.black38,
-                                ),
-                                hintStyle: TextStyle(
-                                  color: Colors.black45,
-                                )
-//                            suffixIcon: Icon(Icons.arrow_drop_down),
-//                            hintText: 'Country',
-//                            labelText: 'Country',
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.outlined_flag,
+                                color: Colors.black38,
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.black45,
+                              ),
                             ),
-                            //   isEmpty: _color == '',
+
                             child: DropdownButtonHideUnderline(
                               child: ButtonTheme(
                                 child: new DropdownButton<String>(
+                                  //controller:_currentAddress,
                                   iconSize: 20,
                                   icon: Icon(Icons.arrow_drop_down),
                                   isDense: true,
                                   hint: new Text("Select Country"),
-                                  //hint: new Text(AppTranslations.of(context).text("key_country")),
-                                  value: _country,
+                                  value: code ,
                                   onChanged: (String newValue) {
                                     setState(() {
-                                      print("******************");
-
-                                      _country = newValue;
-                                      print(newValue);
-                                      print(_myJson[int.parse(newValue)]['countrycode']);
-                                      print(_myJson[int.parse(newValue)]['name']);
-                                      _contcode.text =
-                                      _myJson[int.parse(newValue)]['countrycode'];
+                                      locController1.text='';
+                                      code = newValue;
+                                      _contcode.text = _myJson[int.parse(newValue)]['countrycode'];
                                       _tempcontry = _myJson[int.parse(newValue)]['id'];
+
+                                      //String s1 =  map[_currentAddress2].toString(),
                                       //   _tempcontry = _myJson[int.parse(newValue)]['id'];
                                       /*  _country = _myJson[int.parse(newValue)]['id'];
                                       _contcode.text = _myJson[int.parse(newValue)]['countrycode']; */
@@ -550,26 +523,39 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                   SizedBox(height: 15.0),
-
-                  /*  new TextFormField(
-                    /*    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter Phone';
-                      }
-                    },*/
-                    decoration: const InputDecoration(
-                      icon: const Icon(Icons.phone),
-                      hintText: 'Phone',
-                      labelText: 'Phone',
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFFBFBFB),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [new BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 1.0,
+                        ),]
                     ),
-                    controller: _phone,
-                    focusNode: __phone,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      WhitelistingTextInputFormatter.digitsOnly,
-                    ],
-                  ),*/
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: new TextFormField(
+                        decoration:  InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Icon(
+                              Icons.location_city,
+                              color: Colors.black38,
+                            ),
+                            hintText: 'City',
+                            //hintText: AppTranslations.of(context).text("key_city"),
+                            hintStyle: TextStyle(
+                              color: Colors.black45,
+                            )
+                        ),
+                        //controller: _city,
 
+                        controller: locController1,
+                        keyboardType:  TextInputType.text,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15.0),
                   new Row(
                     children: <Widget>[
                       Padding(
@@ -591,7 +577,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(horizontal: 5,vertical: 20.0),
                             ),
-                            controller: _contcode,
+                            controller: _contcode ,
                             focusNode: __contcode,
                             keyboardType: TextInputType.phone,
                             inputFormatters: [
@@ -656,6 +642,42 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: new TextFormField(
+                        /*    validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter valid email';
+                          }
+                        },*/
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Icon(Icons.mail_outline),
+                            hintText: 'Email',
+                            //hintText: AppTranslations.of(context).text("key_email"),
+                            hintStyle: TextStyle(
+                              color: Colors.black45,
+                            )
+                        ),
+                        //obscureText: true,
+                        controller: _email,
+                        focusNode: __email,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15.0),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFFBFBFB),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [new BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 1.0,
+                        ),]
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: new TextFormField(
                         obscureText: _obscureText,
                         controller: _pass,
                         focusNode: __pass,
@@ -682,40 +704,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-
-
-                  SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        decoration:  InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              color: Colors.black38,
-                            ),
-                            hintText: 'City(optional)',
-                            //hintText: AppTranslations.of(context).text("key_city"),
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        controller: _city,
-                        keyboardType: TextInputType.text,
-                      ),
-                    ),
-                  ),
-
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: new Container(
@@ -765,14 +753,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
                             if(_name.text=='') {
                               // ignore: deprecated_member_use
-                             // FocusScope.of(context).requestFocus(__name);
+                              // FocusScope.of(context).requestFocus(__name);
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
                                 content: new Text("Please enter the Company's name"),
                                 //content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
                               ));
-                               return null;
+                              return null;
                             }
                             else if(_cname.text=='') {
                               // ignore: deprecated_member_use
@@ -796,7 +784,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter the Email ID"),
                                 //content: new Text(AppTranslations.of(context).text("key_please_enter_email")),
                               ));
-                             // FocusScope.of(context).requestFocus(__email);
+                              // FocusScope.of(context).requestFocus(__email);
                               return null;
 
                             }
@@ -807,7 +795,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter the Password of at least 6 characters"),
                                 //content: new Text(AppTranslations.of(context).text("key_must_be_at_least_6_characters")),
                               ));
-                             // FocusScope.of(context).requestFocus(__pass);
+                              // FocusScope.of(context).requestFocus(__pass);
                               return null;
                             }
                             else if(_tempcontry=='' ) {
@@ -817,7 +805,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please Select a Country."),
                                 //content: new Text(AppTranslations.of(context).text("key_select_country")),
                               ));
-                             // FocusScope.of(context).requestFocus(__phone);
+                              // FocusScope.of(context).requestFocus(__phone);
                               return null;
                             }
                             else if(_phone.text.length<6) {
@@ -827,7 +815,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 content: new Text("Please enter a valid Phone No."),
                                 //content: new Text(AppTranslations.of(context).text("key_please_enter_valid_phone")),
                               ));
-                             // FocusScope.of(context).requestFocus(__phone);
+                              // FocusScope.of(context).requestFocus(__phone);
                               return null;
                             }
                             else {
@@ -843,7 +831,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               String referrenceAmt=prefs.getString("referrenceAmt")??"0%";
 
                               print("referrer id sent"+referrerId.toString());
-                              print(globals.path+"register_orgnew?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}");
+                              print(globals.path+"register_orgnew?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}&city=${_city.text}");
                               var url = globals.path+"register_orgnew";
                               http.post(url, body: {
                                 "org_name": _name.text,
@@ -853,7 +841,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "password": _pass.text,
                                 "country": _tempcontry,
                                 "countrycode": '',
-                                "address": _city.text,
+                                "address": locController1.text,
                                 "referrerId":referrerId,
                                 "ReferralValidFrom":ReferralValidFrom,
                                 "ReferralValidTo":ReferralValidTo,
@@ -865,13 +853,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                   var prefs=await SharedPreferences.getInstance();
                                   prefs.setBool("companyFreshlyRegistered",true );
 
-                                 // prefs.setBool("firstTimeInMarked",false );
+                                  // prefs.setBool("firstTimeInMarked",false );
 
                                   print("-----------------> After Registration ---------------->");
                                   print(response.body.toString());
                                   res = json.decode(response.body);
                                   if (res['sts'] == 'true') {
-                                   // setLocal(res['f_name'],res['id'],res['org_id']);  // comment by sohan
+                                    // setLocal(res['f_name'],res['id'],res['org_id']);  // comment by sohan
                                     /*setState(() {
                                       phone = _phone.text;
                                       pass = _pass.text;
@@ -883,14 +871,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                       _cont.text="";
                                       _contcode.text="";
                                       _phone.text="";
-
                                     });*/
 
                                     globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
 
                                     gethome () async{
                                       await new Future.delayed(const Duration(seconds: 1));
-                                     // login(_phone.text, _pass.text, context);
+                                      // login(_phone.text, _pass.text, context);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) => Otp(_email.text,_pass.text,context)),
@@ -901,7 +888,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                         barrierDismissible: false,
                                         child: new AlertDialog(
                                       title: new Text("ubiAttendance"),
-
                                       content: new Text("Hi " + res['f_name'] +
                                           ", Your company is registered successfully."),
                                       actions: <Widget>[
@@ -933,7 +919,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     new AlertDialog(
                                       title: new Text("ubiAttendance"),
                                       content: new Text("Phone No. is already registered"),
-                                     // content: new Text(AppTranslations.of(context).text("key_phone_already_registered")),
+                                      // content: new Text(AppTranslations.of(context).text("key_phone_already_registered")),
                                     ));
                                   } else {
                                     // ignore: deprecated_member_use
@@ -1037,6 +1023,39 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
       ),
     );
+  }
+
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy:LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        locController1.text = place.locality;
+        //locController2.text = place.country;
+        SearchCountry(place.country);
+
+      });
+    } catch (e) {
+      print(e);
+    }
+
   }
 
 }

@@ -465,7 +465,7 @@ class _Bulkatt extends State<Bulkatt> {
                               hint: Text('Admin'),
                               value: _selectedRoute,
                               items: _dropDownItem(),
-                              onChanged: (value){
+                              onChanged: (value) async{
                                 _selectedRoute=value;
                                 setState(() {
                                   _selectedRoute='Admin';
@@ -494,20 +494,29 @@ class _Bulkatt extends State<Bulkatt> {
                                  markAttByQROffline(context);
                                }
                                else{
-                              */   scan().then((onValue){
-                                      print("******************** QR value **************************");
-                                      print(onValue);
-                                      print("******************** QR value **************************");
-                                      //return false;
-                                      if(onValue!='error') {
+                              */
 
-                                        markAttByQR(onValue, context);
-                                      }else {
-                                        setState(() {
-                                          loaderqr = false;
-                                        });
-                                      }
+                                    var onValue=  await scan();
+
+                                    print("******************** QR value **************************");
+                                    print(onValue);
+                                    print("******************** QR value **************************");
+                                    //return false;
+                                    if(onValue!='error') {
+
+                                    await markAttByQR(onValue, context);
+
+                                    //Navigator.of(context).pop();
+
+                                    }else {
+                                    setState(() {
+                                    loaderqr = false;
                                     });
+                                    }
+
+
+
+
                                     /*    }
                           });*/
 
@@ -1048,49 +1057,80 @@ class _Bulkatt extends State<Bulkatt> {
     });
     print('ab');
 
-    var islogin = await dologin.markAttByQR(qr,fakeLocationDetected?1:0,context);
+    var islogin = await dologin.markAttByQRBulk(qr,fakeLocationDetected?1:0,context);
     print(islogin);
     if(islogin=="success" || islogin=="success1" ){
       setState(() {
         loaderqr = false;
       });
       if(islogin=="success" ) {
-        showDialog(
+
+        await showDialog(
             context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("TimeIn marked successfully"),
-            ));
-        markByQR();
+            builder: (context) {
+              Future.delayed(Duration(seconds: 2), () {
+                Navigator.of(context).pop(true);
+              });
+              return AlertDialog(
+                content: new Text("TimeIn marked successfully"),
+              );
+            });
+
+        //Navigator.of(context).pop();
+        await markByQR();
+       // Navigator.of(context).pop();
         /*Scaffold.of(context)
           .showSnackBar(
           SnackBar(content: Text("TimeIn marked successfully.")));*/
       }else {
-        showDialog(
+        await showDialog(
             context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("TimeOut marked successfully"),
-            ));
-        markByQR();
+            builder: (context) {
+              Future.delayed(Duration(seconds: 2), () {
+                Navigator.of(context).pop(true);
+              });
+              return AlertDialog(
+                content: new Text("TimeOut marked successfully"),
+              );
+            });
+
+        //Navigator.of(context).pop();
+       // Navigator.of(context).pop();
+        await markByQR();
       }
 
     }else if(islogin=="failure"){
       setState(() {
         loaderqr = false;
       });
-      Scaffold.of(context)
-          .showSnackBar(
-          SnackBar(content: Text("Invalid login credentials")));
-      markByQR();
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            content: new Text("Invalid login credentials"),
+          ));
+      //Navigator.of(context).pop();
+      await markByQR();
+      //Navigator.of(context).pop();
     }else if(islogin=="imposed"){
       setState(() {
         loaderqr = false;
       });
-      Scaffold.of(context)
-          .showSnackBar(
-          SnackBar(content: Text("Attendance is already marked")));
-      markByQR();
+      await showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              content: new Text("Attendance is already marked."),
+            );
+          });
+
+
+      //Navigator.of(context).pop();
+      await markByQR();
+      //Navigator.of(context).pop();
     }else if(islogin=="nolocation"){
       setState(() {
         loaderqr = false;
@@ -1098,21 +1138,36 @@ class _Bulkatt extends State<Bulkatt> {
       /* Scaffold.of(context)
           .showSnackBar(
           SnackBar(content: Text("Problem Getting Location! Please turn on GPS and try again")));*/
-      showDialog(
+      await showDialog(
           context: context,
-          // ignore: deprecated_member_use
-          child: new AlertDialog(
-            content: new Text("Problem Getting Location! Please turn on GPS and try again"),
-          ));
-      markByQR();
+          builder: (context) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              content: new Text("Problem Getting Location! Please turn on GPS and try again"),
+            );
+          });
+
+     await markByQR();
     }else{
       setState(() {
         loaderqr = false;
       });
-      Scaffold.of(context)
-          .showSnackBar(
-          SnackBar(content: Text("Problem while marking attendance")));
-      markByQR();
+      await showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              content: new Text("Problem while marking attendance."),
+            );
+          });
+
+      //Navigator.of(context).pop();
+      await markByQR();
+      //Navigator.of(context).pop();
     }
   }
 
@@ -1141,6 +1196,9 @@ class _Bulkatt extends State<Bulkatt> {
   }
 
   markByQR() async{
+
+
+
     if(loaderqr)
       return null;
 
@@ -1153,20 +1211,23 @@ class _Bulkatt extends State<Bulkatt> {
                                  markAttByQROffline(context);
                                }
                                else{
-                              */   scan().then((onValue){
+                              */
+
+    var onValue=await scan();
       print("******************** QR value **************************");
       print(onValue);
       print("******************** QR value **************************");
       //return false;
       if(onValue!='error') {
 
-        markAttByQR(onValue, context);
+        await markAttByQR(onValue, context);
       }else {
         setState(() {
           loaderqr = false;
+         // Navigator.of(context).pop();
         });
       }
-    });
+
 
   }
 
@@ -1197,7 +1258,7 @@ class _Bulkatt extends State<Bulkatt> {
     bool issave = false;
     var prefs = await SharedPreferences.getInstance();
     prefix0.showAppInbuiltCamera =
-        prefs.getBool("showAppInbuiltCamera") ?? false;
+        prefs.getBool("showAppInbuiltCamera") ?? true;
     issave = prefix0.showAppInbuiltCamera
         ? await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context)
         : await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context);

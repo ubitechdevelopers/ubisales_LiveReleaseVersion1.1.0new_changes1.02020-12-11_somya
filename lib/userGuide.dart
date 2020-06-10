@@ -136,7 +136,7 @@ class _UserGuide extends State<UserGuide> {
         GestureDetector(
           onTap: ()=>setState((){
           _animatedHeight_reqtimeoff==0.0?_animatedHeight_reqtimeoff=MediaQuery.of(context).size.height * 0.30:_animatedHeight_reqtimeoff=0.0;}),
-          child:Text('How to request time off?',style: TextStyle(fontSize: 20.0,color: Colors.blue)),
+          child:Text('How to apply for Time Off?',style: TextStyle(fontSize: 20.0,color: Colors.blue)),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.015,),
         new AnimatedContainer(duration: const Duration(milliseconds: 5),
@@ -150,15 +150,10 @@ class _UserGuide extends State<UserGuide> {
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
                   Text("2. Your Time off history will be displayed"),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                  Text("3. You can also check status of your time off request"),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.010,),
-                  Text("Request Time Off:",style: TextStyle(fontWeight: FontWeight.bold),),
+
+                  Text("Start Time Off:",style: TextStyle(fontWeight: FontWeight.bold),),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
                   Text("1. Click on \"Add\" button"),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                  Text("2. Fill the time off request form"),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                  Text("3. Click on \"Save\" button"),
 
                 ],
               )

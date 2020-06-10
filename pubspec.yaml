@@ -133,6 +133,7 @@ flutter:
       - assets/Beep_Short.mp3
       - assets/facerecog.png
       - assets/icons8-camera-50.png
+      - assets/face-recognition-gif.gif
 
   # To add assets to your application, add an assets section, like this:
   # assets:

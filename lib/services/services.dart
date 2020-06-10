@@ -1064,6 +1064,9 @@ Future<List<TimeOff>> getTimeOffSummary() async {
 //  print('--------------------getTimeOffList Called-----------------------');
   List responseJson = json.decode(response.body.toString());
   List<TimeOff> userList = createTimeOffList(responseJson);
+
+  //timeoffRunning=  userList[0].TimeTo.toString()=='00:00'?true:false;
+  print('timeoff running'+globals.timeoffRunning.toString());
   return userList;
 }
 

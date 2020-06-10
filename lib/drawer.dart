@@ -22,10 +22,10 @@ import 'userGuide.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
-  _AppDrawerState createState() => new _AppDrawerState();
+  AppDrawerState createState() => new AppDrawerState();
 }
 
-class _AppDrawerState extends State<AppDrawer> {
+class AppDrawerState extends State<AppDrawer> {
   /*var _defaultimage = new NetworkImage(
       "http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
@@ -488,7 +488,7 @@ class _AppDrawerState extends State<AppDrawer> {
               openWhatsApp();
             },
           ):Center(),*/
-
+/*
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -503,7 +503,7 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
-
+*/
           new ListTile(
             title: Row(
               children: <Widget>[

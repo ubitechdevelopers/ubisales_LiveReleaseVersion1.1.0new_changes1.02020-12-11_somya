@@ -23,11 +23,12 @@ import 'package:Shrine/shared/widgets/focus_widget.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'drawer.dart';
 import 'globals.dart' as globals;
 import 'globals.dart';
 import 'home.dart';
@@ -61,7 +62,9 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
     super.initState();
     init();
   }
+  FirebaseMessaging _firebaseMessaging;
   init() async{
+     _firebaseMessaging = FirebaseMessaging();
     var prefs = await SharedPreferences.getInstance();
     setState(() {
       fname = prefs.getString('fname') ?? '';
@@ -127,6 +130,14 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
                     children: <Widget>[
                       SizedBox(height: MediaQuery.of(context).size.height * .06),
 
+                      Row(
+                        children: <Widget>[
+                          SizedBox(width: MediaQuery.of(context).size.width*.7,),
+                          FlatButton(child: Text('Logout',style: TextStyle(color: Colors.blue,decoration: TextDecoration.underline,fontWeight: FontWeight.bold),),onPressed: (){
+                            logout();
+                          },),
+                        ],
+                      ),
                      /*
                       new GestureDetector(
                         onTap: () {
@@ -182,13 +193,15 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
 */
                       SizedBox(height: MediaQuery.of(context).size.height * .24),
 
-                      Image.asset("assets/facerecog.png",width: MediaQuery.of(context).size.width * .4,),
+                      Image.asset("assets/face-recognition-gif.gif",width: MediaQuery.of(context).size.width * .4,),
                       SizedBox(height: MediaQuery.of(context).size.height * .06),
                       //Text('Let\'s start with Face Recognition',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
                       SizedBox(height: MediaQuery.of(context).size.height * .01),
-                      RaisedButton(child: Text('Register my Face ID',style: TextStyle(color: Colors.white),),onPressed: (){
-                           saveImageFaceId();
-                      },color: buttoncolor,)
+
+                            RaisedButton(child: Text('Register my Face ID',style: TextStyle(color: Colors.white),),onPressed: (){
+                                 saveImageFaceId();
+                            },color: buttoncolor,),
+
                       // SizedBox(height: MediaQuery.of(context).size.height*.01),
 
                     ],
@@ -205,8 +218,91 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
     );
 
   }
+
+  logout() async{
+    final prefs = await SharedPreferences.getInstance();
+    String countryTopic=prefs.get('CountryName')??'admin';
+    String orgTopic=prefs.get('OrgTopic')??'admin';
+    String currentOrgStatus=prefs.get('CurrentOrgStatus')??'admin';
+    prefs.remove('response');
+    prefs.remove('fname');
+    prefs.remove('lname');
+    prefs.remove('empid');
+    prefs.remove('email');
+    prefs.remove('status');
+    prefs.remove('sstatus');
+    prefs.remove('orgid');
+    prefs.remove('orgdir');
+    prefs.remove('sstatus');
+    prefs.remove('org_name');
+    prefs.remove('destination');
+    prefs.remove('profile');
+    prefs.remove('latit');
+    prefs.remove('longi');
+    prefs.remove('aid');
+    prefs.remove('shiftId');
+    prefs.remove('OfflineModePermission');
+    prefs.remove('ImageRequired');
+    prefs.remove('glow');
+    prefs.remove('OrgTopic');
+    prefs.remove('CountryName');
+    prefs.remove('CurrentOrgStatus');
+    prefs.remove('date');
+    prefs.remove('firstAttendanceMarked');
+    prefs.remove('EmailVerifacitaionReminderShown');
+    prefs.remove('companyFreshlyRegistered');
+    prefs.remove('fname');
+    prefs.remove('empid');
+    prefs.remove('orgid');
+    prefs.remove('ReferralValidFrom');
+    prefs.remove('glow');
+    prefs.remove('ReferralValidTo');
+    prefs.remove('referrerAmt');
+    prefs.remove('referrenceAmt');
+    prefs.remove('referrerId');
+    prefs.remove('TimeInTime');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('ShiftAdded');
+    prefs.remove('EmployeeAdded');
+    prefs.remove('attendanceNotMarkedButEmpAdded');
+    prefs.remove('tool');
+    prefs.remove('companyFreshlyRegistered');
+
+    _firebaseMessaging.unsubscribeFromTopic("admin");
+    _firebaseMessaging.unsubscribeFromTopic("employee");
+    _firebaseMessaging.unsubscribeFromTopic(countryTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(currentOrgStatus.replaceAll(' ', ''));
+
+
+
+    //prefs.remove("TimeInToolTipShown");
+    department_permission = 0;
+    designation_permission = 0;
+    leave_permission = 0;
+    shift_permission = 0;
+    timeoff_permission = 0;
+    punchlocation_permission = 0;
+    employee_permission = 0;
+    permission_module_permission = 0;
+    report_permission = 0;
+    /* Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );*/
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,
+    );
+    //Navigator.pushNamed(context, '/home');
+    // Navigator.pushNamed(context, '/home');
+  }
+
+
+
   saveImageFaceId() async {
     var imagei;
+
     var prefs = await SharedPreferences.getInstance();
     String orgid = prefs.getString("orgid") ?? "";
     String empid = prefs.getString("empid") ?? "";
@@ -222,6 +318,7 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
       );*/
 
       if (globals.persistedface == '0' && globals.facerecognition == 1) {
+        print("caaaallllled");
         imagei = await Navigator.push(context, new MaterialPageRoute(
           builder: (BuildContext context) =>
           new Camera(
@@ -278,7 +375,7 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
                 child: new AlertDialog(
 
                   content: new Text(
-                      "Face ID registered successfully"),
+                      "Our AI engine is generating the Face ID. It may take a few minutes."),
                 )
             );
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);

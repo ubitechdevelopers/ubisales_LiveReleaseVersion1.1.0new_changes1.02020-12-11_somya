@@ -516,6 +516,7 @@ Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context,imag
     print(e.toString());
     globals.globalCameraOpenedStatus=false;
     return false;
+
   }
 
 
