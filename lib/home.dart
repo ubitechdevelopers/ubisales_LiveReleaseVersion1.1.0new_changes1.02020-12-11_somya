@@ -2942,7 +2942,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       bool issave = false;
      var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
-          prefs.getBool("showAppInbuiltCamera") ?? true;
+          prefs.getBool("showAppInbuiltCamera") ?? false;
       issave = globals.showAppInbuiltCamera
           ? await saveImage.saveTimeInOutImagePickerAppCamera(mk, context)
           : await saveImage.saveTimeInOutImagePicker(mk, context);
@@ -3034,7 +3034,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
-              content: new Text("Selfie was not captured. Please punch again."),
+              content: new Text("Selfie was not captured. Please try again."),
             ));
         if (mounted) {
           setState(() {
@@ -3444,7 +3444,7 @@ var FakeLocationStatus=0;
                           // ignore: deprecated_member_use
                           child: new AlertDialog(
                             content: new Text(
-                                "Selfie was not captured. Please punch again."),
+                                "Selfie was not captured. Please try again."),
                           ));
                       if (mounted)
                         setState(() {
@@ -3581,7 +3581,7 @@ var FakeLocationStatus=0;
                       // ignore: deprecated_member_use
                       child: new AlertDialog(
                         content: new Text(
-                            "Selfie was not captured. Please punch again."),
+                            "Selfie was not captured. Please try again."),
                       ));
                   if (mounted)
                     setState(() {
@@ -3816,11 +3816,15 @@ var FakeLocationStatus=0;
                   setState(() {
                     Password_sts = "1";
                   });
-                  firstPassword(_oldPass.text, _newPass.text, Password_sts);
+                  firstPassword(_oldPass.text, _newPass.text, Password_sts).then((res) {
+                    if(res==1) {
+                      showInSnackBar("Password changed successfully");
+                    }
+                  }).catchError((onError){
+                    showInSnackBar("Unable to change password");
+                    print(onError);
+                  });
                 }
-//                if(_oldPass.text  == RegExp("[a-zA-Z0-9]")){
-//
-//                }
               }
               if(Password_sts == "1")
                 Navigator.of(context, rootNavigator: true).pop();

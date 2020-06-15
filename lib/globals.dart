@@ -29,19 +29,20 @@ String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
-
+/*
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 
+*/
 
 
 
-/*
+
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://ubiattendance.zentylpro.com/index.php/Att_services/";
-*/
+
 
 /*
 String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
@@ -87,7 +88,7 @@ bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
 bool selectimg = true;
 bool showTimeInNotification=true;
-bool showAppInbuiltCamera=true;
+bool showAppInbuiltCamera=false;
 bool timeSpoofed=false;
 bool globalCameraOpenedStatus=false;
 bool locationThreadUpdatedLocation=false;

@@ -595,7 +595,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         act1 = "";
       });
       var prefs= await SharedPreferences.getInstance();
-      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
@@ -617,7 +617,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         showDialog(context: context, child:
         new AlertDialog(
 
-          content: new Text("Selfie was not captured. Please punch again."),
+          content: new Text("Selfie was not captured. Please try again."),
         )
         );
         setState(() {

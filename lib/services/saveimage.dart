@@ -678,7 +678,7 @@ class SaveImage {
             response1 = await dio.post(
                 globals.path + "saveImage", data: formData);
           }
-          print(response1);
+          debugPrint(response1.toString());
           imagei.deleteSync();
           imageCache.clear();
           globals.cameraChannel.invokeMethod("cameraClosed");

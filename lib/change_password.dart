@@ -21,8 +21,10 @@ class _changePassword extends State<changePassword> {
   bool isloading = false;
   final _oldPass = TextEditingController();
   final _newPass = TextEditingController();
+  final _confirmPass = TextEditingController();
   FocusNode __oldPass = new FocusNode();
   FocusNode __newPass = new FocusNode();
+  FocusNode __confirmPass = new FocusNode();
   final _formKey = GlobalKey<FormState>();
   bool _obscureText_old = true;
   bool _obscureText_new = true;
@@ -265,6 +267,51 @@ class _changePassword extends State<changePassword> {
                     ),
                   ),
 
+                  SizedBox(height: 15.0),
+                  Container(
+                    width: MediaQuery.of(context).size.width*.9,
+                    child: TextFormField(
+                      controller: _confirmPass,
+                      focusNode: __confirmPass,
+                      keyboardType: TextInputType.text,
+                      obscureText: _obscureText_new,
+
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                        ),
+                        labelText: 'Confirm Password',
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(0.0),
+                          child: Icon(
+                            Icons.lock,
+                            color: Colors.grey,
+
+                          ), // icon is 48px widget.
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: _toggle_new,
+                          icon: Icon( _obscureText_new ?Icons.visibility_off:Icons.visibility,
+                            color: Colors.grey,),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty || value==null  ) {
+                          __oldPass.notifyListeners();
+                          //    FocusScope.of(context).requestFocus(__newPass);
+
+                          return 'Please enter new password';
+                        }
+                        if(value.length<6)
+                        {
+                          return 'Password must contain at least 6 characters';
+                        }
+                      },
+                    ),
+                  ),
+
+
                   ButtonBar(
                     children: <Widget>[
                       FlatButton(
@@ -293,14 +340,20 @@ class _changePassword extends State<changePassword> {
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
                             if (_oldPass.text == _newPass.text) {
-                              showInSnackBar("New password can't same as old");
+                              showInSnackBar("New Password can't be the same as old Password");
                               FocusScope.of(context).requestFocus(__newPass);
-                            } else {
+                            }else if (_confirmPass.text != _newPass.text) {
+                              showInSnackBar("Confirm Password does not match");
+                              FocusScope.of(context).requestFocus(__newPass);
+                            }
+
+                            else {
                               changeMyPassword(_oldPass.text, _newPass.text).then((res){
                                 if(res==1) {
                                   _newPass.text='';
                                   _oldPass.text='';
-
+                                  _confirmPass.text='';
+                                  __oldPass.requestFocus();
                                   showInSnackBar(
                                       "Password changed successfully");
                                 }

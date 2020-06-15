@@ -796,7 +796,7 @@ class _Flexitime extends State<Flexitime> {
           print('<<****************************');
 
           var prefs= await SharedPreferences.getInstance();
-          prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
+          prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
           // Navigator.of(context, rootNavigator: true).pop();
           prefix0.showAppInbuiltCamera?
           saveImage.saveFlexiOutAppCamera(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus,context)
@@ -830,7 +830,7 @@ class _Flexitime extends State<Flexitime> {
               showDialog(context: context, child:
               new AlertDialog(
 
-                content: new Text("Selfie was not captured. Please punch again."),
+                content: new Text("Selfie was not captured. Please try again."),
               )
               );
             }
@@ -880,7 +880,7 @@ class _Flexitime extends State<Flexitime> {
               showDialog(context: context, child:
               new AlertDialog(
 
-                content: new Text("Selfie was not captured. Please punch again."),
+                content: new Text("Selfie was not captured. Please try again."),
               )
               );
             }
@@ -962,7 +962,7 @@ print('visit out called for visit id:'+visit_id);
       });
 
       var prefs= await SharedPreferences.getInstance();
-      prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
+      prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
       issave = prefix0.showAppInbuiltCamera?await saveImage.saveFlexiAppCamera(mk,context): await saveImage.saveFlexi(mk,context);
       ////print(issave);
       if (issave) {
@@ -997,7 +997,7 @@ print('visit out called for visit id:'+visit_id);
         showDialog(context: context, child:
         new AlertDialog(
 
-          content: new Text("Selfie was not captured. Please punch again."),
+          content: new Text("Selfie was not captured. Please try again."),
         )
         );
         setState(() {

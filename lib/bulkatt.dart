@@ -288,7 +288,7 @@ class _Bulkatt extends State<Bulkatt> {
                         borderRadius: BorderRadius.circular(5),
                         side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
                       ),
-                      child: Text('CANCEL'),
+                      child: Text('BACK'),
                       onPressed: () {
                         /*  Navigator.push(
                           context,
@@ -1258,7 +1258,7 @@ class _Bulkatt extends State<Bulkatt> {
     bool issave = false;
     var prefs = await SharedPreferences.getInstance();
     prefix0.showAppInbuiltCamera =
-        prefs.getBool("showAppInbuiltCamera") ?? true;
+        prefs.getBool("showAppInbuiltCamera") ?? false;
     issave = prefix0.showAppInbuiltCamera
         ? await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context)
         : await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context);

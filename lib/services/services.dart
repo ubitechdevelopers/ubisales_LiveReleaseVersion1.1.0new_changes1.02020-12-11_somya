@@ -1624,10 +1624,10 @@ Future<int> firstPassword(oldPass, newPass, String password_sts) async {
   //  print(oldPass+'--'+newPass);
   print("change psswrd" + globals.path + 'firstPassword?uid=$empid&refno=$orgdir&newpwd=$newPass&password_sts=$password_sts');
   final response = await http.get(globals.path + 'firstPassword?uid=$empid&refno=$orgdir&newpwd=$newPass&password_sts=$password_sts');
-//  if (int.parse(response.body) == 1) {
-//    prefs.setString('usrpwd', newPass);
-//  }
-  //return int.parse(response.body);
+  if (int.parse(response.body) == 1) {
+    prefs.setString('usrpwd', newPass);
+  }
+  return int.parse(response.body);
 }
 
 ///////////////////////////////////////////////////////sgCODE////////////////////////////////////////////////////////
