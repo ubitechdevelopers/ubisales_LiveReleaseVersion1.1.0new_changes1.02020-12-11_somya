@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
       Map profileMap = await po.getProfile(empid);
 
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
+      act = await ho.checkTimeIn(empid, orgdir,context);
       setState(() {
         response = prefs.getInt('response') ?? 0;
         fname = prefs.getString('fname') ?? '';

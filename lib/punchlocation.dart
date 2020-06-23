@@ -215,7 +215,7 @@ var FakeLocationStatus=0;
      // Loc lock = new Loc();
       //location_addr = await lock.initPlatformState();
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
+      act = await ho.checkTimeIn(empid, orgdir,context);
       ho.managePermission(empid, orgdir, desinationId);
       // //print(act);
       ////print("this is-----> "+act);

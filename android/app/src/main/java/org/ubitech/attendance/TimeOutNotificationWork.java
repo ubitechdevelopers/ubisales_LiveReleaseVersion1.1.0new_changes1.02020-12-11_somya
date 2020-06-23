@@ -1,5 +1,5 @@
 package org.ubitech.attendance;
-
+/*
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,15 +17,6 @@ public class TimeOutNotificationWork extends Worker {
         super(context, workerParams);
     }
 
-    /*
-     * This method is responsible for doing the work
-     * so whatever work that is needed to be performed
-     * we will put it here
-     *
-     * For example, here I am calling the method displayNotification()
-     * It will display a notification
-     * So that we will understand the work is executed
-     * */
 
     @NonNull
     @Override
@@ -34,12 +25,6 @@ public class TimeOutNotificationWork extends Worker {
         return Result.SUCCESS;
     }
 
-    /*
-     * The method is doing nothing but only generating
-     * a simple notification
-     * If you are confused about it
-     * you should check the Android Notification Tutorial
-     * */
     private void displayNotification(String title, String task) {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -58,3 +43,5 @@ public class TimeOutNotificationWork extends Worker {
         notificationManager.notify(1, notification.build());
     }
 }
+
+ */

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:Shrine/register_org.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +32,11 @@ class Otp extends StatefulWidget {
   }
 
   @override
-  _OtpState createState() => new _OtpState(username1,password1);
+  _OtpState createState() => new _OtpState(username1,password1 );
 }
 
 class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
+
   String username1 ='';
   String password1 ='';
 
@@ -43,6 +44,8 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
     username1 = username;
     password1 = password;
   }
+
+
   // Constants
   final int time = 10;
   AnimationController _controller;
@@ -81,6 +84,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           color: Colors.black54,
         ),
         onTap: () {
+          Navigator.pop(context);
           Navigator.pop(context);
         },
       ),
@@ -138,7 +142,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         (otploader) ? Center(child :   SizedBox(
           child: CircularProgressIndicator(), height: 30.0, width: 30.0,)) : Center(child :   SizedBox(height: 30.0, width: 30.0,)),
         _getInputField,
-       // _hideResendButton ? _getTimerText : _getResendButton,
+        // _hideResendButton ? _getTimerText : _getResendButton,
         _getResendButton,
         _getTimerText,
         _getOtpKeyboard
@@ -151,16 +155,16 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   get _getTimerText {
     return Container(
       height: 32,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Icon(Icons.access_time),
-            new SizedBox(
-              width: 5.0,
-            ),
-            Text("OTP is valid for 24 hours"),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new Icon(Icons.access_time),
+          new SizedBox(
+            width: 5.0,
+          ),
+          Text("OTP is valid for 24 hours"),
+        ],
+      ),
 
     );
   }
@@ -354,6 +358,10 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   // Overridden methods
   @override
   void initState() {
+
+    print(username1);
+    print(password1);
+    print("username1 ajja");
     totalTimeInSeconds = time;
     super.initState();
     _controller =
@@ -388,13 +396,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
-          );
-          //Navigator.pop(context);
-        }),
+          Navigator.pop(context);}),
         backgroundColor: appcolor,
       ),
       //backgroundColor: Colors.white,
@@ -499,14 +501,14 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             _fifththDigit.toString()+
             _sixthDigit.toString();
         print(otp);
-        varifyotp(otp);
+        varifyotp(otp,username1,password1);
         // Verify your otp by here. API call
 
       }
     });
   }
 
-  varifyotp(otp) async{
+/*  varifyotp(otp,  username1 , password1 ) async{
     var prefs=await SharedPreferences.getInstance();
     print(globals.path+"varifyotp?otp=$otp");
     var url = globals.path+"varifyotp";
@@ -516,7 +518,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
     http.post(url, body: {
       "otp": otp
     }) .then((response)async {
-     // print(response);
+      // print(response);
 
       print(response.statusCode);
       if  (response.statusCode == 200) {
@@ -546,16 +548,106 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           ));
         }
         else if(res['sts'] == 'otpused')
-          {
-            setState(() {
-              otploader = false;
-            });
-            showDialog(context: context, child:
-            new AlertDialog(
-              // title: new Text("ubiAttendance"),
-              content: new Text("OTP already used, Please register again"),
-            ));
+        {
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("OTP already used, Please register again"),
+          ));
+        }
+        else{
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Invalid OTP, Please try again"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+
+      }
+    }).catchError((onError) {
+      setState(() {
+        setState(() {
+          otploader = false;
+        });
+        showDialog(context: context, child:
+        new AlertDialog(
+          // title: new Text("ubiAttendance"),
+          content: new Text("Unable to Connect server."),
+          //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+        ));
+      });
+    });
+  }*/
+
+  varifyotp(otp,  username1 ,password1) async{
+//    print(username1);
+//    print(password1);
+//    print("user pass");
+    var prefs=await SharedPreferences.getInstance();
+    Dio dio = new Dio();
+//    FormData formData = new FormData.from({
+//      "otp":otp,
+//      "username":username1,
+//      "password":password1
+//      // "file": new UploadFileInfo(imagei, "image.png"),
+//    });
+    print(globals.path+"verifyOTPNew?otp=$otp&username=$username1&password=$password1");
+    //Response<String> response1 = await dio.post(globals.path + "resend_otp", data: formData);
+    var url = globals.path+"verifyOTPNew";
+    setState(() {
+      otploader = true;
+    });
+    http.post(url, body: {
+      "otp": otp,
+      "username": username1,
+      "password": password1
+    }).then((response)async {
+      print(response);
+      print(response.statusCode);
+      if  (response.statusCode == 200) {
+        var prefs=await SharedPreferences.getInstance();
+        //  prefs.setBool("companyFreshlyRegistered",true );
+        print(response.body.toString());
+        Map res = json.decode(response.body);
+        print("This si a return value");
+        print(res);
+        if (res['sts'] == 'true') {
+          globals.facebookChannel.invokeMethod("logStartTrialEvent");
+          gethome () async{
+            await new Future.delayed(const Duration(seconds: 1));
+            login(res['phone'], res['pass'], context);
           }
+          gethome ();
+        }
+        else if(res['sts'] == 'timeout'){
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Your OTP has expired"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+        else if(res['sts'] == 'otpused')
+        {
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("OTP already used, Please register again"),
+          ));
+        }
         else{
           setState(() {
             otploader = false;

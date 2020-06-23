@@ -73,7 +73,7 @@ class _TimeOffPageState extends State<TimeOffPage> {
      // location_addr = await lock.initPlatformState();
 
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
+      act = await ho.checkTimeIn(empid, orgdir,context);
 
       print("this is main "+location_addr);
       setState(() {

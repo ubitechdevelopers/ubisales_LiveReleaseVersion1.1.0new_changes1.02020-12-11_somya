@@ -854,7 +854,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
           Home ho = new Home();
 
-          act = await ho.checkTimeIn(empid, orgdir);
+          act = await ho.checkTimeIn(empid, orgdir,context);
           print("Action from check time in");
           ho.managePermission(empid, orgdir, desinationId);
 
@@ -872,7 +872,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     Home ho = new Home();
-    act = await ho.checkTimeIn(empid, orgdir);
+    act = await ho.checkTimeIn(empid, orgdir,context);
     print("Action from check time in1");
     if (timeoutdate == 'nextdate' && act == 'TimeOut') dialogwidget(context);
     ho.managePermission(empid, orgdir, desinationId);
@@ -3140,7 +3140,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 Home ho = new Home();
                 print("Test");
                 await ho.updateTimeOut(empid, orgdir);
-                act = await ho.checkTimeIn(empid, orgdir);
+                act = await ho.checkTimeIn(empid, orgdir,context);
                 print("Action from check time in1");
                 if (timeoutdate == 'nextdate' && act == 'TimeOut')
                   dialogwidget(context);

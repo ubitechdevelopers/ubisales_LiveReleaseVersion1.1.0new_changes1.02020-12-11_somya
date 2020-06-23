@@ -190,7 +190,7 @@ class _AddTimeoff extends State<AddTimeoff> {
       // Loc lock = new Loc();
 
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
+      act = await ho.checkTimeIn(empid, orgdir, context);
       ho.managePermission(empid, orgdir, desinationId);
       // //print(act);
       ////print("this is-----> "+act);

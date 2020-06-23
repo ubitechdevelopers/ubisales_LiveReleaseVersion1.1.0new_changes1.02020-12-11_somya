@@ -591,7 +591,8 @@ public class MainActivityWithoutBGService extends FlutterActivity {
 
 
 
-  public void startTimeOutNotificationWorker(String ShiftTimeOut){
+  public void startTimeOutNotificationWorker(String ShiftTimeOut) {
+      /*
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     String currentTime=sdf.format(cal.getTime());
@@ -625,10 +626,13 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
           .addTag("TimeOutWork")
           .build();
   WorkManager.getInstance().enqueue(workRequest);
-}
 
+
+       */
+  }
 
   public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
+      /*
     Calendar cal = Calendar.getInstance();
     Log.i("nextWorkingday",nextWorkingDay);
       String dateStart = nextWorkingDay+" "+ShiftTimeIn;
@@ -688,6 +692,8 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       WorkManager w=WorkManager.getInstance();
       w.enqueueUniqueWork("TimeInNotificationWork", ExistingWorkPolicy.KEEP,workRequest);
 
+
+       */
   }
 
 

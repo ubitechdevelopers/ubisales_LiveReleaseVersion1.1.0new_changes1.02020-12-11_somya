@@ -53,6 +53,7 @@ class _PermissionPageState extends State<PermissionPage> {
   String fname="", lname="", empid="", email="", status="", orgid="", orgdir="", sstatus="", org_name="", desination="",desinationId="", profile,    latit="",longi="";
   String aid="";
   String shiftId="";
+
   @override
   void initState() {
     //super.initState();
@@ -71,7 +72,7 @@ class _PermissionPageState extends State<PermissionPage> {
     admin_sts = prefs.getString('sstatus') ?? '';
     orgid = prefs.getString('orgid') ?? '';
     desinationId = prefs.getString('desinationId') ?? '';
-    ns.getAllDesgPermission(orgid,desinationId).then((DesgList){
+    ns.getAllDesgPermission(orgid,desinationId).then((DesgList) {
       setState(() {
         desglist = DesgList;
       });
@@ -81,7 +82,7 @@ class _PermissionPageState extends State<PermissionPage> {
      // Loc lock = new Loc();
      // location_addr = await lock.initPlatformState();
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir);
+      act = await ho.checkTimeIn(empid, orgdir,context);
       print("this is main "+location_addr);
       setState(() {
         location_addr1 = location_addr;

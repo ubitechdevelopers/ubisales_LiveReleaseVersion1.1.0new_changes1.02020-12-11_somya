@@ -105,6 +105,7 @@ bool istooltipthreeshown=false;
 bool istooltipfourshown=false;
 bool istooltipfiveshown=false;
 String currentOrgStatus='';
+String inactivestatus='';
 double ab,cd,ef,gh;
 bool timeInToolTipShown=false;
 bool addEmpToolTipShown=false;

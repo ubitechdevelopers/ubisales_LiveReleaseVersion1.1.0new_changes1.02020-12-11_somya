@@ -32,6 +32,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
      // Response response1 = await dio.post("http://192.168.0.200/UBIHRM/HRMINDIA/services/checkLogin", data: formData);
       print("------->"+response1.toString());
       print(response1.statusCode.toString());
+
       if (response1.statusCode == 200) {
         Map employeeMap = json.decode(response1.data);
         print(employeeMap.toString());

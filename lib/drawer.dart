@@ -546,7 +546,9 @@ class AppDrawerState extends State<AppDrawer> {
       throw 'Could not launch Maps';
     }
   }
+
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   logout() async{
     final prefs = await SharedPreferences.getInstance();
     String countryTopic=prefs.get('CountryName')??'admin';

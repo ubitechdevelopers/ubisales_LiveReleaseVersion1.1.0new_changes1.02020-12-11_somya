@@ -1,8 +1,11 @@
 import 'dart:convert';
-
 import 'package:Shrine/globals.dart' as globals;
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../globals.dart';
+import '../login.dart';
 
 class Home{
   var dio = new Dio();
@@ -26,7 +29,7 @@ class Home{
     }
   }
 
-  checkTimeIn(String empid, String orgid) async{
+  checkTimeIn(String empid, String orgid,context) async{
     try {
 
       final prefs = await SharedPreferences.getInstance();
@@ -44,9 +47,14 @@ class Home{
       Response response = await dio.post(globals.path+"getInfo", data: formData);
       print("<<------------------GET HOME-------------------->>");
       print(response.toString());
-      //print("this is status "+response.statusCode.toString());
+      print("this is status "+response.statusCode.toString());
       if (response.statusCode == 200) {
+
         Map timeinoutMap = json.decode(response.data);
+        if(timeinoutMap['inactivestatus'] == 'inactive') {
+          logout(context);
+          return;
+        }
         String aid = timeinoutMap['aid'].toString();
         print('aid'+aid);
         print("Timeoutdate "+timeinoutMap['timeoutdate'].toString());
@@ -149,9 +157,16 @@ class Home{
         print('lastact'+prefs.getString('aid'));
 
         globals.currentOrgStatus=timeinoutMap['CurrentOrgStatus'];
-
         String createdDate = timeinoutMap['CreatedDate'].toString();
         prefs.setString('CreatedDate',createdDate);
+        globals.inactivestatus=timeinoutMap['inactivestatus'];
+
+       /* if(timeinoutMap['inactivestatus'] == 'inactive') {
+          print("somya code");
+          logout(context);
+          print("logout called");
+          return;
+        }*/
         return timeinoutMap['act'];
       } else {
         print('8888');
@@ -280,5 +295,85 @@ class Home{
       return "Poor network connection";
     }
   }
+
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  logout(context) async{
+    final prefs = await SharedPreferences.getInstance();
+    String countryTopic=prefs.get('CountryName')??'admin';
+    String orgTopic=prefs.get('OrgTopic')??'admin';
+    String currentOrgStatus=prefs.get('CurrentOrgStatus')??'admin';
+    prefs.remove('response');
+    prefs.remove('fname');
+    prefs.remove('lname');
+    prefs.remove('empid');
+    prefs.remove('email');
+    prefs.remove('status');
+    prefs.remove('sstatus');
+    prefs.remove('orgid');
+    prefs.remove('orgdir');
+    prefs.remove('sstatus');
+    prefs.remove('org_name');
+    prefs.remove('destination');
+    prefs.remove('profile');
+    prefs.remove('latit');
+    prefs.remove('longi');
+    prefs.remove('aid');
+    prefs.remove('shiftId');
+    prefs.remove('OfflineModePermission');
+    prefs.remove('ImageRequired');
+    prefs.remove('glow');
+    prefs.remove('OrgTopic');
+    prefs.remove('CountryName');
+    prefs.remove('CurrentOrgStatus');
+    prefs.remove('date');
+    prefs.remove('firstAttendanceMarked');
+    prefs.remove('EmailVerifacitaionReminderShown');
+    prefs.remove('companyFreshlyRegistered');
+    prefs.remove('fname');
+    prefs.remove('empid');
+    prefs.remove('orgid');
+    prefs.remove('ReferralValidFrom');
+    prefs.remove('glow');
+    prefs.remove('ReferralValidTo');
+    prefs.remove('referrerAmt');
+    prefs.remove('referrenceAmt');
+    prefs.remove('referrerId');
+    prefs.remove('TimeInTime');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('ShiftAdded');
+    prefs.remove('EmployeeAdded');
+    prefs.remove('attendanceNotMarkedButEmpAdded');
+    prefs.remove('tool');
+    prefs.remove('companyFreshlyRegistered');
+
+    _firebaseMessaging.unsubscribeFromTopic("admin");
+    _firebaseMessaging.unsubscribeFromTopic("employee");
+
+    if(countryTopic != null)
+    _firebaseMessaging.unsubscribeFromTopic(countryTopic.replaceAll(' ', ''));
+    if(orgTopic!=null)
+    _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+    if(currentOrgStatus!=null)
+    _firebaseMessaging.unsubscribeFromTopic(currentOrgStatus.replaceAll(' ', ''));
+
+    //prefs.remove("TimeInToolTipShown");
+    department_permission = 0;
+    designation_permission = 0;
+    leave_permission = 0;
+    shift_permission = 0;
+    timeoff_permission = 0;
+    punchlocation_permission = 0;
+    employee_permission = 0;
+    permission_module_permission = 0;
+    report_permission = 0;
+
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,
+    );
+    //Navigator.pushNamed(context, '/home');
+    // Navigator.pushNamed(context, '/home');
+  }
+
+
 
 }
