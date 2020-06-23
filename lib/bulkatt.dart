@@ -1368,4 +1368,5 @@ class _Bulkatt extends State<Bulkatt> {
       }
     });
   }
+
 }

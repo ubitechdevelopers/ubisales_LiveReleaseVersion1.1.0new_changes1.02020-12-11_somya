@@ -47,7 +47,6 @@ class FaceIdScreen extends StatefulWidget {
 }
 class _FaceIdScreenState extends State<FaceIdScreen> {
   //AppTranslationsDelegate _newLocaleDelegate;
-
   String barcode = "";
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();

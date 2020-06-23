@@ -1788,7 +1788,7 @@ class SaveImage {
   //////////////////////////////////////////////////////////
 
 /////Start SAve flexi time in out//////
-  Future<String> marktimeoff(empid, globalstreamlocationaddr, orgdir, assign_lat, assign_long,FakeLocationStatus,timeoffid,timeoffstatus,context) async {
+  Future<String> marktimeoff(empid, globalstreamlocationaddr, orgdir,reason, assign_lat, assign_long,FakeLocationStatus,timeoffid,timeoffstatus,context) async {
     try {
         globals.globalCameraOpenedStatus=false;
         print('------------**vvxxbb');
@@ -1801,9 +1801,9 @@ class SaveImage {
         print("5*");
         Response<String> response1;
         try {
-          print(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
+          print(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&reason=$reason&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
           response1 =
-          await dio.post(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
+          await dio.post(globals.path + "reqForTimeOff__new?uid=$empid&location=$globalstreamlocationaddr&refid=$orgdir&reason=$reason&latit=$assign_lat&longi=$assign_long&FakeLocationStatus=$FakeLocationStatus&timeoffid=$timeoffid&timeoffstatus=$timeoffstatus");
           print("----->save visit image* --->" + response1.toString());
         } catch (e) {
           print('------------*');
@@ -1822,6 +1822,10 @@ class SaveImage {
           {
              return 'false1';
           }
+        else if(MarkAttMap["status"].toString() == 'false2')
+        {
+          return 'false2';
+        }
         else
           return 'false';
     } catch (e) {

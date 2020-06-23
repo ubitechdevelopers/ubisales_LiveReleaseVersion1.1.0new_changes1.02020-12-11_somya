@@ -748,7 +748,7 @@ class _AddTimeoff extends State<AddTimeoff> {
       setState(() {
         act1 = "";
       });
-      issave =  await saveImage.marktimeoff(empid, prefix0.globalstreamlocationaddr, orgdir, prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus,timeoffid,timeoffstatus,context);
+      issave =  await saveImage.marktimeoff(empid, prefix0.globalstreamlocationaddr, orgdir,_reasonController.text.trim(), prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus,timeoffid,timeoffstatus,context);
       ////print(issave);
       String tempstatus = timeoffstatus;
       if (issave=='true') {
@@ -794,10 +794,21 @@ class _AddTimeoff extends State<AddTimeoff> {
           );
           showDialog(context: context, child:
           new AlertDialog(
-            content: new Text("Please punch your 'TimeIn' first!"),
+            content: new Text("Please punch your 'Time In' first!"),
           )
           );
-        }
+        }else if(issave=='false2')
+      {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Time Off can not be taken after Time Out"),
+        )
+        );
+      }
       else {
         // ignore: deprecated_member_use
         showDialog(context: context, child:

@@ -29,20 +29,20 @@ String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
-/*
+
 String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 
-*/
 
 
 
 
+/*
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://ubiattendance.zentylpro.com/index.php/Att_services/";
-
+*/
 
 /*
 String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
@@ -66,12 +66,14 @@ int visitImage = 0;
 int attImage = 0;
 String mailstatus = "";   //new organization
 String mailverifiedstatus = "";   //existing organization
+int covidsurvey=0;
 int ableToMarkAttendance = 0;
 var timeoutdate = "";
 String departmentname = "";
 int departmentid = 1;
 int varCheckNet=0;
 int areaId=0;
+int language=1;
 var assign_lat = 0.0;//These are user to store latitude got from javacode throughout the app
 var assign_long = 0.0;//These are user to store latitude got from javacode throughout the app
 var assigned_lat = 0.0;//These are user to store geofence latitude got from server throughout the app

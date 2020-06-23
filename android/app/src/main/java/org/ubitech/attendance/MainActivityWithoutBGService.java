@@ -207,6 +207,7 @@ public class MainActivityWithoutBGService extends FlutterActivity {
                       if (location != null) {
 
                           mCurrentLocation=location;
+                          if(mCurrentLocation.hasAccuracy())
                           updateLocationToFlutter(channel,mCurrentLocation);
 
                       }
@@ -224,7 +225,7 @@ public class MainActivityWithoutBGService extends FlutterActivity {
               }
               for (Location location : locationResult.getLocations()) {
                   mCurrentLocation=location;
-
+                  if(mCurrentLocation.hasAccuracy())
                   updateLocationToFlutter(channel,mCurrentLocation);
               }
           };

@@ -82,6 +82,7 @@ class Home{
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.deviceverification=int.parse(timeinoutMap['Addon_DeviceVerification']);
         globals.facerecognition=int.parse(timeinoutMap['Addon_FaceRecognition']);
+        globals.covidsurvey=int.parse(timeinoutMap['addon_COVID19']);
         globals.persistedface=timeinoutMap['persistedface'].toString();
         globals.deviceid=timeinoutMap['deviceid'].toString();
         globals.visitImage=int.parse(timeinoutMap['visitImage']);
@@ -112,7 +113,8 @@ class Home{
         print("----visitImage------>"+globals.visitImage.toString());
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
        // print(timeinoutMap['pwd']);
-
+        prefs.setString('covid_first', timeinoutMap['covid_first'].toString());
+        prefs.setString('covid_second', timeinoutMap['covid_second'].toString());
         prefs.setString("ReferrerDiscount", ReferrerDiscount);
         prefs.setString("ReferrenceDiscount", ReferrenceDiscount);
         prefs.setString("ReferralValidity", ReferralValidity);

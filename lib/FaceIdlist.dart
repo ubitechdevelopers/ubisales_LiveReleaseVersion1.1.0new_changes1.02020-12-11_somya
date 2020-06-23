@@ -1,8 +1,14 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:convert';
+
+import 'package:Shrine/page/camera.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:Shrine/shared/widgets/focus_widget.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -10,15 +16,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Image_view.dart';
 import 'drawer.dart';
+import 'faceIdScreen.dart';
 import 'globals.dart';
+import 'home.dart';
 import 'outside_label.dart';
+import 'FaceIdScreen.dart';
+
 // This app is a stateful, it tracks the user's current choice.
-class CustomDateAttendance extends StatefulWidget {
+class FaceIdList extends StatefulWidget {
   @override
-  _CustomDateAttendance createState() => _CustomDateAttendance();
+  _FaceIdList createState() => _FaceIdList();
 }
 TextEditingController today;String _orgName;
-class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTickerProviderStateMixin {
+class _FaceIdList extends State<FaceIdList> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -39,17 +49,256 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
       trialstatus = prefs.getString('trialstatus') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
       if(admin_sts == '2')
-        Hightvar =  MediaQuery.of(context).size.height*0.56;
+        Hightvar =  MediaQuery.of(context).size.height*0.75;
       else
-        Hightvar =  MediaQuery.of(context).size.height*0.26;
+        Hightvar =  MediaQuery.of(context).size.height*0.75;
     });
+  }
+  saveImageFaceId(String uid) async {
+    print("object");
+    var imagei;
+
+    var prefs = await SharedPreferences.getInstance();
+    String orgid = prefs.getString("orgid") ?? "";
+    String empid = uid;
+    timeWhenButtonPressed = DateTime.now();
+
+      /* Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CameraExampleHome()),
+      );*/
+
+
+        print("caaaallllled");
+        imagei = await Navigator.push(context, new MaterialPageRoute(
+          builder: (BuildContext context) =>
+          new Camera(
+            mode: CameraMode.normal,
+            imageMask: CameraFocus.circle(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          ),
+          fullscreenDialog: true,)
+        );
+        if (imagei != null) {
+          //print("---------------actionb   ----->"+mk.act);
+
+
+          List<int> imageBytes = await imagei.readAsBytes();
+
+          String PictureBase64 = base64.encode(imageBytes);
+
+          /*
+      final tempDir = await getTemporaryDirectory();
+      String path = tempDir.path;
+      int rand = new Math.Random().nextInt(10000);
+      im.Image image1 = im.decodeImage(imagei.readAsBytesSync());
+      imagei.deleteSync();
+      im.Image smallerImage = im.copyResize(image1, 500); // choose the size here, it will maintain aspect ratio
+      File compressedImage = new File('$path/img_$rand.jpg')..writeAsBytesSync(im.encodeJpg(smallerImage, quality: 50));
+    */
+          //// sending this base64image string +to rest api
+          Dio dio = new Dio();
+
+          FormData formData = new FormData.from({
+            "uid": empid,
+            "refid": orgid,
+            "file": new UploadFileInfo(imagei, "image.png"),
+          });
+          print(formData);
+          Response<String> response1 = await dio.post(
+              path + "saveImageFaceId", data: formData);
+          print("Response from save image:" + response1.toString());
+          //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
+          //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
+          //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
+          imagei.deleteSync();
+          imageCache.clear();
+          // globals.cameraChannel.invokeMethod("cameraClosed");
+          /*getTempImageDirectory();*/
+          Map MarkAttMap = json.decode(response1.data);
+          print("facerecog");
+          print(MarkAttMap["facerecog"].toString());
+          if (MarkAttMap["facerecog"].toString() == 'FACE_DETECTED') {
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+
+                  content: new Text(
+                      "Our AI engine is generating the Face ID. It may take a few minutes."),
+                )
+            );
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdList()), (Route<dynamic> route) => false,);
+
+          }else
+          if (MarkAttMap["facerecog"].toString() == 'NO_FACE_DETECTED') {
+
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+
+                  content: new Text(
+                      "Picture clicked should be a Selfie"),
+                )
+            );
+            saveImageFaceId(empid);
+
+          }else
+          if (MarkAttMap["facerecog"].toString() == 'NO_IMAGE_RECIEVED') {
+
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+
+                  content: new Text(
+                      "No image recieved"),
+                )
+            );
+            saveImageFaceId(empid);
+
+          }else
+          if (MarkAttMap["facerecog"].toString() == 'FACE_ID_ALREADY_EXISTS') {
+
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+
+                  content: new Text(
+                      "Face ID already exists"),
+                )
+            );
+            saveImageFaceId(empid);
+
+          }
+          print(MarkAttMap["status"].toString());
+
+        }
+
+
+  }
+  showsuspiciousdialog(id,orgid) async {
+
+    await showDialog<String>(
+      context: context,
+      // ignore: deprecated_member_use
+      child: new AlertDialog(
+        contentPadding: const EdgeInsets.all(8.0),
+        content: Container(
+          height: MediaQuery.of(context).size.height*0.04,
+          width: MediaQuery.of(context).size.width*0.06,
+          child: Column(
+            children: <Widget>[
+              /*new Expanded(
+                child: new TextField(
+                  maxLines: 5,
+                  autofocus: true,
+                  controller: _comments,
+                  decoration: new InputDecoration(
+                      labelText: 'Visit Feedback ', hintText: 'Visit Feedback (Optional)'),
+                ),
+              ),*/
+              Text('Disapprove?'
+              ),
+              SizedBox(height: 4.0,),
+
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          new FlatButton(
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+                side: BorderSide( color: Colors.grey.withOpacity(0.5), width: 1,),
+              ),
+              child: const Text('CANCEL',style: TextStyle(color: Colors.black),),
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              }),
+          Padding(
+            padding: const EdgeInsets.only(right:40.0),
+            child: new RaisedButton(
+                child: const Text('DISAPPROVE',style: TextStyle(color: Colors.white),),
+                elevation: 2.0,
+                highlightElevation: 5.0,
+                highlightColor: Colors.transparent,
+                disabledElevation: 0.0,
+                focusColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                color: buttoncolor,
+                onPressed: () async{
+                  Navigator.of(context, rootNavigator: true).pop();
+                  disapprovefaceid(id,orgid).then((res){
+                    print(res.toString());
+
+                    //   if(res)
+                    //  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FaceIdList()),
+                    );
+                    showDialog(
+                        context: context,
+                        // ignore: deprecated_member_use
+                        child: new AlertDialog(
+                          content: new Text("\"Face ID\" disapproved successfully"),
+                        ));
+                    //  }
+                    //  else
+//                  {
+//                    showDialog(
+//                        context: context,
+//                        // ignore: deprecated_member_use
+//                        child: new AlertDialog(
+//                          content: new Text("Unable to disapprove attendance"),
+//                        ));
+                  });
+//                }).catchError((ett){
+//                  showInSnackBar('Unable to disapprove attendance');
+//                });
+                  /*       //  Loc lock = new Loc();
+                  //   location_addr1 = await lock.initPlatformState();
+                  if(_isButtonDisabled)
+                    return null;
+
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                  setState(() {
+                    _isButtonDisabled=true;
+                  });
+                  //PunchInOut(comments.text,'','empid', location_addr1, 'lid', 'act', 'orgdir', latit, longi).then((res){
+                  SaveImage saveImage = new SaveImage();
+                   saveImage.visitOut(comments.text,visit_id,location_addr1,latit, longi).then((res){
+print('visit out called for visit id:'+visit_id);
+                  /*
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+                    );
+*/
+
+
+                  }).catchError((onError){
+                    showInSnackBar('Unable to punch visit');
+                  });
+*/
+                }),
+          )
+        ],
+      ),
+    );
   }
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
-    _controller = new TabController(length: 4, vsync: this);
+    _controller = new TabController(length: 2, vsync: this);
     getOrgName();
     today = new TextEditingController();
     today.text = formatter.format(DateTime.now());
@@ -97,9 +346,10 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
         children: <Widget>[
           SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Daily Attendance",style: TextStyle(fontSize: 22.0,color: appcolor),),),
+            child: Center(child:Text("Face IDs",style: TextStyle(fontSize: 22.0,color: appcolor),),),
           ),
           Divider(color: Colors.black54,height: 1.5,),
+          /*
           Container(
             child: DateTimeField(
               //dateOnly: true,
@@ -191,6 +441,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               Text('Early Leavers(EL)',style: TextStyle(color:appcolor,fontSize: 12.0),)
             ],
           ):Center(),
+          */
 
           Divider(),
           new Container(
@@ -200,20 +451,23 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               controller: _controller,
               tabs: [
                 new Tab(
-                  text: 'Present',
+                  text: 'Registered',
                 ),
                 new Tab(
-                  text: 'Absent',
+                  text: 'Unregistered',
                 ),
+                /*
                 new Tab(
                   text: 'Late \nComers',
                 ),
                 new Tab(
                   text: 'Early \nLeavers',
                 ),
+                */
               ],
             ),
           ),
+          /*
           new Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //            crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,6 +489,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               ),
             ],
           ),
+          */
           new Divider(height: 1.0,),
           res==true?new Container(
             height: Hightvar,
@@ -250,8 +505,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
-                      child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttn('present',today.text),
+                      child: new FutureBuilder<List<FaceIdLists>>(
+                        future: getregisteredFaceIDList('registered'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -265,12 +520,56 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                             mainAxisAlignment: MainAxisAlignment
                                                 .spaceAround,
                                             children: <Widget>[
-                                              SizedBox(height: 40.0,),
+                                             // SizedBox(height: 40.0,),
+
+
+                                              Container(
+                                                  width: MediaQuery
+                                                      .of(context)
+                                                      .size
+                                                      .width * 0.15,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      /*
+                                                      Text(snapshot.data[index].TimeIn
+                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                                      */
+                                                      Container(
+                                                        width: 32.0,
+                                                        height: 32.0,
+                                                        child:InkWell(
+                                                          child: Container(
+                                                              decoration: new BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: new DecorationImage(
+                                                                      fit: BoxFit.fill,
+                                                                      image: new NetworkImage(
+                                                                          snapshot
+                                                                              .data[index]
+                                                                              .Image)
+                                                                  )
+                                                              )),
+                                                          onTap: (){
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].Image,org_name: _orgName)),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  )
+
+                                              ),
                                               Container(
                                                 width: MediaQuery
                                                     .of(context)
                                                     .size
-                                                    .width * 0.46,
+                                                    .width * 0.4,
+
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment
                                                       .start,
@@ -280,7 +579,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                         color: Colors.black87,
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 16.0),),
-
+                                                    /*
                                                     InkWell(
                                                       child: Text('Time In: ' +
                                                           snapshot.data[index]
@@ -314,51 +613,11 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                     ),
                                                     SizedBox(height: 15.0,),
 
-
+                                                 */
                                                   ],
                                                 ),
                                               ),
-
-                                              Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.22,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeIn
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                          child: Container(
-                                                              decoration: new BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  image: new DecorationImage(
-                                                                      fit: BoxFit.fill,
-                                                                      image: new NetworkImage(
-                                                                          snapshot
-                                                                              .data[index]
-                                                                              .EntryImage)
-                                                                  )
-                                                              )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-
-                                                    ],
-                                                  )
-
-                                              ),
+                                              /*
                                               Container(
                                                   width: MediaQuery
                                                       .of(context)
@@ -399,10 +658,35 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                   )
 
                                               ),
+                                              */
+                                              Expanded(
+                                                child: RaisedButton(
+                                                  elevation: 2.0,
+                                                  highlightElevation: 5.0,
+                                                  highlightColor: Colors.transparent,
+                                                  disabledElevation: 0.0,
+                                                  focusColor: Colors.transparent,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(5),
+                                                  ),
+                                                  child: Text(
+                                                    'Disapprove',
+                                                    style: TextStyle(color: Colors.white),
+                                                  ),
+                                                  color: buttoncolor,
+                                                  onPressed: () {
+                                                    print('id-->'+snapshot.data[index].Id+'orgid-->'+snapshot.data[index].orgid);
+                                                    showsuspiciousdialog(snapshot.data[index].Id,snapshot.data[index].orgid);
+
+
+                                                  },
+                                                ),
+                                              )
                                             ],
 
                                           ),
                                           Divider(color: Colors.black26,),
+
                                         ]);}
                               );
                             }else{
@@ -443,8 +727,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                       //width: MediaQuery.of(context).size.width*.99,
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
-                      child: new FutureBuilder<List<Attn>>(
-                        future: getCDateAttn('absent',today.text),
+                      child: new FutureBuilder<List<FaceIdLists>>(
+                        future: getregisteredFaceIDList('unregistered'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -461,7 +745,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                           width: MediaQuery
                                               .of(context)
                                               .size
-                                              .width * 0.46,
+                                              .width * 0.5,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment
                                                 .start,
@@ -508,7 +792,28 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 //                                            )
 //
 //                                        ),
-                                      ],
+                                        Expanded(
+                                          child: RaisedButton(
+                                            elevation: 2.0,
+                                            highlightElevation: 5.0,
+                                            highlightColor: Colors.transparent,
+                                            disabledElevation: 0.0,
+                                            focusColor: Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: Text(
+                                              'Register',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                            color: buttoncolor,
+                                            onPressed: () {
+                                              print("saveimage clicked");
+                                              print(snapshot.data[index].Id);
+                                              saveImageFaceId(snapshot.data[index].Id);
+                                            },
+                                          ),
+                                        )],
 
                                     );
                                   }
@@ -547,7 +852,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
 
                 /////////////TAB 3 STARTS
-
+/*
                 new Container(
 
                   height: Hightvar,
@@ -936,6 +1241,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                     ),
                   ),
                 ),
+                */
                 ///////////////////TAB 4 Ends
               ],
             ),

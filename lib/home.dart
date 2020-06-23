@@ -37,8 +37,10 @@ import 'Bottomnavigationbar.dart';
 import 'askregister.dart';
 import 'attendance_summary.dart';
 import 'bulkatt.dart';
+import 'covid19servey.dart';
 import 'database_models/qr_offline.dart';
 import 'drawer.dart';
+import 'every7dayscovidsurvey.dart';
 import 'faceIdScreen.dart';
 import 'globals.dart';
 import 'leave_summary.dart';
@@ -92,6 +94,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int response;
   String Password_sts='';
   String changepasswordStatus ='';
+  String covid_first="0";
+  String covid_second="0";
  // var workingHoursTimer;
   final Widget removedChild = Center();
   String fname = "",
@@ -118,6 +122,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String address = '';
   String createdDate = "";
   String dateShowed = "";
+  String dateShowedCovidSurvey='';
+  String datetoShowCovidSurvey='';
+  var currDate = DateTime.now();
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
   var token = "";
@@ -1707,6 +1714,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           print("New pwd" + newpwd + "  User ped" + userpwd);
 
           admin_sts = prefs.getString('sstatus').toString() ?? '0';
+          covid_second = prefs.getString('covid_second') ?? '';
+          covid_first = prefs.getString('covid_first') ?? '0';
           //glow= prefs.getBool('tool');
           mail_varified = prefs.getString('mail_varified').toString() ?? '0';
           alertdialogcount = globalalertcount;
@@ -1723,6 +1732,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           desination = prefs.getString('desination') ?? '';
           profile = prefs.getString('profile') ?? '';
           createdDate = prefs.getString('CreatedDate') ?? '';
+
+
           if (referralNotificationShown == false && admin_sts == '1') {
             showReferralPopup(context, createdDate);
             referralNotificationShown = true;
@@ -2792,8 +2803,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           globals.globalCameraOpenedStatus = true;
           // if(changepasswordStatus == '0' || changepasswordStatus == '')
           //saveImage();
+          print('covidfirst'+covid_first);
+          print('covidfirst'+covid_second);
+          print('covidfirst'+covidsurvey.toString());
 
-          if(changepasswordStatus == '1') {
+          if(covid_first=='1' && globals.covidsurvey==1)
+          {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Every7dayscovidsurvey()), (Route<dynamic> route) => true,
+            );
+          }
+          else if(covid_second=='1'  && globals.covidsurvey==1)
+          {
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Covid19serve()), (Route<dynamic> route) => true,
+              );
+
+          }else if(changepasswordStatus == '1') {
             if (Password_sts == '0')
               _onAlertWithCustomContentPressed(context);
             if (Password_sts == '1')
@@ -2823,7 +2852,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
         color: globals.buttoncolor,
         onPressed: () async {
-
           globals.globalCameraOpenedStatus = true;
           // //print("Time out button pressed");
           saveImage();

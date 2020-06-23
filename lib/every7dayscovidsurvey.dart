@@ -1,65 +1,66 @@
-import 'dart:convert';
-import 'package:Shrine/model/user.dart';
-import 'package:Shrine/services/checklogin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'otpvarify.dart';
-import 'askregister.dart';
+import 'covid19servey.dart';
 import 'globals.dart' as globals;
-import 'globals.dart';
+import 'askregister.dart';
+import 'package:Shrine/services/checklogin.dart';
 import 'home.dart';
+import 'package:Shrine/model/user.dart';
 import 'services/services.dart';
-void main() => runApp(new MyApp());
+import 'dart:convert';
+import 'globals.dart';
+import 'login.dart';
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MyHomePage(title: 'ubiAttendance');
-  }
-}
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+class Every7dayscovidsurvey extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  /*static final List<String> languagesList = application.supportedLanguages;
-  static final List<String> languageCodesList =application.supportedLanguagesCodes;
-  final Map<dynamic, dynamic> languagesMap = {
-    languagesList[0]: languageCodesList[0],
-    languagesList[1]: languageCodesList[1],
-  };*/
-
+class _MyHomePageState extends State<Every7dayscovidsurvey> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  TextEditingController _name,_cname,_email,_pass,_cont,_phone,_city,_contcode;
-  TextEditingController locController1 = new TextEditingController();
-  TextEditingController locController2 = new TextEditingController();
-
-
-  Position _currentPosition;
+  TextEditingController _name,_cname,_email,_pass,_cont,_age,_city,_contcode;
   var phone ="";
   var pass = "";
-  String code;
   bool loader = false;
   bool _isButtonDisabled = false;
   final FocusNode __name = FocusNode();
   final FocusNode __cname = FocusNode();
   final FocusNode __email = FocusNode();
   final FocusNode __pass = FocusNode();
-  //final FocusNode __cont = FocusNode();
+  final FocusNode __cont = FocusNode();
   final FocusNode __contcode = FocusNode();
-  final FocusNode __phone = FocusNode();
+  final FocusNode __age = FocusNode();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   SharedPreferences prefs;
   Map<String, dynamic>res;
+
+  String _country;
+  bool _obscureText = true;
+  String  _tempcontry  = '';
+  int travelled = 11;  // 1 means yes , and 0 means no
+  int gathering = 11;  // 1 means yes , and 0 means no
+  int contact = 11;  // 1 means yes , and 0 means no
+  int quarantined = 11;  // 1 means yes , and 0 means no
+  int livingstatus = 11;  // 1 means yes , and 0 means no
+  int hypertension = 0;
+  int diabetes = 0;
+  int lungdiseases = 0;
+  int cardio = 0;
+  int renal = 0;
+  int liver = 0;
+  bool noneofabovehealth = false;
+  bool noneofabove = false;
+  String empid = "";
+  String orgid = "";
+  String _orgName = "";
+  int count = 0;
+  String risk = "--";
+  bool _isVisible = false;
   List<Map> _myJson = [{ "ind": "0"    ,   "id": "2"  ,   "name": "Afghanistan"  ,   "countrycode": "+93"}    ,
     { "ind":"1"       ,      "id": "4"  ,   "name": "Albania"  ,   "countrycode": "+355"}    ,
     { "ind":"2"       ,      "id": "50"  ,   "name": "Algeria"  ,   "countrycode": "+213"}    ,
@@ -298,41 +299,64 @@ class _MyHomePageState extends State<MyHomePage> {
     { "ind":"235"    ,      "id": "236" ,   "name": "Zambia" ,   "countrycode": "+260"}      ,
     { "ind":"236"    ,      "id": "238" ,   "name": "Zimbabwe" ,   "countrycode": "+263"} ];
 
-  String _country;
-  bool _obscureText = true;
-  String  _tempcontry  = '';
-  @override
 
+
+
+  @override
   void initState() {
-    _getCurrentLocation();
     _name = new TextEditingController();
     _cname = new TextEditingController();
     _email = new TextEditingController();
-    _phone = new TextEditingController();
+    _age = new TextEditingController();
     _pass = new TextEditingController();
     _cont = new TextEditingController();
     _city = new TextEditingController();
     _contcode = new TextEditingController();
+
     super.initState();
-    /*application.onLocaleChanged = onLocaleChange;
-    onLocaleChange(Locale(languagesMap["English"]));*/
+    initplatform();
   }
+  getcount(){
+    count = 0;
+    
+    if(travelled != 11)
+      count = count+travelled;
+    if(gathering != 11)
+      count = count+gathering;
+    if(contact != 11)
+      count = count+contact;
+    if(quarantined != 11)
+      count = count+quarantined;
+    if(hypertension != 0)
+      count = count+hypertension;
+    if(diabetes != 0)
+      count = count+diabetes;
+    if(lungdiseases != 0)
+      count = count+lungdiseases;
+    if(cardio != 0)
+      count = count+cardio;
+    if(renal != 0)
+      count = count+renal;
+    if(liver != 0)
+      count = count+liver;
 
-  SearchCountry(String country) {
-    for (int i=0; i < _myJson.length; i++) {
-      if (country == _myJson[i]["name"]) {
-        code = _myJson[i]["ind"];
-        _contcode.text = _myJson[i]['countrycode'];
-        _tempcontry = _myJson[i]['id'];
-      }
-    }
+    setState(() {
+      if(count==0)
+        risk = "Low";
+       else if(count == 1)
+        risk = "Medium";
+       else
+        risk = "High";
+    });
   }
+  initplatform() async{
 
-  setLocal(var fname, var empid, var  orgid) async {
-    prefs = await SharedPreferences.getInstance();
-    await prefs.setString('fname',fname);
-    await prefs.setString('empid',empid.toString());
-    await prefs.setString('orgid',orgid.toString());
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+      empid = prefs.getString('empid') ?? '';
+      orgid = prefs.getString('orgdir') ?? '';
+      _orgName = prefs.getString('org_name') ?? '';
+    });
   }
 
   void _toggle() {
@@ -340,7 +364,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _obscureText = !_obscureText;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -348,14 +371,13 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("ubiAttendance", style: new TextStyle(fontSize: 20.0)),
-            //new Text(AppTranslations.of(context).text("key_app_title"), style: new TextStyle(fontSize: 20.0)),
+            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
           ],
         ),
         leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AskRegisterationPage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
         },),
         backgroundColor: appcolor,
@@ -366,344 +388,573 @@ class _MyHomePageState extends State<MyHomePage> {
           child: loader ? runloader():new Form(
               key: _formKey,
               autovalidate: true,
-
               child: new ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: new Text("Register Company",
-                      textAlign: TextAlign.center,
-                      style: new TextStyle(fontWeight: FontWeight.bold, fontSize:20.0, color: appcolor ),
-                    ),
-                  ),
-                  new Text("Note: This form is only for company registration. If the company is already registered, employees should not fill this form. They should  only login with admin's help.",
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize:14.0, color: Colors.orange[900], ),
-                  ),
-                  SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ), child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: new TextFormField(
-                      /*   validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter company name';
-                          }
-                        },*/
-                      decoration:  InputDecoration(
-                          border: InputBorder.none,
-                          //prefixIcon:  Icon(Icons.business, color: Colors.black38,),
-                          prefixIcon:  Icon(
-                            Icons.person_outline,
-                            color: Colors.black38,
-                          ),
-                          //hintText: AppTranslations.of(context).text("key_company_name"),
-                          hintText: 'First name          Last name',
-//                          labelText: 'Company',
-                          hintStyle: TextStyle(
-                            color: Colors.black45,
-                          )
-                      ),
-                      controller: _cname,
-                      focusNode: __cname,
-                    ),
-                  ),
-                  ),
-                  SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        /*  validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter contact person name';
-                          }
-                        },*/
-                        decoration:  InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon:  Icon(
-                              Icons.person_outline,
-                              color: Colors.black38,
-                            ),
-                            //hintText: AppTranslations.of(context).text("key_contact_person_name"),
-                            hintText: 'Company Name',
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        controller: _name,
-                        focusNode: __name,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.0),
-                  Column(
+/*
+                  Row(
                     children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.9,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFFBFBFB),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [new BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 1.0,
-                            ),]
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: new InputDecorator(
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              prefixIcon: Icon(
-                                Icons.outlined_flag,
-                                color: Colors.black38,
-                              ),
-                              hintStyle: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-
-                            child: DropdownButtonHideUnderline(
-                              child: ButtonTheme(
-                                child: new DropdownButton<String>(
-                                  //controller:_currentAddress,
-                                  iconSize: 20,
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  isDense: true,
-                                  hint: new Text("Select Country"),
-                                  value: code ,
-                                  onChanged: (String newValue) {
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("English"),
+                                  groupValue: globals.language,
+                                  value: 1,
+                                  onChanged: (val) {
                                     setState(() {
-                                      locController1.text='';
-                                      code = newValue;
-                                      _contcode.text = _myJson[int.parse(newValue)]['countrycode'];
-                                      _tempcontry = _myJson[int.parse(newValue)]['id'];
-
-                                      //String s1 =  map[_currentAddress2].toString(),
-                                      //   _tempcontry = _myJson[int.parse(newValue)]['id'];
-                                      /*  _country = _myJson[int.parse(newValue)]['id'];
-                                      _contcode.text = _myJson[int.parse(newValue)]['countrycode']; */
+                                      globals.language = 1;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Empdetails()),
+                                      );
                                     });
                                   },
-                                  items: _myJson.map((Map map) {
-                                    return new DropdownMenuItem<String>(
-                                      value:  map['ind'].toString(),
-                                      child: SizedBox(
-                                        width: 200.0,
-                                        child: new Text(
-                                          map["name"].toString(),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                                )
+                              ],
                             ),
-                          ),
-                        ),
-                      ),
+                          )),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Hindi"),
+                                  groupValue: globals.language,
+                                  value: 2,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      globals.language = 2;
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => EmpdetailsHindi()),
+                                      );
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+
                     ],
                   ),
-                  SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        decoration:  InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              color: Colors.black38,
-                            ),
-                            hintText: 'City',
-                            //hintText: AppTranslations.of(context).text("key_city"),
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        //controller: _city,
+                  */
 
-                        controller: locController1,
-                        keyboardType:  TextInputType.text,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                    child: new Text('Please give correct answer.',
+                      textAlign: TextAlign.center,
+                      style: new TextStyle(fontWeight: FontWeight.bold, fontSize:18.0, color: Colors.red ),
                     ),
                   ),
-                  SizedBox(height: 15.0),
-                  new Row(
+                  SizedBox(height: 20.0),
+                  /*****   First question start   ******/
+
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('1.   Have you or your family member travelled out of town in last 14 days?',
+                              //  textAlign: TextAlign.center,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                            ),
+                          ]
+                      ),
+                    ),
+                  ), Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right:8.0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width*0.15,
-                          height: MediaQuery.of(context).size.height*0.08,
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFFBFBFB),
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [new BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 1.0,
-                              ),]
-                          ),
-                          child: new TextFormField(
-                            enabled: false,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 5,vertical: 20.0),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Yes"),
+                                  groupValue: travelled,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      travelled = 1;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
                             ),
-                            controller: _contcode ,
-                            focusNode: __contcode,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              WhitelistingTextInputFormatter.digitsOnly,
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.73,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFFBFBFB),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [new BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 1.0,
-                            ),]
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: new TextFormField(
-                            /*    validator: (value) {
-                          if (value.isEmpty) {
-                          return 'Please enter Phone';
-                          }
-                    },*/
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
+                          )),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("No"),
+                                  groupValue: travelled,
+                                  value: 0,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      travelled = 0;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
 
-                              // icon: const Icon(Icons.phone),
-                              hintText: 'Phone',
-                              //hintText: AppTranslations.of(context).text("key_phone"),
-                              hintStyle: TextStyle(
-                                color: Colors.black45,
-                              ),
-                              prefixIcon: const Icon(Icons.phone,color: Colors.black38,),
-                            ),
-                            controller: _phone,
-                            focusNode: __phone,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              WhitelistingTextInputFormatter.digitsOnly,
-                            ],
-                          ),
-                        ),
-                      ),
-                      // child: new Text(_obscureText ? "show": "Hide")),
                     ],
                   ),
-                  SizedBox(height: 15.0),
+                  /*****   First question end   ******/
 
+                  /*****   Second question start   ******/
+
+                  SizedBox(height: 20.0),
                   Container(
                     width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        /*    validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter valid email';
-                          }
-                        },*/
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(Icons.mail_outline),
-                            hintText: 'Email',
-                            //hintText: AppTranslations.of(context).text("key_email"),
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        //obscureText: true,
-                        controller: _email,
-                        focusNode: __email,
-                        keyboardType: TextInputType.emailAddress,
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('2.   Have you or your family member attended any gathering in last 14 days?',
+                              //textAlign: TextAlign.start,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                            ),
+                          ]
                       ),
                     ),
+                  ), Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Yes"),
+                                  groupValue: gathering,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      gathering = 1;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("No"),
+                                  groupValue: gathering,
+                                  value: 0,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      gathering = 0;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                    ],
                   ),
 
-                  SizedBox(height: 15.0),
+                  /*****   Third question start   ******/
+                  SizedBox(height: 20.0),
                   Container(
                     width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        obscureText: _obscureText,
-                        controller: _pass,
-                        focusNode: __pass,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            //hintText: 'Set Password',
-                            hintText:"Password",
-                            hintStyle: TextStyle(
-                                color: Colors.black45
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('3.   Is anyone quarantined for suspected COVID-19 infection in your neighborhood or close social contact in last 14 days?',
+                              //textAlign: TextAlign.center,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
                             ),
-                            prefixIcon: Padding(
-                                padding: EdgeInsets.only(top: 0.0),
-                                child: Icon(Icons.lock,color: Colors.black38,)
-                            ),
-                            suffixIcon: IconButton(
-                              onPressed: _toggle,
-                              icon:  Icon(_obscureText ?Icons.visibility_off:Icons.visibility,
-                                  color: Colors.black38),
-                            )
-                        ),
-                        /*        validator: (val) => val.length < 6 ? 'Password too short.' : null,
-                        onSaved: (val) => _password = val,*/
-
+                          ]
                       ),
                     ),
+                  ), Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Yes"),
+                                  groupValue: quarantined,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      quarantined = 1;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("No"),
+                                  groupValue: quarantined,
+                                  value: 0,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      quarantined = 0;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                    ],
                   ),
+
+
+
+                  /*****   Forth question start   ******/
+                  SizedBox(height: 20.0),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('4.  Have you or family member come in contact with any confirmed/suspected case of COVID 19 in last 14 days?',
+                              // textAlign: TextAlign.center,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                            ),
+                          ]
+                      ),
+                    ),
+                  ), Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Yes"),
+                                  groupValue: contact,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      contact = 1;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("No"),
+                                  groupValue: contact,
+                                  value: 0,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      contact = 0;
+                                      getcount();
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+                    ],
+                  ),
+
+
+                  /*****   Forth question end   ******/
+
+
+
+                  /*****   Fifth question start   ******/
+                  SizedBox(height: 20.0),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('5.   Which of the following living status applies to you?',
+                              //textAlign: TextAlign.center,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                            ),
+                          ]
+                      ),
+                    ),
+                  ), Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Alone"),
+                                  groupValue: livingstatus,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      livingstatus = 1;
+                                    });
+                                  },
+                                ),RadioListTile(
+                                  title: Text("With Family"),
+                                  groupValue: livingstatus,
+                                  value: 2,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      livingstatus = 2;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Paying Guest"),
+                                  groupValue: livingstatus,
+                                  value: 3,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      livingstatus = 3;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Shared Accomodation"),
+                                  groupValue: livingstatus,
+                                  value: 4,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      livingstatus = 4;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("With Relatives"),
+                                  groupValue: livingstatus,
+                                  value: 5,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      livingstatus = 5;
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          )),
+
+                    ],
+                  ),
+
+
+
+                  /*****   fifth question end   ******/
+
+
+                  /*****   Six question start   ******/
+                  SizedBox(height: 20.0),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text('6.   Do you have any pre-existing health condition mentioned below?',
+                              //textAlign: TextAlign.center,
+                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                            ),
+                          ]
+                      ),
+                    ),
+                  ), Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                            // height: 350.0,
+                            child: Column(
+                              children: [
+                                RadioListTile(
+                                  title: Text("Hypertension"),
+                                  groupValue: hypertension,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      hypertension = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Diabetes"),
+                                  groupValue: diabetes,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      diabetes = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Lung Disease"),
+                                  groupValue: lungdiseases,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      lungdiseases = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Cardio Vascular Disease"),
+                                  groupValue: cardio,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      cardio = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Renal Disease"),
+                                  groupValue: renal,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      renal = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: Text("Liver Disease"),
+                                  groupValue: liver,
+                                  value: 1,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      liver = 1;
+                                      getcount();
+                                      _isVisible = true;
+                                    });
+                                  },
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width*0.9,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left:10.0),
+                                    child: new Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+
+                                          Checkbox(
+                                            value: noneofabove,
+                                            onChanged: (bool value) {
+                                              setState(() {
+                                                noneofabove = value;
+                                                print(value);
+                                                if(value==true)
+                                                {
+                                                  hypertension = 0;
+                                                  diabetes = 0;
+                                                  lungdiseases = 0;
+                                                  cardio = 0;
+                                                  renal = 0;
+                                                  liver = 0;
+                                                  getcount();
+
+                                                }
+                                                else{
+                                                  hypertension = 1;
+                                                  diabetes = 1;
+                                                  lungdiseases = 1;
+                                                  cardio = 1;
+                                                  renal = 1;
+                                                  liver = 1;
+                                                  getcount();
+                                                }
+                                              });
+                                            },
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 14.0,left: 10.0),
+                                            child: new Text('NONE OF THE ABOVE  ',
+                                              // textAlign: TextAlign.center,
+                                              style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                                            ),
+                                          )
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+
+                    ],
+                  ),
+
+
+
+                  /*****   Six question end   ******/
+
+                  SizedBox(height: 15.0),
+
+
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        new Text('Risk:  ${risk}',
+                          textAlign: TextAlign.center,
+                          style: new TextStyle(fontSize:16.0, color: Colors.blue, ),
+                        ),
+                      ]
+                  ),
+
+
+                  SizedBox(height: 20.0),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: new Container(
@@ -711,7 +962,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: buttoncolor,
                             textColor: Colors.white,
                             padding: EdgeInsets.all(20.0),
-                            child: Text("Please wait...",style: TextStyle(fontSize: 18.0),),
+                            child: const Text('Please wait...',style: TextStyle(fontSize: 18.0),),
                             onPressed: (){}
                         ):new RaisedButton(
                           elevation: 1.0,
@@ -725,209 +976,72 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: buttoncolor,
                           textColor: Colors.white,
                           padding: EdgeInsets.all(20.0),
-                          child: Text("Register Company",style: TextStyle(fontSize: 18.0),),
-                          onPressed: () async{
-
-                            /*
-                            setLocal('Ubitech Solutions','0','0');
-                            showDialog(context: context, child:
-                            new AlertDialog(
-                              title: new Text("Congratulations"),
-                              content: new Text(prefs.getString('fname')),
-                              actions: <Widget>[
-                                new RaisedButton(
-                                  color: Colors.green,
-                                  textColor: Colors.white,
-                                  child: new Text('Start Trial'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ));
-                            print('============*******************===============');
-                            return;
-*/
+                          child: const Text('Submit',style: TextStyle(fontSize: 18.0),),
+                          onPressed: (){
+                           // print("Country: "+_country);
+                            // return false;
                             if(_isButtonDisabled)
                               return null;
 
-                            if(_name.text=='') {
-                              // ignore: deprecated_member_use
-                              // FocusScope.of(context).requestFocus(__name);
+                            if( travelled==11 || gathering==11 || quarantined==11 || contact==11 || livingstatus==11  ) {
                               showDialog(context: context, child:
                               new AlertDialog(
                                 title: new Text("Alert"),
-                                content: new Text("Please enter the Company's name"),
-                                //content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
+                                content: new Text(
+                                    "Please answer all questions"),
                               ));
-                              return null;
-                            }
-                            else if(_cname.text=='') {
-                              // ignore: deprecated_member_use
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Contact Person's name"),
-                                //content: new Text(AppTranslations.of(context).text("key_enter_contact_person_name")),
-                              ));
-                              //FocusScope.of(context).requestFocus(__cname);
-                              return null;
+                              return false;
                             }
 
-                            else if(!(validateEmail(_email.text))) {
-                              //print((validateEmail(_email.text)).toString());
-
-                              // ignore: deprecated_member_use
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Email ID"),
-                                //content: new Text(AppTranslations.of(context).text("key_please_enter_email")),
-                              ));
-                              // FocusScope.of(context).requestFocus(__email);
-                              return null;
-
-                            }
-                            else if(_pass.text.length<6) {
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter the Password of at least 6 characters"),
-                                //content: new Text(AppTranslations.of(context).text("key_must_be_at_least_6_characters")),
-                              ));
-                              // FocusScope.of(context).requestFocus(__pass);
-                              return null;
-                            }
-                            else if(_tempcontry=='' ) {
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please Select a Country."),
-                                //content: new Text(AppTranslations.of(context).text("key_select_country")),
-                              ));
-                              // FocusScope.of(context).requestFocus(__phone);
-                              return null;
-                            }
-                            else if(_phone.text.length<6) {
-                              showDialog(context: context, child:
-                              new AlertDialog(
-                                title: new Text("Alert"),
-                                content: new Text("Please enter a valid Phone No."),
-                                //content: new Text(AppTranslations.of(context).text("key_please_enter_valid_phone")),
-                              ));
-                              // FocusScope.of(context).requestFocus(__phone);
-                              return null;
-                            }
                             else {
+                              print("Successfull");
+                              print(_country);
+                              //return false;
                               setState(() {
                                 _isButtonDisabled=true;
                               });
-                              var prefs=await SharedPreferences.getInstance();
-
-                              String referrerId=prefs.getString("referrerId")??"0";
-                              String ReferralValidFrom=prefs.getString("ReferralValidFrom")??"0000-00-00";
-                              String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
-                              String referrerAmt=prefs.getString("referrerAmt")??"0%";
-                              String referrenceAmt=prefs.getString("referrenceAmt")??"0%";
-
-                              print("referrer id sent"+referrerId.toString());
-                              print(globals.path+"register_orgnew?org_name=${ _name.text}&name=${_cname.text}&phone=${_phone.text}&email=${_email.text}&password=${_pass.text}&platform=android&country=${_tempcontry}&city=${_city.text}");
-                              var url = globals.path+"register_orgnew";
+                              print(globals.path+"Every7DaysCOVID19data");
+                              var url = globals.path+"Every7DaysCOVID19data";
                               http.post(url, body: {
-                                "org_name": _name.text,
-                                "name": _cname.text,
-                                "phone": _phone.text,
-                                "email": _email.text,
-                                "password": _pass.text,
-                                "country": _tempcontry,
-                                "countrycode": '',
-                                "address": locController1.text,
-                                "referrerId":referrerId,
-                                "ReferralValidFrom":ReferralValidFrom,
-                                "ReferralValidTo":ReferralValidTo,
-                                "referrerAmt":referrerAmt,
-                                "referrenceAmt":referrenceAmt,
-                                "platform":'android'
-                              }) .then((response)async {
+                                "hypertension": hypertension.toString(),
+                                "cardio": cardio.toString(),
+                                "diabetes": diabetes.toString(),
+                                "lungdiseases": lungdiseases.toString(),
+                                "travelled": travelled.toString(),
+                                "gathering": gathering.toString(),
+                                "contact": contact.toString(),
+                                "quarantined": quarantined.toString(),
+                                "livingstatus": livingstatus.toString(),
+                                "renal": renal.toString(),
+                                "liver": liver.toString(),
+                                "noneofabove": noneofabove.toString(),
+                                "orgid": orgid,
+                                "empid": empid,
+                                "risk":risk
+                              }) .then((response) {
                                 if  (response.statusCode == 200) {
-                                  var prefs=await SharedPreferences.getInstance();
-                                  prefs.setBool("companyFreshlyRegistered",true );
-
-                                  // prefs.setBool("firstTimeInMarked",false );
-
+                                  print('risk-->'+risk);
                                   print("-----------------> After Registration ---------------->");
                                   print(response.body.toString());
                                   res = json.decode(response.body);
-                                  if (res['sts'] == 'true') {
-                                    // setLocal(res['f_name'],res['id'],res['org_id']);  // comment by sohan
-                                    /*setState(() {
-                                      phone = _phone.text;
-                                      pass = _pass.text;
-                                      _name.text="";
-                                      _city.text="";
-                                      _cname.text="";
-                                      _email.text="";
-                                      _pass.text="";
-                                      _cont.text="";
-                                      _contcode.text="";
-                                      _phone.text="";
-                                    });*/
+                                  if (res['status'] == 'true') {
 
-                                    globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
-
-                                    gethome () async{
-                                      await new Future.delayed(const Duration(seconds: 1));
-                                      // login(_phone.text, _pass.text, context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => Otp(_email.text,_pass.text,context)),
-                                      );
-                                    }
-                                    gethome ();  // comment by sohan
-                                    /*  showDialog(context: context,
-                                        barrierDismissible: false,
-                                        child: new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text("Hi " + res['f_name'] +
-                                          ", Your company is registered successfully."),
-                                      actions: <Widget>[
-                                        new RaisedButton(
-                                          color: Colors.green,
-                                          textColor: Colors.white,
-                                          child: new Text('Start Trial'),
-                                          onPressed: () {
-                                            Navigator.of(context, rootNavigator: true).pop();
-                                            login(phone, pass, context);
-                                          },
-                                        ),
-                                      ],
-                                    ));*/
-
-
-                                  } else if (res['sts'] == 'false1' ||
-                                      res['sts'] == 'false3') {
-                                    // ignore: deprecated_member_use
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => Covid19serve()), (Route<dynamic> route) => false,
+                                    );
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text("Email ID is already registered. Please Sign In"),
-                                      //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+                                      title: new Text("Alert!"),
+                                      content: new Text("Form submitted successfully."),
                                     ));
-                                  } else if (res['sts'] == 'false2' || res['sts'] == 'false4') {
-                                    // ignore: deprecated_member_use
+
+                                  }
+                                  else {
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text("Phone No. is already registered"),
-                                      // content: new Text(AppTranslations.of(context).text("key_phone_already_registered")),
-                                    ));
-                                  } else {
-                                    // ignore: deprecated_member_use
-                                    showDialog(context: context, child:
-                                    new AlertDialog(
-                                      title: new Text("ubiAttendance"),
-                                      content: new Text("Oops!! Poor network connection. Company could not be registered."),
-                                      //content: new Text(AppTranslations.of(context).text("key_poor_network_connection")),
+                                      title: new Text("Worning"),
+                                      content: new Text("Unable to connect API. Please try again."),
                                     ));
                                   }
                                   setState(() {
@@ -939,7 +1053,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     _isButtonDisabled=false;
 
                                   });
-                                  // ignore: deprecated_member_use
                                   showDialog(context: context, child:
                                   new AlertDialog(
                                     title: new Text("Error"),
@@ -954,10 +1067,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 //   print("Response status: ${response.statusCode}");
                                 //   print("Response body: ${response.body}");
                               }).catchError((onError) {
+                                print(onError);
                                 setState(() {
                                   _isButtonDisabled=false;
                                 });
-                                // ignore: deprecated_member_use
                                 showDialog(context: context, child:
                                 new AlertDialog(
                                   title: new Text("Error"),
@@ -966,6 +1079,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 );
                               });
                             }
+
                             // return false;
 
                           },
@@ -1023,39 +1137,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
       ),
     );
-  }
-
-  _getCurrentLocation() {
-    geolocator
-        .getCurrentPosition(desiredAccuracy:LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-      _getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
-
-  }
-
-  _getAddressFromLatLng() async {
-    try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-
-      Placemark place = p[0];
-
-      setState(() {
-        locController1.text = place.locality;
-        //locController2.text = place.country;
-        SearchCountry(place.country);
-
-      });
-    } catch (e) {
-      print(e);
-    }
-
   }
 
 }

@@ -261,6 +261,23 @@ disapprovesuspiciousattn(String id) async{
     print(e.toString());
   }
 }
+disapprovefaceid(String empid,String orgid) async{
+  try{
+    Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid");
+    await dio.post(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid");
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
 
 
 sendNotificationtouser ()async
@@ -1834,6 +1851,57 @@ class Attn {
     this.Absent,
   });
 }
+List<FaceIdLists> createFaceEmpList(var data) {
+   print('Create list called/*******************');
+  List<FaceIdLists> list = new List();
+
+  print("Tril status");
+  print("Tril status>>>>>>>>>>>>>>>,"+data.toString());
+
+  print(trialstatus);
+  if(data!=null) {
+    int length = data.length;
+    if (trialstatus == '2' && length > 10) {
+      length = 10; // expired organization show only 10 records
+    }
+
+    /*int total_dept = 0;
+   int total_abs = 0;
+   int total_pre = 0;
+   int total_emp = 0;*/
+
+    for (int i = 0; i < length; i++) {
+      String Id = data[i]['Id'].toString();
+      String Name = data[i]["name"].toString();
+      String Image = data[i]["Profile"].toString();
+      String orgid = data[i]["orgid"].toString();
+
+
+      FaceIdLists tos = new FaceIdLists(
+        Id: Id,
+        Name: Name,
+        Image: Image,
+        orgid: orgid,
+      );
+
+      list.add(tos);
+    }
+  }
+  return list;
+}
+class FaceIdLists {
+  String Id;
+  String Name;
+  String Image;
+  String orgid;
+
+  FaceIdLists({
+    this.Id,
+    this.Name,
+    this.Image,
+    this.orgid,
+  });
+}
 
 class SyncNotification {
   int Id;
@@ -1885,6 +1953,30 @@ Future<List<Attn>> getCDateAttn(listType, date) async {
     responseJson = res['lateComings'];
   else if (listType == 'earlyleavings') responseJson = res['earlyLeavings'];
   List<Attn> userList = createTodayEmpList(responseJson);
+  return userList;
+}
+
+Future<List<FaceIdLists>> getregisteredFaceIDList(listType) async {
+  final prefs = await SharedPreferences.getInstance();
+
+
+  String orgdir = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid') ?? '';
+  print(globals.path + 'registeredFaceIDList?refno=$orgdir&datafor=$listType&empid=$empid');
+  final response = await http.get(globals.path +
+      'registeredFaceIDList?refno=$orgdir&datafor=$listType&empid=$empid');
+  final res = await json.decode(response.body);
+  //debugPrint(res.toString());
+  List responseJson;
+  if (listType == 'registered')
+    responseJson = res['registered'];
+  else if (listType == 'unregistered'){
+    responseJson = res['unregistered'];
+    print("pppppppppp"+responseJson.toString());
+  }
+
+  print(responseJson.toString());
+  List<FaceIdLists> userList = createFaceEmpList(responseJson);
   return userList;
 }
 
