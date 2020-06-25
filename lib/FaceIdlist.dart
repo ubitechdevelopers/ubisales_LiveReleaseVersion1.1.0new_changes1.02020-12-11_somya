@@ -4,6 +4,7 @@
 import 'dart:convert';
 
 import 'package:Shrine/page/camera.dart';
+import 'package:Shrine/page/camera_grpatt.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/shared/widgets/focus_widget.dart';
 import 'package:connectivity/connectivity.dart';
@@ -27,7 +28,7 @@ class FaceIdList extends StatefulWidget {
   @override
   _FaceIdList createState() => _FaceIdList();
 }
-TextEditingController today;String _orgName;
+TextEditingController today;String _orgName="";
 class _FaceIdList extends State<FaceIdList> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -72,8 +73,8 @@ class _FaceIdList extends State<FaceIdList> with SingleTickerProviderStateMixin 
         print("caaaallllled");
         imagei = await Navigator.push(context, new MaterialPageRoute(
           builder: (BuildContext context) =>
-          new Camera(
-            mode: CameraMode.normal,
+          new Camera_grpatt(
+            mode: Camera_grpattMode.normal,
             imageMask: CameraFocus.circle(
               color: Colors.black.withOpacity(0.5),
             ),
@@ -140,7 +141,7 @@ class _FaceIdList extends State<FaceIdList> with SingleTickerProviderStateMixin 
                 child: new AlertDialog(
 
                   content: new Text(
-                      "Picture clicked should be a Selfie"),
+                      "Clicked picture is not clear"),
                 )
             );
             saveImageFaceId(empid);
@@ -346,7 +347,7 @@ print('visit out called for visit id:'+visit_id);
         children: <Widget>[
           SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Face IDs",style: TextStyle(fontSize: 22.0,color: appcolor),),),
+            child: Center(child:Text("Face ID",style: TextStyle(fontSize: 22.0,color: appcolor),),),
           ),
           Divider(color: Colors.black54,height: 1.5,),
           /*

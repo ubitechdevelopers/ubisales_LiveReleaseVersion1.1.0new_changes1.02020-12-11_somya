@@ -986,7 +986,7 @@ class _MyHomePageState extends State<Every7dayscovidsurvey> {
                             if( travelled==11 || gathering==11 || quarantined==11 || contact==11 || livingstatus==11  ) {
                               showDialog(context: context, child:
                               new AlertDialog(
-                                title: new Text("Alert"),
+                                //title: new Text("Alert"),
                                 content: new Text(
                                     "Please answer all questions"),
                               ));
@@ -1032,7 +1032,7 @@ class _MyHomePageState extends State<Every7dayscovidsurvey> {
                                     );
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("Alert!"),
+                                      //title: new Text("Alert!"),
                                       content: new Text("Form submitted successfully."),
                                     ));
 
@@ -1040,7 +1040,7 @@ class _MyHomePageState extends State<Every7dayscovidsurvey> {
                                   else {
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("Worning"),
+                                      title: new Text("Warning"),
                                       content: new Text("Unable to connect API. Please try again."),
                                     ));
                                   }

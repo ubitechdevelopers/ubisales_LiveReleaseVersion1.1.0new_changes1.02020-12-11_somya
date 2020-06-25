@@ -58,8 +58,8 @@ class _Camera_grpattState extends State<Camera_grpatt> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-    Future.delayed(Duration(seconds: 4), () => bloc.onTakePictureButtonPressed());
-    Future.delayed(Duration(seconds: 6), () =>  grpatt());
+//    Future.delayed(Duration(seconds: 4), () => bloc.onTakePictureButtonPressed());
+//    Future.delayed(Duration(seconds: 6), () =>  grpatt());
 
 
 

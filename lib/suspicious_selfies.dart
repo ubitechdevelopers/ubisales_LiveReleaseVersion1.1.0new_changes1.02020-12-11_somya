@@ -333,7 +333,7 @@ print('visit out called for visit id:'+visit_id);
               SizedBox(height: 50.0,),
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('    Face IDs',textAlign: TextAlign.right,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 14.0),),
+                child:Text('    Face ID',textAlign: TextAlign.right,style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 14.0),),
               ),
               SizedBox(height: 50.0,),
               Container(

@@ -352,6 +352,7 @@ Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context,imag
           "FakeLocationStatus" : mk.FakeLocationStatus,
           "platform":'android',
           "tempimagestatus":1,
+          "appVersion": globals.appVersion
           //"deviceidmobile":deviceidmobile,
           //"devicenamebrand":globals.devicenamebrand
         });

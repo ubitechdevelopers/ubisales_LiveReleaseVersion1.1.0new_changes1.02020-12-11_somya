@@ -388,7 +388,7 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
                 child: new AlertDialog(
 
                   content: new Text(
-                      "Picture clicked should be a Selfie"),
+                      "Picture is unclear or is not a Selfie"),
                 )
             );
             saveImageFaceId();

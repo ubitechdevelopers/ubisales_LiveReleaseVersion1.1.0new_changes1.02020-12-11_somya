@@ -42,6 +42,7 @@ class _CameraSettings extends State<CameraSettings> {
     response = prefs.getInt('response') ?? 0;
 
     prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+    prefix0.showPhoneCamera=prefs.getBool("showPhoneCamera")??true;
 
     admin_sts = prefs.getString('sstatus') ?? '0';
     if(response==1) {
@@ -182,7 +183,7 @@ class _CameraSettings extends State<CameraSettings> {
                 children: <Widget>[
                   SizedBox(height: 20.0),
                   Center(
-                    child:Text("Choose App\'s Camera",style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                    child:Text("App\'s Camera",style: new TextStyle(fontSize: 22.0,color: appcolor)),
                   ),
                   SizedBox(height: 30.0),
                   Container(
@@ -212,6 +213,13 @@ class _CameraSettings extends State<CameraSettings> {
                                         prefs.setBool("showAppInbuiltCamera", await value);
                                         setState((){
                                           showAppInbuiltCamera = value;
+                                          if(prefix0.showAppInbuiltCamera==true){
+                                            showPhoneCamera=false;
+                                            prefs.setBool("showPhoneCamera", false);
+                                          }else{
+                                            showPhoneCamera=true;
+                                            prefs.setBool("showPhoneCamera", true);
+                                          }
 
 
                                         });
@@ -223,7 +231,54 @@ class _CameraSettings extends State<CameraSettings> {
 
                         ],
                       )
-                  ), //Enter date
+                  ),
+                  Container(
+                      child: Row(
+                        children: <Widget>[
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[    Container(
+                                width: MediaQuery.of(context).size.width*.65,
+                                child: Text("Phone Camera",style: TextStyle(fontSize: 22.0),
+
+                                ),
+                              ),
+                              ]
+                          ),
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[    Container(
+                                  width: MediaQuery.of(context).size.width*.15,
+                                  child:Switch(
+                                      value: showPhoneCamera,
+                                      onChanged: (value) async{
+                                        prefix0.cameraChannel.invokeMethod("askAudioPermission");
+                                        var prefs= await SharedPreferences.getInstance();
+                                        prefs.setBool("showPhoneCamera", await value);
+                                        setState((){
+                                          showPhoneCamera = value;
+                                          if(prefix0.showPhoneCamera==true){
+                                            showAppInbuiltCamera=false;
+                                            prefs.setBool("showAppInbuiltCamera", false);
+
+                                          }else{
+                                            showAppInbuiltCamera=true;
+                                            prefs.setBool("showAppInbuiltCamera", true);
+                                          }
+
+
+                                        });
+                                      })
+                              ),
+
+                              ]
+                          )
+
+                        ],
+                      )
+                  ),//Enter date
                   SizedBox(height: 12.0),
 
                   /*

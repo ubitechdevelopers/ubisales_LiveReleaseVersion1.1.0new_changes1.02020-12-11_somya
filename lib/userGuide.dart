@@ -99,7 +99,7 @@ class _UserGuide extends State<UserGuide> {
         GestureDetector(
           onTap: ()=>setState((){
             _animatedHeight_markatt==0.0?_animatedHeight_markatt=MediaQuery.of(context).size.height * 0.15:_animatedHeight_markatt=0.0;}),
-        child:Text('How to mark Attendance?',style: TextStyle(fontSize: 20.0,color: Colors.blue)),
+        child:Text('How to punch Attendance?',style: TextStyle(fontSize: 20.0,color: Colors.blue)),
         ),
         SizedBox(height: MediaQuery.of(context).size.height * 0.015,),
         new AnimatedContainer(duration: const Duration(milliseconds: 5),
@@ -109,13 +109,14 @@ class _UserGuide extends State<UserGuide> {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text("1. Click on \"Time In\" button"),
+                         // Text("1. Click on \"Time In\" button"),
+                          Text("1.Go to homescreen."),
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                      Text("2. Your current location will be shown. If it is incorrect then press the refresh location button."),
+                      Text('2. Current location will be shown. If it is incorrect then press “Refresh Location”'),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                      Text("3. Capture “Selfie” by using your phone’s camera and click on “OK” button to mark attendance."),
+                      Text("3.  Click on \"Time In\" button."),
                       //SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
                       //Text("4. Time In will be marked successfully."),
                      // SizedBox(height: 5.0,),

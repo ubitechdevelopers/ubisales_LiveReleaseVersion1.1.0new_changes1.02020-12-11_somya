@@ -167,6 +167,28 @@ getWidgets(context){
                 style: new TextStyle(fontSize: 22.0, color: globals.appcolor,)),
           ),
         ),
+        /*
+        Container(
+          //padding: EdgeInsets.only(left: 5.0),
+          child: InkWell(
+            child: Text(
+              'Rejected Attendance Log',
+              style: TextStyle(
+                decoration:
+                TextDecoration
+                    .underline,
+                color: Colors
+                    .blueAccent,
+                fontSize: 16,
+                //fontWeight: FontWeight.bold
+              ),
+            ),
+            onTap: () {
+
+            },
+          ),
+        ),
+        */
         Divider(color: Colors.black54,height: 1.5,),
         new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,7 +276,7 @@ getWidgets(context){
                                           },
                                         ),
                                         snapshot.data[index].bhour.toString()!=''?Container(
-                                          color:globals.buttoncolor,
+                                          //color:globals.buttoncolor,
                                           child:Text(""+snapshot.data[index]
                                               .bhour.toString()+" Hr(s)",style: TextStyle(),),
                                         ):SizedBox(height: 10.0,),

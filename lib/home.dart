@@ -820,7 +820,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             "Time": attendances[i].Time,
             "FakeLocationStatus": attendances[i].FakeLocationStatus,
             "FakeTimeStatus": attendances[i].FakeTimeStatus,
-            "Address": address
+            "Address": address,
+            "appVersion": globals.appVersion
           });
         }
         var jsonList1 = json.encode(jsonList);
@@ -2617,7 +2618,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   getwidget(String addrloc) {
-    if (addrloc != "Location not fetched.") {
+    if (addrloc != "Location could not be fetched.") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -2639,7 +2640,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             borderOnForeground: true,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.only(left:5.0,right:5.0),
               child: Container(
                   color: Colors.white,
                   height: MediaQuery.of(context).size.height * .18,
@@ -2654,8 +2655,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         FlatButton(
                           child: new Text(
                               globals.globalstreamlocationaddr != null
-                                  ? globals.globalstreamlocationaddr
-                                  : "Location not fetched",
+                                  ? 'You are at: '+globals.globalstreamlocationaddr
+                                  : "Location could not be fetched",
                               textAlign: TextAlign.center,
                               style: new TextStyle(
                                   fontSize: 14.0, color: Colors.black54)),
@@ -2722,7 +2723,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             child: Text(
                               'Fake Location',
                               style: TextStyle(
-                                  fontSize: 20.0,
+                                  fontSize: 16.0,
                                   color: Colors.amber,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.0),
@@ -2735,9 +2736,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       padding:
                                           EdgeInsets.only(top: 5.0, right: 5.0),
                                       child: Text(
-                                        ' Outside Fenced Area ',
+                                        ' Outside Geofence ',
                                         style: TextStyle(
-                                            fontSize: 20.0,
+                                            fontSize: 16.0,
                                             color: Colors.white,
                                             backgroundColor: Colors.red,
                                             fontWeight: FontWeight.w600,
@@ -2747,9 +2748,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   : Container(
                                       padding: EdgeInsets.all(5.0),
                                       child: Text(
-                                        ' Within Fenced Area ',
+                                        ' Within Geofence ',
                                         style: TextStyle(
-                                            fontSize: 20.0,
+                                            fontSize: 16.0,
                                             color: Colors.white,
                                             backgroundColor: Colors.green,
                                             fontWeight: FontWeight.w600,
@@ -2764,7 +2765,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ]);
     } else {
       return Column(children: [
-        Text('Kindly refresh the page to fetch the location.',
+        Text('Kindly refresh the page to fetch the location',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(

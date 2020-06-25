@@ -787,7 +787,7 @@ class _AddTimeoff extends State<AddTimeoff> {
           );
           showDialog(context: context, child:
           new AlertDialog(
-            content: new Text("Please punch your 'TimeIn' first!"),
+            content: new Text("Please punch your 'Time In' first!"),
           )
           );
       } else if(issave=='false2') {

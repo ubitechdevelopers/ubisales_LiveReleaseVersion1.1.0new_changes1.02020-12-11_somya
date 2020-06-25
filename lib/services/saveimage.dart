@@ -392,6 +392,7 @@ class SaveImage {
             "FakeLocationStatus" : mk.FakeLocationStatus,
             "platform":'android',
             "tempimagestatus":1,
+            "appVersion": globals.appVersion
             //"deviceidmobile":deviceidmobile,
             //"devicenamebrand":globals.devicenamebrand
           });
@@ -462,6 +463,7 @@ class SaveImage {
           "longi": long,
           "FakeLocationStatus":mk.FakeLocationStatus,
           "platform":'android',
+          "appVersion": globals.appVersion
           // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -1029,7 +1031,8 @@ class SaveImage {
             "longi": mk.longi,
             "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus": mk.FakeLocationStatus,
-            "platform":'android'
+            "platform":'android',
+            "appVersion": globals.appVersion
           });
           print("5");
           print(globals.path + "saveImage");
@@ -1067,7 +1070,8 @@ class SaveImage {
           "latit": mk.latit,
           "longi": mk.longi,
           "FakeLocationStatus": mk.FakeLocationStatus,
-          "platform":'android'
+          "platform":'android',
+          "appVersion": globals.appVersion
         });
 
         Response<String> response1 =
@@ -1139,7 +1143,8 @@ class SaveImage {
             "longi": mk.longi,
             "file": new UploadFileInfo(imagei, "image.png"),
             "FakeLocationStatus": mk.FakeLocationStatus,
-             "platform":'android'
+             "platform":'android',
+            "appVersion": globals.appVersion,
           });
           print("5");
           print(globals.path + "saveImage");
@@ -1177,7 +1182,8 @@ class SaveImage {
           "latit": mk.latit,
           "longi": mk.longi,
           "FakeLocationStatus": mk.FakeLocationStatus,
-          "platform":'android'
+          "platform":'android',
+          "appVersion": globals.appVersion
         });
 
         Response<String> response1 =

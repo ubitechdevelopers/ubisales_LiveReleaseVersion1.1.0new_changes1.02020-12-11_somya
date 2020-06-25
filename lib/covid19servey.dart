@@ -47,6 +47,8 @@ class _MyHomePageState extends State<Covid19serve> {
   bool noneofabove = false;
   String empid = "";
   String orgid = "";
+  String _orgName = "";
+  String orgname = "";
 
   @override
   void initState() {
@@ -67,6 +69,8 @@ class _MyHomePageState extends State<Covid19serve> {
     setState(() {
       empid = prefs.getString('empid') ?? '';
       orgid = prefs.getString('orgdir') ?? '';
+      _orgName = prefs.getString('org_name') ?? '';
+      orgname=_orgName.split("..")[1];
     });
   }
 
@@ -156,7 +160,7 @@ class _MyHomePageState extends State<Covid19serve> {
 
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: new Text('SGL’s Daily Self Health Information Tool.',
+                    child: new Text(' Daily Self Health Information Tool.',
                       textAlign: TextAlign.center,
                       style: new TextStyle(fontWeight: FontWeight.bold, fontSize:18.0, color: Colors.red ),
                     ),
@@ -750,7 +754,7 @@ class _MyHomePageState extends State<Covid19serve> {
                               if (contactwithperson == 11 || covidsymptoms == 11) {
                                 showDialog(context: context, child:
                                 new AlertDialog(
-                                  title: new Text("Alert"),
+                                  //title: new Text("Alert"),
                                   content: new Text(
                                       "Please answer all questions"),
                                 ));
@@ -853,7 +857,7 @@ class _MyHomePageState extends State<Covid19serve> {
                                   else {
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("Worning"),
+                                      title: new Text("Warning"),
                                       content: new Text("Unable to connect API. Please try again."),
                                     ));
                                   }

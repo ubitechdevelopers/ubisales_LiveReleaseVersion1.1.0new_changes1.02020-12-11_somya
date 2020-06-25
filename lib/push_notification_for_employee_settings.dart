@@ -544,7 +544,7 @@ class _PushNotificationForEmployee extends State<PushNotificationForEmployee> {
               Container(
                 padding: EdgeInsets.only(top:0.0,bottom: 2.0),
                 child:Center(
-                  child:Text("Punch Notifications",
+                  child:Text("App Notifications",
                       style: new TextStyle(fontSize: 22.0, color: appcolor,)),
                 ),
               ),

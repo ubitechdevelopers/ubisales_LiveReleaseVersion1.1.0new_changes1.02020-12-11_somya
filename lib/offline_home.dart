@@ -613,14 +613,14 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                     );
                     return;
                   }
-                  /*
-                  if(newIndex==0){
+
+                  if(newIndex==3){
 
                     markAttByQROffline(context);
                     return;
 
 
-                  }*/
+                  }
                   /*else if(newIndex == 3){
                 Navigator.push(
                   context,
@@ -632,11 +632,8 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
                 }, // this will be set when a new tab is tapped
                 items: [
-                  /*
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.burst_mode,color: Colors.white,),
-                      title: Text('Bulk QR',style: TextStyle(color: Colors.white),)
-                  ),*/
+
+
                   BottomNavigationBarItem(
                       icon: Icon(Icons.assignment,color: Colors.white,),
                       title: Text('Logs',style: new TextStyle(color: Colors.white)),
@@ -649,6 +646,10 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                   BottomNavigationBarItem(
                       icon: Icon(Icons.location_on,color: Colors.white,),
                       title: Text('Visits',style: TextStyle(color: Colors.white),)
+                  ),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.burst_mode,color: Colors.white,),
+                      title: Text('Group QR',style: TextStyle(color: Colors.white),)
                   ),
 
 
@@ -708,7 +709,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                                   color: Colors.white,
                                 ),
                               ),
-                              color: Colors.redAccent,
+                              color: Colors.green,
                               onPressed: ()async {
                                 prefix0.globalCameraOpenedStatus=true;
                                 timeOutPressedTime=DateTime.now();
@@ -1429,8 +1430,9 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
 
           child: RaisedButton(
             child: Text('TIME IN',
-                style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-            color: timeInClicked?Colors.grey:buttoncolor,
+                style: new TextStyle(fontSize: 22.0, color: Colors.green)),
+            shape: Border.all(color: Colors.green),
+            color: timeInClicked?Colors.grey:Colors.white,
             onPressed: ()async {
               var prefs= await SharedPreferences.getInstance();
               prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
@@ -1487,7 +1489,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                     child: RaisedButton(
                       child: Text('TIME OUT',
                           style: new TextStyle(fontSize: 22.0, color: Colors.white)),
-                      color: timeOutClicked?Colors.grey:buttoncolor,
+                      color: timeOutClicked?Colors.grey:Colors.green,
                       onPressed: () async{
                         var prefs= await SharedPreferences.getInstance();
                         prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;

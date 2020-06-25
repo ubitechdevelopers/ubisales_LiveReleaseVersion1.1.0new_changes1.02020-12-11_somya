@@ -45,10 +45,10 @@ class _CameraState extends State<Camera> {
     bloc.getCameras();
     bloc.cameras.listen((data) {
       bloc.controllCamera = CameraController(
-        data[0],
+        data[1],
         ResolutionPreset.high,
       );
-      bloc.cameraOn.sink.add(0);
+      bloc.cameraOn.sink.add(1);
       bloc.controllCamera.initialize().then((_) {
         bloc.selectCamera.sink.add(true);
       });
@@ -137,13 +137,15 @@ class _CameraState extends State<Camera> {
               );
           }
         }
-
+/*
         if (orientation == NativeDeviceOrientation.portraitDown ||
             orientation == NativeDeviceOrientation.portraitUp) {
           sizeImage = Size(width, height);
         } else {
           sizeImage = Size(height, width);
         }
+
+ */
 
         return Scaffold(
           backgroundColor: Colors.black,
@@ -373,6 +375,7 @@ class _CameraState extends State<Camera> {
                                       radius: 25.0,
                                     ),
                                     _getButtonPhoto(),
+                                    /*
                                     CircleAvatar(
                                       child: RotateIcon(
                                         child: OrientationWidget(
@@ -389,6 +392,7 @@ class _CameraState extends State<Camera> {
                                       backgroundColor: Colors.black38,
                                       radius: 25.0,
                                     )
+                                    */
                                   ],
                                 );
                         }),
