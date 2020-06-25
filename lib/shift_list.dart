@@ -20,14 +20,14 @@ class _ShiftList extends State<ShiftList> {
   String _orgName='';
   bool _isButtonDisabled = false;
   String admin_sts='0';
+  var _shifts;
   @override
   void initState() {
     super.initState();
     checkNetForOfflineMode(context);
-
     dept = new TextEditingController();
-    // f_dept = FocusNode();
     getOrgName();
+    _shifts = getShifts();
   }
   formatTime(String time){
     if(time.contains(":")){
@@ -66,90 +66,90 @@ class _ShiftList extends State<ShiftList> {
 
   getmainhomewidget() {
     return new WillPopScope(
-        onWillPop: ()=> sendToHome(),
-    child: Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+      onWillPop: ()=> sendToHome(),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
 
-                new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+              new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
 
-                /*  Image.asset(
+              /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/
-              ],
-            ),
-            leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-              Navigator.pop(context);}),
-            backgroundColor: appcolor,
+            ],
           ),
-      bottomNavigationBar:Bottomnavigationbar(),
+          leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+            Navigator.pop(context);}),
+          backgroundColor: appcolor,
+        ),
+        bottomNavigationBar:Bottomnavigationbar(),
 
-          endDrawer: new AppDrawer(),
-          body:
-          Container(
-            //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 8.0),
-                Center(
-                  child: Text('Shifts',
-                    style: new TextStyle(fontSize: 22.0, color: appcolor,),),
+        endDrawer: new AppDrawer(),
+        body:
+        Container(
+          //   padding: EdgeInsets.only(left: 2.0, right: 2.0),
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 8.0),
+              Center(
+                child: Text('Shifts',
+                  style: new TextStyle(fontSize: 22.0, color: appcolor,),),
+              ),
+              //Divider(height: 1.5,),
+              Divider(height: 10.0,color: Colors.black),
+              SizedBox(height: 2.0),
+              Container(
+                padding: EdgeInsets.only(bottom:10.0,top: 10.0),
+                width: MediaQuery.of(context).size.width*.9,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.30,
+                      child: Text('Shifts', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.22,
+                      child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.22,
+                      child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width*0.16,
+                      child: Text('Status', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
+                    ),
+
+                  ],
                 ),
-                //Divider(height: 1.5,),
-                Divider(height: 10.0,color: Colors.black),
-                SizedBox(height: 2.0),
-                Container(
-                  padding: EdgeInsets.only(bottom:10.0,top: 10.0),
-                  width: MediaQuery.of(context).size.width*.9,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.30,
-                        child: Text('Shifts', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.left,),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.22,
-                        child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width*0.16,
-                        child: Text('Status', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
-                      ),
+              ),
+              Divider(height: 0.2,),
+              new Expanded(
+                child: getDeptWidget(),
+              ),
 
-                    ],
-                  ),
-                ),
-                Divider(height: 0.2,),
-                new Expanded(
-                  child: getDeptWidget(),
-                ),
+            ],
+          ),
 
-              ],
-            ),
-
-          ),
-          floatingActionButton: new FloatingActionButton(
-            mini: false,
-            backgroundColor: buttoncolor,
-            onPressed: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => addShift()),
-              );
-            },
-            tooltip: 'Add Shift',
-            child: new Icon(Icons.add),
-          ),
-          ),
-        );
+        ),
+        floatingActionButton: new FloatingActionButton(
+          mini: false,
+          backgroundColor: buttoncolor,
+          onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => addShift()),
+            );
+          },
+          tooltip: 'Add Shift',
+          child: new Icon(Icons.add),
+        ),
+      ),
+    );
 
   }
 
@@ -168,7 +168,7 @@ class _ShiftList extends State<ShiftList> {
 
   getDeptWidget() {
     return new FutureBuilder<List<Shift>>(
-        future: getShifts(),
+        future: _shifts,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return new ListView.builder(
@@ -183,14 +183,14 @@ class _ShiftList extends State<ShiftList> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               new Container(
-                                width: MediaQuery.of(context).size.width*0.3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    new Text(snapshot.data[index].Name.toString()),
-                                    new Text('('+snapshot.data[index].Type.toString()+')',style: TextStyle(color: Colors.grey)),
-                                  ],
-                                )
+                                  width: MediaQuery.of(context).size.width*0.3,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      new Text(snapshot.data[index].Name.toString()),
+                                      new Text('('+snapshot.data[index].Type.toString()+')',style: TextStyle(color: Colors.grey)),
+                                    ],
+                                  )
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.22,
@@ -202,13 +202,17 @@ class _ShiftList extends State<ShiftList> {
                               ),
                               new Container(
                                 width: MediaQuery.of(context).size.width*0.16,
-                                child: new Text(snapshot.data[index].Status.toString(), style: TextStyle(color: snapshot.data[index].Status.toString()!='Active'?Colors.deepOrange:Colors.green), textAlign: TextAlign.center,),
+                                child: new Text(snapshot.data[index].Status.toString(),
+                                  style: snapshot.data[index].Name.toUpperCase().toString() == "TRIAL SHIFT"
+                                      ?TextStyle(color: Colors.blueGrey)
+                                      :TextStyle(color: snapshot.data[index].Status.toString()!='Active'?Colors.deepOrange:Colors.green),
+                                  textAlign: TextAlign.center,),
                               ),
                             ],
                           ),
                           onPressed: (){
-                            //return null;
-                           editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
+                            if(snapshot.data[index].Name.toUpperCase().toString() != "TRIAL SHIFT")
+                              editDept(context,snapshot.data[index].Name.toString(),snapshot.data[index].Status.toString(),snapshot.data[index].Id.toString());
                           },),
                         Divider(color: Colors.blueGrey.withOpacity(0.25),height: 0.2,),
                       ]
@@ -333,6 +337,15 @@ class _ShiftList extends State<ShiftList> {
               }),
         ],
       ),
+
+
+
+
+
+
+
+
+
     );
   }
 //////////edit department-end

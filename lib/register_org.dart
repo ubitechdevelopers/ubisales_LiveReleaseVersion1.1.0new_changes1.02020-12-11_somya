@@ -440,7 +440,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration:  InputDecoration(
                             border: InputBorder.none,
                             prefixIcon:  Icon(
-                              Icons.person_outline,
+                              Icons.gradient,
                               color: Colors.black38,
                             ),
                             //hintText: AppTranslations.of(context).text("key_contact_person_name"),
@@ -751,7 +751,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             if(_isButtonDisabled)
                               return null;
 
-                            if(_name.text=='') {
+                            if(_name.text.trim()=='') {
                               // ignore: deprecated_member_use
                               // FocusScope.of(context).requestFocus(__name);
                               showDialog(context: context, child:
@@ -762,7 +762,18 @@ class _MyHomePageState extends State<MyHomePage> {
                               ));
                               return null;
                             }
-                            else if(_cname.text=='') {
+                            else if(locController1.text.trim()=='') {
+                              // ignore: deprecated_member_use
+                              // FocusScope.of(context).requestFocus(__name);
+                              showDialog(context: context, child:
+                              new AlertDialog(
+                                title: new Text("Alert"),
+                                content: new Text("Please enter the City"),
+                                //content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
+                              ));
+                              return null;
+                            }
+                            else if(_cname.text.trim()=='') {
                               // ignore: deprecated_member_use
                               showDialog(context: context, child:
                               new AlertDialog(
@@ -774,7 +785,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               return null;
                             }
 
-                            else if(!(validateEmail(_email.text))) {
+                            else if(!(validateEmail(_email.text.trim()))) {
                               //print((validateEmail(_email.text)).toString());
 
                               // ignore: deprecated_member_use

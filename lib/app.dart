@@ -43,6 +43,7 @@ class _ShrineAppState extends State<ShrineApp> {
   @override
   void initState() {
     super.initState();
+    appVersion=cur_ver;
     getShared();
     checkNow().then((res){
       setState(() {

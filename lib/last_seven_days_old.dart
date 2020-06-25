@@ -19,10 +19,6 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _orgName = "";
-  String newValue ;
-  Future<List<Attn>> _listFuture,_listFuture1,_listFuture2,_listFuture3,_listFuture4;
-
-
   List<Map<String,String>> chartData;
   void showInSnackBar(String value) {
     final snackBar = SnackBar(
@@ -30,40 +26,19 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
   getOrgName() async{
-
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _orgName= prefs.getString('org_name') ?? '';
     });
   }
-
   @override
   void initState() {
     super.initState();
-
-    //getChartDataLast('Last 7 days ');
-    _listFuture1 = getAttnDataLast('Last 7 days ','present');
-    _listFuture2 = getAttnDataLast('Last 7 days ','absent');
-    _listFuture3 = getAttnDataLast('Last 7 days ','latecomings');
-    _listFuture4 = getAttnDataLast('Last 7 days ','earlyleavings');
-    //getChartDataLast('Last 7 days ');
-
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
-    //setAlldata();
   }
-
-  setAlldata() {
-
-    _listFuture1 = getAttnDataLast(newValue,'present');
-    _listFuture2 = getAttnDataLast(newValue,'absent');
-    _listFuture3 = getAttnDataLast(newValue,'latecomings');
-    _listFuture4 = getAttnDataLast(newValue,'earlyleavings');
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -78,62 +53,17 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
         children: <Widget>[
           SizedBox(height:10.0),
           new Container(
-            child: Center(child:Text("Attendance Snap",style: TextStyle(fontSize: 22.0,color: appcolor,),),),
+            child: Center(child:Text("Attendance Snap - Last 7 Days",style: TextStyle(fontSize: 22.0,color: appcolor,),),),
           ),
           Divider(color: Colors.black54,height: 1.5,),
-          SizedBox(height:10.0),
-          Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left:10.0),
-                child: Container(
-                  width: MediaQuery.of(context).copyWith().size.width*0.4,
-                  padding: EdgeInsets.all(5.0),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide( color: Colors.grey.withOpacity(1.0), width: 1,),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left:5.0,top: 5.0,bottom: 5.0,),
-                        child: DropdownButton<String>(
-                          icon: Icon(Icons.arrow_drop_down),
-                          isDense: true,
-                          hint: Text('Select Period'),
-                          value: newValue,
-                          onChanged: (value) async{
-                            newValue=value;
-                            print(value);
-                            print(newValue);
-                            setState(() {
-                              setAlldata();
-                            });
-                          },
-                          items: <String>['Last 7 days ', 'Last 14 days ', 'Last 30 days ', 'This month ', 'Last month'].map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: new Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
           new Container(
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
             child: new ListTile(
-              title: new SizedBox(height: MediaQuery.of(context).size.height*0.25,
+              title: new SizedBox(height: MediaQuery.of(context).size.height*0.30,
+
                 child: new FutureBuilder<List<Map<String,String>>>(
-                    future: newValue != null? getChartDataLast(newValue): getChartDataLast('Last 7 days '),
-                    // future:  getChartDataLast(newValue),
+                    future: getChartDataLast('l7'),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data.length > 0) {
@@ -224,8 +154,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        //future: getAttnDataLast('l7','present'),
-                        future: _listFuture1,
+                        future: getAttnDataLast('l7','present'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -263,7 +192,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                                                   color: Colors.black87,
                                                   fontSize: 16.0,
                                                   fontWeight: FontWeight.bold,
-                                                ),
+                                              ),
 
                                               ),
                                             ],
@@ -284,10 +213,10 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                                               .of(context)
                                               .size
                                               .width * 0.16,
-                                          child:  Text(snapshot.data[index].TimeOut.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 16.0),),
+                                          child:  Text(snapshot.data[index].TimeOut
+                                              .toString(), style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 16.0),),
                                         ),
                                       ],
 
@@ -306,7 +235,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                             }
                           }
                           else if (snapshot.hasError) {
-                            return new Text("Unable to connect server");
+                             return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -319,6 +248,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                 ),
                 //////////////TABB 2 Start
                 new Container(
+
                   height: MediaQuery.of(context).size.height*0.3,
                   //   shape: Border.all(color: Colors.deepOrange),
                   child: new ListTile(
@@ -328,8 +258,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        //future: getAttnDataLast('l7','absent',),
-                        future: _listFuture2,
+                        future: getAttnDataLast('l7','absent',),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -408,7 +337,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                             }
                           }
                           else if (snapshot.hasError) {
-                            return new Text("Unable to connect server");
+                             return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -438,8 +367,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        //future: getAttnDataLast('l7','latecomings'),
-                        future: _listFuture3,
+                        future: getAttnDataLast('l7','latecomings'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -518,7 +446,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                             }
                           }
                           else if (snapshot.hasError) {
-                            return new Text("Unable to connect server");
+                             return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner
@@ -530,7 +458,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                   ),
 
                 ),
-                /////////TAB 3 ENDSF
+                /////////TAB 3 ENDS
 
 
                 /////////TAB 4 STARTS
@@ -546,9 +474,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                       color: Colors.white,
                       //////////////////////////////////////////////////////////////////////---------------------------------
                       child: new FutureBuilder<List<Attn>>(
-                        //future: getAttnDataLast('l7','earlyleavings'),
-                        future:_listFuture4,
-                        // future: getabc(),
+                        future: getAttnDataLast('l7','earlyleavings'),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if(snapshot.data.length>0) {
@@ -627,7 +553,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
                             }
                           }
                           else if (snapshot.hasError) {
-                            return new Text("Unable to connect server");
+                             return new Text("Unable to connect server");
                           }
 
                           // By default, show a loading spinner

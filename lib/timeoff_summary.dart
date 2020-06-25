@@ -5,7 +5,9 @@ import 'dart:async';
 
 import 'package:Shrine/model/model.dart';
 import 'package:Shrine/services/newservices.dart';
+import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +15,6 @@ import 'Bottomnavigationbar.dart';
 import 'addtimeoff.dart';
 import 'drawer.dart';
 import 'globals.dart';
-import 'globals.dart' as globals;
 import 'home.dart';
 import 'login.dart';
 import 'timeoff.dart';
@@ -24,7 +25,9 @@ class TimeoffSummary extends StatefulWidget {
 }
 
 class _TimeoffSummary extends State<TimeoffSummary> {
+  StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<Flexi> flexiidsts = null;
   var profileimage;
   bool _checkLoaded = true;
   int checkProcessing = 0;
@@ -50,11 +53,16 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       profile = "",
       latit = "",
       longi = "";
+  String time;
   bool isWithdrawPopupOpen=false;
   String lid = "";
   String shiftId = "";
   var timeofflist;
   TextEditingController client_name,comments;
+  var FakeLocationStatus=0;
+  String timeoffstatus = "0";
+  String timeoffid = "0";
+
   @override
   void initState() {
     client_name = new TextEditingController();
@@ -72,8 +80,19 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     appResumedPausedLogic(context);
     timeofflist=await getTimeOffSummary();
     setState(() {
-      timeoffRunning=  timeofflist[0].TimeTo.toString()=='00:00'?true:false;
+      timeoffRunning=timeofflist[0].TimeTo.toString()=='00:00'?true:false;
+    });
 
+    checkTimeOff().then((EmpList) {
+      setState(() {
+        flexiidsts = EmpList;
+        timeoffid = flexiidsts[0].fid;
+        timeoffstatus = flexiidsts[0].sts;
+        print("id and sts");
+        print(timeoffid);
+        print(timeoffstatus);
+
+      });
     });
 
     final prefs = await SharedPreferences.getInstance();
@@ -82,8 +101,8 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     response = prefs.getInt('response') ?? 0;
     admin_sts = prefs.getString('sstatus') ?? 0;
     if (response == 1) {
-     // Loc lock = new Loc();
-     // location_addr = await lock.initPlatformState();
+      // Loc lock = new Loc();
+      // location_addr = await lock.initPlatformState();
       //act =await checkPunch(empid, orgdir);
 
       //act= 'PunchOut';
@@ -107,7 +126,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
 
         profileimage = new NetworkImage(profile);
         _checkLoaded = false;
-       /* profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
+        /* profileimage.resolve(new ImageConfiguration()).addListener((_, __) {
           if (mounted) {
             setState(() {
               _checkLoaded = false;
@@ -178,37 +197,37 @@ class _TimeoffSummary extends State<TimeoffSummary> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return WillPopScope(
-            onWillPop: () {},
-            child: new AlertDialog(
-              title: new Text("Are you sure?",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 18.0),),
-              content:  ButtonBar(
-                children: <Widget>[
-                  FlatButton(
-                    child: Text('CANCEL'),
-                    shape: Border.all(color: Colors.grey),
-                    onPressed: () {
-                      setState(() {
-                        _isButtonDisabled=false;
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                  RaisedButton(
-                    child: Text('Withdraw',style: TextStyle(color: Colors.white),),
-                    color: buttoncolor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      withdrawlTimeOff(timeoffid);
-                    },
-                  ),
-                ],
-              ),
-            )
+              onWillPop: () {},
+              child: new AlertDialog(
+                title: new Text("Are you sure?",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 18.0),),
+                content:  ButtonBar(
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text('CANCEL'),
+                      shape: Border.all(color: Colors.grey),
+                      onPressed: () {
+                        setState(() {
+                          _isButtonDisabled=false;
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                    RaisedButton(
+                      child: Text('Withdraw',style: TextStyle(color: Colors.white),),
+                      color: buttoncolor,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        withdrawlTimeOff(timeoffid);
+                      },
+                    ),
+                  ],
+                ),
+              )
           );
         }
-        );
+    );
     return Center(
-      child: CircularProgressIndicator()
+        child: CircularProgressIndicator()
     );
 
     /*
@@ -267,40 +286,40 @@ class _TimeoffSummary extends State<TimeoffSummary> {
 
   getmainhomewidget() {
     return new WillPopScope(
-        onWillPop: ()=> sendToHome(),
-    child: Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
+      onWillPop: ()=> sendToHome(),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
 
-            new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+              new Text(org_name, style: new TextStyle(fontSize: 20.0)),
 
-          ],
+            ],
+          ),
+          leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },),
+          backgroundColor: appcolor,
         ),
-        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        },),
-        backgroundColor: appcolor,
+        bottomNavigationBar: Bottomnavigationbar(),
+        endDrawer: new AppDrawer(),
+        body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
+        floatingActionButton: timeoffRunning==false?new RaisedButton(
+          color: buttoncolor,
+          onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddTimeoff()),
+            );
+          },
+          child: Text(timeoffRunning?"End":"Start" ,style: TextStyle(color: Colors.white),),
+        ):Center()
       ),
-      bottomNavigationBar: Bottomnavigationbar(),
-      endDrawer: new AppDrawer(),
-      body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-      floatingActionButton: new RaisedButton(
-        color: buttoncolor,
-        onPressed: (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddTimeoff()),
-          );
-        },
-       child: Text(timeoffRunning?"Stop":"Start" ,style: TextStyle(color: Colors.white),),
-      ),
-    ),
     );
   }
 
@@ -348,7 +367,9 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       ),
     );
   }
-var timeoffRunning=false;
+
+  var timeoffRunning=false;
+
   mainbodyWidget() {
     return SafeArea(
       child: ListView(
@@ -356,7 +377,7 @@ var timeoffRunning=false;
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 15.0),
+              SizedBox(height: 5.0),
               (act1 == '') ? loader() : getMarkAttendanceWidgit(act1),
               //getMarkAttendanceWidgit(),
             ],
@@ -379,7 +400,7 @@ var timeoffRunning=false;
         children: <Widget>[
           Text('My Time Off History',
               style: new TextStyle(fontSize: 22.0, color: appcolor)),
-          //SizedBox(height: 10.0),
+          SizedBox(height: 5.0),
 
           new Divider(color: Colors.black54,height: 1.5,),
           new Row(
@@ -395,19 +416,18 @@ var timeoffRunning=false;
 
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.32,
-                child:Text(' Start',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                width: MediaQuery.of(context).size.width*0.22,
+                child:Text('Start \nTime',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
               SizedBox(height: 50.0,),
               Container(
-                width: MediaQuery.of(context).size.width*0.34,
-                child:Text(' End',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+                width: MediaQuery.of(context).size.width*0.24,
+                child:Text(' End \nTime',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
               ),
-              /*
               Container(
                 width: MediaQuery.of(context).size.width*0.22,
-                child:Text('  Status',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-              ),*/
+                child:Text('Duration',style: TextStyle(color: appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              ),
             ],
           ),
           new Divider(height: 1.5,),
@@ -423,29 +443,26 @@ var timeoffRunning=false;
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if(snapshot.data.length>0){
-                  return new ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index) {
+                    return new ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
 
-
-
-
-                        return new Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                          new Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              new Container(
-                                  width: MediaQuery.of(context).size.width * 0.30,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      new Text(
-                                        snapshot.data[index].TimeofDate.toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                    /*  (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?new Container(
+                          return new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    new Container(
+                                        width: MediaQuery.of(context).size.width * 0.30,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            new Text(
+                                              snapshot.data[index].TimeofDate.toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                            /*  (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?new Container(
                                               height:18.5,
                                               child:new  FlatButton(
                                                 shape: Border.all(color: Colors.blue),
@@ -456,23 +473,22 @@ var timeoffRunning=false;
                                                 child: Text("Withdraw",style: TextStyle(color: Colors.blue),),
                                               )
                                       ):Center(),*/
-                                    ],
-                                  )),
+                                          ],
+                                        )),
 
-                              new Container(
-                                  width: MediaQuery.of(context).size.width * 0.32,
-                                  child:  Text(
-                                      snapshot.data[index].TimeFrom.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              new Container(
-                                width: MediaQuery.of(context).size.width * 0.32,
-                                child:  Text(
-                                    snapshot.data[index].TimeTo.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              /*
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.22,
-                                /*decoration: new ShapeDecoration(
+                                    new Container(
+                                      width: MediaQuery.of(context).size.width * 0.22,
+                                      child:  Text(
+                                          snapshot.data[index].TimeFrom.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    new Container(
+                                      width: MediaQuery.of(context).size.width * 0.22,
+                                      child:  Text(
+                                          snapshot.data[index].TimeTo.toString(),style:TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width * 0.22,
+                                      /*decoration: new ShapeDecoration(
                                   shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(2.0)),
                                   color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black12,
                                 ),
@@ -484,16 +500,27 @@ var timeoffRunning=false;
                                 padding: EdgeInsets.only(top:1.5,bottom: 1.5,left:8.0,right:8.0),
                                 margin: EdgeInsets.only(top: 4.0),
                                 child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: Colors.white, fontSize: 14.0,),textAlign: TextAlign.center, ),*/
-                                child:Column(
-                                  children: <Widget>[
-                                   // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                      child:Column(
+                                        children: <Widget>[
+                                          // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
+                                          snapshot.data[index].TimeTo.toString()=='00:00' && timeoffRunning?
+                                          RaisedButton(
+                                            color: buttoncolor,
+                                            onPressed: (){
+                                              saveVisitImage();
+                                              /*Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => AddTimeoff()),
+                                              );*/
+                                            },
+                                            child: Text("End",style: TextStyle(color: Colors.white),),
+                                          )
+                                          :new Text(snapshot.data[index].hrs.toString(), style: TextStyle(fontWeight: FontWeight.bold, color:snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orange:Colors.teal),),
+                                          // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
-                                    //new Text(snapshot.data[index].TimeTo.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
-                                   // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
-
-  SizedBox(height: 7.0,),
-                                    /*(snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?InkWell(
+                                          //SizedBox(height: 7.0,),
+                                          /*(snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdrawn' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?InkWell(
                                       child: Container(
                                        /* height:18.5,
                                         child:new  FlatButton(
@@ -513,11 +540,11 @@ var timeoffRunning=false;
                                       ),
                                     ):Center(),*/
 
-                                  ],
-                                ),
-                                 // child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center, )
-                              ),*/
-                            /*  (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdraw' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?Container(
+                                        ],
+                                      ),
+                                      // child: Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?Colors.orangeAccent:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center, )
+                                    ),
+                                    /*  (snapshot.data[index].withdrawlsts && snapshot.data[index].ApprovalSts.toString()!='Withdraw' && snapshot.data[index].ApprovalSts.toString()!="Rejected")?Container(
                                   height: 25.0,
                                   width: 25.0,
                                   child: FittedBox(
@@ -531,35 +558,107 @@ var timeoffRunning=false;
                                       )
                                   )
                               ): Container(),*/
-                              //Divider(),
-                            ],
-                          ),
-                          //SizedBox(width: 30.0,),
+                                    //Divider(),
+                                  ],
+                                ),
+                                //SizedBox(width: 30.0,),
 
-                          snapshot.data[index].Reason.toString()!='-'?Container(
-                            width: MediaQuery.of(context).size.width*.90,
-                            padding: EdgeInsets.only(top:1.5,bottom: 1.5),
-                            margin: EdgeInsets.only(top: 4.0),
-                            child: Text('Reason: '+snapshot.data[index].Reason.toString(), style: TextStyle(color: Colors.black54),),
-                          ):Center(),
-                          snapshot.data[index].ApproverComment.toString()!='-'?Container(
-                            width: MediaQuery.of(context).size.width*.90,
-                            padding: EdgeInsets.only(top:1.5,bottom: 1.5),
-                            margin: EdgeInsets.only(top: 4.0),
-                            child: Text('Comment: '+snapshot.data[index].ApproverComment.toString(), style: TextStyle(color: Colors.black54), ),
-                          ):Center(
-                       // child:Text(snapshot.data[index].withdrawlsts.toString()),
-                        ),
+                                snapshot.data[index].Reason.toString()!='-'?Row(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 4.0),
+                                      child: Text('Reason: ', style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12.0, fontWeight: FontWeight.bold)),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        //width: MediaQuery.of(context).size.width*.80,
+                                        //padding: EdgeInsets.only(top:1.5,bottom: 1.5),
+                                        margin: EdgeInsets.only(top: 4.0),
+                                        child: Text(snapshot.data[index].Reason.toString(), style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12.0),overflow: TextOverflow.ellipsis,),
+                                      ),
+                                    ),
+                                  ],
+                                ):Center(),
+                                snapshot.data[index].StartLoc.toString()!='-'?Row(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 4.0),
+                                      child: Text('Start Location: ', style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12.0, fontWeight: FontWeight.bold)),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        child: Container(
+                                          //width: MediaQuery.of(context).size.width*.90,
+                                          //padding: EdgeInsets.only(top:1.5,bottom: 1.5),
+                                          margin: EdgeInsets.only(top: 4.0),
+                                          child: Text(snapshot.data[index].StartLoc.toString()+'...', style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12.0),overflow: TextOverflow.ellipsis,maxLines: 1,),
+                                        ),
+                                        onTap: () {
+                                          goToMap(
+                                              snapshot.data[index]
+                                                  .LatIn ,
+                                              snapshot.data[index]
+                                                  .LongIn);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ):Center(),
+                                snapshot.data[index].EndLoc.toString()!='-'?Row(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 4.0),
+                                      child: Text('End Location: ', style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12.0, fontWeight: FontWeight.bold)),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        child: Container(
+                                          //width: MediaQuery.of(context).size.width*.90,
+                                          //padding: EdgeInsets.only(top:1.5,bottom: 1.5),
+                                          margin: EdgeInsets.only(top: 4.0),
+                                          child: Text(snapshot.data[index].EndLoc.toString(), style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12.0),overflow: TextOverflow.ellipsis,maxLines: 1,),
+                                        ),
+                                        onTap: () {
+                                          goToMap(
+                                              snapshot.data[index]
+                                                  .LatOut ,
+                                              snapshot.data[index]
+                                                  .LongOut);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ):Center(),
+                                /*snapshot.data[index].ApproverComment.toString()!='-'?Container(
+                                  width: MediaQuery.of(context).size.width*.90,
+                                  padding: EdgeInsets.only(top:1.5,bottom: 1.5),
+                                  margin: EdgeInsets.only(top: 4.0),
+                                  child: Text('Comment: '+snapshot.data[index].ApproverComment.toString(), style: TextStyle(color: Colors.black54), ),
+                                ):Center(
+                                  // child:Text(snapshot.data[index].withdrawlsts.toString()),
+                                ),*/
 
-                          Divider(color: Colors.black45,),
-                        ]);
-                      }
-                  );
+                                Divider(color: Colors.black45,),
+                              ]);
+                        }
+                    );
                   }else
                     return new Center(
                       child: Container(
                         width: MediaQuery.of(context).size.width*1,
-                        color: buttoncolor.withOpacity(0.1),
+                        color: appcolor.withOpacity(0.1),
                         padding:EdgeInsets.only(top:5.0,bottom: 5.0),
                         child:Text("you have not taken any time off  ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                       ),
@@ -578,8 +677,69 @@ var timeoffRunning=false;
         ]);
   }
 
-
-
+  saveVisitImage() async {
+    sl.startStreaming(5);
+    var connectivityResult = await (new Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+      SaveImage saveImage = new SaveImage();
+      String issave = 'false';
+      setState(() {
+        act1 = "";
+      });
+      issave =  await saveImage.marktimeoff(empid, globalstreamlocationaddr, orgdir,'', assign_lat.toString(), assign_long.toString(),FakeLocationStatus,timeoffid,timeoffstatus,context);
+      print("issave");
+      print(issave);
+      //String tempstatus = timeoffstatus;
+      if (issave=='true') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TimeoffSummary()),
+        );
+          showDialog(context: context, child:
+          new AlertDialog(
+            content: new Text("Time Off has ended"),
+          )
+          );
+      } else if(issave=='false1') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Please punch your 'TimeIn' first!"),
+        )
+        );
+      } else if(issave=='false2') {
+        /*Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );*/
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Time Off can not be taken after Time Out"),
+        )
+        );
+      } else {
+        // ignore: deprecated_member_use
+        showDialog(context: context, child:
+        new AlertDialog(
+          content: new Text("Unable to connect to server. Please try again."),
+        )
+        );
+      }
+      setState(() {
+        act1 = act;
+      });
+    }else {
+      // ignore: deprecated_member_use
+      showDialog(context: context, child:
+      new AlertDialog(
+        content: new Text("Internet connection not found!."),
+      )
+      );
+    }
+  }
 
   getPunchPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

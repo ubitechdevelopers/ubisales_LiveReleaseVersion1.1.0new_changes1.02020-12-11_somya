@@ -1,6 +1,7 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:Shrine/payment.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ TextEditingController today;String _orgName;
 class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTickerProviderStateMixin {
   TabController _controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String trialstatus = "";
 
   var formatter = new DateFormat('dd-MMM-yyyy');
   bool res = true;
@@ -36,8 +38,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _orgName= prefs.getString('org_name') ?? '';
-      trialstatus = prefs.getString('trialstatus') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
+      trialstatus = prefs.getString('trialstatus') ?? '';
       if(admin_sts == '2')
         Hightvar =  MediaQuery.of(context).size.height*0.56;
       else
@@ -109,16 +111,16 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               onShowPicker: (context, currentValue) {
                 if(trialstatus=='2')
                   return showDatePicker(
-                      context: context,
-                      firstDate: DateTime.now().subtract(Duration(days: 2)),
-                      initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime.now());
+                    context: context,
+                    firstDate: DateTime.now().subtract(Duration(days: 2)),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime.now());
                 else
                   return showDatePicker(
-                      context: context,
-                      firstDate: DateTime(1900),
-                      initialDate: currentValue ?? DateTime.now(),
-                      lastDate: DateTime.now());
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime.now());
               },
               readOnly: true,
               decoration: InputDecoration(
@@ -129,7 +131,8 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                     color: Colors.grey,
                   ), // icon is 48px widget.
                 ), // icon is 48px widget.
-                labelText: 'Select Date',
+                labelText: "Select Date(2 days data for unpaid user)",
+                //hintText: 'Select Date()',
               ),
               onChanged: (date) {
                 setState(() {
@@ -151,7 +154,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
             padding: EdgeInsets.all(0.1),
             margin: EdgeInsets.all(0.1),
             child: new ListTile(
-              title: new SizedBox(height: MediaQuery.of(context).size.height*0.27,
+              title: new SizedBox(height: MediaQuery.of(context).size.height*0.20,
 
                 child: new FutureBuilder<List<Map<String,String>>>(
                     future: getChartDataCDate(today.text),
@@ -403,6 +406,54 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                              ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width *
+                                                          0.88,
+                                                      color: Colors.red[400],
+                                                      padding:
+                                                      EdgeInsets.only(
+                                                          top: 3.0,
+                                                          bottom: 3.0),
+                                                      child: Text(
+                                                          "For More Information Pay Now ",
+                                                          style: TextStyle(
+                                                              fontSize: 18.0,
+                                                              color: Colors
+                                                                  .white),
+                                                          textAlign: TextAlign
+                                                              .center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 50.0,
+                                            ),
+                                          ])
+                                              : new Center(),
                                         ]);}
                               );
                             }else{
@@ -452,31 +503,33 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                   scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (BuildContext context, int index) {
-                                    return new Row(
+                                    return Column(
+                                      children: <Widget>[
+                                      new Row(
 //                                      mainAxisAlignment: MainAxisAlignment
 //                                          .spaceAround,
-                                      children: <Widget>[
-                                        SizedBox(height: 30.0,),
-                                        Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.46,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(snapshot.data[index].Name
-                                                    .toString(), style: TextStyle(
-                                                    color: Colors.black87,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16.0),),
-                                              ),
-                                            ],
+                                        children: <Widget>[
+                                          SizedBox(height: 30.0,),
+                                          Container(
+                                            width: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width * 0.46,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment
+                                                  .start,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(snapshot.data[index].Name
+                                                      .toString(), style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16.0),),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
 
 //                                        Container(
 //                                            width: MediaQuery
@@ -508,9 +561,65 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 //                                            )
 //
 //                                        ),
-                                      ],
-
+                                        ],
+                                      ),
+                                        (index == snapshot.data.length - 1 &&
+                                            trialstatus == '2')
+                                            ? Row(children: <Widget>[
+                                          //  SizedBox(height: 25.0,),
+                                          Padding(
+                                            padding:
+                                            const EdgeInsets.only(
+                                                bottom: 4.0),
+                                            child: Container(
+                                              //  padding: EdgeInsets.only(bottom: 10.0),
+                                              child: InkWell(
+                                                child: Center(
+                                                  child: Container(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        0.88,
+                                                    color:
+                                                    Colors.red[400],
+                                                    padding:
+                                                    EdgeInsets.only(
+                                                        top: 3.0,
+                                                        bottom:
+                                                        3.0),
+                                                    child: Text(
+                                                        "For More Information Pay Now ",
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                            18.0,
+                                                            color: Colors
+                                                                .white),
+                                                        textAlign:
+                                                        TextAlign
+                                                            .center),
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                            PaymentPage()),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 50.0,
+                                          ),
+                                        ])
+                                            : new Center(),
+                                    ]
                                     );
+
                                   }
                               );
                             }else{
@@ -711,6 +820,54 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                              ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width *
+                                                          0.88,
+                                                      color: Colors.red[400],
+                                                      padding:
+                                                      EdgeInsets.only(
+                                                          top: 3.0,
+                                                          bottom: 3.0),
+                                                      child: Text(
+                                                          "For More Information Pay Now ",
+                                                          style: TextStyle(
+                                                              fontSize: 18.0,
+                                                              color: Colors
+                                                                  .white),
+                                                          textAlign: TextAlign
+                                                              .center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 50.0,
+                                            ),
+                                          ])
+                                              : new Center(),
                                         ]);}
                               );
                             }else{
@@ -908,6 +1065,54 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
 
                                           ),
                                           Divider(color: Colors.black26,),
+                                          (index == snapshot.data.length - 1 &&
+                                              trialstatus == '2')
+                                              ? Row(children: <Widget>[
+                                            //  SizedBox(height: 25.0,),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 4.0),
+                                              child: Container(
+                                                //  padding: EdgeInsets.only(bottom: 10.0),
+                                                child: InkWell(
+                                                  child: Center(
+                                                    child: Container(
+                                                      width: MediaQuery.of(
+                                                          context)
+                                                          .size
+                                                          .width *
+                                                          0.88,
+                                                      color: Colors.red[400],
+                                                      padding:
+                                                      EdgeInsets.only(
+                                                          top: 3.0,
+                                                          bottom: 3.0),
+                                                      child: Text(
+                                                          "For More Information Pay Now ",
+                                                          style: TextStyle(
+                                                              fontSize: 18.0,
+                                                              color: Colors
+                                                                  .white),
+                                                          textAlign: TextAlign
+                                                              .center),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              PaymentPage()),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 50.0,
+                                            ),
+                                          ])
+                                              : new Center(),
                                         ]);}
                               );
                             }else{

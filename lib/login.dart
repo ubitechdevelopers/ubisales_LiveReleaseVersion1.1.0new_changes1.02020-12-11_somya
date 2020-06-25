@@ -20,7 +20,6 @@ import 'package:Shrine/database_models/qr_offline.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/offline_home.dart';
-import 'package:Shrine/otpvarify.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -36,6 +35,7 @@ import 'askregister.dart';
 import 'forgot_password.dart';
 import 'globals.dart';
 import 'home.dart';
+import 'otpvarify.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -65,12 +65,11 @@ class _LoginPageState extends State<LoginPage> {
   bool succ=false;
   bool _isButtonDisabled=false;
   bool loginu=false;
-
   int _currentIndex = 2;
+
   @override
   void initState() {
     super.initState();
-
     initPlatformState();
     platform.setMethodCallHandler(_handleMethod);
   }
@@ -142,7 +141,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     }
-
     if (mounted) {
       setState(() {
         loginuser=prefs.getString('username') ?? "";
@@ -246,7 +244,8 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       onFieldSubmitted: (String value) {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState.validate())  {
+
                           login(_usernameController.text,_passwordController.text,context);
                         }
                       },
@@ -315,7 +314,7 @@ class _LoginPageState extends State<LoginPage> {
                               fontSize: 13.0,
                               decoration: TextDecoration.underline),),
                           onTap: () {
-                           _showModalSheet(context);
+                            _showModalSheet(context);
 
 //                            Navigator.push(
 //                                context, new MaterialPageRoute(builder: (BuildContext context) => ForgotPassword()));
@@ -655,6 +654,8 @@ class _LoginPageState extends State<LoginPage> {
 
   login(var username,var userpassword, BuildContext context) async{
     final prefs = await SharedPreferences.getInstance();
+
+
     var user = User(username,userpassword);
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
@@ -662,9 +663,14 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loader = true;
       });
+
       var islogin = await dologin.checkLogin(user);
       print(islogin);
-      if(islogin=="success"){
+      print(mailstatus);   //when new organization registered
+      print(mailverifiedstatus);  //when existing organiztion's employee login
+      print("mailll");
+
+      if(islogin=="success"  ) {
         prefs.setString('username', username);
         /*Navigator.push(
         context,
@@ -677,7 +683,18 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => Otp(_usernameController.text,_passwordController.text,context)),
         );
-      }else if(islogin=="failure"){
+      }
+      else if(islogin == 'inactive user') {
+
+        setState(() {
+          loader = false;
+        });
+        Scaffold.of(context)
+            .showSnackBar(
+            SnackBar(content: Text("Your account has been deactivated. You can not login.")));
+        return;
+      }
+      else if(islogin=="failure"){
         setState(() {
           loader = false;
         });
@@ -837,11 +854,11 @@ class _LoginPageState extends State<LoginPage> {
                                         _isButtonDisabled=false;
                                       });
                                       // ignore: deprecated_member_use
-                                      showDialog(context: context, child:
-                                      new AlertDialog(
-                                        title: new Text("Alert"),
-                                        content: new Text("Please check your mail for the reset Password link."),
-                                      ));
+                                      showDialog(context: context,
+                                          child: new AlertDialog(
+                                            title: new Text("Alert"),
+                                            content: new Text("Please check your mail for the reset Password link."),
+                                          ));
                                     }
                                     else {
                                       showInSnackBar("Email Not Found.");

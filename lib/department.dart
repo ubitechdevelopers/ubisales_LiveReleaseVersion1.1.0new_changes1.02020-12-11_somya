@@ -20,14 +20,16 @@ class _Department extends State<Department> {
   String _orgName="";
   String admin_sts='0';
   bool _isButtonDisabled= false;
+  var _department;
   @override
   void initState() {
+
     super.initState();
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     dept = new TextEditingController();
-    // f_dept = FocusNode();
     getOrgName();
+    _department = getDepartments();
 
   }
 
@@ -138,7 +140,7 @@ class _Department extends State<Department> {
 
   getDeptWidget() {
     return new FutureBuilder<List<Dept>>(
-        future: getDepartments(),
+        future: _department,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return new ListView.builder(
@@ -163,13 +165,16 @@ class _Department extends State<Department> {
                                 // color: Colors.amber.shade400,
                                 //  padding: EdgeInsets.only(top:7.0,bottom: 7.0),
                                 alignment: FractionalOffset.center,
-                                child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
+                                child: new Text(snapshot.data[index].status.toString(),
+                                    style: snapshot.data[index].dept.toUpperCase().toString() == "TRIAL DEPARTMENT"
+                                        ? TextStyle(color: Colors.blueGrey)
+                                        : TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green)),
                               ),
                             ],
                           ),
                           onPressed: (){
-                            //null;
-                            editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
+                            if(snapshot.data[index].dept.toUpperCase().toString() != "TRIAL DEPARTMENT")
+                              editDept(context,snapshot.data[index].dept.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
                           },),
                         Divider(color: Colors.blueGrey.withOpacity(0.25),height: 0.2,),
                       ]

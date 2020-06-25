@@ -5,10 +5,12 @@
 import 'dart:async';
 
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:Shrine/timeoff_list.dart';
 import 'package:Shrine/timeoff_summary.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Bottomnavigationbar.dart';
 import 'askregister.dart';
 import 'drawer.dart';
+import 'flexi_list.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
@@ -78,7 +81,6 @@ class _AddTimeoff extends State<AddTimeoff> {
   String timeoffstatus = "0";
   String timeoffid = "0";
   String sts ="";
-  String time;
 
   var FakeLocationStatus=0;
   bool internetAvailable=true;
@@ -188,7 +190,7 @@ class _AddTimeoff extends State<AddTimeoff> {
       // Loc lock = new Loc();
 
       Home ho = new Home();
-      act = await ho.checkTimeIn(empid, orgdir,context);
+      act = await ho.checkTimeIn(empid, orgdir, context);
       ho.managePermission(empid, orgdir, desinationId);
       // //print(act);
       ////print("this is-----> "+act);
@@ -467,8 +469,8 @@ class _AddTimeoff extends State<AddTimeoff> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .015),
-                  Text("Time Off", style: new TextStyle(fontSize: 22.0,color: appcolor)),
+                  SizedBox(height: MediaQuery.of(context).size.height * .03),
+                  Text("Time Off", style: new TextStyle(fontSize: 22.0,fontWeight: FontWeight.bold,color: appcolor)),
                   SizedBox(height: MediaQuery.of(context).size.height * .03),
                   new GestureDetector(
                     onTap: () {
@@ -555,8 +557,8 @@ class _AddTimeoff extends State<AddTimeoff> {
             getwidget(prefix0.globalstreamlocationaddr),
           ]),
     );
-  }
 
+  }
   getwidget(String addrloc) {
     if (addrloc != "PermissionStatus.deniedNeverAsk") {
       return Column(children: [
@@ -586,7 +588,7 @@ class _AddTimeoff extends State<AddTimeoff> {
                   height: MediaQuery.of(context).size.height * .15,
                   child:
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text('You are at: ',style: new TextStyle(fontSize: 14.0,color: Colors.teal)), FlatButton(
+                    FlatButton(
                       child: new Text(prefix0.globalstreamlocationaddr,
                           textAlign: TextAlign.center,
                           style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
@@ -704,7 +706,7 @@ class _AddTimeoff extends State<AddTimeoff> {
 //          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
         ),
         color: buttoncolor,
-        child: const Text('END TIME OFF ',style: TextStyle(color: Colors.white,fontSize: 18),),
+        child: const Text('STOP TIME OFF ',style: TextStyle(color: Colors.white,fontSize: 18),),
 
         onPressed: () async {
           saveVisitImage();
@@ -747,9 +749,8 @@ class _AddTimeoff extends State<AddTimeoff> {
         act1 = "";
       });
       issave =  await saveImage.marktimeoff(empid, prefix0.globalstreamlocationaddr, orgdir,_reasonController.text.trim(), prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus,timeoffid,timeoffstatus,context);
-      print("issave");
-      print(issave);
-      //String tempstatus = timeoffstatus;
+      ////print(issave);
+      String tempstatus = timeoffstatus;
       if (issave=='true') {
         /*checkTimeOff().then((EmpList) {
           setState(() {
@@ -767,46 +768,55 @@ class _AddTimeoff extends State<AddTimeoff> {
           context,
           MaterialPageRoute(builder: (context) => TimeoffSummary()),
         );
-       /* if(tempstatus=='2') {
-          showDialog(context: context, child:
-          new AlertDialog(
-            content: new Text("Time Off has ended"),
-          )
-          );
-        } else {*/
-          showDialog(context: context, child:
-          new AlertDialog(
-            content: new Text("Time Off has started"),
-          )
-          );
-        //}
-      } else if(issave=='false1') {
+        if(tempstatus=='2')
+          {
+            showDialog(context: context, child:
+            new AlertDialog(
+              content: new Text("Time Off has ended"),
+            )
+            );
+          }
+          else
+            {
+              showDialog(context: context, child:
+              new AlertDialog(
+                content: new Text("Time Off has started"),
+              )
+              );
+            }
+
+      }
+      else if(issave=='false1')
+        {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
           showDialog(context: context, child:
           new AlertDialog(
-            content: new Text("Please punch your 'TimeIn' first!"),
+            content: new Text("Please punch your 'Time In' first!"),
           )
           );
-      } else if(issave=='false2') {
-        /*Navigator.push(
+        }else if(issave=='false2')
+      {
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
-        );*/
+        );
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text("Time Off can not be taken after Time Out"),
         )
         );
-      } else {
+      }
+      else {
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
           content: new Text("Unable to connect to server. Please try again."),
         )
         );
+
       }
       setState(() {
         act1 = act;

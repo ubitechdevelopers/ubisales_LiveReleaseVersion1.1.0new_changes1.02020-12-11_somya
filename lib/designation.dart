@@ -18,6 +18,8 @@ class _Designation extends State<Designation> {
   String _orgName = "";
   String admin_sts='0';
   bool _isButtonDisabled= false;
+
+  var _designations;
   @override
   void initState() {
     super.initState();
@@ -25,7 +27,7 @@ class _Designation extends State<Designation> {
     appResumedPausedLogic(context);
     desg = new TextEditingController();
     getOrgName();
-
+    _designations=getDesignation();
   }
   getOrgName() async{
     final prefs = await SharedPreferences.getInstance();
@@ -132,7 +134,7 @@ class _Designation extends State<Designation> {
 
   getDesgWidget() {
     return new FutureBuilder<List<Desg>>(
-        future: getDesignation(),
+        future: _designations,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return new ListView.builder(
@@ -157,13 +159,16 @@ class _Designation extends State<Designation> {
                                   // color: Colors.amber.shade400,
                                   padding: EdgeInsets.only(top:7.0,bottom: 7.0),
                                   alignment: FractionalOffset.center,
-                                  child: new Text(snapshot.data[index].status.toString(),style: TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green),),
+                                  child: new Text(snapshot.data[index].status.toString(),
+                                      style: snapshot.data[index].desg.toUpperCase().toString() == "TRIAL DESIGNATION"
+                                          ? TextStyle(color: Colors.blueGrey)
+                                          : TextStyle(color: snapshot.data[index].status.toString()!='Active'?Colors.deepOrange:Colors.green)),
                                 ),
                               ],
                             ),
                             onPressed: (){
-                              //null;
-                              editDesg(context,snapshot.data[index].desg.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
+                              if(snapshot.data[index].desg.toUpperCase().toString() != "TRIAL DESIGNATION")
+                                editDesg(context,snapshot.data[index].desg.toString(),snapshot.data[index].status.toString(),snapshot.data[index].id.toString());
                             }
 
                         ),

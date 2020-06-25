@@ -18,7 +18,7 @@ TextEditingController today;
 class _TimeOffList extends State<TimeOffList> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _currentIndex = 1;
-  String _orgName='';
+  String _orgName;
   bool res = true;
   String admin_sts='0';
   var formatter = new DateFormat('dd-MMM-yyyy');
@@ -84,7 +84,7 @@ class _TimeOffList extends State<TimeOffList> {
             SizedBox(height: 8.0),
             Center(
               child: Text(
-                'Time Off',
+                'Time Off History',
                 style: new TextStyle(
                   fontSize: 22.0,
                   color: appcolor,
@@ -168,7 +168,7 @@ class _TimeOffList extends State<TimeOffList> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.22,
-                    child: Text('Duration',
+                    child: Text('Total Time',
                         style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left),
                   ),
@@ -252,67 +252,21 @@ class _TimeOffList extends State<TimeOffList> {
                           ),
                           new Container(
                             width: MediaQuery.of(context).size.width * 0.16,
-                            child: new Text(snapshot.data[index].to.toString()=='00:00'?'Running':snapshot.data[index].diff.toString(), style: TextStyle(fontWeight: FontWeight.bold, color:snapshot.data[index].to.toString()=='00:00'?Colors.orange:Colors.teal),),
+                            child: new Text(
+                                snapshot.data[index].diff.toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold)
+                            ),
                           ),
                         ],
                       ),
-                      //SizedBox(height: MediaQuery.of(context).size.height*.005,),
-                      snapshot.data[index].Reason.toString()!=""?new Row(
+                      SizedBox(height: MediaQuery.of(context).size.height*.01,),
+                      new Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Container(margin: EdgeInsets.only(top: 4.0),child: new Text("  Reason: ", style: TextStyle(fontSize: 12.0,color: Colors.black, fontWeight: FontWeight.bold),)),
-                            Expanded(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 4.0),
-                                child: new Text(snapshot.data[index].Reason.toString(), style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 12.0),overflow: TextOverflow.ellipsis,),
-                              ),
-                            ),
+                            new Text(" Status: "),
+                            new Text(snapshot.data[index].to.toString()=='00:00'?'Running':snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].to.toString()=='00:00'?Colors.orangeAccent:Colors.green, fontSize: 14.0,),textAlign: TextAlign.center,),
                             //new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
-                          ]):Center(),
-                      snapshot.data[index].StartLoc.toString()!="..."?new Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(margin: EdgeInsets.only(top: 4.0),child: new Text("  Start Location: ", style: TextStyle(fontSize: 12.0,color: Colors.black, fontWeight: FontWeight.bold),)),
-                            InkWell(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 4.0),
-                                child: new Text(snapshot.data[index].StartLoc.toString(), style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 12.0)),
-                              ),
-                              onTap: () {
-                                goToMap(
-                                    snapshot.data[index]
-                                        .LatIn ,
-                                    snapshot.data[index]
-                                        .LongIn);
-                              },
-                            ),
-                            //new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
-                          ]):Center(),
-                      snapshot.data[index].EndLoc.toString()!="..."?new Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(margin: EdgeInsets.only(top: 4.0),child: new Text("  End Location: ", style: TextStyle(fontSize: 12.0,color: Colors.black, fontWeight: FontWeight.bold),)),
-                            InkWell(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 4.0),
-                                child: new Text(snapshot.data[index].EndLoc.toString(), style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 12.0)),
-                              ),
-                              onTap: () {
-                                goToMap(
-                                    snapshot.data[index]
-                                        .LatOut ,
-                                    snapshot.data[index]
-                                        .LongOut);
-                              },
-                            ),
-                            //new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
-                          ]):Center(),
+                          ]),
                       SizedBox(height: MediaQuery.of(context).size.height*.005,),
                       Divider(
                         color: Colors.blueGrey.withOpacity(0.25),

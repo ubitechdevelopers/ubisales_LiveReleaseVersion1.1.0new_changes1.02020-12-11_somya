@@ -37,6 +37,9 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
         Map employeeMap = json.decode(response1.data);
         print(employeeMap.toString());
         globals.mailstatus=employeeMap["mailstatus"]??'0';
+        if(employeeMap["response"] == '2') {
+          return 'inactive user';
+        }
 
         if(globals.mailstatus.toString()=='1'){
           return 'MailNotVerified';

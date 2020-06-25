@@ -53,6 +53,7 @@ class _Reports extends State<Reports> {
       _orgName= prefs.getString('org_name') ?? '';
       buystatus = prefs.getString('buysts') ?? '';
       trialstatus = prefs.getString('trialstatus') ?? '';
+
       orgmail = prefs.getString('orgmail') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
     });
@@ -200,16 +201,16 @@ class _Reports extends State<Reports> {
               splashColor: splashcolor,
               textColor: textcolor,
               onPressed: () {
-                if(trialstatus=="2"){
+               /* if(trialstatus=="2"){
                   showDialogWidget("Upgrade to Premium plan to check Get Specific Days Attendance records.");
-                }else {
+                }else {*/
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => CustomDateAttendance()),
                   );
                 }
-              },
+              //},
             ):Center(),
             /*
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
@@ -808,6 +809,54 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
             */
+
+            admin_sts =='1' ? SizedBox(height: 0.0):Center(),
+            admin_sts =='1' ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(0xe811, fontFamily: "CustomIcon"),size: 30.0,),
+                    SizedBox(width: 25.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('Periodic Attendance',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get Attendance of Specific Days',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor:splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                if(trialstatus=="2"){
+                  showDialogWidget("Upgrade to Premium plan to check last 7 days attendance records.");
+                }else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LastSeven()),
+                  );
+                }
+              },
+            ):Center(),
+
+            /*
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(
               child: Container(
@@ -899,7 +948,7 @@ class _Reports extends State<Reports> {
                 }
               },
             ):Center(),
-
+*/
 
 
           ]),

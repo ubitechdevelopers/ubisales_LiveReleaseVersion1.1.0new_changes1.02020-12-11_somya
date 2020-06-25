@@ -31,8 +31,14 @@ class TimeOff {
   String Reason;
   String ApprovalSts;
   String ApproverComment;
+  String StartLoc;
+  String LatIn;
+  String LongIn;
+  String EndLoc;
+  String LatOut;
+  String LongOut;
   bool withdrawlsts;
-  TimeOff({this.TimeofDate,this.TimeFrom,this.TimeTo,this.hrs,this.Reason,this.ApprovalSts,this.ApproverComment,this.withdrawlsts, this.TimeOffId, this.EmpId, this.OrgId});
+  TimeOff({this.TimeofDate,this.TimeFrom,this.TimeTo,this.hrs,this.Reason,this.ApprovalSts,this.ApproverComment,this.withdrawlsts, this.TimeOffId, this.EmpId, this.OrgId, this.StartLoc, this.LatIn, this.LongIn, this.EndLoc, this.LatOut, this.LongOut});
 }
 
 class Profile{

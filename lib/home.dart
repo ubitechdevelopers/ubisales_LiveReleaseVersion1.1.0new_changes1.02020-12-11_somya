@@ -1849,7 +1849,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
     if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
+     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
     }
   }
 
@@ -2897,6 +2897,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus = 0;
+
+    if(areaStatus == '0'){
+      geofence="Outside Fenced Area";
+    }else{
+      geofence="Within Fenced Area";
+    }
 
     if(globals.departmentid==1||globals.departmentid==0){
       await showDialog(

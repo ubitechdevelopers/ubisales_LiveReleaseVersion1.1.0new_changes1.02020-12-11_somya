@@ -55,10 +55,17 @@ class _AddEmployee extends State<AddEmployee> {
   bool _isButtonDisabled = false;
   TextEditingController deptctr = new TextEditingController();
   TextEditingController desgctrl = new TextEditingController();
+  //TextEditingController deptind = new TextEditingController();
   String councode = "+91";
   String whatscontact = '';
   String _sts = 'Active';
   String _sts1 = 'Active';
+  String shiftind = "0";
+  String desgind ="0";
+  String deptind="0";
+  int flagd =0;
+  bool visibilityTag = false;
+
   List<Map> countrylist = [
     {"id": "0#", "name": "country"},
     {"id": "2#+93", "name": "Afghanistan"},
@@ -310,14 +317,12 @@ class _AddEmployee extends State<AddEmployee> {
   void initState() {
     super.initState();
     initPlatformState();
-
     //  shiftList= getShifts();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     appResumedPausedLogic(context);
-
     checkNetForOfflineMode(context);
 
     final prefs = await SharedPreferences.getInstance();
@@ -325,22 +330,27 @@ class _AddEmployee extends State<AddEmployee> {
     _orgName = prefs.getString('org_name') ?? '';
     _pass.text = '123456';
     if (response == 1) {
+
+
       Home ho = new Home();
       setState(() {
+
         buysts = prefs.getString('buysts')??'0';
         org_name = prefs.getString('org_name') ?? '';
         org_country = prefs.getString('org_country') ?? '';
         councode = prefs.getString('countrycode') ?? '';
         admin_sts = prefs.getString('sstatus') ?? '0';
+        //shift =  prefs.getString('shiftId')??'0';
+
         admname = prefs.getString('fname') ?? ''+' '+ prefs.getString('lname') ?? '';
         _department1.text = globals.departmentname;
         if (admin_sts == '2') supervisor = false;
         if(buysts=='0')
-          {
-            dept = globals.departmentid.toString();
-            desg = globals.designationid.toString();
-            shift =  prefs.getString('shiftId')??'0';
-          }
+        {
+          dept = globals.departmentid.toString();
+          desg = globals.designationid.toString();
+          shift =  prefs.getString('shiftId')??'0';
+        }
         /*   response = prefs.getInt('response') ?? 0;
         fname = prefs.getString('fname') ?? '';
         lname = prefs.getString('lname') ?? '';
@@ -357,10 +367,43 @@ class _AddEmployee extends State<AddEmployee> {
       });
     }
     platform.setMethodCallHandler(_handleMethod);
+    getdeptid();
+    getdesgid();
+    getshiftid();
+  }
+  getdeptid() async{
+    getDepartmentsList(1).then((onValue){
+      for(int i = 0 ; i < onValue.length; i++){
+        if(onValue[i]["Name"].toUpperCase() == "TRIAL DEPARTMENT") {
+          deptind = onValue[i]["Id"];
+          print(deptind);
+        }
+      }
+    });
+  }
+  getdesgid() async{
+    getDesignationsList(0).then((onValue) {
+      for(int i = 0 ; i < onValue.length; i++){
+        if(onValue[i]["Name"].toUpperCase() == "TRIAL DESIGNATION") {
+          desgind = onValue[i]["Id"];
+          print(desgind);
+        }
+      }
+    });
+  }
+  getshiftid() async{
+    getShiftsList().then((onValue) {
+      for(int i = 0 ; i < onValue.length; i++){
+        if(onValue[i]["Name"].toUpperCase() == "TRIAL SHIFT") {
+          shiftind = onValue[i]["Id"];
+          print("shiftind");
+          print(shiftind);
+        }
+      }
+    });
   }
 
   static const platform = const MethodChannel('location.spoofing.check');
-
   Future<dynamic> _handleMethod(MethodCall call) async {
     /*
     switch(call.method) {
@@ -371,7 +414,6 @@ class _AddEmployee extends State<AddEmployee> {
 
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
-
         }
         if(call.arguments["internet"].toString()=="Internet Not Available")
         {
@@ -423,7 +465,7 @@ class _AddEmployee extends State<AddEmployee> {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
-             /* Navigator.push(
+            /* Navigator.push(
             context,
            MaterialPageRoute(builder: (context) => HomePage()),
           ); */
@@ -458,7 +500,10 @@ class _AddEmployee extends State<AddEmployee> {
                     ,
                     child: Text('CANCEL'),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
                     },
                   ),
                   SizedBox(width: 10.0),
@@ -482,7 +527,6 @@ class _AddEmployee extends State<AddEmployee> {
                     ),
                     color: globals.buttoncolor,
                     onPressed: () {
-                      // openWhatsApp('aa','+917440519273');
 
 
                       if (_formKey.currentState.validate()) {
@@ -490,17 +534,17 @@ class _AddEmployee extends State<AddEmployee> {
                           return null;
 
                         if (admin_sts == '2') {
-                          dept = globals.departmentid.toString();
+                          deptind = globals.departmentid.toString();
                         }
-                        if (dept == '0') {
+                        if (deptind == '0' ) {
                           showInSnackBar("Please select the department");
                           return null;
                         }
-                        if (desg == '0') {
+                        if (desgind == '0') {
                           showInSnackBar("Please select the designation");
                           return null;
                         }
-                        if (shift == '0') {
+                        if (shiftind == '0' ) {
                           showInSnackBar("Please select the shift");
                           return null;
                         }
@@ -516,8 +560,7 @@ class _AddEmployee extends State<AddEmployee> {
                         print(org_country);
                         print('org_country');
                         if(org_country=='93') {
-                          updatedcontact =
-                              updatedcontact = updatedcontact.replaceAll('+91', '');
+                          updatedcontact = updatedcontact = updatedcontact.replaceAll('+91', '');
                         }
                         updatedcontact = updatedcontact.replaceAll('+', '');
                         updatedcontact = updatedcontact.replaceAll('-', '');
@@ -536,37 +579,40 @@ class _AddEmployee extends State<AddEmployee> {
                             _pass.text,
                             dept,
                             desg,
-                            shift)
-                            .then((res) async{
+                            shift,
+                            deptind,
+                            desgind,
+                            shiftind
+                        ).then((res) async{
                           //showInSnackBar(res.toString());
                           //   showInSnackBar('Employee registeed Successfully');
                           if (res == 1) {
 
-                          var prefs=await SharedPreferences.getInstance();
-                          var employeeAdded=prefs.getBool("EmployeeAdded")??false;
-                          prefs.setBool("glow", false);
-                          if(!employeeAdded) {
-                            prefs.setBool("EmployeeAdded", true);
+                            var prefs=await SharedPreferences.getInstance();
+                            var employeeAdded=prefs.getBool("EmployeeAdded")??false;
+                            prefs.setBool("glow", false);
+                            if(!employeeAdded) {
+                              prefs.setBool("EmployeeAdded", true);
+                            }
+                            var firstAttendanceMarked=prefs.getBool('firstAttendanceMarked')??false;
 
-                          }
+                            if(!firstAttendanceMarked)
+                              prefs.setBool("attendanceNotMarkedButEmpAdded", true);
 
-                          var firstAttendanceMarked=prefs.getBool('firstAttendanceMarked')??false;
-
-                          if(!firstAttendanceMarked)
-                            prefs.setBool("attendanceNotMarkedButEmpAdded", true);
-
-
-
-                          prefs.setBool('tool',true );
+                            prefs.setBool('tool',true );
                             //   showInSnackBar('Contact Already Exist');
+                            //Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EmployeeList()),
                             );
+                            //generateAndShareReferralLink();
+                            //openWhatsApp('aa','+918871653803');
                             dialogwidget(
                                 'Hello+'+_firstName.text+'+%0A%0ADownload+ubiAttendance+App+from+the+link+https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dorg.ubitech.attendance%26hl%3Den_IN%0A%0ASign+In+to+the+App+with%0A%0AUser+Name%3A+'+updatedcontact.trim()+'%0APassword%3A+'+_pass.text+'%0A%0AMark+your+%E2%80%9CTime+In%E2%80%9D+now!+Start+punching+Attendance+daily.',
                                 whatscontact);
+
                           } else if (res == 3)
                             showInSnackBar('Contact already exists');
                           else if (res == 2)
@@ -659,7 +705,7 @@ class _AddEmployee extends State<AddEmployee> {
             child: Column(children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
-               /* child: Center(
+                /* child: Center(
                   child:Text("Add Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
                 ),*/
               ),
@@ -681,11 +727,13 @@ class _AddEmployee extends State<AddEmployee> {
                     ),
                     //Divider(color: Colors.black87,height: 1.5),
                     SizedBox(height: 10,),
+
                     Padding(
                       padding: const EdgeInsets.only(left:15.0,right: 15.0),
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.70,
                         child: TextFormField(
+                          focusNode: __fullName,
                           controller: _firstName,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
@@ -697,13 +745,7 @@ class _AddEmployee extends State<AddEmployee> {
                               labelText: 'Name',
                               suffixIcon: IconButton(
                                 onPressed: ()async {
-
-                               //Loc permission = new Loc();
-                            //  var per =  await permission.getcontactpermission();
-                                //  print(per);
-
-                                  Contact contact =
-                                  await _contactPicker.selectContact();
+                                  Contact contact = await _contactPicker.selectContact();
                                   setState(() {
                                     _contactpick = contact;
                                     _contact.text = _contactpick.phoneNumber;
@@ -717,12 +759,54 @@ class _AddEmployee extends State<AddEmployee> {
                           ),
                           validator: (value) {
                             if (value.trim().isEmpty) {
+                              FocusScope.of(context).requestFocus(__fullName);
                               return 'Please enter the name';
                             }
                           },
                           onFieldSubmitted: (String value) {
-                            if (_formKey.currentState.validate()) {
-                              //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                            if (!_formKey.currentState.validate()) {
+                              FocusScope.of(context).requestFocus(__fullName);
+                            }
+                          },
+
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.0),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        child: TextFormField(
+                          // textInputAction: TextInputAction.done,
+                          focusNode: __contact,
+                          controller: _contact,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.grey.withOpacity(0.0), width: 1,),
+                              ),
+                              labelText: 'Phone',
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(0.0),
+                                child: Icon(
+                                  Icons.call,
+                                  color: Colors.grey,
+                                ), // icon is 48px widget.
+                              )),
+                          validator: (value) {
+                            if (value.isEmpty ||
+                                value.length < 6 ||
+                                value.length > 15) {
+                              FocusScope.of(context).requestFocus(__contact);
+                              return 'Please enter a valid Phone No.';
+                            }
+                          },
+                          onFieldSubmitted: (String value) {
+                            if (!_formKey.currentState.validate()) {
+                              FocusScope.of(context).requestFocus(__contact);
                             }
                           },
                         ),
@@ -730,54 +814,19 @@ class _AddEmployee extends State<AddEmployee> {
                     ),
                     SizedBox(height: 15.0),
 
-                    Container(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0,right: 15.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .9,
-                            child: TextFormField(
-                              controller: _contact,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
-                                  ),
-                                  labelText: 'Phone',
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.all(0.0),
-                                    child: Icon(
-                                      Icons.call,
-                                      color: Colors.grey,
-                                    ), // icon is 48px widget.
-                                  )),
-                              validator: (value) {
-                                if (value.isEmpty ||
-                                    value.length < 6 ||
-                                    value.length > 15) {
-                                  return 'Please enter a valid Phone No.';
-                                }
-                              },
-                              onFieldSubmitted: (String value) {
-                                if (_formKey.currentState.validate()) {
-                                  //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
-                                }
-                              },
-                            ),
-                          ),
-                        )),
-                    SizedBox(height: 15.0),
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                       child: Container(
                         width: MediaQuery.of(context).size.width * .9,
                         child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          focusNode: __email,
                           controller: _email,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                                borderSide: BorderSide(color: Colors.grey.withOpacity(0.0), width: 1,),
                               ),
                               labelText: 'Email(optional)',
                               //hintText: 'Email(optional)',
@@ -790,18 +839,23 @@ class _AddEmployee extends State<AddEmployee> {
                                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                             RegExp regex = new RegExp(pattern);
                             if (value.isNotEmpty && !regex.hasMatch(value)) {
+                              FocusScope.of(context).requestFocus(__email);
                               return 'Enter a valid Email ID';
                             }
                           },
                           onFieldSubmitted: (String value) {
-                            if (_formKey.currentState.validate()) {
-                              //requesttimeoff(_dateController.text ,_starttimeController.text,_endtimeController.text,_reasonController.text, context);
+                            if (!_formKey.currentState.validate()) {
+                              FocusScope.of(context).requestFocus(__email);
+                            }
+                            else{
+                              FocusScope.of(context).requestFocus(__pass);
                             }
                           },
                         ),
                       ),
                     ),
                     SizedBox(height: 15.0),
+
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                       child: Container(
@@ -840,25 +894,77 @@ class _AddEmployee extends State<AddEmployee> {
                             },
 
                           )),
+
                     ),
+                    SizedBox(height: 15.0),
+                    new Container(
+                        padding: EdgeInsets.only(left: 15.0, right: 2.0),
+                        child:new Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            //Padding(padding: EdgeInsets.only(right: 100.0),),
+                            visibilityTag == false ?new InkWell(
+                              onTap:() {
+                                setState((){
+                                  visibilityTag=true;
+                                });
+                              },
+                              child:Text("More Details",textAlign: TextAlign.justify,
+                                  style: new TextStyle(fontSize:18.0,color: appcolor ,
+                                    decoration: TextDecoration.underline,
+                                  )
+
+                              ),
+                            ):
+                            //Padding(padding: EdgeInsets.only(right: 10.0),),
+                            new InkWell(
+                                onTap:() {
+                                  setState(() {
+                                    visibilityTag = false;
+                                  } );
+                                  //visibilityTag = false;
+                                  //print(visibilityTag);
+                                  getdeptid();
+                                  getdesgid();
+                                  getshiftid();
+                                },
+                                child:Text("Hide Details",textAlign: TextAlign.center,
+                                    style: new TextStyle( fontSize:18.0, color: appcolor ,
+                                      decoration: TextDecoration.underline,)))
+                          ],
+                        )
+
+
+                    ),
+
+                    /*Padding(
+                      padding: const EdgeInsets.only(left:15.0,right: 15.0),
+                      child: Text(
+                        'Add Employee',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),*/
                     ////////////////////-----------------
 
-                           (supervisor)
-                               ? getDepartments_DD()
-                               : getDepartments_DD1(),
-                           getDesignations_DD(),
-                           getShifts_DD(),
+                    (admin_sts == '1') && (visibilityTag == true) ? getDepartments_DD() : Container(),
+                    (admin_sts == '2') && (visibilityTag == true) ? getDepartments_DD1(): Container(),
+                    visibilityTag ?getDesignations_DD(): Container(),
+                    visibilityTag ?getShifts_DD():Container(),
 
 
                     ////////////////////-----------------
 
-                    ButtonBar(
-                      alignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-
-                      ],
-                    ),
+//                    ButtonBar(
+//                      alignment: MainAxisAlignment.spaceEvenly,
+//                      mainAxisSize: MainAxisSize.max,
+//                      children: <Widget>[
+//
+//                      ],
+//                    ),
                   ],
                 ),
               ),
@@ -872,23 +978,27 @@ class _AddEmployee extends State<AddEmployee> {
 
   ////////////////common dropdowns
 
-   permission() async
+  permission() async
   {
-   // Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.contacts]);
+    // Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.contacts]);
     PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.contacts);
     return permission;
   }
 
   Widget getDepartments_DD() {
+
     String dc = "0";
     return new FutureBuilder<List<Map>>(
         future: getDepartmentsList(0), //with -select- label
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            //getdptId();
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+
                 InkWell(
                   onTap: (){
                     _showDialog(context);
@@ -912,16 +1022,15 @@ class _AddEmployee extends State<AddEmployee> {
                       Padding(
                         padding: const EdgeInsets.only(top:5.0,bottom: 5.0,right: 15.0,),
                         child: InkWell(
-
-                           child: Row(
-                             children: <Widget>[
-                               Icon(
-                                 Icons.add,
-                                 size: 24,
-                                 color: Colors.black,
-                               ),
-                             ],
-                           ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
+                                size: 24,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -935,6 +1044,7 @@ class _AddEmployee extends State<AddEmployee> {
                     //    width: MediaQuery.of(context).size.width*.45,
                     child: InputDecorator(
                       decoration: InputDecoration(
+
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
@@ -950,10 +1060,11 @@ class _AddEmployee extends State<AddEmployee> {
                           child: new DropdownButton<String>(
                             isDense: true,
                             style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                            value: dept,
+                            hint: new Text("Select Department"),
+                            value: deptind == ""? "0" : deptind,
                             onChanged: (String newValue) {
                               setState(() {
-                                dept = newValue;
+                                deptind = newValue;
                               });
                             },
                             items: snapshot.data.map((Map map) {
@@ -1112,7 +1223,7 @@ class _AddEmployee extends State<AddEmployee> {
                       else {
                         Navigator.of(context, rootNavigator: true).pop('dialog');
                         showInSnackBar('Department added successfully');
-                       // getDeptWidget();
+                        // getDeptWidget();
                         deptctr.text = '';
                         _sts = 'Active';
                       }
@@ -1258,7 +1369,7 @@ class _AddEmployee extends State<AddEmployee> {
                       else {
                         Navigator.of(context, rootNavigator: true).pop('dialog');
                         showInSnackBar('Designation added successfully');
-                       // getDesgWidget();
+                        // getDesgWidget();
                         desgctrl.text = '';
                         _sts = 'Active';
                       }
@@ -1294,7 +1405,7 @@ class _AddEmployee extends State<AddEmployee> {
               child: Text(
                 'Department',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 15.0,
                   letterSpacing: 0.5,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1307,6 +1418,9 @@ class _AddEmployee extends State<AddEmployee> {
           child: Container(
             width: MediaQuery.of(context).size.width * .9,
             child: TextFormField(
+//              onFieldSubmitted: (String value) {
+//                FocusScope.of(context).requestFocus(__newPass);
+//              },
               controller: _department1,
               enabled: false,
               keyboardType: TextInputType.text,
@@ -1339,11 +1453,19 @@ class _AddEmployee extends State<AddEmployee> {
 
   ////////////////////////////////////////////////////////////////
   Widget getDesignations_DD() {
+    print(admin_sts);
+    print(supervisor);
+    print("supervisor list");
     String dc = "0";
     return new FutureBuilder<List<Map>>(
         future: getDesignationsList(0),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+//            for(int i = 0 ; i < snapshot.data.length; i++){
+//              if(snapshot.data[i]["Name"] == "Dummy Designation"){
+//                desgind = snapshot.data[i]["Id"];
+//              }
+//            }
             return Column(
               children: <Widget>[
                 InkWell(
@@ -1368,8 +1490,6 @@ class _AddEmployee extends State<AddEmployee> {
                       Padding(
                         padding: const EdgeInsets.only(top:5.0,bottom: 5.0,right: 15.0),
                         child: InkWell(
-
-
                           child: Row(
                             children: <Widget>[
                               Icon(
@@ -1396,6 +1516,7 @@ class _AddEmployee extends State<AddEmployee> {
                           borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                         ),
                         labelText: 'Designation',
+                        hintText: "Select Designation",
                         prefixIcon: Icon(
                           Icons.desktop_windows,
                           color: Colors.grey,
@@ -1406,10 +1527,12 @@ class _AddEmployee extends State<AddEmployee> {
                           child: new DropdownButton<String>(
                             isDense: true,
                             style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                            value: desg,
+                            hint: new Text("Select Designation"),
+
+                            value: desgind== "0"? "0":desgind,
                             onChanged: (String newValue) {
                               setState(() {
-                                desg = newValue;
+                                desgind = newValue;
                               });
                             },
                             items: snapshot.data.map((Map map) {
@@ -1451,6 +1574,11 @@ class _AddEmployee extends State<AddEmployee> {
         future: getShiftsList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+//            for(int i = 0 ; i < snapshot.data.length; i++){
+//              if(snapshot.data[i]["Name"] == "Dummy Shift"){
+//                 shiftind = snapshot.data[i]["Id"];
+//              }
+//            }
             return Column(
               children: <Widget>[
                 Row(
@@ -1467,23 +1595,6 @@ class _AddEmployee extends State<AddEmployee> {
                         ),
                       ),
                     ),
-                  /*  FlatButton(
-                      onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => addShift()),
-                        );
-                      },
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            size: 24,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    )*/
                   ],
                 ),
                 new Container(
@@ -1496,6 +1607,7 @@ class _AddEmployee extends State<AddEmployee> {
                         borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
                       ),
                       labelText: 'Shift',
+                      hintText: "Select Shift",
                       prefixIcon: Icon(
                         Icons.access_alarm,
                         color: Colors.grey,
@@ -1506,10 +1618,12 @@ class _AddEmployee extends State<AddEmployee> {
                         child: new DropdownButton<String>(
                           isDense: true,
                           style: new TextStyle(fontSize: 15.0, color: Colors.black),
-                          value: shift,
+                          hint: new Text("Select Shift"),
+
+                          value:  shiftind == "0"? "0":shiftind ,
                           onChanged: (String newValue) {
                             setState(() {
-                              shift = newValue;
+                              shiftind = newValue;
                             });
                           },
                           items: snapshot.data.map((Map map) {
@@ -1546,10 +1660,6 @@ class _AddEmployee extends State<AddEmployee> {
   }
 
   openWhatsApp(msg, number) async {
-    //SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var name = prefs.getString("fname") ?? "";
-    //var org_name = prefs.getString('org_name') ?? '';
-    //var message = msg;
     var url = "https://wa.me/" + number + "?text=" + msg;
     if (await canLaunch(url)) {
       await launch(url);
@@ -1558,7 +1668,19 @@ class _AddEmployee extends State<AddEmployee> {
     }
   }
 
+//  _launchURL(url) async {
+//    print(url);
+//    print("lunchURl");
+//    //  const url = 'https://flutter.io';
+//    if (await canLaunch(url)) {
+//      await launch(url);
+//    } else {
+//      throw 'Could not launch $url';
+//    }
+//  }
+
   dialogwidget(msg, number) {
+    print("launch");
     showDialog(
         context: context,
         child: new AlertDialog(
@@ -1577,10 +1699,14 @@ class _AddEmployee extends State<AddEmployee> {
                 style: TextStyle(color: Colors.white),
               ),
               color: Colors.amber,
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context, rootNavigator: true).pop();
-
                 openWhatsApp(msg, number);
+//                var whatsappUrl ="whatsapp://send?phone=$number";
+//                await canLaunch(whatsappUrl)? launch(whatsappUrl)
+//                    //:print("open whatsapp app link or do a snackbar with notification that there is no whatsapp installed");
+//                    : _launchURL( 'sms:' + number.toString());
+                //_launchURL( 'sms:' + number.toString());
               },
             ),
           ],

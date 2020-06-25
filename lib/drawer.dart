@@ -9,6 +9,7 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'about_app.dart';
 import 'contactUs.dart';
 import 'flexi_time.dart';
 import 'globals.dart';
@@ -504,6 +505,21 @@ class AppDrawerState extends State<AppDrawer> {
             },
           ),
 */
+
+          new ListTile(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.perm_device_information,size: 20.0),SizedBox(width: 5.0),
+                new Text('About', style: new TextStyle(fontSize: 15.0)),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutApp()),
+              );
+            },
+          ),
           new ListTile(
             title: Row(
               children: <Widget>[

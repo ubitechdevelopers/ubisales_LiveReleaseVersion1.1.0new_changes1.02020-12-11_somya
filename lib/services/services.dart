@@ -34,6 +34,7 @@ class Services {}
 
 bool isOfflineHomeRedirected=false;
 String trialstatus = '';
+
 var refererId="0";
 
 void initDynamicLinks() async {
@@ -920,6 +921,7 @@ Future<List<Map>> getShiftsList() async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
   final response = await http.get(globals.path + 'shiftMaster?orgid=$orgid');
+  debugPrint(response.body.toString()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   List data = json.decode(response.body.toString());
   List<Map> depts = createList(data, 0);
   return depts;
@@ -1087,7 +1089,7 @@ Future<List<TimeOff>> getTimeOffSummary() async {
   return userList;
 }
 
-List<TimeOff> createTimeOffList(List data) {
+List<TimeOff> createTimeOffList_old(List data) {
   List<TimeOff> list = new List();
   for (int i = 0; i < data.length; i++) {
     String TimeofDate = data[i]["date"];
@@ -1109,6 +1111,46 @@ List<TimeOff> createTimeOffList(List data) {
         ApproverComment: ApproverComment,
         withdrawlsts: withdrawlsts,
         TimeOffId: TimeOffId);
+    list.add(tos);
+  }
+  return list;
+}
+
+List<TimeOff> createTimeOffList(List data) {
+  List<TimeOff> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String TimeofDate = data[i]["date"];
+    String TimeFrom = data[i]["from"];
+    String TimeTo = data[i]["to"];
+    String hrs = data[i]["hrs"];
+    String Reason = data[i]["reason"];
+    String ApprovalSts = data[i]["status"];
+    String ApproverComment = data[i]["comment"];
+    bool withdrawlsts = data[i]["withdrawlsts"];
+    String TimeOffId = data[i]["timeoffid"];
+    String StartLoc = data[i]["startloc"];
+    String LatIn = data[i]["latin"];
+    String LongIn = data[i]["longout"];
+    String EndLoc = data[i]["endloc"];
+    String LatOut = data[i]["latout"];
+    String LongOut = data[i]["longout"];
+    TimeOff tos = new TimeOff(
+        TimeofDate: TimeofDate,
+        TimeFrom: TimeFrom,
+        TimeTo: TimeTo,
+        hrs: hrs,
+        Reason: Reason,
+        ApprovalSts: ApprovalSts,
+        ApproverComment: ApproverComment,
+        withdrawlsts: withdrawlsts,
+        TimeOffId: TimeOffId,
+        StartLoc: StartLoc,
+        LatIn: LatIn,
+        LongIn: LongIn,
+        EndLoc: EndLoc,
+        LatOut: LatOut,
+        LongOut: LongOut
+    );
     list.add(tos);
   }
   return list;
@@ -1465,32 +1507,29 @@ Future<int> sendsms(sms) async {
 
 
 Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
-    password, dept, desg, shift) async {
+    password, dept, desg, shift, String deptind, String desgind, String shiftind,) async {
   //print('RECIEVED STATUS: '+status.toString());
   final prefs = await SharedPreferences.getInstance();
+  print(dept);
+  print(password);
+  print("002200220020");
   String empid = prefs.getString('empid') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
 //  print('addEmp function called, parameters :');
-/*  print(fname +
-      '--' +
-      lname +
-      '--' +
-      email +
-      '--' +
-      countryCode +
-      '--' +
-      countryId +
-      '--' +
-      contact +
-      '--' +
-      password);*/
-  //print(globals.path +'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift');
-  final response = await http.get(globals.path +
-      'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desg&department=$dept&shift=$shift');
+  print(deptind);
+  print("-----1");
+  print(desgind);
+  print("-----2");
+  print(shiftind);
+
+  print(globals.path + 'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desgind&department=$deptind&shift=$shiftind');
+  final response = await http.get(globals.path + 'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desgind&department=$deptind&shift=$shiftind');
   var res = json.decode(response.body);
   print("--------> Adding employee" + res.toString());
   return res['sts'];
 }
+
+
 Future<int> editEmployee(fname, lname, email, countryCode, countryId, contact,
     password, dept, desg, shift , empid) async {
   //print('RECIEVED STATUS: '+status.toString());
@@ -1937,13 +1976,13 @@ class SyncNotification {
 //******************Cdate Attn List Data
 Future<List<Attn>> getCDateAttn(listType, date) async {
   final prefs = await SharedPreferences.getInstance();
+  trialstatus = prefs.getString('trialstatus') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid') ?? '';
-  print(globals.path + 'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
-  final response = await http.get(globals.path +
-      'getCDateAttendances_new?refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
+  print(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
+  final response = await http.get(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
   final res = json.decode(response.body);
-  // print(res);
+// print(res);
   List responseJson;
   if (listType == 'present')
     responseJson = res['present'];
@@ -1955,6 +1994,7 @@ Future<List<Attn>> getCDateAttn(listType, date) async {
   List<Attn> userList = createTodayEmpList(responseJson);
   return userList;
 }
+
 
 Future<List<FaceIdLists>> getregisteredFaceIDList(listType) async {
   final prefs = await SharedPreferences.getInstance();
@@ -2275,15 +2315,16 @@ Future<List<Attn>> getYesAttn(listType) async {
 Future<List<Attn>> getAttnDataLast(days, listType) async {
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
+  print(days);
+  print(listType);
   print(globals.path + 'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
-  final response = await http.get(globals.path +
-      'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
+  final response = await http.get(globals.path + 'getAttnDataLast?refno=$orgdir&datafor=$listType&limit=$days');
   final res = json.decode(response.body);
 //  print(res);
   List responseJson;
   responseJson = res['elist'];
 
-  /* if (listType == 'present')
+  /*if (listType == 'present')
     responseJson = res['elist'];
   else if (listType == 'absent')
     responseJson = res['absent'];
@@ -2433,6 +2474,25 @@ Future<List<Map<String, String>>> getChartDataCDate(date) async {
 
 Future<List<Map<String, String>>> getChartDataLast(dys) async {
   // dys: no. of days
+  print(dys);
+  print("1234567788");
+  final prefs = await SharedPreferences.getInstance();
+  String orgdir = prefs.getString('orgdir') ?? '';
+  List<Map<String, String>> val = [];
+  print(globals.path + 'getChartDataLast_7_30?refno=$orgdir&limit=$dys');
+  final response = await http.get(globals.path + 'getChartDataLast_7_30?refno=$orgdir&limit=$dys');
+  final data = json.decode(response.body);
+  for (int i = 0; i < data.length; i++)
+    val.add({
+      "date": data[i]['event'].toString(),
+      "total": data[i]['total'].toString()
+    });
+
+  return val;
+}
+/*
+Future<List<Map<String, String>>> getChartDataLast(dys) async {
+  // dys: no. of days
   final prefs = await SharedPreferences.getInstance();
   String orgdir = prefs.getString('orgdir') ?? '';
   List<Map<String, String>> val = [];
@@ -2456,7 +2516,7 @@ Future<List<Map<String, String>>> getChartDataLast(dys) async {
       });
   }
   return val;
-}
+}*/
 //********************************************************************************************//
 // ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -2542,17 +2602,17 @@ Future<List<EmpListTimeOff>> getTimeOFfDataList(date) async {
   if (date == '' || date == null) return null;
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
-  final response = await http
-      .get(globals.path + 'getTimeoffList?fd=$date&to=$date&refno=$orgid');
+  print(globals.path + 'getTimeoffList?fd=$date&to=$date&refno=$orgid');
+  final response = await http.get(globals.path + 'getTimeoffList?fd=$date&to=$date&refno=$orgid');
 
-  List responseJson = json.decode(response.body.toString());
+  List responseJson = await json.decode(response.body.toString());
   // print(responseJson.toString());
   List<EmpListTimeOff> list = createTimeOFfDataList(responseJson);
 //  print(list);
   return list;
 }
 
-List<EmpListTimeOff> createTimeOFfDataList(List data) {
+List<EmpListTimeOff> createTimeOFfDataList_old(List data) {
   List<EmpListTimeOff> list = new List();
   for (int i = 0; i < data.length; i++) {
     String diff = data[i]["diff"];
@@ -2568,6 +2628,43 @@ List<EmpListTimeOff> createTimeOFfDataList(List data) {
   return list;
 }
 
+List<EmpListTimeOff> createTimeOFfDataList(List data) {
+  List<EmpListTimeOff> list = new List();
+  print("aaaabbbcc>>>>"+data.toString());
+  for (int i = 0; i < data.length; i++) {
+    String diff = data[i]["diff"];
+    String to = data[i]["TimeTo"];
+    String from = data[i]["TimeFrom"];
+    String name = data[i]["name"];
+    String date = data[i]["tod"];
+    String ApprovalSts = data[i]["ApprovalSts"];
+    String Reason = data[i]["reason"];
+    String StartLoc = data[i]["startloc"];
+    String LatIn = data[i]["latin"].toString();
+    String LongIn = data[i]["longin"].toString();
+    String EndLoc = data[i]["endloc"].toString();
+    String LatOut = data[i]["latout"].toString();
+    String LongOut = data[i]["longout"].toString();
+    EmpListTimeOff row = new EmpListTimeOff(
+        diff: diff,
+        to: to,
+        from: from,
+        name: name,
+        date: date,
+        ApprovalSts:ApprovalSts,
+        Reason:Reason,
+        StartLoc: StartLoc,
+        LatIn: LatIn,
+        LongIn: LongIn,
+        EndLoc: EndLoc,
+        LatOut: LatOut,
+        LongOut: LongOut
+    );
+    list.add(row);
+  }
+  return list;
+}
+
 class EmpListTimeOff {
   String diff;
   String to;
@@ -2575,8 +2672,15 @@ class EmpListTimeOff {
   String name;
   String date;
   String ApprovalSts;
+  String Reason;
+  String StartLoc;
+  String LatIn;
+  String LongIn;
+  String EndLoc;
+  String LatOut;
+  String LongOut;
 
-  EmpListTimeOff({this.diff, this.to, this.from, this.name, this.date,this.ApprovalSts});
+  EmpListTimeOff({this.diff, this.to, this.from, this.name, this.date,this.ApprovalSts,this.Reason,this.StartLoc,this.LatIn,this.LongIn,this.EndLoc,this.LatOut,this.LongOut});
 }
 //********************************************************************************************//
 // ////////////////////////////////////////////////////////////////
