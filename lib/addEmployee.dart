@@ -909,7 +909,7 @@ class _AddEmployee extends State<AddEmployee> {
                                   visibilityTag=true;
                                 });
                               },
-                              child:Text("More Details",textAlign: TextAlign.justify,
+                              child:Text("Show Details",textAlign: TextAlign.justify,
                                   style: new TextStyle(fontSize:18.0,color: appcolor ,
                                     decoration: TextDecoration.underline,
                                   )

@@ -341,7 +341,14 @@ class _TimeoffSummary extends State<TimeoffSummary> {
     }
   }
 
-  loader() {/*
+  loader() { return new Center(
+    child: Container(
+      width: MediaQuery.of(context).size.width*1,
+      color: appcolor.withOpacity(0.1),
+      padding:EdgeInsets.only(top:5.0,bottom: 5.0),
+      child:Text("You have not taken any time off  ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+    ),
+  );/*
     return new Container(
       child: Center(
         child: Row(
@@ -504,6 +511,22 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                         children: <Widget>[
                                           // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
                                           snapshot.data[index].TimeTo.toString()=='00:00' && timeoffRunning?
+                                          InkWell(
+                                            child: Container(
+                                              height: 25,
+                                              width:60,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.orangeAccent,
+//borderRadius: BorderRadius.circular(10),
+                                                  border: Border.all(color: Colors.orangeAccent,width: 1)
+                                              ),
+                                              child: Center(child: Text("End",style: TextStyle(color: Colors.white),)),
+                                            ),
+                                            onTap: (){
+                                              saveVisitImage();
+                                            },
+                                          )
+                          /*
                                           RaisedButton(
                                             color: buttoncolor,
                                             onPressed: (){
@@ -515,6 +538,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                             },
                                             child: Text("End",style: TextStyle(color: Colors.white),),
                                           )
+                                          */
                                           :new Text(snapshot.data[index].hrs.toString(), style: TextStyle(fontWeight: FontWeight.bold, color:snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orange:Colors.teal),),
                                           // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 

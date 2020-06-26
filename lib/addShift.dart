@@ -545,7 +545,7 @@ class _addShift extends State<addShift> {
                     ),
                   ), //Enter date
                   SizedBox(height: 20.0),
-                  Text('Shift Timings',style: TextStyle(fontSize: 18.0),),
+                  Text('Shift Timings',style: TextStyle(fontSize: 17.0),),
                   SizedBox(height: 15.0),
                   Row(
                     children: <Widget>[
@@ -619,7 +619,7 @@ class _addShift extends State<addShift> {
                     ],
                   ),
                   SizedBox(height: 20.0),
-                  Text('Break Hours',style: TextStyle(fontSize: 18.0),),
+                  Text('Break Timings',style: TextStyle(fontSize: 17.0),),
                   SizedBox(height: 15.0),
                   Row(
                     children: <Widget>[

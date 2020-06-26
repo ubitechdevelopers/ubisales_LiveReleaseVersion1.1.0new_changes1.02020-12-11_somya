@@ -38,9 +38,9 @@ class _Suspicious_selfies extends State<Suspicious_selfies> with SingleTickerPro
       _orgName= prefs.getString('org_name') ?? '';
       admin_sts = prefs.getString('sstatus') ?? '';
       if(admin_sts == '2')
-        Hightvar =  MediaQuery.of(context).size.height*0.8;
+        Hightvar =  MediaQuery.of(context).size.height*0.7;
       else
-        Hightvar =  MediaQuery.of(context).size.height*0.8;
+        Hightvar =  MediaQuery.of(context).size.height*0.7;
     });
   }
 

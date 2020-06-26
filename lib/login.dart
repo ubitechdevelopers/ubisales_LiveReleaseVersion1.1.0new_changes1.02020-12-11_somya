@@ -602,7 +602,7 @@ class _LoginPageState extends State<LoginPage> {
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
-              content: new Text("TimeIn marked successfully"),
+              content: new Text("Time In marked successfully"),
             ));
       /*Scaffold.of(context)
           .showSnackBar(
@@ -612,7 +612,7 @@ class _LoginPageState extends State<LoginPage> {
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
-              content: new Text("TimeOut marked successfully"),
+              content: new Text("Time Out marked successfully"),
             ));
 
     }else if(islogin=="failure"){

@@ -409,7 +409,7 @@ class _Settings extends State<Settings> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
-                        child: Text('Manage Face Id ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                        child: Text('Manage Face ID ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                     ),
                   ),
                 ],

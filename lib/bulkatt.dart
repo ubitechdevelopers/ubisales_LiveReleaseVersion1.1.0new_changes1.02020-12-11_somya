@@ -1072,7 +1072,7 @@ class _Bulkatt extends State<Bulkatt> {
                 Navigator.of(context).pop(true);
               });
               return AlertDialog(
-                content: new Text("TimeIn marked successfully"),
+                content: new Text("Time In marked successfully"),
               );
             });
 
@@ -1090,7 +1090,7 @@ class _Bulkatt extends State<Bulkatt> {
                 Navigator.of(context).pop(true);
               });
               return AlertDialog(
-                content: new Text("TimeOut marked successfully"),
+                content: new Text("Time Out marked successfully"),
               );
             });
 

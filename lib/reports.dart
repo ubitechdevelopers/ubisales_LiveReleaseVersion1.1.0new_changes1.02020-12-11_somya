@@ -599,7 +599,7 @@ class _Reports extends State<Reports> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('List of punched visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('List of Punched Visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],
@@ -646,7 +646,7 @@ class _Reports extends State<Reports> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('List of punched visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('List of Punched Visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],
@@ -692,7 +692,7 @@ class _Reports extends State<Reports> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('Outside the geo fence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('Outside the Geo Fence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],

@@ -89,7 +89,7 @@ class _FlexiReport extends State<FlexiReport> {
             SizedBox(height: 8.0),
             Center(
               child: Text(
-                'Flexi Attendance1',
+                'Flexi Attendance',
                 style: new TextStyle(
                   fontSize: 22.0,
                   color: appcolor,

@@ -528,7 +528,7 @@ class _EditEmployee extends State<EditEmployee> {
                         print(updatedcontact);
                         _countryId.text = '0';
                         _countryCode.text = '0'; // prevented by parth sir
-                        editEmployee(_firstName.text, _lastName.text, _email.text, _countryCode.text, _countryId.text, updatedcontact.trim(), _pass.text, dept, desg, shift ,widget.empid )
+                        editEmployee(_firstName.text, _lastName.text, _email.text, _countryCode.text, _countryId.text, updatedcontact.trim(), _pass.text.trim(), dept, desg, shift ,widget.empid )
                             .then((res) {
                           //showInSnackBar(res.toString());
                           //   showInSnackBar('Employee registered Successfully');
@@ -542,7 +542,7 @@ class _EditEmployee extends State<EditEmployee> {
                             showDialog(
                                 context: context,
                                 child: new AlertDialog(
-                                  content: new Text("Employee details update successfully."),
+                                  content: new Text("Employee details updated successfully."),
                                 ));
                           } else if (res == 3)
                             showInSnackBar('Contact Already Exist');

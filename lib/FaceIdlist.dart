@@ -444,7 +444,8 @@ print('visit out called for visit id:'+visit_id);
           ):Center(),
           */
 
-          Divider(),
+          //Divider(),
+          SizedBox(height: 8.0,),
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
@@ -537,8 +538,8 @@ print('visit out called for visit id:'+visit_id);
                                                           .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
                                                       */
                                                       Container(
-                                                        width: 32.0,
-                                                        height: 32.0,
+                                                        width: 42.0,
+                                                        height: 42.0,
                                                         child:InkWell(
                                                           child: Container(
                                                               decoration: new BoxDecoration(

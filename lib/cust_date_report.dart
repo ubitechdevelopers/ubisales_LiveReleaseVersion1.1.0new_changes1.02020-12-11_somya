@@ -41,9 +41,9 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
       admin_sts = prefs.getString('sstatus') ?? '';
       trialstatus = prefs.getString('trialstatus') ?? '';
       if(admin_sts == '2')
-        Hightvar =  MediaQuery.of(context).size.height*0.56;
+        Hightvar =  MediaQuery.of(context).size.height*0.35;
       else
-        Hightvar =  MediaQuery.of(context).size.height*0.26;
+        Hightvar =  MediaQuery.of(context).size.height*0.35;
     });
   }
   @override
@@ -131,7 +131,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                     color: Colors.grey,
                   ), // icon is 48px widget.
                 ), // icon is 48px widget.
-                labelText: "Select Date(2 days data for unpaid user)",
+                labelText: "Select Date",
                 //hintText: 'Select Date()',
               ),
               onChanged: (date) {

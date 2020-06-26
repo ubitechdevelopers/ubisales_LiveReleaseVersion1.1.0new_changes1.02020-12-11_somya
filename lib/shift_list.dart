@@ -113,11 +113,11 @@ class _ShiftList extends State<ShiftList> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width*0.22,
-                      child: Text('Time in', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                      child: Text('Time In', style: TextStyle(color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width*0.22,
-                      child: Text('Time out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
+                      child: Text('Time Out', style: TextStyle( color: appcolor,fontSize: 16.0, fontWeight: FontWeight.bold),textAlign: TextAlign.center),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width*0.16,

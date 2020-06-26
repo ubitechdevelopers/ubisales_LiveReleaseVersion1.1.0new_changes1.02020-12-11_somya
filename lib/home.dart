@@ -1850,7 +1850,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
     if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
-     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
     }
   }
 
