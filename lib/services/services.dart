@@ -294,8 +294,8 @@ sendNotificationtouser ()async
     uriPrefix: 'https://ubiattendance.page.link',
     link: Uri.parse('https://ubiattendance.com/'+empId+"/"+phoneno+"/"+password),
     androidParameters: AndroidParameters(
-      packageName: 'org.ubitech.attendance',
-      minimumVersion: 50009,
+      packageName: 'org.ubitech.sales',
+      minimumVersion: 10000,
     ),
   );
 
@@ -328,8 +328,8 @@ generateAndShareReferralLink()async{
     uriPrefix: 'https://ubiattendance.page.link',
     link: Uri.parse('https://ubiattendance.com/'+empId+"/"+ReferralValidFrom+"/"+ReferralValidTo+"/"+referrerAmt+"/"+referrenceAmt),
     androidParameters: AndroidParameters(
-      packageName: 'org.ubitech.attendance',
-      minimumVersion: 50009,
+      packageName: 'org.ubitech.sales',
+      minimumVersion: 10000,
     ),
   );
 

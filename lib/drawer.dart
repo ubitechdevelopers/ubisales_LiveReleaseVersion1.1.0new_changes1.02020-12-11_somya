@@ -430,7 +430,7 @@ class AppDrawerState extends State<AppDrawer> {
             onTap: () {
               prefix0.facebookChannel.invokeMethod("logRateEvent");
               LaunchReview.launch(
-                  androidAppId: "org.ubitech.attendance"
+                  androidAppId: "org.ubitech.sales"
               );
             },
           ),

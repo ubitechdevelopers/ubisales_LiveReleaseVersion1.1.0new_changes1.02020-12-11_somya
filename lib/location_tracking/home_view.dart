@@ -261,26 +261,33 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
     var currDate=DateTime.now();
 
     //database.setPersistenceCacheSizeBytes(10000);
-    firebaseDb.DatabaseReference _locRef=database.reference().child('Locations');
-    _locRef.child(orgId).child(employeeId).child(currDate.toString().split(".")[0].split(" ")[0]).child(currDate.toString().split(" ")[1].split(".")[0]).set(<String,String>{
-      "is_moving":location.isMoving.toString(),
-      "uuid":location.uuid.toString(),
-      "odometer":location.odometer.toString(),
-      "activity":location.activity.type.toString(),
-      "is_charging":location.battery.isCharging.toString(),
-      "battery_level":location.battery.level.toString(),
-      "altitude":location.coords.altitude.toString(),
-      "heading":location.coords.heading.toString(),
-      "latitude":location.coords.latitude.toString(),
-      "speed":location.coords.speed.toString(),
-      "longitude":location.coords.longitude.toString(),
-      "accuracy":location.coords.accuracy.toString(),
+
+   // if(location.coords.accuracy<10)
+      //database.setPersistenceCacheSizeBytes(10000);
+     //{
+      firebaseDb.DatabaseReference _locRef = database.reference().child(
+          'Locations');
+      _locRef.child(orgId).child(employeeId).child(
+          currDate.toString().split(".")[0].split(" ")[0]).child(
+          currDate.toString().split(" ")[1].split(".")[0]).set(<String, String>{
+        "is_moving": location.isMoving.toString(),
+        "uuid": location.uuid.toString(),
+        "odometer": location.odometer.toString(),
+        "activity": location.activity.type.toString(),
+        "is_charging": location.battery.isCharging.toString(),
+        "battery_level": location.battery.level.toString(),
+        "altitude": location.coords.altitude.toString(),
+        "heading": location.coords.heading.toString(),
+        "latitude": location.coords.latitude.toString(),
+        "speed": location.coords.speed.toString(),
+        "longitude": location.coords.longitude.toString(),
+        "accuracy": location.coords.accuracy.toString(),
 
 
-    }).then((_) {
-      print('Transaction  committed.');
-    });
-
+      }).then((_) {
+        print('Transaction  committed.');
+      });
+   // }
 
     print('[${bg.Event.LOCATION}] - $location');
    // if(mounted)

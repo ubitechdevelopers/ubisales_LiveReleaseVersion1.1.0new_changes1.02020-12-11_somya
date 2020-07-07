@@ -1,4 +1,4 @@
-package org.ubitech.attendance;
+package org.ubitech.sales;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

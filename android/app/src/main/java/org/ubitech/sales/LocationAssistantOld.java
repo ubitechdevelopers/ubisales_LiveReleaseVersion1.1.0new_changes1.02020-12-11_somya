@@ -1,4 +1,4 @@
-package org.ubitech.attendance;
+package org.ubitech.sales;
 
 import android.Manifest;
 import android.app.Activity;
@@ -34,7 +34,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-import java.net.*;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 

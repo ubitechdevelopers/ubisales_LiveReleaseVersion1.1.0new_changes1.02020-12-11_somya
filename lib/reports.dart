@@ -594,7 +594,7 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Punched Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
@@ -641,12 +641,12 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Punched Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Location and Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('List of Punched Visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('Track live location of employees ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],

@@ -36,7 +36,8 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
   @override
   Widget build(BuildContext context) {
     return new BottomNavigationBar(
-      backgroundColor: Colors.teal,
+      backgroundColor: prefix0.appcolor,
+
       currentIndex: _currentIndex,
 //      fixedColor: Colors.yellowAccent,
       type: BottomNavigationBarType.fixed,

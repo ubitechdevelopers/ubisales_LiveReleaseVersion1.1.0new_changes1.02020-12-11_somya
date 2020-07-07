@@ -8,9 +8,9 @@ Color color = Colors.teal.shade50;
 Color splashcolor = Colors.teal.shade100;
 Color textcolor = Colors.black54;
 
-Color appcolor =  Colors.teal;
-Color buttoncolor =  Colors.orangeAccent;
-Color headingcolor =  Colors.orange;
+Color appcolor =  Color.fromRGBO(0, 135, 180, 1);
+Color buttoncolor =  Color.fromRGBO( 16, 230, 230,1);
+Color headingcolor =  Color.fromRGBO( 4, 77, 120,1);
 Color iconcolor =  Colors.black45;
 
 /*

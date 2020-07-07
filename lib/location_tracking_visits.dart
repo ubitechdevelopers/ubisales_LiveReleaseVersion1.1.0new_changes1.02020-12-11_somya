@@ -153,14 +153,14 @@ getWidgets(context){
         Container(
           padding: EdgeInsets.only(top:12.0,bottom: 2.0),
           child:Center(
-            child:Text('Punched Visits',
+            child:Text('Today\'s Visits',
                 style: new TextStyle(fontSize: 22.0, color: globals.appcolor,)),
           ),
         ),
 
 
         Divider(color: Colors.black54,height: 1.5,),
-        RaisedButton(child: Text('Track Employees',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
+        RaisedButton(child: Text('Live Location',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
         onPressed: (){
           Navigator.push(
 

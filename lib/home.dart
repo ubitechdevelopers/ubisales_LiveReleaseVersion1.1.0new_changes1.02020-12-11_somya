@@ -1894,11 +1894,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               backgroundColor: Colors.white,
               key: _scaffoldKey,
               appBar: AppBar(
+
                 title: Row(
+
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     new Text(org_name, style: new TextStyle(fontSize: 20.0)),
                   ],
+                ),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[
+                            Color.fromRGBO(0, 176, 217, 1),
+                            Color.fromRGBO(0, 135, 180, 1),
+                          ])
+                  ),
                 ),
                 automaticallyImplyLeading: false,
                 backgroundColor: appcolor,
@@ -2898,7 +2911,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus = 0;
-
+    startLiveLocationTracking();
+    startLiveLocationTracking();
     if(areaStatus == '0'){
       geofence="Outside Fenced Area";
     }else{

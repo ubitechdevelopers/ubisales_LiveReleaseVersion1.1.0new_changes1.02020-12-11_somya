@@ -1,4 +1,4 @@
-package org.ubitech.attendance;
+package org.ubitech.sales;
 /*
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,19 +11,25 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-public class TimeOutNotificationWork extends Worker {
 
-    public TimeOutNotificationWork(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+
+
+public class TimeInNotificationWork extends Worker {
+
+
+    public TimeInNotificationWork(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
+
 
 
     @NonNull
     @Override
     public Result doWork() {
-        displayNotification("Please Mark Your Time out", "Your shift Time is up.");
+        displayNotification("Please Mark Your Time In", "Your shift Time has started.");
         return Result.SUCCESS;
     }
+
 
     private void displayNotification(String title, String task) {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -42,6 +48,10 @@ public class TimeOutNotificationWork extends Worker {
         notification.setContentIntent(contentIntent);
         notificationManager.notify(1, notification.build());
     }
+
+
 }
+
+
 
  */

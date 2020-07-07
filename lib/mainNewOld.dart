@@ -1,3 +1,4 @@
+
 // Copyright 2018-present the Flutter authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +15,6 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splashscreen/splashscreen.dart';
-import 'package:Shrine/app.dart';
-import 'package:Shrine/services/newservices.dart';
-import 'package:firebase_database/firebase_database.dart' as firebaseDb;
-
 import 'package:Shrine/app.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,8 +30,10 @@ import 'services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:background_fetch/background_fetch.dart';
+import 'dart:convert';
 JsonEncoder encoder = new JsonEncoder.withIndent("     ");
 
+/// Receive events from BackgroundGeolocation in Headless state.
 void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
   print('📬 --> $headlessEvent');
 
@@ -62,47 +58,36 @@ void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
       break;
     case bg.Event.LOCATION:
       bg.Location location = headlessEvent.event;
-      print(location);
       break;
     case bg.Event.MOTIONCHANGE:
       bg.Location location = headlessEvent.event;
-      print(location);
       break;
     case bg.Event.GEOFENCE:
       bg.GeofenceEvent geofenceEvent = headlessEvent.event;
-      print(geofenceEvent);
       break;
     case bg.Event.GEOFENCESCHANGE:
       bg.GeofencesChangeEvent event = headlessEvent.event;
-      print(event);
       break;
     case bg.Event.SCHEDULE:
       bg.State state = headlessEvent.event;
-      print(state);
       break;
     case bg.Event.ACTIVITYCHANGE:
       bg.ActivityChangeEvent event = headlessEvent.event;
-      print(event);
       break;
     case bg.Event.HTTP:
       bg.HttpEvent response = headlessEvent.event;
-      print(response);
       break;
     case bg.Event.POWERSAVECHANGE:
       bool enabled = headlessEvent.event;
-      print(enabled);
       break;
     case bg.Event.CONNECTIVITYCHANGE:
       bg.ConnectivityChangeEvent event = headlessEvent.event;
-      print(event);
       break;
     case bg.Event.ENABLEDCHANGE:
       bool enabled = headlessEvent.event;
-      print(enabled);
       break;
     case bg.Event.AUTHORIZATION:
       bg.AuthorizationEvent event = headlessEvent.event;
-      print(event);
       bg.BackgroundGeolocation.setConfig(bg.Config(
           url: "${ENV.TRACKER_HOST}/api/locations"
       ));
@@ -114,7 +99,7 @@ void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
 void backgroundFetchHeadlessTask(String taskId) async {
   // Get current-position from BackgroundGeolocation in headless mode.
   //bg.Location location = await bg.BackgroundGeolocation.getCurrentPosition(samples: 1);
-  print("[BackgroundFetch] HeadlessTask: $taskId");
+  print('[BackgroundFetch] HeadlessTask');
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int count = 0;
@@ -126,6 +111,8 @@ void backgroundFetchHeadlessTask(String taskId) async {
 
   BackgroundFetch.finish(taskId);
 }
+
+
 
 
 void main(){
@@ -143,13 +130,13 @@ void main(){
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   bool _isMoving;
@@ -158,12 +145,11 @@ class _MyAppState extends State<MyApp> {
   String _odometer;
   String _content;
 
-
   void initState() {
     //checknetonpage(context);
-    // StreamLocation sl = new StreamLocation();
-    // sl.startStreaming(10);
-    // cameraChannel.invokeMethod("showNotification",{"title":"Welcome to ubiAttendance","description":"Cleck out help videos!"});
+   // StreamLocation sl = new StreamLocation();
+   // sl.startStreaming(10);
+   // cameraChannel.invokeMethod("showNotification",{"title":"Welcome to ubiAttendance","description":"Cleck out help videos!"});
     platform.setMethodCallHandler(_handleMethod);
     firebaseHandler();
     _content = "    Enable the switch to begin tracking.";
@@ -198,7 +184,7 @@ class _MyAppState extends State<MyApp> {
     // 2.  Configure the plugin
     bg.BackgroundGeolocation.ready(bg.Config(
         reset: true,
-        debug: true,
+        debug: false,
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
         distanceFilter: 10.0,
@@ -225,8 +211,6 @@ class _MyAppState extends State<MyApp> {
     }).catchError((error) {
       print('[ready] ERROR: $error');
     });
-
-
   }
 
   void _onClickEnable(enabled) {
@@ -287,59 +271,15 @@ class _MyAppState extends State<MyApp> {
   // Event handlers
   //
 
-  void _onLocation(bg.Location location) async{
+  void _onLocation(bg.Location location) {
     print('[location] - $location');
-    firebaseDb.FirebaseDatabase database;
-
-    var currDate=DateTime.now();
-    SharedPreferences prefs = await _prefs;
-    String orgname = "ubi222";
-    String username = "ubiShashank";
-    prefs.setString("username", username);
-    prefs.setString("orgname", orgname);
-    String employeeId=prefs.getString("empid");
-    String orgId=prefs.getString("orgid");
-    database = new firebaseDb.FirebaseDatabase();
-    database.setPersistenceEnabled(true);
-
-
-    //if(location.coords.accuracy<10)
-    //database.setPersistenceCacheSizeBytes(10000);
-     //{
-      firebaseDb.DatabaseReference _locRef=database.reference().child('Locations');
-      _locRef.child(orgId).child(employeeId).child(
-          currDate.toString().split(".")[0].split(" ")[0]).child(
-          currDate.toString().split(" ")[1].split(".")[0]).set(<String, String>{
-        "is_moving": location.isMoving.toString(),
-        "uuid": location.uuid.toString(),
-        "odometer": location.odometer.toString(),
-        "activity": location.activity.type.toString(),
-        "is_charging": location.battery.isCharging.toString(),
-        "battery_level": location.battery.level.toString(),
-        "altitude": location.coords.altitude.toString(),
-        "heading": location.coords.heading.toString(),
-        "latitude": location.coords.latitude.toString(),
-        "speed": location.coords.speed.toString(),
-        "longitude": location.coords.longitude.toString(),
-        "accuracy": location.coords.accuracy.toString(),
-
-
-      }).then((_) {
-        print('Transaction  committed.');
-      });
-    //}
-
-    print('[${bg.Event.LOCATION}] - $location');
-
-
-
 
     String odometerKM = (location.odometer / 1000.0).toStringAsFixed(1);
-    // if(mounted)
-    // setState(() {
-    _content = encoder.convert(location.toMap());
-    _odometer = odometerKM;
-    //  });
+    if(mounted)
+    setState(() {
+      _content = encoder.convert(location.toMap());
+      _odometer = odometerKM;
+    });
   }
 
   void _onLocationError(bg.LocationError error) {
@@ -353,9 +293,9 @@ class _MyAppState extends State<MyApp> {
   void _onActivityChange(bg.ActivityChangeEvent event) {
     print('[activitychange] - $event');
     if(mounted)
-      setState(() {
-        _motionActivity = event.activity;
-      });
+    setState(() {
+      _motionActivity = event.activity;
+    });
   }
 
   void _onHttp(bg.HttpEvent event) async {
@@ -372,10 +312,10 @@ class _MyAppState extends State<MyApp> {
 
   void _onProviderChange(bg.ProviderChangeEvent event) {
     print('$event');
-    if(mounted)
-      setState(() {
-        _content = encoder.convert(event.toMap());
-      });
+if(mounted)
+    setState(() {
+      _content = encoder.convert(event.toMap());
+    });
   }
 
   void _onConnectivityChange(bg.ConnectivityChangeEvent event) {
@@ -393,7 +333,7 @@ class _MyAppState extends State<MyApp> {
       case "locationAndInternet":
       // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
       // Map<String,String> responseMap=call.arguments;
-        prefix0.locationThreadUpdatedLocation=true;
+      prefix0.locationThreadUpdatedLocation=true;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
         }
@@ -404,15 +344,13 @@ class _MyAppState extends State<MyApp> {
         address=await getAddressFromLati(lat, long);
         print(call.arguments["mocked"].toString());
 
-        globalstreamlocationaddr=address;
+          globalstreamlocationaddr=address;
 
         break;
 
         return new Future.value("");
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -424,7 +362,7 @@ class _MyAppState extends State<MyApp> {
             navigateAfterSeconds: new ShrineApp(),
             title: new Text('',style: TextStyle(fontSize: 32.0),),
             loaderColor: Colors.blueGrey[100],
-            image:   Image.asset('assets/splash.png'),
+            image:   Image.asset('assets/splash.gif'),
             backgroundColor: Colors.white,
             styleTextUnderTheLoader: new TextStyle(color: Colors.grey[500]),
             photoSize: MediaQuery.of(context).size.width*0.45
@@ -432,23 +370,24 @@ class _MyAppState extends State<MyApp> {
           );
         }),);
   }
+
   void firebaseHandler() async{
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print('on message $message'+message['data'].isEmpty.toString());
 //{notification: {title: ABC has marked his Time In, body: null}, data: {}}
-      //  cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
+        cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
 
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
         var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
-        //navigateToPageAfterNotificationClicked(navigate, context);
+        navigateToPageAfterNotificationClicked(navigate, context);
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
         var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
-        //navigateToPageAfterNotificationClicked(navigate, context);
+        navigateToPageAfterNotificationClicked(navigate, context);
       },
     );
   }

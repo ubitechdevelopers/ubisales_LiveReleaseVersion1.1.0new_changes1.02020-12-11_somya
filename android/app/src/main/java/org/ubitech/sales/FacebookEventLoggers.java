@@ -1,4 +1,4 @@
-package org.ubitech.attendance;
+package org.ubitech.sales;
 
 /*
 import com.facebook.appevents.AppEventsConstants;

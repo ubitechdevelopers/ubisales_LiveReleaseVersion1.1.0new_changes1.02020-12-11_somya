@@ -58,18 +58,23 @@ class Locations {
 
 
   Locations.fromFireBase(DataSnapshot snapshot) {
-    this.longitude = snapshot.value["longitude"] ?? '0.0';
-    this.latitude = snapshot.value["latitude"] ?? '0.0';
-    this.accuracy = snapshot.value["accuracy"] ?? '.0';
-    this.activity = snapshot.value["activity"] ?? 'Unknown user';
-    this.altitude = snapshot.value["altitude"] ?? 'Unknown user';
-    this.battery_level = snapshot.value["battery_level"] ?? 'Unknown user';
-    this.heading = snapshot.value["heading"] ?? 'Unknown user';
-    this.is_charging = snapshot.value["is_charging"] ?? 'Unknown user';
-    this.is_moving = snapshot.value["is_moving"] ?? 'Unknown user';
-    this.odometer = snapshot.value["odometer"] ?? 'Unknown user';
-    this.speed = snapshot.value["speed"] ?? 'Unknown user';
-    this.uuid = snapshot.value["uuid"] ?? 'Unknown user';
+    try{
+      this.longitude = snapshot.value["longitude"] ?? '0.0';
+      this.latitude = snapshot.value["latitude"] ?? '0.0';
+      this.accuracy = snapshot.value["accuracy"] ?? '.0';
+      this.activity = snapshot.value["activity"] ?? 'Unknown user';
+      this.altitude = snapshot.value["altitude"] ?? 'Unknown user';
+      this.battery_level = snapshot.value["battery_level"] ?? 'Unknown user';
+      this.heading = snapshot.value["heading"] ?? 'Unknown user';
+      this.is_charging = snapshot.value["is_charging"] ?? 'Unknown user';
+      this.is_moving = snapshot.value["is_moving"] ?? 'Unknown user';
+      this.odometer = snapshot.value["odometer"] ?? 'Unknown user';
+      this.speed = snapshot.value["speed"] ?? 'Unknown user';
+      this.uuid = snapshot.value["uuid"] ?? 'Unknown user';
+
+    }catch(e){
+      print("Object Not Created");
+    }
 
   }
 }
@@ -566,11 +571,13 @@ print("marker added............");
       ),
     );*/
   }
-
+  GoogleMapController controller2;
 
   void onMapCreated(GoogleMapController controller)async {
+
     controller.setMapStyle(Utils.mapStyles);
     _controller.complete(controller);
+    controller2=controller;
     var prefs= await SharedPreferences.getInstance();
     today1 = new TextEditingController();
     today1.text = formatter.format(DateTime.now());
@@ -586,7 +593,7 @@ print("marker added............");
 
     setMapPins();
 
-    updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data) {
+    updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data) async {
       // locationList.insert(0, Locations.fromFireBase(data.snapshot));
       print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>"+data.snapshot.value.toString());
       print(latlng.toString());
@@ -603,15 +610,19 @@ print("marker added............");
           zoom: 17.0,
         ),
       ));
-      latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
-      _polylines.add(Polyline(
-        polylineId: PolylineId("1"),
-        visible: true,
-        //latlng is List<LatLng>
 
-        points: latlng,
-        color: Colors.blue,
-      ));
+      setState(() {
+        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+        _polylines.add(Polyline(
+          polylineId: PolylineId("1"),
+          visible: true,
+          //latlng is List<LatLng>
+
+          points: latlng,
+          color: Colors.blue,
+        ));
+      });
+
     });
     // } );
 
@@ -698,11 +709,111 @@ print("marker added............");
 
   }
 
+  onDateChanged2(String date2)async{
+    var prefs= await SharedPreferences.getInstance();
+    date2=date2.split(" ")[0];
+
+
+
+    var orgId=await prefs.get("orgid");
+    //final GoogleMapController controller = await _controller.future;
+
+
+    //onDateChanged(today1.text);
+
+    setState(() {
+      _polylines.clear();
+      _markers.clear();
+      latlng.clear();
+    });
+   // setMapPins();
+    //StreamSubscription <Event> updates ;
+    FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data) async {
+      // locationList.insert(0, Locations.fromFireBase(data.snapshot));
+
+      print("Latitude and longitudes from firebase: "+ latlng.toString());
+      //  print('hjjghgjgjgjhgj'+data.snapshot.value['longitude1'].toString());
+      var currentLoc=Locations.fromFireBase(data.snapshot);
+      print("Object made >>>>>>>>>>>>>"+currentLoc.toString());
+      //  setState(() {
+      // create a Polyline instance
+      // with an id, an RGB color and the list of LatLng pairs
+      controller2.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          zoom: 17.0,
+        ),
+      ));
+
+      setState(() {
+        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+      });
+
+
+    });
+
+    setState(() {
+      _polylines.add(Polyline(
+        polylineId: PolylineId("1"),
+        visible: true,
+        //latlng is List<LatLng>
+
+        points: latlng,
+        color: Colors.blue,
+      ));
+    });
+
+    // } );
+
+    //setSourceAndDestinationIcons();
+    var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+    var visits=  await  getVisitsDataList(date.toString(),empId);
+    print("aaa");
+    var generatedIcon;
+    List<BitmapDescriptor> generatedIcons=new List<BitmapDescriptor>();
+    var j=visits.length;
+    print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"+j.toString());
+    if(j>0)
+      await Future.forEach(visits, (Punch visit) async {
+
+        print("marker added............");
+        var m=Marker(
+          markerId: MarkerId('sourcePin$j'),
+          position: LatLng(double.parse(visit.pi_latit),double.parse(visit.pi_longi)),
+          icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),j),
+          onTap: () {
+            setState(() {
+              currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: visit.pi_img, location: LatLng(0, 0), client: visit.client,description: visit.desc,in_time: visit.pi_time,out_time: visit.po_time, labelColor: Colors.grey);
+              pinPillPosition = 100;
+            });
+            print(visit.po_time);
+
+          },
+
+          infoWindow: InfoWindow(
+              title: visit.client,
+              snippet:visit.desc
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+        j--;
+      });
+
+  }
+
+
   void onDateChanged(String date2)async {
     //_controller1 = new TabController(length: 2, vsync: this);
     var prefs= await SharedPreferences.getInstance();
     date2=date2.split(" ")[0];
-    var orgId=prefs.get("orgid");
+    var orgId= await prefs.get("orgid");
     final GoogleMapController controller = await _controller.future;
     setState(() {
       latlng.clear();
@@ -776,7 +887,7 @@ print("marker added............");
 
     if(j>0)
     await Future.forEach(visits, (Punch visit) async {
-print('akkakakakakka');
+    print('akkakakakakka');
 
       var m=Marker(
         markerId: MarkerId('sourcePin$j'),

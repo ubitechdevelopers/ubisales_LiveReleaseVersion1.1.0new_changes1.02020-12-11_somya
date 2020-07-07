@@ -1,35 +1,27 @@
-package org.ubitech.attendance;
+package org.ubitech.sales;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.StrictMode;
+import android.os.Looper;
 import android.provider.Settings;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -39,13 +31,7 @@ import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import io.flutter.Log;
@@ -55,7 +41,8 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-public class MainActivity extends FlutterActivity {
+
+public class MainActivityWithoutBGService extends FlutterActivity {
 
   private LocationAssistant assistant;
   private static final String CHANNEL = "location.spoofing.check";
@@ -63,6 +50,7 @@ public class MainActivity extends FlutterActivity {
   private static final String FACEBOOK_CHANNEL = "log.facebook.data";
   private boolean cameraOpened=false;
   private BackgroundLocationService gpsService;
+  private Location mCurrentLocation;
 
 
   private SettingsClient mSettingsClient;
@@ -70,15 +58,171 @@ public class MainActivity extends FlutterActivity {
   private static final int REQUEST_CHECK_SETTINGS = 214;
   private static final int REQUEST_ENABLE_GPS = 516;
 
+  private FusedLocationProviderClient fusedLocationClient;
+
 
   MethodChannel channel;
+    private boolean mockLocationsEnabled=false;
+    private Location lastMockLocation;
+    private int numGoodReadings=0;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+
+    protected void createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void startLocationUpdates() {
+        /*
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());*/
+    }
+
+    private void checkMockLocations() {
+        // Starting with API level >= 18 we can (partially) rely on .isFromMockProvider()
+        // (http://developer.android.com/reference/android/location/Location.html#isFromMockProvider%28%29)
+        // For API level < 18 we have to check the Settings.Secure flag
+        //checkInternet();
+        if (Build.VERSION.SDK_INT < 18 &&
+                !Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings
+                        .Secure.ALLOW_MOCK_LOCATION).equals("0")) {
+            mockLocationsEnabled = true;
+
+        } else
+            mockLocationsEnabled = false;
+
+        android.util.Log.i("shashank","checking Mock Location "+mockLocationsEnabled);
+    }
+
+    private boolean isLocationPlausible(Location location) {
+        checkMockLocations();
+        if (location == null) return false;
+
+        boolean isMock = mockLocationsEnabled || (Build.VERSION.SDK_INT >= 18 && location.isFromMockProvider());
+        if (isMock) {
+            lastMockLocation = location;
+            numGoodReadings = 0;
+        } else
+            numGoodReadings = Math.min(numGoodReadings + 1, 1000000); // Prevent overflow
+
+        // We only clear that incident record after a significant show of good behavior
+        if (numGoodReadings >= 20) lastMockLocation = null;
+
+        // If there's nothing to compare against, we have to trust it
+        if (lastMockLocation == null) return true;
+
+        // And finally, if it's more than 1km away from the last known mock, we'll trust it
+        double d = location.distanceTo(lastMockLocation);
+        return (d > 1000);
+    }
+
+    public void updateLocationToFlutter(MethodChannel channel,Location mLastLocation){
+
+
+        long previousTime=0,currentTime=0;
+
+        boolean timeSpoofed=false;
+        boolean plausible;
+        String ifMocked="";
+        HashMap<String, String> responseMap = new HashMap<String, String>();
+        //android.util.Log.i("LocationWOService", "LocationChanged: "+location);
+        if(isLocationPlausible(mLastLocation)){
+            plausible=true;
+            android.util.Log.i("shashank","Plausible");
+            ifMocked = "No";
+        }
+        else{
+            plausible=false;
+            ifMocked = "Yes";
+            android.util.Log.i("shashank","Not Plausible");
+        }
+
+        android.util.Log.i("TimeFromLocation",mLastLocation.getTime()+"");
+        if (String.valueOf(mLastLocation.getTime()) != null){
+            currentTime= TimeUnit.MILLISECONDS.toMinutes(mLastLocation.getTime());
+            if(previousTime!=0&&!timeSpoofed){
+                if((currentTime-previousTime)>10||(currentTime-previousTime)<-10){
+                    timeSpoofed=true;
+                    android.util.Log.i("TimeSpoofed","detected");
+                }
+
+            }
+            previousTime=currentTime;
+
+        }
+
+        if (String.valueOf(mLastLocation.getLatitude()) != null)
+            responseMap.put("latitude", String.valueOf(mLastLocation.getLatitude()));
+        if (String.valueOf(mLastLocation.getLongitude()) != null)
+            responseMap.put("longitude", String.valueOf(mLastLocation.getLongitude()));
+        responseMap.put("internet", "Internet Available");
+
+        responseMap.put("mocked", ifMocked);
+        responseMap.put("TimeSpoofed", timeSpoofed?"Yes":"No");
+
+        channel.invokeMethod("locationAndInternet", responseMap);
+
+        android.util.Log.i(getClass().getSimpleName(), " Lat: " + responseMap.get("latitude") + " Longi: " + responseMap.get("longitude"));
+
+
+
+    }
+
+
   //LocationListenerExecuter listenerExecuter;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+    GeneratedPluginRegistrant.registerWith(this);
 
-    Intent i=getIntent();
+      Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
+
+      channel=new MethodChannel(getFlutterView(), CHANNEL);
+      fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+      fusedLocationClient.getLastLocation()
+              .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                  @Override
+                  public void onSuccess(Location location) {
+                      // Got last known location. In some rare situations this can be null.
+                      if (location != null) {
+
+                          mCurrentLocation=location;
+                          if(mCurrentLocation.hasAccuracy())
+                          updateLocationToFlutter(channel,mCurrentLocation);
+
+                      }
+                  }
+              });
+      locationRequest = LocationRequest.create();
+      locationRequest.setInterval(10000);
+      locationRequest.setFastestInterval(5000);
+      locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+      locationCallback = new LocationCallback() {
+          @Override
+          public void onLocationResult(LocationResult locationResult) {
+              if (locationResult == null) {
+                  return;
+              }
+              for (Location location : locationResult.getLocations()) {
+                  mCurrentLocation=location;
+                  if(mCurrentLocation.hasAccuracy())
+                  updateLocationToFlutter(channel,mCurrentLocation);
+              }
+          };
+      };
+
+      fusedLocationClient.requestLocationUpdates(locationRequest,
+              locationCallback,
+              Looper.getMainLooper());
+
+
+/*
+      Intent i=getIntent();
       final Handler handler = new Handler();
       handler.postDelayed(new Runnable() {
           @Override
@@ -88,7 +232,7 @@ public class MainActivity extends FlutterActivity {
       }, 7000);
 
     //onNewIntent(i);
-
+*/
 
   //showLocationDialog();
    // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
@@ -122,13 +266,13 @@ public class MainActivity extends FlutterActivity {
       }
 */
 
-
+/*
       Intent intent111 = new Intent(getApplicationContext(), MainActivity.class);
       intent111.setAction(Intent.ACTION_RUN);
       intent111.putExtra("route", "settings");
       intent111.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       getApplicationContext().startActivity(intent111);
-
+*/
 
 
     MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
@@ -143,12 +287,12 @@ public class MainActivity extends FlutterActivity {
               @Override
               public void onMethodCall(MethodCall call, Result result) {
                 if (call.method.equals("logCompleteRegistrationEvent")) {
-                 // if(facebookLogger!=null);
+                  //if(facebookLogger!=null);
                  // facebookLogger.logCompleteRegistrationEvent("");
                 }
                 else
                 if (call.method.equals("logContactEvent")) {
-                 // if(facebookLogger!=null);
+                  //if(facebookLogger!=null);
                  // facebookLogger.logContactEvent();
                 }
                 else
@@ -162,7 +306,7 @@ public class MainActivity extends FlutterActivity {
                  // facebookLogger.logRateEvent("","","0",5,4);
                 }
                 if (call.method.equals("logStartTrialEvent")) {
-                 // if(facebookLogger!=null);
+                //  if(facebookLogger!=null);
                 // facebookLogger.logStartTrialEvent("","",0.0);
 
                 }
@@ -171,18 +315,27 @@ public class MainActivity extends FlutterActivity {
             });
 
 
-    if (android.os.Build.VERSION.SDK_INT > 9)
+
+      ActivityCompat.requestPermissions(this,
+             new String[]{/*Manifest.permission.CAMERA,*/Manifest.permission.ACCESS_FINE_LOCATION,/*Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS*/}, 1);
+
+
+
+
+
+
+
+
+
+
+    /*
+
+     if (android.os.Build.VERSION.SDK_INT > 9)
     {
       StrictMode.ThreadPolicy policy = new
               StrictMode.ThreadPolicy.Builder().permitAll().build();
       StrictMode.setThreadPolicy(policy);
     }
-      ActivityCompat.requestPermissions(this,
-             new String[]{/*Manifest.permission.CAMERA,*/Manifest.permission.ACCESS_FINE_LOCATION,/*Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS*/}, 1);
-
-    channel=new MethodChannel(getFlutterView(), CHANNEL);
-    GeneratedPluginRegistrant.registerWith(this);
-
     try{
         final Intent intent = new Intent(this.getApplication(), BackgroundLocationService.class);
         this.getApplication().startService(intent);
@@ -197,7 +350,7 @@ public class MainActivity extends FlutterActivity {
         Log.e("AsyncTask",e.getMessage());
     }
       Timer timer = new Timer();
-
+*/
       new MethodChannel(getFlutterView(), CAMERA_CHANNEL).setMethodCallHandler(
             new MethodCallHandler() {
               @Override
@@ -236,7 +389,7 @@ public class MainActivity extends FlutterActivity {
                     Log.i("audio","permission asked");
                     try{
 
-                        ActivityCompat.requestPermissions(MainActivity.this,
+                        ActivityCompat.requestPermissions(MainActivityWithoutBGService.this,
                                 new String[]{Manifest.permission.RECORD_AUDIO}, 444);
 
 
@@ -292,6 +445,7 @@ public class MainActivity extends FlutterActivity {
 
 
   }
+  /*
     public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -332,7 +486,7 @@ public class MainActivity extends FlutterActivity {
         context.startActivity(mainIntent);
         Runtime.getRuntime().exit(0);
     }
-
+*/
 
   public void openLocationDialog(){
 
@@ -342,7 +496,7 @@ public class MainActivity extends FlutterActivity {
     builder.setAlwaysShow(true);
     mLocationSettingsRequest = builder.build();
 
-    mSettingsClient = LocationServices.getSettingsClient(MainActivity.this);
+    mSettingsClient = LocationServices.getSettingsClient(MainActivityWithoutBGService.this);
 
     mSettingsClient
             .checkLocationSettings(mLocationSettingsRequest)
@@ -360,7 +514,7 @@ public class MainActivity extends FlutterActivity {
                   case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     try {
                       ResolvableApiException rae = (ResolvableApiException) e;
-                      rae.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+                      rae.startResolutionForResult(MainActivityWithoutBGService.this, REQUEST_CHECK_SETTINGS);
                     } catch (IntentSender.SendIntentException sie) {
                       Log.e("GPS","Unable to execute request.");
                     }
@@ -376,6 +530,8 @@ public class MainActivity extends FlutterActivity {
                 Log.e("GPS","checkLocationSettings -> onCanceled");
               }
             });
+
+
 
   }
 
@@ -420,8 +576,8 @@ public class MainActivity extends FlutterActivity {
 
 
 
-  public void startTimeOutNotificationWorker(String ShiftTimeOut){
- /*
+  public void startTimeOutNotificationWorker(String ShiftTimeOut) {
+      /*
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
     String currentTime=sdf.format(cal.getTime());
@@ -455,14 +611,14 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
           .addTag("TimeOutWork")
           .build();
   WorkManager.getInstance().enqueue(workRequest);
-*/
-}
 
 
+       */
+  }
 
   public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
-    /*
-        Calendar cal = Calendar.getInstance();
+      /*
+    Calendar cal = Calendar.getInstance();
     Log.i("nextWorkingday",nextWorkingDay);
       String dateStart = nextWorkingDay+" "+ShiftTimeIn;
       String dateStop = "01/15/2012 10:31:48";
@@ -497,6 +653,18 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     Log.i("WorkerMinutesForTimeIn",diffMinutes+"");
     final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TimeInNotificationWork.class)
             .setInitialDelay(diffMinutes, TimeUnit.MINUTES)
@@ -510,15 +678,14 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
       w.enqueueUniqueWork("TimeInNotificationWork", ExistingWorkPolicy.KEEP,workRequest);
 
 
-     */
+       */
   }
 
 
   public void manuallyStartAssistant(){
     try{
-        if(gpsService!=null&&channel!=null)
-       // if(!listenerExecuter.isCancelled())
-            gpsService.startTracking(channel);
+        onPause();
+        onResume();
     }
     catch(Exception e){
 
@@ -540,14 +707,11 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   @Override
   protected void onResume() {
     super.onResume();
-    if(gpsService!=null)
-    Log.i("serviceRunning", String.valueOf(isServiceRunningInForeground(getApplicationContext(),gpsService.getClass() )));
     try{
-   if(!cameraOpened)
-       startService(new Intent(this,BackgroundLocationService.class));
-     if(gpsService!=null&&channel!=null){
-         gpsService.startTracking(channel);
-     }
+
+       fusedLocationClient.requestLocationUpdates(locationRequest,
+               locationCallback,
+               Looper.getMainLooper());
 
     }
     catch(Exception e){
@@ -560,18 +724,15 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
   protected void onPause() {
    // assistant.stop();
   //if(!cameraOpened)
+      super.onPause();
     try {
-      if (gpsService != null)
-      {
-          stopService(new Intent(this,BackgroundLocationService.class));
-
-      }
+        fusedLocationClient.removeLocationUpdates(locationCallback);
 
     }
     catch(Exception e){
 
     }
-    super.onPause();
+    //super.onPause();
   }
 
 
@@ -587,7 +748,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 try{
         if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&gpsService!=null) {
           Log.i("Peeeerrrr", requestCode + "detected");
-          manuallyStartAssistant(); ;
+            fusedLocationClient.requestLocationUpdates(locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper());
 
         }
 }
@@ -601,6 +764,8 @@ catch(Exception e){
   // Log.i("Perrrrr",permissions[1]+grantResults);
 
   }
+
+
     @Override
     public void onNewIntent(Intent intent){
         Bundle extras = intent.getExtras();
