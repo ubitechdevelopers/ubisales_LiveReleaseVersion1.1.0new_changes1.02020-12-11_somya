@@ -154,7 +154,7 @@ class _VisitListEmp extends State<VisitListEmp> with SingleTickerProviderStateMi
               ),
             ),
 */
-            getEmployee_DD(),
+           // getEmployee_DD(),
             SizedBox(height: 2.0),
             Row(
               children: <Widget>[

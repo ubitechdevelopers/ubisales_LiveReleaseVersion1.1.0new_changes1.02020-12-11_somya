@@ -36,10 +36,10 @@ var cameraSource=LatLng(26.19675, 78.1970424);
 
 
 class TrackEmp extends StatefulWidget {
-  String empId;
-  TrackEmp(this.empId);
+  String empId,empName;
+  TrackEmp(this.empId,this.empName);
   @override
-  _TrackEmpState createState() => _TrackEmpState(empId);
+  _TrackEmpState createState() => _TrackEmpState(empId,empName);
 }
 
 class Locations {
@@ -103,10 +103,10 @@ class _TrackEmpState extends State<TrackEmp>  with SingleTickerProviderStateMixi
   // for my custom icons
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
-String empId;
+String empId,empName;
 
   var _scaffoldKey;
-  _TrackEmpState(this.empId);
+  _TrackEmpState(this.empId,this.empName);
   @override
   void initState() {
     super.initState();
@@ -384,7 +384,7 @@ print("marker added............");
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            new Text(empName, style: new TextStyle(fontSize: 20.0)),
 
             /*  Image.asset(
                     'assets/logo.png', height: 40.0, width: 40.0),*/

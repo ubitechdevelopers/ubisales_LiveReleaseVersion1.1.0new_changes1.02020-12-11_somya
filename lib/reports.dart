@@ -646,7 +646,7 @@ class _Reports extends State<Reports> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('Track live location of employees ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('Track live location and visits of employees ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],

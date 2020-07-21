@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/trackAllEmp.dart';
 import 'package:Shrine/trackEmp.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,6 +42,8 @@ class _LocationTrackingVisits extends State<LocationTrackingVisits> {
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
     checkNetForOfflineMode(context);
+    print("gggsss");
+    await getCurrentLocation("4253");
     appResumedPausedLogic(context);
     final prefs = await SharedPreferences.getInstance();
     print('imagestring');
@@ -136,7 +140,9 @@ class VisitsLT {
   String empId;
   String in_time;
   String out_time;
-  VisitsLT({this.fName,this.lName,this.inImage,this.outImage,this.client,this.in_time,this.out_time,this.empId});
+  String location;
+  String distance;
+  VisitsLT({this.fName,this.lName,this.inImage,this.outImage,this.client,this.in_time,this.out_time,this.empId,this.location,this.distance});
 }
 
 String dateFormatter(String date_) {
@@ -160,7 +166,7 @@ getWidgets(context){
 
 
         Divider(color: Colors.black54,height: 1.5,),
-        RaisedButton(child: Text('Live Location',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
+        RaisedButton(child: Text('Track Employees',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
         onPressed: (){
           Navigator.push(
 
@@ -184,19 +190,16 @@ getWidgets(context){
             ),
             SizedBox(width: MediaQuery.of(context).size.width*0.02),
             Container(
-              width: MediaQuery.of(context).size.width*0.25,
-              child:Text('Client',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              width: MediaQuery.of(context).size.width*0.46,
+              child:Text('Current Location',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
 
             SizedBox(height: 50.0,),
-            Container(
-              width: MediaQuery.of(context).size.width*0.22,
-              child:Text('Visit In',textAlign: TextAlign.left,style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
-            ),
+
             SizedBox(height: 50.0,),
             Container(
               width: MediaQuery.of(context).size.width*0.2,
-              child:Text('Visit Out',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
+              child:Text('Distance Travelled',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
           ],
         ),
@@ -209,6 +212,7 @@ getWidgets(context){
               future: getSummary(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+
                   return new ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
@@ -216,6 +220,7 @@ getWidgets(context){
                       itemBuilder: (context, index) {
                         //   double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
                         //   double f_width = MediaQuery.of(context).size.width*1; // screen's 100%
+                        var locationData=getCurrentLocation(snapshot.data[index].empId);
                         return new Column(
                             children: <Widget>[
                               Row(
@@ -240,7 +245,7 @@ getWidgets(context){
                                             Navigator.push(
 
                                               context,
-                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId)),
+                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId,snapshot.data[index].fName)),
                                             );
                                           },
                                         ),
@@ -285,16 +290,16 @@ getWidgets(context){
                                   ),
                                   SizedBox(height: 40.0,),
                                   Container(
-                                    width: MediaQuery.of(context).size.width * 0.23,
+                                    width: MediaQuery.of(context).size.width * 0.46,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment
                                           .start,
                                       children: <Widget>[
                                         InkWell(
-                                          child: Text(snapshot.data[index].client
+                                          child: Text(snapshot.data[index].location
                                               .toString(), style: TextStyle(
                                               color: Colors.black87,
-                                              fontWeight: FontWeight.bold,
+
                                               fontSize: 16.0,
 
                                           ),),
@@ -302,7 +307,7 @@ getWidgets(context){
                                             Navigator.push(
 
                                               context,
-                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId)),
+                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId,snapshot.data[index].fName)),
                                             );
                                           },
                                         ),
@@ -347,7 +352,7 @@ getWidgets(context){
                                   ),
 
                                   Container(
-                                      width: MediaQuery.of(context).size.width * 0.22,
+                                      width: MediaQuery.of(context).size.width * 0.23,
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
@@ -358,81 +363,15 @@ getWidgets(context){
                                             height: 62.0,
                                             child:InkWell(
                                               child: Container(
-                                                  decoration: new BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image: new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: new NetworkImage(snapshot.data[index].inImage)
-                                                      )
+                                                  child: Text(snapshot.data[index].distance+ " km"),
                                                   )),
-                                              onTap: (){
-                                               /*
-                                                Navigator.push(
 
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: org_name)),
-                                                );
-                                              */},
-                                            ),),
+                                            ),
 
                                         ],
                                       )
                                   ),
 
-                                  Container(
-                                      width: MediaQuery.of(context).size.width * 0.22,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                        /*  Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(snapshot.data[index].TimeOut.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
-                                                if(snapshot.data[index].timeindate.toString() != snapshot.data[index].timeoutdate.toString())
-                                                  Text(" +1 \n Day",style: TextStyle(fontSize: 9.0,color: Colors.teal,fontWeight: FontWeight.bold),),
-                                              ]),
-                                          (index == 0 && snapshot.data[index].TimeOut.toString().trim() != '-'  &&  globals.PictureBase64Att != "")?
-                                          Container(
-                                            width: 62.0,
-                                            height: 62.0,
-                                            child:InkWell(
-                                              child: Container(
-                                                  child:  ClipOval(child:Image.memory(base64Decode(globals.PictureBase64Att),height: 100, width: 100, fit: BoxFit.cover,))
-                                              ),
-                                              onTap: (){
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => ImageView.fromImage((globals.PictureBase64Att),org_name)),
-                                                );
-                                              },
-                                            ),
-                                          ):*/Container(
-                                            width: 62.0,
-                                            height: 62.0,
-                                            child:InkWell(
-                                              child: Container(
-                                                  decoration: new BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image: new DecorationImage(
-                                                          fit: BoxFit.fill,
-                                                          image: new NetworkImage(snapshot.data[index].outImage)
-                                                      )
-                                                  )),
-                                              onTap: (){
-                                                /*
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: org_name)),
-                                                );*/
-                                              },
-                                            ),
-                                          ),
-
-                                        ],
-                                      )
-
-                                  ),
                                 ],
 
                               ),
@@ -461,12 +400,94 @@ Future<List<VisitsLT>> getSummary() async {
   print(response.body);
   List responseJson = json.decode(response.body.toString());
 
-  List<VisitsLT> visitList = createVisitList(responseJson);
+  List<VisitsLT> visitList = await createVisitList(responseJson);
   return visitList;
 }
 
+ getCurrentLocation(empid) async {
+  final prefs = await SharedPreferences.getInstance();
+  var result={"address":"","distance":""};
 
-List<VisitsLT> createVisitList(List data){
+  //String empid = prefs.getString('empid') ?? '';
+  print("gggggggssssss");
+  String orgid = prefs.getString('orgid') ?? '';
+  try {
+
+    var value;
+    var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+    await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empid).child("2020-07-08").once().then((data)async {
+
+      //print("Locations found:::"+data.snapshot.value.toString());
+      value=data.value;
+
+    });
+//print("Locations found:::"+value);
+
+    if(value!=null) {
+      var timesMap = new Map<String, dynamic>.from(value);
+      List<Map<String, dynamic>> locationList = List();
+      timesMap.forEach((k, v) => locationList.add({k: v}));
+
+      locationList.sort((a, b) {
+        return DateTime.parse(date + " " + a.keys.first).compareTo(
+            DateTime.parse(date + " " + b.keys.first));
+      });
+
+      print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>" +
+          locationList.length.toString()
+          +
+          locationList.toString() + ">>>" +
+          locationList[locationList.length - 1].toString());
+var time,lastLocation,firstLocation;
+      var map=locationList[locationList.length - 1];
+      map.forEach((k,v){
+        time=k;
+        lastLocation=v;
+      });
+
+     var map1=locationList[0];
+      map1.forEach((k,v){
+
+        firstLocation=v;
+      });
+
+
+
+
+      var addresses = await Geocoder.local.findAddressesFromCoordinates(
+          Coordinates(
+              double.parse(lastLocation["latitude"]), double.parse(lastLocation["longitude"])));
+      var first = addresses.first;
+      //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
+      var streamlocationaddr = "${first.addressLine}";
+      //return streamlocationaddr;
+      var distanceTravelled=0.0;
+
+      distanceTravelled=double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]);
+
+      result["address"]=streamlocationaddr;
+      result["distance"]=distanceTravelled.toString();
+      return result;
+
+    }
+    else{
+      return result;
+    }
+
+   // var snapshot = await FirebaseDatabase.instance.reference().child(
+   //     "Locations").once();
+   // print("data found"+snapshot.value.toString());
+  }catch(Object){
+    print(Object.toString());
+    return result;
+    print("inside catchhhhh");
+   }
+
+}
+
+
+
+Future<List<VisitsLT>> createVisitList(List data)async{
   List<VisitsLT> list = new List();
   print("kjhkjdhkdh"+data.length.toString());
   for (int i = 0; i < data.length; i++) {
@@ -479,7 +500,108 @@ List<VisitsLT> createVisitList(List data){
     String out_time=data[i]["out_time"];
     String client=data[i]["client"]==null?"-":data[i]["client"];
 print((data[i]["outImage"]!=null).toString()+"\n");
-   VisitsLT visit=new VisitsLT(client: client,empId: empId,inImage: inImage,outImage: outImage,fName: fName,lName: lName,in_time: in_time,out_time: out_time);
+
+
+////////////for calculation diatance and location
+
+    final prefs = await SharedPreferences.getInstance();
+    var result={"address":"-","distance":"-"};
+
+    //String empid = prefs.getString('empid') ?? '';
+    print("gggggggssssss");
+    String orgid = prefs.getString('orgid') ?? '';
+    try {
+
+      var value;
+      var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+      await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empId).child(date).once().then((data)async {
+
+        //print("Locations found:::"+data.snapshot.value.toString());
+        value=data.value;
+
+      });
+//print("Locations found:::"+value);
+
+      if(value!=null) {
+        var timesMap = new Map<String, dynamic>.from(value);
+        List<Map<String, dynamic>> locationList = List();
+        timesMap.forEach((k, v) => locationList.add({k: v}));
+
+        locationList.sort((a, b) {
+          return DateTime.parse(date + " " + a.keys.first).compareTo(
+              DateTime.parse(date + " " + b.keys.first));
+        });
+
+        print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>" +
+            locationList.length.toString()
+            +
+            locationList.toString() + ">>>" +
+            locationList[locationList.length - 1].toString());
+        var time,lastLocation,firstLocation;
+        var map=locationList[locationList.length - 1];
+        map.forEach((k,v){
+          time=k;
+          lastLocation=v;
+        });
+
+        var map1=locationList[0];
+        map1.forEach((k,v){
+
+          firstLocation=v;
+        });
+
+
+        print("first l odo:"+((double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]))/1000).toStringAsFixed(2));
+        print("last l odo:"+double.parse(lastLocation["odometer"]).toString());
+
+        var addresses = await Geocoder.local.findAddressesFromCoordinates(
+            Coordinates(
+                double.parse(lastLocation["latitude"]), double.parse(lastLocation["longitude"])));
+        var first = addresses.first;
+        //streamlocationaddr = "${first.featureName} : ${first.addressLine}";
+        var streamlocationaddr = "${first.addressLine}";
+        //return streamlocationaddr;
+        var distanceTravelled=0.0;
+
+        distanceTravelled=((double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]))/1000);
+
+        result["address"]=streamlocationaddr;
+        result["distance"]=distanceTravelled.toStringAsFixed(2);
+       // return result;
+
+      }
+      else{
+       // return result;
+      }
+
+      // var snapshot = await FirebaseDatabase.instance.reference().child(
+      //     "Locations").once();
+      // print("data found"+snapshot.value.toString());
+    }catch(Object){
+      print(Object.toString());
+      //return result;
+      print("inside catchhhhh");
+    }
+
+
+    ////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   VisitsLT visit=new VisitsLT(client: client,empId: empId,inImage: inImage,outImage: outImage,fName: fName,lName: lName,in_time: in_time,out_time: out_time,location: result["address"],distance: result["distance"]);
    list.add(visit);
   }
   print("Listtttttt");

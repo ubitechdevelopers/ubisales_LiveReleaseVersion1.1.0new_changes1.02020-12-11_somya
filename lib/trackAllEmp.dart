@@ -151,7 +151,7 @@ String empId;
     var orgId=prefs.get("orgid");
     final GoogleMapController controller = await _controller.future;
 
-    updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).onChildAdded.listen((data)async {
+    updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgId).onChildAdded.listen((data)async {
      // locationList.insert(0, Locations.fromFireBase(data.snapshot));
       var date=DateTime.now().toString().split(".")[0].split(" ")[0];
       var empId=data.snapshot.key.toString();
