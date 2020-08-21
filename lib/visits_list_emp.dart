@@ -159,7 +159,7 @@ class _VisitListEmp extends State<VisitListEmp> with SingleTickerProviderStateMi
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
+                  child: Container(    
                     color: Colors.white,
                     child: DateTimeField(
                       //dateOnly: true,
