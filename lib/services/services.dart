@@ -25,7 +25,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../home.dart';
 import '../today_attendance_report.dart';
-
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
 class Services {}
 
@@ -366,7 +366,13 @@ appResumedPausedLogic(context,[bool isVisitPage]){
     if(msg=='AppLifecycleState.resumed' )
     {
       print("------------------------------------ App Resumed-----------------------------");
-
+      DateTime now = DateTime.now();
+      if (lastRequestedTemporaryFullAccuracy != null) {
+        Duration dt = lastRequestedTemporaryFullAccuracy.difference(now);
+        if (dt.inSeconds < 10) return;
+      }
+      lastRequestedTemporaryFullAccuracy = now;
+      bg.BackgroundGeolocation.requestTemporaryFullAccuracy("DemoPurpose");
       //initDynamicLinks();
       cameraChannel.invokeMethod("openLocationDialog");
       var serverConnected= await checkConnectionToServer();

@@ -531,7 +531,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
         // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
 
-        // print("token--------------->"+token.toString()+"-------------"+country);
+        print("token--------------->"+token.toString()+"-------------");
       });
 
       _firebaseMessaging.configure(
@@ -2887,10 +2887,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  void startLiveLocationTracking() {
+  void startLiveLocationTracking()async {
 
     HomeViewState tracker=HomeViewState();
     tracker.initState();
+    await tracker.onClickMenu();
     tracker.onClickEnable(true);
     tracker.onClickChangePace();
     //tracker.onEnabledChange(true);
@@ -2912,7 +2913,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     print('aidId' + aid);
     var FakeLocationStatus = 0;
     startLiveLocationTracking();
-    startLiveLocationTracking();
+    //startLiveLocationTracking();
     if(areaStatus == '0'){
       geofence="Outside Fenced Area";
     }else{

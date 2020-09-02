@@ -1,6 +1,7 @@
 import 'package:Shrine/attendance_summary.dart';
 import 'package:firebase_database/firebase_database.dart' as firebaseDb;
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -8,14 +9,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:background_fetch/background_fetch.dart';
 import 'package:http/http.dart' as http;
-
+import 'dart:math';
 import '../app.dart';
 import '../config/env.dart';
 import 'map_view.dart';
 import 'event_list.dart';
 import './util/dialog.dart' as util;
 import './util/test.dart';
-
+import 'package:vector_math/vector_math.dart' as vm;
+import 'util/geospatial.dart';
 import 'shared_events.dart';
 
 // For pretty-printing location JSON
@@ -64,7 +66,32 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
 
     initPlatformState();
   }
+  void onClickMenu() async {
+    // Text a backgroundTask on menu-click.
+    int accuracyAuthorization = await bg.BackgroundGeolocation.requestTemporaryFullAccuracy("DemoPurpose");
+    print("[requestTemporaryFullAccuracy] $accuracyAuthorization");
 
+    try {
+      int status = await bg.BackgroundGeolocation.requestPermission();
+      if (status == bg.ProviderChangeEvent.AUTHORIZATION_STATUS_ALWAYS) {
+        print("[requestPermission] authorized Always: $status");
+      } else if (status == bg.ProviderChangeEvent.AUTHORIZATION_STATUS_WHEN_IN_USE) {
+        print("[requestPermission] authorized WhenInUse: $status");
+      }
+    } catch(error) {
+      print("[requestPermission] DENIED: $error");
+    }
+
+    bg.BackgroundGeolocation.startBackgroundTask().then((int taskId) {
+      print("********* startBackgroundTask: $taskId");
+
+      // Simulate a long-running async task.
+      new Timer(Duration(milliseconds: 250), () {
+        bg.BackgroundGeolocation.stopBackgroundTask(taskId);
+      });
+
+    });
+  }
   void initPlatformState() async {
     SharedPreferences prefs = await _prefs;
     String orgname = "ubi222";
@@ -118,13 +145,14 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
         stopTimeout: 1,
         // HTTP & Persistence
         autoSync: true,
+        locationAuthorizationRequest: 'Always',
         // Application options
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
         heartbeatInterval: 60,
 
-    )).then((bg.State state) {
+    )).then((bg.State state) async{
       print('[ready] ${state.toMap()}');
 
       if (state.schedule.isNotEmpty) {
@@ -173,7 +201,17 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
       }
       prefs.setInt("fetch-count", ++count);
       print('[BackgroundFetch] count: $count');
-
+      if (taskId == 'flutter_background_fetch') {
+        // Test scheduling a custom-task in fetch event.
+        BackgroundFetch.scheduleTask(TaskConfig(
+            taskId: "com.transistorsoft.customtask",
+            delay: 5000,
+            periodic: false,
+            forceAlarmManager: true,
+            stopOnTerminate: false,
+            enableHeadless: true
+        ));
+      }
       BackgroundFetch.finish(taskId);
     });
   }
@@ -181,7 +219,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
   void onClickEnable(enabled) async {
     //bg.BackgroundGeolocation.playSound(util.Dialog.getSoundId("BUTTON_CLICK"));
     if (enabled) {
-      dynamic callback = (bg.State state) {
+      dynamic callback = (bg.State state)async  {
         print('[start] success: $state');
         //if(mounted)
         //setState(() {
@@ -256,10 +294,33 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
   // Event handlers
   //
 
-  void _onLocation(bg.Location location) {
 
+  Future<double> bearingBetween(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+
+    var startLongtitudeRadians = vm.radians(startLongitude);
+    var startLatitudeRadians = vm.radians(startLatitude);
+
+    var endLongtitudeRadians = vm.radians(endLongitude);
+    var endLattitudeRadians = vm.radians(endLatitude);
+
+    var y = sin(endLongtitudeRadians - startLongtitudeRadians) *
+        cos(endLattitudeRadians);
+    var x = cos(startLatitudeRadians) * sin(endLattitudeRadians) -
+        sin(startLatitudeRadians) *
+            cos(endLattitudeRadians) *
+            cos(endLongtitudeRadians - startLongtitudeRadians);
+
+    return Future.value(vm.degrees(atan2(y, x)));
+  }
+  var lastLati=0.0,lastLongi=0.0;
+  void _onLocation(bg.Location location) async{
+    if (location.sample) { return; }
     var currDate=DateTime.now();
 
+    print("onlocation..........................");
+    print(await bearingBetween(lastLati, lastLongi, double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString())));
+    print(await Geospatial.getBearing(LatLng(lastLati, lastLongi), LatLng(double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString()))));
     //database.setPersistenceCacheSizeBytes(10000);
 
    // if(location.coords.accuracy<10)
@@ -323,8 +384,20 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
     });
   }
 
-  void _onProviderChange(bg.ProviderChangeEvent event) {
+  void _onProviderChange(bg.ProviderChangeEvent event)async  {
     print('[${bg.Event.PROVIDERCHANGE}] - $event');
+    if (event.accuracyAuthorization == bg.ProviderChangeEvent.ACCURACY_AUTHORIZATION_REDUCED) {
+      // Supply "Purpose" key from Info.plist as 1st argument.
+      bg.BackgroundGeolocation.requestTemporaryFullAccuracy("DemoPurpose").then((int accuracyAuthorization) {
+        if (accuracyAuthorization == bg.ProviderChangeEvent.ACCURACY_AUTHORIZATION_FULL) {
+          print("[requestTemporaryFullAccuracy] GRANTED:  $accuracyAuthorization");
+        } else {
+          print("[requestTemporaryFullAccuracy] DENIED:  $accuracyAuthorization");
+        }
+      }).catchError((error) {
+        print("[requestTemporaryFullAccuracy] FAILED TO SHOW DIALOG: $error");
+      });
+    }
     if(mounted)
     setState(() {
       events.insert(0, Event(bg.Event.PROVIDERCHANGE, event, event.toString()));

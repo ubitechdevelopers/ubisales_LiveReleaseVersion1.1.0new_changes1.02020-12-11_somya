@@ -13,8 +13,11 @@
 // limitations under the License.
 
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:Shrine/location_tracking/util/geospatial.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:Shrine/app.dart';
@@ -36,6 +39,12 @@ import 'services/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:background_fetch/background_fetch.dart';
+import 'package:vector_math/vector_math.dart' as vm;
+
+
+
+
+
 JsonEncoder encoder = new JsonEncoder.withIndent("     ");
 
 void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
@@ -129,7 +138,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
 
 
 void main(){
-
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
       new MaterialApp(
     home: new MyApp(),
@@ -287,7 +296,33 @@ class _MyAppState extends State<MyApp> {
   // Event handlers
   //
 
+  Future<double> bearingBetween(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+
+    var startLongtitudeRadians = vm.radians(startLongitude);
+    var startLatitudeRadians = vm.radians(startLatitude);
+
+    var endLongtitudeRadians = vm.radians(endLongitude);
+    var endLattitudeRadians = vm.radians(endLatitude);
+
+    var y = sin(endLongtitudeRadians - startLongtitudeRadians) *
+        cos(endLattitudeRadians);
+    var x = cos(startLatitudeRadians) * sin(endLattitudeRadians) -
+        sin(startLatitudeRadians) *
+            cos(endLattitudeRadians) *
+            cos(endLongtitudeRadians - startLongtitudeRadians);
+
+    return Future.value(vm.degrees(atan2(y, x)));
+  }
+  var lastLati=0.0,lastLongi=0.0;
   void _onLocation(bg.Location location) async{
+
+    if (location.sample) { return; }
+
+    print("onlocation..........................");
+    print(await bearingBetween(lastLati, lastLongi, double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString())));
+    print(await Geospatial.getBearing(LatLng(lastLati, lastLongi), LatLng(double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString()))));
+
     print('[location] - $location');
     firebaseDb.FirebaseDatabase database;
 

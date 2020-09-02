@@ -32,7 +32,7 @@ double pinPillPosition = -470;
 PinInformation currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: 'http://ubiattendance.ubihrm.com/assets/img/avatar.png', location: LatLng(0, 0), client: '',description: '', labelColor: Colors.grey,in_time: '',out_time: '');
 PinInformation sourcePinInfo;
 PinInformation destinationPinInfo;
-var cameraSource=LatLng(26.19675, 78.1970424);
+var cameraSource=LatLng(double.parse(assign_lat.toString()), double.parse(assign_long.toString()));
 
 
 class TrackEmp extends StatefulWidget {
@@ -367,7 +367,16 @@ print("marker added............");
   }
 
   var formatter = new intl.DateFormat('dd-MMM-yyyy');
-
+  Future<ui.Image> loadImage() async {
+    ByteData data = await rootBundle.load("assets/needle.jpg");
+    if (data == null) {
+      print("data is null");
+    } else {
+      var codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      var frame = await codec.getNextFrame();
+      return frame.image;
+    }
+  }
 
 
   @override
@@ -400,7 +409,25 @@ print("marker added............");
       body: new ListView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
+    /*  Container(
+        constraints: BoxConstraints.expand(),
+      child: FutureBuilder(
+        future: loadImage(),
 
+        builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
+          switch(snapshot.connectionState) {
+            case ConnectionState.waiting :
+              return Center(child: Text("loading..."),);
+            default:
+              if (snapshot.hasError) {
+                return Center(child: Text("error: ${snapshot.error}"),);
+              } else {
+                return ImagePainter(image: snapshot.data);
+              }
+          }
+        },
+      ),
+    ),*/
           Container(
             color: Colors.white,
             child: DateTimeField(
@@ -591,12 +618,16 @@ print("marker added............");
     //onDateChanged(today1.text);
 
 
-    setMapPins();
+    //setMapPins();
 
     updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data) async {
       // locationList.insert(0, Locations.fromFireBase(data.snapshot));
       print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>"+data.snapshot.value.toString());
       print(latlng.toString());
+
+
+
+
       //  print('hjjghgjgjgjhgj'+data.snapshot.value['longitude1'].toString());
       var currentLoc=Locations.fromFireBase(data.snapshot);
 
@@ -1092,4 +1123,61 @@ class Utils {
     ]
   }
 ]''';
+}
+
+
+class ImagePainter extends StatefulWidget {
+
+  ui.Image image;
+
+  ImagePainter({this.image}) : assert(image != null);
+  @override
+  State<StatefulWidget> createState() {
+    return ImagePainterState();
+  }
+}
+
+
+class ImagePainterState extends State<ImagePainter> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: CustomImagePainter(image: widget.image),
+    );
+  }
+}
+
+class CustomImagePainter extends CustomPainter {
+
+  ui.Image image;
+
+  CustomImagePainter({this.image}): assert(image != null);
+
+  @override
+  void paint(ui.Canvas canvas, ui.Size size) {
+    // TODO: implement paint
+    Offset imageSize = Offset(image.width.toDouble(), image.height.toDouble());
+    Paint paint = new Paint()
+      ..color = Colors.green;
+    // canvas.drawCircle(size.center(Offset.zero), 20.0, paint);
+
+    print(size);
+    canvas.save();
+    var scale = size.width / image.width;
+    canvas.scale(scale);
+    // canvas.translate(image.width/2 * scale, image.height/2 * scale);
+    // canvas.rotate(45 * PI /180);
+    // canvas.translate(- image.width /2/ scale, - image.height/2/scale);
+    canvas.drawImage(image, Offset.zero, paint);
+
+
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+
 }

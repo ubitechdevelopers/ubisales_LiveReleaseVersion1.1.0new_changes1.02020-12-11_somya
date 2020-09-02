@@ -77,7 +77,7 @@ dependencies:
   firebase_ml_vision: ^0.6.0+2
   screen: 0.0.5
   audioplayers: 0.15.1
-  flutter_background_geolocation: 1.7.0
+  flutter_background_geolocation: 1.10.0+1
   latlong: 0.6.1
   unicorndial: 1.1.5
   flutter_map: 0.8.2
@@ -134,6 +134,8 @@ flutter:
       - assets/facerecog.png
       - assets/icons8-camera-50.png
       - assets/face-recognition-gif.gif
+      - assets/needle.jpg
+      - assets/current_loc.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
