@@ -346,7 +346,7 @@ class _Bulkatt extends State<Bulkatt> {
                                   from = new DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]),00,00);
                                   if (to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
-                                        "'s timein is greater than current time...");
+                                        "'s Time In is greater than current time...");
                                     return null;
                                   }
                                 }
@@ -355,7 +355,7 @@ class _Bulkatt extends State<Bulkatt> {
                                   from = new DateTime(now.year, now.month, now.day, int.parse(arr[0]), int.parse(arr[1]),00,00);
                                   if (to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
-                                        "'s timeout is greater than current time...");
+                                        "'s Time Out is greater than current time...");
                                     return null;
                                   }
                                 }
@@ -370,7 +370,7 @@ class _Bulkatt extends State<Bulkatt> {
                                   to = new DateTime(2001, 01, 01, int.parse(arr1[0]), int.parse(arr1[1]), 00, 00);
                                   if (to.isBefore(from)) {
                                     showInSnackBar(_saved[i].Name +
-                                        "'s timein is greater than timeout...");
+                                        "'s Time In is greater than Time Out...");
                                     return null;
                                   }
                                 }
@@ -914,7 +914,10 @@ class _Bulkatt extends State<Bulkatt> {
                                               context: context,
                                               initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                                             );
-                                            return DateTimeField.convert(time);
+                                             if(time==null)
+                                              return null;
+                                            else
+                                              return DateTimeField.convert(time);
                                           },
                                           onChanged: (t) => setState(() {
                                             print('time');
@@ -943,7 +946,7 @@ class _Bulkatt extends State<Bulkatt> {
                                       ),*/
                                           validator: (time) {
                                             if (time == null && emplist[index].csts==1) {
-                                              return 'Please enter TimeIn';
+                                              return 'Please enter Time In';
                                             }
                                           },
                                         ),
@@ -970,7 +973,10 @@ class _Bulkatt extends State<Bulkatt> {
                                               context: context,
                                               initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
                                             );
-                                            return DateTimeField.convert(time);
+                                            if(time==null)
+                                              return null;
+                                            else
+                                              return DateTimeField.convert(time);
                                           },
                                           //editable: false,
                                           //controller: _to,
@@ -1258,7 +1264,7 @@ class _Bulkatt extends State<Bulkatt> {
     bool issave = false;
     var prefs = await SharedPreferences.getInstance();
     prefix0.showAppInbuiltCamera =
-        prefs.getBool("showAppInbuiltCamera") ?? false;
+        prefs.getBool("showAppInbuiltCamera") ?? true;
     issave = prefix0.showAppInbuiltCamera
         ? await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context)
         : await saveImage.saveTimeInOutImagePickerGroupAttFaceCamera(mk, context);

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -69,6 +70,43 @@ class Home{
         String newpwd = timeinoutMap['pwd'].toString();
         String password_sts = timeinoutMap['password_sts'].toString(); //somya
         String changepasswordStatus = timeinoutMap['admin_password_sts'].toString();
+        print('beforepushnotification');
+
+        //////////////////// Push Notification Status ///////////////////////
+
+        UnderTime = int.parse(timeinoutMap['UnderTime'])??0;
+        Visit = int.parse(timeinoutMap['Visit'])??0;
+        OutsideGeofence=int.parse(timeinoutMap['OutsideGeofence'])??0;
+        FakeLocation=int.parse(timeinoutMap['FakeLocation'])??0;
+        FaceIdReg=int.parse(timeinoutMap['FaceIdReg'])??0;
+        FaceIdDisapproved=int.parse(timeinoutMap['FaceIdDisapproved'])??0;
+        SuspiciousSelfie = int.parse(timeinoutMap['SuspiciousSelfie'])??0;
+        SuspiciousDevice = int.parse(timeinoutMap['SuspiciousDevice'])??0;
+        DisapprovedAtt = int.parse(timeinoutMap['DisapprovedAtt'])??0;
+        AttEdited = int.parse(timeinoutMap['AttEdited'])??0;
+        ChangedPassword = int.parse(timeinoutMap['ChangedPassword'])??0;
+        TimeOffStartStatus = int.parse(timeinoutMap['TimeOffStart'])??0;
+        TimeOffEndStatus = int.parse(timeinoutMap['TimeOffEnd'])??0;
+
+        UnderTimeMessage = timeinoutMap['UnderTimeMessage'].toString();
+        VisitMessage = timeinoutMap['VisitMessage'].toString();
+        OutsideGeofenceMessage=timeinoutMap['OutsideGeofenceMessage'].toString();
+        FakeLocationMessage=timeinoutMap['FakeLocationMessage'].toString();
+        FaceIdRegMessage=timeinoutMap['FaceIdRegMessage'].toString();
+        FaceIdDisapprovedMessage=timeinoutMap['FaceIdDisapprovedMessage'].toString();
+        SuspiciousSelfieMessage = timeinoutMap['SuspiciousSelfieMessage'].toString();
+        SuspiciousDeviceMessage = timeinoutMap['SuspiciousDeviceMessage'].toString();
+        DisapprovedAttMessage = timeinoutMap['DisapprovedAttMessage'].toString();
+        AttEditedMessage = timeinoutMap['AttEditedMessage'].toString();
+        ChangedPasswordMessage = timeinoutMap['ChangedPasswordMessage'].toString();
+        TimeOffStartStatusMessage = timeinoutMap['TimeOffStartStatusMessage'].toString();
+        TimeOffEndStatusMessage = timeinoutMap['TimeOffEndStatusMessage'].toString();
+
+
+
+        //////////////////// Push Notification Status ///////////////////////
+
+        print('afterpushnotification');
 
         String org_country = timeinoutMap['orgcountry'].toString();
         prefs.setString('countrycode',timeinoutMap['countrycode']);
@@ -147,6 +185,7 @@ class Home{
         prefs.setString('CountryName', timeinoutMap['CountryName']);
         globals.globalCountryTopic=timeinoutMap['CountryName'].toString();
         globals.globalOrgTopic= timeinoutMap['OrgTopic'].toString();
+        globals.globalEmployeeTopic= timeinoutMap['EmployeeTopic'].toString();
         print('countru name'+timeinoutMap['CountryName'].toString());
 
         prefs.setString('OutPushNotificationStatus', timeinoutMap['OutPushNotificationStatus']);
@@ -167,8 +206,48 @@ class Home{
           print("logout called");
           return;
         }*/
+        String orgid = prefs.getString('orgdir') ?? '';
+       // if(orgid =='10932') { // this calculation only for welspun
+          List areaids = json.decode(timeinoutMap['areaIds']);
+          double calculateDistance(lat1, lon1, lat2, lon2) {
+            var p = 0.017453292519943295;
+            var c = cos;
+            var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+                c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+            return 12742 * asin(sqrt(a));
+          }
+          double totalDistance = 0.0;
+          double lat = globals.assign_lat;
+          double long = globals.assign_long;
+          for (var i = 0; i < areaids.length; i++) {
+            double user_lat = double.parse(areaids[i]['lat']);
+            double user_long = double.parse(areaids[i]['long']);
+            globals.assign_radius = double.parse(areaids[i]['radius']);
+
+            double Temp_totalDistance = calculateDistance(
+                user_lat, user_long, lat, long);
+            if (i == 0) {
+              totalDistance = Temp_totalDistance;
+              globals.areaId = int.parse(areaids[i]['id']);
+              globals.assigned_lat = double.parse(areaids[i]['lat']);
+              globals.assigned_long = double.parse(areaids[i]['long']);
+              globals.assign_radius = double.parse(areaids[i]['radius']);
+            }
+            else {
+              if (totalDistance > Temp_totalDistance) {
+                totalDistance = Temp_totalDistance;
+                globals.areaId = int.parse(areaids[i]['id']);
+                print("Area Id :"+globals.areaId.toString());
+                globals.assigned_lat = double.parse(areaids[i]['lat']);
+                globals.assigned_long = double.parse(areaids[i]['long']);
+                globals.assign_radius = double.parse(areaids[i]['radius']);
+              }
+            }
+          }
+      //  }
         return timeinoutMap['act'];
-      } else {
+      }
+      else {
         print('8888');
         return "Poor network connection";
       }

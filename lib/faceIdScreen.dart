@@ -179,7 +179,7 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
                   ),*/
                         ]),
                       ),*/
-                      SizedBox(height: MediaQuery.of(context).size.height * .02),
+                     // SizedBox(height: MediaQuery.of(context).size.height * .02),
 /*
                       Text(fname.toUpperCase() + " " + lname.toUpperCase(),
 
@@ -190,7 +190,20 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
                             letterSpacing: 3.0,
                           )),
 */
-                      SizedBox(height: MediaQuery.of(context).size.height * .24),
+
+                    SizedBox(height: MediaQuery.of(context).size.height * .08),
+                    Container(
+                    child: Column(children: <Widget>[
+                      Text('Hi '+fname+'!',style: TextStyle(fontSize: 18.0),),
+                      SizedBox(height: 8.0,),
+                      Text('Please Register your Face ID',style: TextStyle(fontSize: 18.0),),
+
+                      ],),
+
+                     ),
+
+                      SizedBox(height: MediaQuery.of(context).size.height * .1),
+
 
                       Image.asset("assets/face-recognition-gif.gif",width: MediaQuery.of(context).size.width * .4,),
                       SizedBox(height: MediaQuery.of(context).size.height * .06),
@@ -223,6 +236,7 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
     String countryTopic=prefs.get('CountryName')??'admin';
     String orgTopic=prefs.get('OrgTopic')??'admin';
     String currentOrgStatus=prefs.get('CurrentOrgStatus')??'admin';
+    String employeeTopic = prefs.getString("EmployeeTopic") ?? '';
     prefs.remove('response');
     prefs.remove('fname');
     prefs.remove('lname');
@@ -266,6 +280,10 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
     prefs.remove('attendanceNotMarkedButEmpAdded');
     prefs.remove('tool');
     prefs.remove('companyFreshlyRegistered');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('showPhoneCamera');
+
+    _firebaseMessaging.unsubscribeFromTopic(employeeTopic.replaceAll(' ', ''));
 
     _firebaseMessaging.unsubscribeFromTopic("admin");
     _firebaseMessaging.unsubscribeFromTopic("employee");

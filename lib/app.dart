@@ -37,8 +37,7 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='5.3.3',new_ver='5.3.3';
-  String updatestatus = "0";
+  String cur_ver='',new_ver='1.0.2'; String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override
   void initState() {

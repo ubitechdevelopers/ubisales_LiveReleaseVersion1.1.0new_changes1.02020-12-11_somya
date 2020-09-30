@@ -37,14 +37,12 @@ String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/"
 
 
 
-
 /*
+
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://ubiattendance.zentylpro.com/index.php/Att_services/";
 */
-
-
 
 /*
 String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
@@ -92,7 +90,7 @@ bool fakeLocationDetected=false;
 bool showTimeOutNotification=true;
 bool selectimg = true;
 bool showTimeInNotification=true;
-bool showAppInbuiltCamera=false;
+bool showAppInbuiltCamera=true;
 bool showPhoneCamera=false;
 bool timeSpoofed=false;
 bool globalCameraOpenedStatus=false;
@@ -125,11 +123,14 @@ String shiftId='';
 var timeoffRunning=false;
 DateTime lastRequestedTemporaryFullAccuracy;
 
-String appVersion='5.3.3';
+String appVersion='1.0.2';
+int TimeOffStartStatus=0,TimeOffEndStatus=0,UnderTime=0,Visit = 0,OutsideGeofence=0,FakeLocation=0,FaceIdReg=0,FaceIdDisapproved=0,SuspiciousSelfie = 0, SuspiciousDevice = 0, DisapprovedAtt = 0 , AttEdited = 0, ChangedPassword = 0;
+
+String TimeOffStartStatusMessage='',TimeOffEndStatusMessage='',UnderTimeMessage='',VisitMessage = '',OutsideGeofenceMessage='',FakeLocationMessage='',FaceIdRegMessage='',FaceIdDisapprovedMessage='',SuspiciousSelfieMessage = '', SuspiciousDeviceMessage = '', DisapprovedAttMessage = '' , AttEditedMessage = '', ChangedPasswordMessage = '';
+String globalEmployeeTopic='';
 
 
-
-String geofence='Not Calculated.';
+String geofence='';
 
 /*
 int total_dept = 0;

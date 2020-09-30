@@ -2912,7 +2912,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //  sl.startStreaming(5);
     print('aidId' + aid);
     var FakeLocationStatus = 0;
-    startLiveLocationTracking();
+
     //startLiveLocationTracking();
     if(areaStatus == '0'){
       geofence="Outside Fenced Area";
@@ -3018,7 +3018,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
           if(locationTrackingAddon=='1'){
-           // startLiveLocationTracking();
+            startLiveLocationTracking();
           }
 
           print("This is time in block " + act1);
@@ -3036,7 +3036,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         }
         else{
-         // stopLiveLocationTracking();
+
+
+          stopLiveLocationTracking();
           print("This is time timeout block"+ act1);
           var prefs = await SharedPreferences.getInstance();
 

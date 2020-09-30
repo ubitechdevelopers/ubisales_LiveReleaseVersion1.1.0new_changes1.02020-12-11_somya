@@ -202,7 +202,7 @@ class _FaceIdList extends State<FaceIdList> with SingleTickerProviderStateMixin 
                       labelText: 'Visit Feedback ', hintText: 'Visit Feedback (Optional)'),
                 ),
               ),*/
-              Text('Disapprove?'
+              Text('Disapprove?',style: TextStyle(color: Colors.black,fontSize: 18.0)
               ),
               SizedBox(height: 4.0,),
 
@@ -699,7 +699,7 @@ print('visit out called for visit id:'+visit_id);
                                       width: MediaQuery.of(context).size.width*1,
                                       color: appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                                      child:Text("No one is present on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                      child:Text("No registered face found ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
                                   )
                               );
@@ -828,7 +828,7 @@ print('visit out called for visit id:'+visit_id);
                                       width: MediaQuery.of(context).size.width*1,
                                       color:appcolor.withOpacity(0.1),
                                       padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                                      child:Text("No one is absent on this date ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                                      child:Text("No data found ",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                                     ),
                                   )
                               );

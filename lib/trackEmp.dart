@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:Shrine/visits_list_emp.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -106,6 +108,8 @@ class _TrackEmpState extends State<TrackEmp>  with SingleTickerProviderStateMixi
 String empId,empName;
 
   var _scaffoldKey;
+
+  String kms="0.0";
   _TrackEmpState(this.empId,this.empName);
   @override
   void initState() {
@@ -502,6 +506,8 @@ print("marker added............");
         child:Stack(
           children: <Widget>[
 
+
+
             GoogleMap(
               myLocationEnabled: false,
               compassEnabled: true,
@@ -524,7 +530,20 @@ print("marker added............");
             MapPinPillComponent(
                 pinPillPosition: pinPillPosition,
                 currentlySelectedPin: currentlySelectedPin
-            )
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+
+              child: Container(
+                color: buttoncolor.withOpacity(0.7),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(kms,style: TextStyle(color: Colors.black45),),
+                ),
+              ),
+
+            ),
 
           ],
 
@@ -600,6 +619,88 @@ print("marker added............");
   }
   GoogleMapController controller2;
 
+  Future<Uint8List> getBytesFromCanvas(int width, int height) async  {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    final Radius radius = Radius.circular(width/2);
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(0.0, 0.0, width.toDouble(),  height.toDouble()),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        paint);
+    countOfPositionMarker++;
+    TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = TextSpan(
+      text: countOfPositionMarker.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white,fontWeight: FontWeight.bold),
+    );
+
+    painter.layout();
+    painter.paint(
+        canvas,
+        Offset((width * 0.5) - painter.width * 0.5,
+            (height * .5) - painter.height * 0.5));
+    final img = await pictureRecorder.endRecording().toImage(width, height);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data.buffer.asUint8List();
+  }
+
+
+
+
+  int countOfPositionMarker=0;
+  Future<BitmapDescriptor> getClusterMarker(
+      int clusterSize,
+      Color clusterColor,
+      Color textColor,
+      int width,
+      ) async {
+    final PictureRecorder pictureRecorder = PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = clusterColor;
+    final TextPainter textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+    );
+
+
+
+    final double radius = width / 2;
+    canvas.drawCircle(
+      Offset(radius, radius),
+      radius,
+      paint,
+    );
+    textPainter.text = TextSpan(
+      text: clusterSize.toString(),
+      style: TextStyle(
+        fontSize: radius - 5,
+        fontWeight: FontWeight.bold,
+        color: textColor,
+      ),
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+        radius - textPainter.width / 2,
+        radius - textPainter.height / 2,
+      ),
+    );
+    final image = await pictureRecorder.endRecording().toImage(
+      radius.toInt() * 2,
+      radius.toInt() * 2,
+    );
+    final data = await image.toByteData(format: ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(data.buffer.asUint8List());
+  }
+
+  var startM=0.0,endM=0.0;
+  var start=0.0,end=0.0;
   void onMapCreated(GoogleMapController controller)async {
 
     controller.setMapStyle(Utils.mapStyles);
@@ -620,10 +721,13 @@ print("marker added............");
 
     //setMapPins();
 
+
+    var p=97;
+
+    var ii=0;
     updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data) async {
       // locationList.insert(0, Locations.fromFireBase(data.snapshot));
-      print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>"+data.snapshot.value.toString());
-      print(latlng.toString());
+
 
 
 
@@ -641,17 +745,82 @@ print("marker added............");
           zoom: 17.0,
         ),
       ));
+      end= double.parse(currentLoc.odometer);
+
+
+
+      print(latlng.toString());
+
+
+      if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0)){
+
+        start=end;
+        final Uint8List markerIcon = await getBytesFromCanvas(50,50);
+        p++;
+        //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+        //add position number marker
+
+
+
+        // Future.delayed(Duration(seconds: 2),(){
+        setState(() {
+
+          if(ii==0){
+            startM=double.parse(currentLoc.odometer);
+            print("current loc odo"+startM.toString());
+          }
+
+          endM=double.parse(currentLoc.odometer);
+          print("end loc odo"+startM.toString());
+
+          kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+          print("sgksshhskhs   "+kms);
+          // if(endM-startM<0)
+          //  kms='0.0';
+        });
+        //});
+
+
+        ii++;
+
+
+        var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+              title: data.snapshot.key,
+
+          ),
+        );
+       Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+
+      }
+
+
 
       setState(() {
-        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
-        _polylines.add(Polyline(
-          polylineId: PolylineId("1"),
-          visible: true,
-          //latlng is List<LatLng>
+        if(double.parse(currentLoc.accuracy)<20.0)
+        {
+          latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+          _polylines.add(Polyline(
+            polylineId: PolylineId("1"),
+            visible: true,
+            //latlng is List<LatLng>
 
-          points: latlng,
-          color: Colors.blue,
-        ));
+            points: latlng,
+            color: Colors.blue,
+          ));
+        }
+
       });
 
     });
@@ -852,17 +1021,70 @@ print("marker added............");
       _markers.clear();
 
     });
+    var start=0.0,end=0.0;
+    var ii=0;
+
     updates = FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(date2).onChildAdded.listen((data) {
       // locationList.insert(0, Locations.fromFireBase(data.snapshot));
       print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>"+data.snapshot.value.toString());
       print(latlng.toString());
+
       //  print('hjjghgjgjgjhgj'+data.snapshot.value['longitude1'].toString());
       var currentLoc=Locations.fromFireBase(data.snapshot);
-
+      end=double.parse(currentLoc.odometer);
       //  setState(() {
       // create a Polyline instance
       // with an id, an RGB color and the list of LatLng pairs
+      var p=0;
+      /*
+      if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0)){
 
+        start=end;
+        final Uint8List markerIcon = await getBytesFromCanvas(50,50);
+        p++;
+        //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+        //add position number marker
+
+        var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+
+      }*/
+
+      setState(() {
+
+        if(ii==0){
+          startM=double.parse(currentLoc.odometer);
+          print("current loc odo"+startM.toString());
+        }
+
+        endM=double.parse(currentLoc.odometer);
+        print("end loc odo"+startM.toString());
+
+        kms=((endM-startM)/1000).toStringAsFixed(2)+" Kms";
+        print("sgksshhskhs   "+kms);
+        // if(endM-startM<0)
+        //  kms='0.0';
+      });
+      //});
+
+
+      ii++;
 
       controller.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -892,6 +1114,7 @@ print("marker added............");
       print('polylines>>>>>>>>>>>>');
       print(_polylines);
       setState(() {
+        if(double.parse(currentLoc.accuracy)<20.0)
         latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
         _polylines.add(Polyline(
           polylineId: PolylineId("1"),

@@ -594,7 +594,7 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Punched Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
@@ -641,12 +641,12 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Location and Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Punched Visits',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('Track live location and visits of employees ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('List of Punched Visits ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],
@@ -687,12 +687,12 @@ class _Reports extends State<Reports> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              child: Text('Outside the fence',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                              child: Text('Outside Geofence',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Container(
-                                child: Text('Outside the Geo Fence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                                child: Text('Outside the Geofence',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                             ),
                           ),
                         ],

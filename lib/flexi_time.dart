@@ -415,7 +415,7 @@ class _Flexitime extends State<Flexitime> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+                'Kindly enable location excess from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -685,7 +685,7 @@ class _Flexitime extends State<Flexitime> {
     } else {
       return Column(children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Kindly enable location excess from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -796,7 +796,7 @@ class _Flexitime extends State<Flexitime> {
           print('<<****************************');
 
           var prefs= await SharedPreferences.getInstance();
-          prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+          prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
           // Navigator.of(context, rootNavigator: true).pop();
           prefix0.showAppInbuiltCamera?
           saveImage.saveFlexiOutAppCamera(empid,prefix0.globalstreamlocationaddr,fid.toString(),prefix0.assign_lat,prefix0.assign_long,orgid,FakeLocationStatus,context)
@@ -962,7 +962,7 @@ print('visit out called for visit id:'+visit_id);
       });
 
       var prefs= await SharedPreferences.getInstance();
-      prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
       issave = prefix0.showAppInbuiltCamera?await saveImage.saveFlexiAppCamera(mk,context): await saveImage.saveFlexi(mk,context);
       ////print(issave);
       if (issave) {
@@ -981,7 +981,7 @@ print('visit out called for visit id:'+visit_id);
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          content: new Text("Attendance marked successfully!"),
+          content: new Text("Flexi Attendance marked successfully!"),
         )
         );
         Navigator.push(

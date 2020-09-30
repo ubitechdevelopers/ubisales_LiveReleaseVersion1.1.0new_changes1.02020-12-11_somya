@@ -13,6 +13,7 @@ import 'package:Shrine/services/services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -393,7 +394,7 @@ var FakeLocationStatus=0;
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+                'Kindly enable location excess from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -531,7 +532,9 @@ var FakeLocationStatus=0;
 
   }
   getwidget(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
+    print('insidegetwidgetpunchvisit');
+    print(addrloc);
+    if (addrloc != "PermissionStatus.deniedNeverAsk" && globalstreamlocationaddr!='Location not fetched.') {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -608,7 +611,7 @@ var FakeLocationStatus=0;
     } else {
       return Column(children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Kindly enable location excess from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -667,6 +670,12 @@ var FakeLocationStatus=0;
     MarkVisit mk = new MarkVisit(
         empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
     /* mk1 = mk;*/
+    var prefs = await SharedPreferences.getInstance();
+    var orgTopic = prefs.getString("OrgTopic") ?? '';
+    var eName = prefs.getString('fname') ?? 'User';
+    String topic = orgTopic+'PushNotifications';
+    var formatter = new DateFormat('HH:mm');
+    var datenew= formatter.format(DateTime.now());
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
@@ -680,10 +689,27 @@ var FakeLocationStatus=0;
         act1 = "";
       });
       var prefs= await SharedPreferences.getInstance();
-      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      var employeeTopic = prefs.getString("EmployeeTopic") ?? '';
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
+        if(Visit==9|| Visit==11||Visit==13|| Visit==15) {
+          sendPushNotification(
+              eName + ' has punched Visit for ' + client + ' at ' + datenew,
+              '',
+              '(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
+          print('(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
+        }
+        /*
+        if(Visit==10 || Visit==11) {
+          sendPushNotification(' Punched Visit for ' + client + ' at ' + datenew,
+              '',
+              '(\'' + employeeTopic + '\' in topics)');
+          print('(\'' + employeeTopic + '\' in topics)');
+        }
+
+         */
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(

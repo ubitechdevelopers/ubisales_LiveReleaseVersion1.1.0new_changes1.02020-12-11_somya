@@ -311,6 +311,8 @@ class _AddEmployee extends State<AddEmployee> {
   String country = "0#";
   List<Map> shiftList;
 
+  bool trackLocation=false;
+
   // List<Map> statusList= [{"id":"1","name":"Admin"},{"id":"0","name":"User"}];
 
   @override
@@ -582,7 +584,8 @@ class _AddEmployee extends State<AddEmployee> {
                             shift,
                             deptind,
                             desgind,
-                            shiftind
+                            shiftind,
+                            trackLocation
                         ).then((res) async{
                           //showInSnackBar(res.toString());
                           //   showInSnackBar('Employee registeed Successfully');
@@ -893,6 +896,24 @@ class _AddEmployee extends State<AddEmployee> {
                               }
                             },
 
+                          )),
+
+                    ),
+                    SizedBox(height: 15.0),
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          child: CheckboxListTile(
+                            title: Text("Track location(Starts after Time is punched)"),
+                            value: trackLocation,
+                            onChanged: (newValue) {
+                              setState(() {
+                                trackLocation = newValue;
+                              });
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
                           )),
 
                     ),

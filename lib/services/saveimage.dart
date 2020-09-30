@@ -120,6 +120,7 @@ class SaveImage {
       File imagei = null;
       var isNextDayAWorkingDay=0;
       var prefs=await SharedPreferences.getInstance();
+      var eName = prefs.getString('fname') ?? 'User';
       isNextDayAWorkingDay=prefs.getInt("isNextDayAWorkingDay")??0;
 
       imageCache.clear();
@@ -196,7 +197,9 @@ class SaveImage {
             "devicenamebrand":globals.devicenamebrand,
             "city": city,
             "appVersion": globals.appVersion,
-            "geofence": globals.geofence
+            "geofence": globals.geofence,
+            "globalOrgTopic": globals.globalOrgTopic,
+            "name": eName
           });
           print(formData);
           Response<String> response1;
@@ -271,7 +274,9 @@ class SaveImage {
           "devicenamebrand":globals.devicenamebrand,
           "city": city,
           "appVersion": globals.appVersion,
-          "geofence": globals.geofence
+          "geofence": globals.geofence,
+          "globalOrgTopic": globals.globalOrgTopic,
+          "name": eName
           // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -613,6 +618,7 @@ class SaveImage {
       File imagei = null;
       var isNextDayAWorkingDay=0;
       var prefs=await SharedPreferences.getInstance();
+      var eName = prefs.getString('fname') ?? 'User';
       isNextDayAWorkingDay=prefs.getInt("isNextDayAWorkingDay")??0;
 
       imageCache.clear();
@@ -632,6 +638,7 @@ class SaveImage {
               startTimeInNotificationWorker();
             }
           }
+
           
           var currentTime=DateTime.now();
           int timeDifference=currentTime.difference(globals.timeWhenButtonPressed).inSeconds;
@@ -676,13 +683,17 @@ class SaveImage {
             "devicenamebrand":globals.devicenamebrand,
             "city": city,
             "appVersion": globals.appVersion,
-            "geofence": globals.geofence
+            "geofence": globals.geofence,
+            "globalOrgTopic": globals.globalOrgTopic,
+            "name": eName
           });
+
           print(formData);
          // print(globals.path + "saveImage?uid=${ mk.uid}&location=${location}&aid=${mk.aid}&act=${mk.act}");
           Response<String> response1;
           if(globals.facerecognition==1){
             response1 = await dio.post(globals.path + "saveImageSandbox", data: formData);
+            print(globals.path + "saveImageSandbox?uid=${mk.uid}&location=$location&aid=${mk.aid}&act=${mk.act}&shiftid=${mk.shiftid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}&platform=android&tempimagestatus=1&deviceidmobile=$deviceidmobile&devicenamebrand=${globals.devicenamebrand}&city=$city&appVersion=${globals.appVersion}&geofence=${globals.geofence}");
           }else{
             print(globals.path + "saveImage?uid=${mk.uid}&location=$location&aid=${mk.aid}&act=${mk.act}&shiftid=${mk.shiftid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}&platform=android&tempimagestatus=1&deviceidmobile=$deviceidmobile&devicenamebrand=${globals.devicenamebrand}&city=$city&appVersion=${globals.appVersion}&geofence=${globals.geofence}");
             response1 = await dio.post(globals.path + "saveImage", data: formData);
@@ -767,7 +778,9 @@ class SaveImage {
           "devicenamebrand":globals.devicenamebrand,
           "city": city,
           "appVersion": globals.appVersion,
-          "geofence": globals.geofence
+          "geofence": globals.geofence,
+          "globalOrgTopic": globals.globalOrgTopic,
+          "name": eName
          // "file": new UploadFileInfo(imagei, "image.png"),
         });
         print("5");
@@ -1036,8 +1049,13 @@ class SaveImage {
           });
           print("5");
           print(globals.path + "saveImage");
-          Response<String> response1 =
-          await dio.post(globals.path + "saveImage", data: formData);
+          Response<String> response1;
+          if(globals.facerecognition==1){
+            response1 = await dio.post(globals.path + "saveImageSandbox", data: formData);
+          }else{
+           // print(globals.path + "saveImage?uid=${mk.uid}&aid=${mk.aid}&act=${mk.act}&shiftid=${mk.shiftid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}&platform=android&tempimagestatus=1&deviceidmobile=$deviceidmobile&devicenamebrand=${globals.devicenamebrand}&city=$city&appVersion=${globals.appVersion}&geofence=${globals.geofence}");
+            response1 = await dio.post(globals.path + "saveImage", data: formData);
+          }
           //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
           //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
           //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);
@@ -1186,8 +1204,13 @@ class SaveImage {
           "appVersion": globals.appVersion
         });
 
-        Response<String> response1 =
-        await dio.post(globals.path + "saveImage", data: formData);
+        Response<String> response1;
+        if(globals.facerecognition==1){
+          response1 = await dio.post(globals.path + "saveImageSandbox", data: formData);
+        }else{
+          //print(globals.path + "saveImage?uid=${mk.uid}&location=$location&aid=${mk.aid}&act=${mk.act}&shiftid=${mk.shiftid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}&platform=android&tempimagestatus=1&deviceidmobile=$deviceidmobile&devicenamebrand=${globals.devicenamebrand}&city=$city&appVersion=${globals.appVersion}&geofence=${globals.geofence}");
+          response1 = await dio.post(globals.path + "saveImage", data: formData);
+        }
         //Response<String> response1=await dio.post("https://ubiattendance.ubihrm.com/index.php/services/saveImage",data:formData);
         //Response<String> response1=await dio.post("http://192.168.0.200/ubiattendance/index.php/services/saveImage",data:formData);
         //Response<String> response1 = await dio.post("https://ubitech.ubihrm.com/services/saveImage", data: formData);

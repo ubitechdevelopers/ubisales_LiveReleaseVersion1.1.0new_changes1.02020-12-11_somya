@@ -100,7 +100,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                               child: Text('Update now',style: TextStyle(color: Colors.white),),
                             onPressed: (){
                               LaunchReview.launch(
-                                  androidAppId: "org.ubitech.sales"
+                                  androidAppId: "org.ubitech.attendance"
                               );
                             },
                           ),

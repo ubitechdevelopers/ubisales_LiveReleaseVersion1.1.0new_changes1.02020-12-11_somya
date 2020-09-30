@@ -493,6 +493,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           labelText: 'Phone',
                         ),
                         controller: _phone,
+                        enabled: false,
                         keyboardType: TextInputType.phone,
                         validator: (date) {
                           if (_phone.text==null||_phone.text.trim()==''){
@@ -500,7 +501,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                         },
                       ),
-                      ButtonBar(
+                    /*  ButtonBar(
                         children: <Widget>[
                           FlatButton(
                             highlightColor: Colors.transparent,
@@ -550,6 +551,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
+                      */
                     ],
                   ),
                   width: MediaQuery.of(context).size.width*.9,
@@ -619,7 +621,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               ],
             ),
-            if(globals.currentOrgStatus=="TrialOrg" )
+         /*   if(globals.currentOrgStatus=="TrialOrg" )
             Container(
               margin: EdgeInsets.only(bottom: 0.0),
               child: AdmobBanner(
@@ -631,6 +633,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
             ),
+            */
           ],
         ),
 
@@ -645,7 +648,7 @@ class _ProfilePageState extends State<ProfilePage> {
     NewServices ns = NewServices();
 
     var prefs= await SharedPreferences.getInstance();
-    prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+    prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
     bool isupdate = showAppInbuiltCamera?await ns.updateProfilePhotoAppCamera(uploadtype,empid,orgid,context):await ns.updateProfilePhoto(uploadtype,empid,orgid,context);
     print('Image status');
     print(isupdate);
@@ -713,8 +716,8 @@ class _ProfilePageState extends State<ProfilePage> {
       // ignore: deprecated_member_use
       showDialog(context: context, child:
       new AlertDialog(
-        title: new Text("Sorry!"),
-        content: new Text("Phone no. already exists"),
+        //title: new Text("Sorry!"),
+        content: new Text('No Changes Found.'),
       )
       );
     }else{

@@ -292,19 +292,29 @@ class _Settings extends State<Settings> {
         onWillPop: ()=> sendToHome(),
     child: new Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
+      appBar:AppBar(
+
         title: Row(
+
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-
             new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
-            /*  Image.asset(
-                    'assets/logo.png', height: 40.0, width: 40.0),*/
           ],
         ),
-        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
-          sendToHome();}),
-        backgroundColor: Colors.teal,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[
+                    Color.fromRGBO(0, 176, 217, 1),
+                    Color.fromRGBO(0, 135, 180, 1),
+                  ])
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: appcolor,
+        // backgroundColor: Color.fromARGB(255,63,163,128),
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -396,7 +406,7 @@ class _Settings extends State<Settings> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Icon(const IconData(0xe806, fontFamily: "CustomIcon"),size: 30.0,),
+            Icon(const IconData(58400, fontFamily: 'MaterialIcons'),size: 30.0,color: Colors.black38,),
             SizedBox(width: 20.0,),
             Expanded(
 //                            widthFactor: MediaQuery.of(context).size.width*0.10,

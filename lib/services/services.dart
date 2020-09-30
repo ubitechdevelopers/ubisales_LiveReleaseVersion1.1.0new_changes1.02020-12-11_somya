@@ -25,7 +25,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../home.dart';
 import '../today_attendance_report.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+
 
 class Services {}
 
@@ -263,6 +263,8 @@ disapprovesuspiciousattn(String id) async{
   }
 }
 disapprovefaceid(String empid,String orgid) async{
+  var prefs = await SharedPreferences.getInstance();
+  var orgTopic = prefs.getString("OrgTopic") ?? '';
   try{
     Dio dio = new Dio();
     /*
@@ -271,8 +273,45 @@ disapprovefaceid(String empid,String orgid) async{
         "refno": orgid,
       });*/
 
-    print(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid");
-    await dio.post(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid");
+    print(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid&orgTopic=$orgTopic");
+    await dio.post(globals.path+"disapprovefaceid?empid=$empid&orgid=$orgid&orgTopic=$orgTopic");
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+sendMailByAppToAdmin(String subject,String content) async{
+  var prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgid') ?? '';
+  try{
+    Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"sendMailByAppToAdmin?subject=$subject&content=$content&orgid=$orgid");
+    await dio.post(globals.path+"sendMailByAppToAdmin?subject=$subject&content=$content&orgid=$orgid");
+
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+sendMailByAppToEmployee(String id,String content) async{
+  try{
+    Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"sendMailByApp?id=$id&content=$content");
+    await dio.post(globals.path+"sendMailByApp?id=$id&content=$content");
 
   }catch(e)
   {
@@ -294,8 +333,8 @@ sendNotificationtouser ()async
     uriPrefix: 'https://ubiattendance.page.link',
     link: Uri.parse('https://ubiattendance.com/'+empId+"/"+phoneno+"/"+password),
     androidParameters: AndroidParameters(
-      packageName: 'org.ubitech.sales',
-      minimumVersion: 10000,
+      packageName: 'org.ubitech.attendance',
+      minimumVersion: 50009,
     ),
   );
 
@@ -328,8 +367,8 @@ generateAndShareReferralLink()async{
     uriPrefix: 'https://ubiattendance.page.link',
     link: Uri.parse('https://ubiattendance.com/'+empId+"/"+ReferralValidFrom+"/"+ReferralValidTo+"/"+referrerAmt+"/"+referrenceAmt),
     androidParameters: AndroidParameters(
-      packageName: 'org.ubitech.sales',
-      minimumVersion: 10000,
+      packageName: 'org.ubitech.attendance',
+      minimumVersion: 50009,
     ),
   );
 
@@ -344,7 +383,7 @@ generateAndShareReferralLink()async{
   ReferrerenceMessagesList[1]="I am using a great App to monitor attendance. Give it a try. You will get ${referrenceAmt} off on your purchase. ";
   ReferrerenceMessagesList[2]="Attendance Analytics, Geo Fencing, Location Tracking  and more! Here’s ${referrenceAmt} off your order. Check it out!";
   ReferrerenceMessagesList[3]="Looking for a foolproof  attendance tracker? I suggest ubiAttendance. Sign up now: ${referrenceAmt} discount! via @${referrerName}";
-  ReferrerenceMessagesList[4]="Use this link to get ${referrenceAmt} off your first purchase at ubiAttendance – the best time tracker for your employees via @${referrerName}";
+  ReferrerenceMessagesList[4]="Use this link to get ${referrenceAmt} off on your first purchase at ubiAttendance – the best time tracker for your employees via @${referrerName}";
   ReferrerenceMessagesList[5]="Got headache Managing Attendance of your employees? Try ubiAttendance. Get ${referrenceAmt} off on your purchase amount via @${referrerName}";
   ReferrerenceMessagesList[6]="Try ubiAttendance and get ${referrenceAmt} off on your purchase amount";
 
@@ -366,13 +405,7 @@ appResumedPausedLogic(context,[bool isVisitPage]){
     if(msg=='AppLifecycleState.resumed' )
     {
       print("------------------------------------ App Resumed-----------------------------");
-      DateTime now = DateTime.now();
-      if (lastRequestedTemporaryFullAccuracy != null) {
-        Duration dt = lastRequestedTemporaryFullAccuracy.difference(now);
-        if (dt.inSeconds < 10) return;
-      }
-      lastRequestedTemporaryFullAccuracy = now;
-      bg.BackgroundGeolocation.requestTemporaryFullAccuracy("DemoPurpose");
+
       //initDynamicLinks();
       cameraChannel.invokeMethod("openLocationDialog");
       var serverConnected= await checkConnectionToServer();
@@ -1513,7 +1546,7 @@ Future<int> sendsms(sms) async {
 
 
 Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
-    password, dept, desg, shift, String deptind, String desgind, String shiftind,) async {
+    password, dept, desg, shift, String deptind, String desgind, String shiftind,trackLocation) async {
   //print('RECIEVED STATUS: '+status.toString());
   final prefs = await SharedPreferences.getInstance();
   print(dept);
@@ -1528,7 +1561,13 @@ Future<int> addEmployee(fname, lname, email, countryCode, countryId, contact,
   print("-----2");
   print(shiftind);
 
-  print(globals.path + 'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desgind&department=$deptind&shift=$shiftind');
+  var ppp=0;
+  if(trackLocation){
+    ppp=1;
+  }
+
+
+  print(globals.path + 'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desgind&department=$deptind&shift=$shiftind&trackLocation=$ppp');
   final response = await http.get(globals.path + 'registerEmp?uid=$empid&org_id=$orgdir&f_name=$fname&l_name=$lname&password=$password&username=$email&contact=$contact&country=$countryId&countrycode=$countryCode&admin=1&designation=$desgind&department=$deptind&shift=$shiftind');
   var res = json.decode(response.body);
   print("--------> Adding employee" + res.toString());
@@ -2151,10 +2190,10 @@ getCsvAlldata(associateListP,associateListA,associateListL,associateListE, fname
   List<dynamic> row1 = List();
 
   row1.add('Name');
-  row1.add('TimeIn');
-  row1.add('TimeIn Location');
-  row1.add('TimeOut');
-  row1.add('TimeOut Location');
+  row1.add('Time In');
+  row1.add('Time In Location');
+  row1.add('Time Out');
+  row1.add('Time Out Location');
   rows.add(row1);
 
   row1 = List();
@@ -3265,10 +3304,10 @@ getCsv(associateList, fname, name) async {
   } else {
     row1.add('Name');
     if (name != 'absent') {
-      row1.add('TimeIn');
-      row1.add('TimeIn Location');
-      row1.add('TimeOut');
-      row1.add('TimeOut Location');
+      row1.add('Time In');
+      row1.add('Time In Location');
+      row1.add('Time Out');
+      row1.add('Time Out Location');
     }
     rows.add(row1);
     for (int i = 0; i < associateList.length; i++) {
@@ -3322,10 +3361,10 @@ getCsvDesg(associateList, fname, name) async {
   List<dynamic> row1 = List();
   row1.add('Name');
   if (name == 'desg') {
-    row1.add('TimeIn');
-    row1.add('TimeIn Location');
-    row1.add('TimeOut');
-    row1.add('TimeOut Location');
+    row1.add('Time In');
+    row1.add('Time In Location');
+    row1.add('Time Out');
+    row1.add('Time Out Location');
     rows.add(row1);
     for (int i = 0; i < associateList.length; i++) {
 //row refer to each column of a row in csv file and rows refer to each row in a file
@@ -3375,10 +3414,10 @@ getCsvEmpWise(associateList, fname, name) async {
   List<dynamic> row1 = List();
   row1.add('Name');
   if (name == 'desg' && name != 'absent') {
-    row1.add('TimeIn');
-    row1.add('TimeIn Location');
-    row1.add('TimeOut');
-    row1.add('TimeOut Location');
+    row1.add('Time In');
+    row1.add('Time In Location');
+    row1.add('Time Out');
+    row1.add('Time Out Location');
     rows.add(row1);
     for (int i = 0; i < associateList.length; i++) {
 //row refer to each column of a row in csv file and rows refer to each row in a file

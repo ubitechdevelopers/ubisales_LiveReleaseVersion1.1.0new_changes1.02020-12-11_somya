@@ -352,7 +352,7 @@ class _TimeOff_New extends State<TimeOff_New> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+                'Kindly enable location excess from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -534,7 +534,7 @@ class _TimeOff_New extends State<TimeOff_New> {
     } else {
       return Column(children: [
         Text(
-            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
+            'Kindly enable location excess from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -595,7 +595,7 @@ class _TimeOff_New extends State<TimeOff_New> {
         act1 = "";
       });
       var prefs= await SharedPreferences.getInstance();
-      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {

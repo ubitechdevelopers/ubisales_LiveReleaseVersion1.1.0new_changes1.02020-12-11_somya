@@ -1,4 +1,3 @@
-
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -72,7 +71,6 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
               context,
               MaterialPageRoute(builder: (context) => Notifications()),
             );
-
           }*/
         setState((){_currentIndex = newIndex;});
 
@@ -95,7 +93,7 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
         BottomNavigationBarItem(
             icon: Icon(Icons.settings,color: Colors.white,size: 30.0),
             title: Text('Settings',style: TextStyle(color: Colors.white,)
-        )),
+            )),
         /* BottomNavigationBarItem(
               icon: Icon(
                 Icons.notifications
@@ -109,4 +107,3 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
 
 
 }
-

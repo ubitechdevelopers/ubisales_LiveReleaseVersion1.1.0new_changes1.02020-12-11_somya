@@ -305,7 +305,7 @@ String address="";
                 Navigator.of(context, rootNavigator: true).pop();
 
                 var prefs= await SharedPreferences.getInstance();
-                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
+                prefix0.showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
                 prefix0.showAppInbuiltCamera?
                 saveImage.saveVisitOutAppCamera(empid,streamlocationaddr.toString(),visit_id.toString(),assign_lat.toString(),assign_long.toString(),_comments.text,orgid,FakeLocationStatus,context).then((res){
 
@@ -698,7 +698,7 @@ print('visit out called for visit id:'+visit_id);
                               width: MediaQuery.of(context).size.width*1,
                               color: appcolor.withOpacity(0.1),
                               padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                              child:Text("No visits on this date.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                              child:Text("No Punch Visits.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                             ),
                           )
                       );
