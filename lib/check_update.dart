@@ -54,6 +54,7 @@ class _CheckUpdate extends State<CheckUpdate> {
     super.initState();
     getShared();
   }
+
   getShared() async{
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -100,7 +101,7 @@ class _CheckUpdate extends State<CheckUpdate> {
                               child: Text('Update now',style: TextStyle(color: Colors.white),),
                             onPressed: (){
                               LaunchReview.launch(
-                                  androidAppId: "org.ubitech.attendance"
+                                  androidAppId: "org.ubitech.sales"
                               );
                             },
                           ),

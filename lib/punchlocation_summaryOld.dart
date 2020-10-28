@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/punchlocation.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -15,7 +16,7 @@ import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
-import 'punchlocation.dart';
+import 'punchlocationOld.dart';
 
 
 void main() => runApp(new PunchLocationSummary());
@@ -698,13 +699,13 @@ print('visit out called for visit id:'+visit_id);
                               width: MediaQuery.of(context).size.width*1,
                               color: appcolor.withOpacity(0.1),
                               padding:EdgeInsets.only(top:5.0,bottom: 5.0),
-                              child:Text("No Punch Visits.",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
+                              child:Text("No Punch Visits",style: TextStyle(fontSize: 18.0),textAlign: TextAlign.center,),
                             ),
                           )
                       );
                     }
                   } else if (snapshot.hasError) {
-                    return new Text("     You are not connected.");
+                    return new Text("     You are not connected");
                   }
 
                   // By default, show a loading spinner

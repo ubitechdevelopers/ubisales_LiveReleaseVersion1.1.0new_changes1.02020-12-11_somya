@@ -3,18 +3,24 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:Shrine/addClient.dart';
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rounded_modal/rounded_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,21 +30,53 @@ import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
-import 'punchlocation_summary.dart';
+import 'punchlocation_summaryOld.dart';
 import 'services/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 class PunchLocation extends StatefulWidget {
+  final String client;
+
+  PunchLocation({Key key, this.client}) : super(key: key);
   @override
   _PunchLocation createState() => _PunchLocation();
 }
 
 class _PunchLocation extends State<PunchLocation> {
   static const platform = const MethodChannel('location.spoofing.check');
- // StreamLocation sl = new StreamLocation();
+  // StreamLocation sl = new StreamLocation();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _clientname = TextEditingController();
+  String id="";
+  String company="";
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
+  final TextEditingController _searchQueryController = new TextEditingController();
+  final FocusNode _focusNode = new FocusNode();
+  var res;
+  bool _isSearching = true;
+  String _searchText = "";
+  var _searchList = List();
+  bool _onTap = false;
+  int ontap=0;
+  int _onTapTextLength = 0;
+  String finalClientId;
+  _PunchLocation() {
+    _searchQueryController.addListener(() {
+      if (_searchQueryController.text.isEmpty) {
+        setState(() {
+         // _isSearching = false;
+          _searchText = "";
+          _searchList = List();
+        });
+      } else {
+        setState(() {
+          _isSearching = true;
+          _searchText = _searchQueryController.text;
+          _onTap = _onTapTextLength == _searchText.length;
+        });
+      }
+    });
+  }
   var profileimage;
   bool _checkLoaded = true;
   int _currentIndex = 1;
@@ -73,23 +111,44 @@ class _PunchLocation extends State<PunchLocation> {
       desination = "",
       desinationId = "",
       profile;
-
+  //String client="";
   String aid = "";
-  String client='0';
+  String clientname='';
   String shiftId = "";
+  int notFound;
 
   List<Widget> widgets;
 
-var FakeLocationStatus=0;
+  var FakeLocationStatus=0;
   @override
   void initState() {
+    /*checkPermission().then((res){
+      if(res==false) {
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              title: new Text("Please enable Camera access to punch Visit"),
+              content: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text('Open Settings', style: new TextStyle(
+                    fontSize: 18.0, color: Colors.white)),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  PermissionHandler().openAppSettings();
+                },
+              ),));
+      }
+    });*/
     super.initState();
     checkNetForOfflineMode(context);
     appResumedPausedLogic(context);
     streamlocationaddr=globalstreamlocationaddr;
     initPlatformState();
-  //  setLocationAddress();
-   // startTimer();
+    //  setLocationAddress();
+    // startTimer();
     platform.setMethodCallHandler(_handleMethod);
   }
   bool internetAvailable=true;
@@ -101,8 +160,8 @@ var FakeLocationStatus=0;
         break;
       case "locationAndInternet":
         prefix0.locationThreadUpdatedLocation=true;
-      // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-      // Map<String,String> responseMap=call.arguments;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
           timeSpoofed=true;
 
@@ -211,9 +270,10 @@ var FakeLocationStatus=0;
     desinationId = prefs.getString('desinationId') ?? '';
     response = prefs.getInt('response') ?? 0;
 
+    _searchQueryController.text=widget.client;
 
     if (response == 1) {
-     // Loc lock = new Loc();
+      // Loc lock = new Loc();
       //location_addr = await lock.initPlatformState();
       Home ho = new Home();
       act = await ho.checkTimeIn(empid, orgdir,context);
@@ -378,7 +438,7 @@ var FakeLocationStatus=0;
                 ),
                 onPressed: () {
                   //sl.startStreaming(5);
-            //      startTimer();
+                  //      startTimer();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -394,7 +454,7 @@ var FakeLocationStatus=0;
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Kindly enable location excess from settings',
+                'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -465,7 +525,7 @@ var FakeLocationStatus=0;
                 ),
                 onPressed: () {
                   //sl.startStreaming(5);
-               //   startTimer();
+                  //   startTimer();
                   cameraChannel.invokeMethod("startAssistant");
 
                   Navigator.push(
@@ -503,12 +563,12 @@ var FakeLocationStatus=0;
                           style: new TextStyle(fontSize: 22.0,color:appcolor)),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * .03),
+                  //SizedBox(height: MediaQuery.of(context).size.height * .01),
                   //Image.asset('assets/logo.png',height: 150.0,width: 150.0),
-                  // SizedBox(height: 5.0),
-                  getClients_DD(),
-                  SizedBox(height: 35.0),
-                  SizedBox(height: MediaQuery.of(context).size.height * .01),
+                  //SizedBox(height: 5.0),
+                  advancevisit==1?getClients_DD():getClients_DD1(),
+                  //SizedBox(height: 35.0),
+                  SizedBox(height: MediaQuery.of(context).size.height * .04),
                   // SizedBox(height: MediaQuery.of(context).size.height*.01),
                   (act1 == '') ? loader() : getMarkAttendanceWidgit(),
                 ],
@@ -521,20 +581,20 @@ var FakeLocationStatus=0;
   }
 
   getMarkAttendanceWidgit() {
-    return Container(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 1.0),
-            getwidget(location_addr1),
-          ]),
+    return Expanded(
+      child: Container(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 1.0),
+              getwidget(location_addr1),
+            ]),
+      ),
     );
 
   }
   getwidget(String addrloc) {
-    print('insidegetwidgetpunchvisit');
-    print(addrloc);
-    if (addrloc != "PermissionStatus.deniedNeverAsk" && globalstreamlocationaddr!='Location not fetched.') {
+    if (addrloc != "PermissionStatus.deniedNeverAsk") {
       return Column(children: [
         ButtonTheme(
           minWidth: 120.0,
@@ -553,19 +613,17 @@ var FakeLocationStatus=0;
             borderOnForeground: true ,
             clipBehavior: Clip.antiAliasWithSaveLayer ,
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(0.0),
               child: Container(
                   color: Colors.white,
                   height: MediaQuery.of(context).size.height * .15,
-                  child:
-                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     FlatButton(
                       child: new Text(globalstreamlocationaddr,
                           textAlign: TextAlign.center,
                           style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
                       onPressed: () {
                         launchMap(lat, long);
-
                       },
                     ),
                     new Center(
@@ -576,19 +634,19 @@ var FakeLocationStatus=0;
                           SizedBox(width: 1.0,),
                           new InkWell(
                             child:Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
-                                ),
-                             Text(
-                              "Refresh location",
-                              style: new TextStyle(
-                                  color: appcolor,
-                                  decoration: TextDecoration.none),
-                            ),
-                              ]),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: prefix0.appcolor,),
+                                  ),
+                                  Text(
+                                    "Refresh location",
+                                    style: new TextStyle(
+                                        color: appcolor,
+                                        decoration: TextDecoration.none),
+                                  ),
+                                ]),
                             onTap: () {
                               //   startTimer();
                               //sl.startStreaming(5);
@@ -598,7 +656,6 @@ var FakeLocationStatus=0;
                                 MaterialPageRoute(builder: (context) => PunchLocation()),
                               );
                             },
-
                           )
                         ],
                       ),
@@ -611,7 +668,7 @@ var FakeLocationStatus=0;
     } else {
       return Column(children: [
         Text(
-            'Kindly enable location excess from settings',
+            'Location permission is restricted from app settings, click "Open Settings" to allow permission.',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -625,7 +682,7 @@ var FakeLocationStatus=0;
   }
 
   getVisitInButton() {
-    return RaisedButton(
+    return notFound==1?RaisedButton(
       clipBehavior: Clip.antiAlias,
       elevation: 0.0,
       highlightElevation: 0.0,
@@ -634,19 +691,123 @@ var FakeLocationStatus=0;
       focusColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+      ),
+      child: Text('ADD CLIENT',
+          style: new TextStyle(fontSize: 18.0, color: Colors.white)),
+      color: buttoncolor,
+      onPressed: () async {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddClient(
+              company: _searchQueryController.text,
+              clientaddress: globalstreamlocationaddr,
+              sts:"2"
+          )),
+        );
+      },
+    ):notFound==3?RaisedButton(
+      clipBehavior: Clip.antiAlias,
+      elevation: 0.0,
+      highlightElevation: 0.0,
+      highlightColor: Colors.transparent,
+      disabledElevation: 50.0,
+      focusColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text('ASSIGN TEMPORARILY',
+          style: new TextStyle(fontSize: 18.0, color: Colors.white)),
+      color: buttoncolor,
+      onPressed: () async {
+        temporarilyAssign(id).then((res) {
+          if(int.parse(res)==0) {
+            showDialog(context: context, child:
+            new AlertDialog(
+              //title: new Text("Alert"),
+              content: new Text("Unable to assign client"),
+            ));
+          } else {
+            showDialog(context: context, child:
+            new AlertDialog(
+              //title: new Text("Alert"),
+              content: new Text("Client has been temporarily assigned to you"),
+            ));
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PunchLocation(client: company,)));
+          }
+        }
+        ).catchError((err){
+          showDialog(context: context, child:
+          new AlertDialog(
+            title: new Text("Alert"),
+            content: new Text("Unable to call the service"),
+          ));
+          //showInSnackBar('Unable to call the service');
+        });
+      },
+    ):RaisedButton(
+      clipBehavior: Clip.antiAlias,
+      elevation: 0.0,
+      highlightElevation: 0.0,
+      highlightColor: Colors.transparent,
+      disabledElevation: 50.0,
+      focusColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        //side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
       ),
       child: Text('VISIT IN',
           style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
-      onPressed: () {
+      onPressed: () async {
+        if(_searchQueryController.text.trim().isEmpty) {
+          showDialog(
+              context: context,
+              // ignore: deprecated_member_use
+              child: new AlertDialog(
+
+                content: new Text(
+                    "Please select a client first"),
+              ));
+          return null;
+        }
         globalCameraOpenedStatus=true;
-        if(_clientname.text.trim() == '') {
-          showInSnackBar('Please enter client name first');
-          return false;
-        }else
+        /*print(res.length.toString()+' length of res list');
+        if (res.length == 0) {
+          showInSnackBar('Invalid client name');
+          return null;
+        }*/
+        if(advancevisit==1) {
+          for (final r in res) {
+            if (r['Name'].trim() == _searchQueryController.text.trim()) {
+              finalClientId = r['Id'].toString();
+              print('----');
+              print(r['Name']);
+              print(r['Id']);
+              print('----');
+              break;
+            }
+            finalClientId = '';
+          }
+          /*if(finalClientId=='0') {
+            showInSnackBar('Invalid client name ');
+            return null;
+          }else {
+            saveVisitImage();
+          }*/
           saveVisitImage();
           return true;
+        }else{
+          if(_clientname.text.trim() == '') {
+            showInSnackBar('Please enter client name first');
+            return false;
+          }else {
+            saveVisitImage();
+            return true;
+          }
+        }
       },
     );
   }
@@ -665,17 +826,14 @@ var FakeLocationStatus=0;
   }
 
   saveVisitImage() async {
-   // sl.startStreaming(5);
-    client = _clientname.text;
-    MarkVisit mk = new MarkVisit(
-        empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
+    // sl.startStreaming(5);
+    //client = _clientname.text;
+
+    advancevisit==1?clientname = _searchQueryController.text:clientname = _clientname.text;
+    print("clientname");
+    print(clientname);
+    MarkVisit mk = new MarkVisit(empid, clientname, finalClientId, streamlocationaddr, orgdir, lat, long, FakeLocationStatus);
     /* mk1 = mk;*/
-    var prefs = await SharedPreferences.getInstance();
-    var orgTopic = prefs.getString("OrgTopic") ?? '';
-    var eName = prefs.getString('fname') ?? 'User';
-    String topic = orgTopic+'PushNotifications';
-    var formatter = new DateFormat('HH:mm');
-    var datenew= formatter.format(DateTime.now());
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
@@ -683,37 +841,45 @@ var FakeLocationStatus=0;
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
+      /*PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
+      print("permission status");
+      print(permission);
+      print("permission status");
+
+      if(permission.toString()=='PermissionStatus.denied' && globals.visitImage==1){
+        print("PermissionStatus.denied");
+        await showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              title: new Text("Please enable Camera access to punch Visit"),
+              content: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text('Open Settings', style: new TextStyle(
+                    fontSize: 18.0, color: Colors.white)),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  PermissionHandler().openAppSettings();
+                },
+              ),));
+        return;
+      }*/
       SaveImage saveImage = new SaveImage();
       bool issave = false;
       setState(() {
         act1 = "";
       });
       var prefs= await SharedPreferences.getInstance();
-      var employeeTopic = prefs.getString("EmployeeTopic") ?? '';
-      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??true;
+      showAppInbuiltCamera=prefs.getBool("showAppInbuiltCamera")??false;
       issave = showAppInbuiltCamera?await saveImage.saveVisitAppCamera(mk,context):await saveImage.saveVisit(mk,context);
       ////print(issave);
       if (issave) {
-        if(Visit==9|| Visit==11||Visit==13|| Visit==15) {
-          sendPushNotification(
-              eName + ' has punched Visit for ' + client + ' at ' + datenew,
-              '',
-              '(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
-          print('(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
-        }
-        /*
-        if(Visit==10 || Visit==11) {
-          sendPushNotification(' Punched Visit for ' + client + ' at ' + datenew,
-              '',
-              '(\'' + employeeTopic + '\' in topics)');
-          print('(\'' + employeeTopic + '\' in topics)');
-        }
-
-         */
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          content: Text("\"Visit In\" punched successfully"),
+          content: Text("'Visit In' punched successfully"),
         )
         );
         Navigator.push(
@@ -728,7 +894,7 @@ var FakeLocationStatus=0;
         showDialog(context: context, child:
         new AlertDialog(
 
-          content: new Text("Selfie was not captured. Please try again."),
+          content: new Text("Selfie was not captured. Please punch again."),
         )
         );
         setState(() {
@@ -794,13 +960,246 @@ var FakeLocationStatus=0;
     }
   }
 
+  Widget getFutureWidget() {
+    print('----------getFutureWidget123--------------');
+    return new FutureBuilder(
+        future: _buildSearchList(),
+        initialData: List<ListTile>(),
+        builder: (BuildContext context, AsyncSnapshot<List<ListTile>> childItems) {
+          return new Container(
+            //color: Colors.white,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),// changes position of shadow
+                ),
+              ],
+            ),
+            //height: getChildren(childItems).length*15.0,
+            height:_searchList.length==1?MediaQuery.of(context).size.height*0.1:notFound!=1?MediaQuery.of(context).size.height*0.27:MediaQuery.of(context).size.height*0.0,
+            width: MediaQuery.of(context).size.width,
+            child: new Stack(
+              children: <Widget>[
+                ListView(
+                  //   padding: new EdgeInsets.only(left: 50.0),
+                  children: childItems.data.isNotEmpty
+                      ? ListTile
+                      .divideTiles(
+                      context: context, tiles: getChildren(childItems))
+                      .toList()
+                      : List(),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  List<ListTile> getChildren(AsyncSnapshot<List<ListTile>> childItems) {
+    if (_onTap && _searchText.length != _onTapTextLength) _onTap = false;
+    print("childItems.data");
+    print(childItems.data);
+    List<ListTile> childrenList = _isSearching && !_onTap ? childItems.data : List();
+    print("childrenList");
+    print(childrenList);
+    return childrenList;
+  }
+
+  ListTile _getListTile(var suggestedPhrase, int listIndex) {
+    return new ListTile(
+      dense: true,
+      trailing: InkWell(
+          child: Icon(Icons.info, size: 40,color: Colors.grey[400],),
+          onTap: (){
+            FocusScope.of(context).unfocus();
+            print("_searchList.length");
+            print(_searchList.length);
+            _showModalSheet(context, listIndex);
+            /*Navigator.push(
+               context,
+               MaterialPageRoute(builder: (context) => AddClient(
+                   company: _searchQueryController.text,
+                   clientaddress: globalstreamlocationaddr,
+                   sts:"2"
+               )),
+             );*/
+          },
+        ),
+      /*title: new Text(
+        suggestedPhrase["company"]+" assigned to "+suggestedPhrase["employeename"],
+        style: TextStyle(color: (suggestedPhrase["assignsts"].toString()=='1')?Colors.black:Colors.grey  )
+      ),*/
+      title: RichText(
+        text: TextSpan(
+          text: suggestedPhrase["company"],
+          style: TextStyle(color:(suggestedPhrase["assignsts"].toString()=='1')?Colors.black:Colors.grey , fontSize: 16),
+          children: <TextSpan>[
+            suggestedPhrase["employeename"]!=''?TextSpan(text: ' assigned to ', style: TextStyle(color: Colors.grey),):null,
+            TextSpan(text: suggestedPhrase["employeename"], style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          _onTap = true;
+          _isSearching = false;
+          _onTapTextLength = suggestedPhrase["company"].length;
+          if(suggestedPhrase["assignsts"].toString()=='2') {
+            notFound=3;
+            id=suggestedPhrase["id"];
+            company=suggestedPhrase["company"];
+            _searchQueryController.text = suggestedPhrase["company"];
+          }
+        });
+        _searchQueryController.text = suggestedPhrase["company"];
+      },
+    );
+  }
+
+  Future<List<ListTile>> _buildSearchList() async {
+    print('----------_buildSearchList--------------');
+    /*if (_searchText.isEmpty) {
+      _searchList = List();
+      return List();
+    } else {*/
+      _searchList = await _getSuggestion(_searchText, orgdir, empid) ?? List();
+      print("_searchList");
+      print(_searchList);
+      //..add(_searchText);
+      List<ListTile> childItems = new List();
+      int index = 0;
+      for (var value in _searchList) {
+        index = (index+1);
+        print("index");
+        print(index-1);
+        //  if (!(value.contains(" ") && value.split(" ").length > 2)) {
+        childItems.add(_getListTile(value, index-1));
+        print(childItems);
+        Divider();
+        // }
+      }
+      return childItems;
+    //}
+  }
+
+  Future<List<Map<String, String>>> _getSuggestion(String hintText, String orgdir, String empid) async {
+    print('--------_getSuggestion-------------');
+    print(hintText);
+    print(orgdir);
+    String url = globals.path+"getClientList?startwith=$hintText&orgdir=$orgdir&empid=$empid";//=$hintText&max=4
+    print(url);
+    var response = await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
+    print(response.body);
+    List decode = json.decode(response.body);
+    res=json.decode(response.body.toString());
+    if (response.statusCode != HttpStatus.OK || decode.length == 0) {
+      print("if data not found");
+      notFound=1;
+      return null;
+    } else {
+      print("if data found");
+      notFound=0;
+      List<Map<String,String>> suggestedWords = new List();
+      //if (decode.length == 0) return null;
+      print('-------------------------1');
+      print(decode);
+      decode.forEach((f) => suggestedWords.add({"id":f['Id'],"company":f['Company'],"name":f['Name'],"contact":f['Contact'],"email":f['Email'],"addr":f['Address'],"desc":f['Description'],"employeename":f['EmployeeName'],"assignsts":f['Assignsts']}));
+      print('-------------------------2');
+      return suggestedWords;
+    }
+  }
+
 ////////////////////////////////////////////////////////////
   Widget getClients_DD() {
+    return Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Container(
+                child: Center(
+                  child: Form(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 40.0),
+                      child: /*TextFormField(
+                    controller: _clientname,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                        ),
+                        labelText: 'Client Name',
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(0.0),
+                          child: Icon(
+                            Icons.supervised_user_circle,
+                            color: Colors.grey,
+                          ), // icon is 48px widget.
+                        )
+                    ),
+                  ),*/
+                      new TextFormField(
+                        onTap:(){
+                          print("getFutureWidget");
+                          getFutureWidget();
+                        },
+                        controller: _searchQueryController,
+                        focusNode: _focusNode,
+                        onFieldSubmitted: (String value) {
+                          print("$value submitted");
+                          setState(() {
+                            _searchQueryController.text = value;
+                            _onTap = true;
+                          });
+                        },
+                        onSaved: (String value) => print("$value saved"),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                            ),
+                            labelText: 'Client Name',
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.all(0.0),
+                              child: Icon(
+                                Icons.supervised_user_circle,
+                                color: Colors.grey,
+                              ), // icon is 48px widget.
+                            ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:100.0, left: 20.0, right:20.0, bottom:10.0),
+            child: new Container(
+                //alignment: Alignment.topCenter,
+                //height: 150.0,
+               /* decoration: BoxDecoration(
+                  border: Border.all()
+                ),*/
+                padding: new EdgeInsets.only(
+                   // top: MediaQuery.of(context).size.height * .15,
+                    //top: 60.0,
+                    //right: 20.0,
+                    //left: 38.0
+                   ),
+                child: _isSearching && (!_onTap) ? getFutureWidget() : null),
+          )
+        ]
+    );
+  }
 
+  Widget getClients_DD1() {
     return Center(
       child: Form(
         child: Padding(
-          padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 40.0),
+          padding: const EdgeInsets.only(left:16.0,right: 16.0,top: 10.0),
           child: TextFormField(
             controller: _clientname,
             keyboardType: TextInputType.text,
@@ -818,12 +1217,103 @@ var FakeLocationStatus=0;
                   ), // icon is 48px widget.
                 )
             ),
-
           ),
         ),
       ),
     );
 
   }
+
+  _showModalSheet(context, int i) async{
+    showRoundedModalBottomSheet(context: context, builder: (builder) {
+      return Container(
+        height: MediaQuery.of(context).size.height*0.40,
+        decoration: new BoxDecoration(
+            color: appcolor.withOpacity(0.2),
+            borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(0.0),
+                topRight: const Radius.circular(0.0))),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  //Text('Client Name: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                  Text(_searchList[i]['company'], style: TextStyle(fontSize: 22.0, color: appcolor, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(height:10.0),
+              Row(
+                children: <Widget>[
+                  //Text('Contact Person: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                  Icon(Icons.person),
+                  SizedBox(width:10.0),
+                  Text(_searchList[i]['name'], style: TextStyle(fontSize: 16.0)),
+                ],
+              ),
+              SizedBox(height:5.0),
+              Row(
+                children: <Widget>[
+                  //Text('Contact: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                  Icon(Icons.phone),
+                  SizedBox(width:10.0),
+                  Text(_searchList[i]['contact'], style: TextStyle(fontSize: 16.0)),
+                ],
+              ),
+              SizedBox(height:5.0),
+              Row(
+                children: <Widget>[
+                  //Text('Email ID: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                  Icon(Icons.mail),
+                  SizedBox(width:10.0),
+                  Text(_searchList[i]['email'], style: TextStyle(fontSize: 16.0)),
+                ],
+              ),
+              SizedBox(height:5.0),
+              Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Icon(Icons.location_on),
+                      //Text('Address: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                    ],
+                  ),
+                  SizedBox(width:10.0),
+                  Flexible(
+                    child: Column(
+                      children: <Widget>[
+                        Text(_searchList[i]['addr'], style: TextStyle(fontSize: 16.0)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height:5.0),
+              Row(
+                children: <Widget>[
+                  //Text('Description: ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+                  Icon(Icons.description),
+                  SizedBox(width:10.0),
+                  Text(_searchList[i]['desc'], style: TextStyle(fontSize: 16.0)),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  temporarilyAssign(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    String empid = prefs.getString('empid') ?? '';
+    String orgid = prefs.getString('orgdir') ?? '';
+    print(globals.path + 'tempAssignClient?uid=$empid&orgid=$orgid&cid=$id');
+    final response = await http.get(globals.path + 'tempAssignClient?uid=$empid&orgid=$orgid&cid=$id');
+    return response.body.toString();
+  }
+
 ////////////////////////////////////////////////////////////
 }

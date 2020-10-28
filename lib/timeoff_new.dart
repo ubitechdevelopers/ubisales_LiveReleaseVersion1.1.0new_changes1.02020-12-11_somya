@@ -21,7 +21,7 @@ import 'askregister.dart';
 import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
-import 'punchlocation_summary.dart';
+import 'punchlocation_summaryOld.dart';
 import 'services/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeOff_New extends StatefulWidget {
@@ -77,6 +77,7 @@ class _TimeOff_New extends State<TimeOff_New> {
   List<Widget> widgets;
   bool fakeLocationDetected=false;
   var FakeLocationStatus=0;
+
 
   @override
   void initState() {
@@ -352,7 +353,7 @@ class _TimeOff_New extends State<TimeOff_New> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Kindly enable location excess from settings',
+                'Kindly allow location permission from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -534,7 +535,7 @@ class _TimeOff_New extends State<TimeOff_New> {
     } else {
       return Column(children: [
         Text(
-            'Kindly enable location excess from settings',
+            'Kindly allow location permission from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -579,8 +580,9 @@ class _TimeOff_New extends State<TimeOff_New> {
   saveVisitImage() async {
    // sl.startStreaming(5);
     client = _clientname.text;
+    String finalClientId ="";
     MarkVisit mk = new MarkVisit(
-        empid,client, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
+        empid,client,finalClientId, streamlocationaddr, orgdir, lat, long,FakeLocationStatus);
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());

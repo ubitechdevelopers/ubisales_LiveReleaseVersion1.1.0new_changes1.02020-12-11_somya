@@ -227,7 +227,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                   }
                                                   // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
                                                   dialogwidget(
-                                                      "CSV has been saved in internal storage in ubiattendance_files/Department_Report_" +
+                                                      "CSV has been saved in internal storage in ubiSales_files/Department_Report_" +
                                                           today.text +
                                                           ".csv",
                                                       res);
@@ -283,7 +283,7 @@ class _Departmentwise_att extends State<Departmentwise_att>
                                                     });
                                                   }
                                                   dialogwidget(
-                                                      'PDF has been saved in internal storage in ubiattendance_files/' +
+                                                      'PDF has been saved in internal storage in ubiSales_files/' +
                                                           'Department_Report_' +
                                                           today.text +
                                                           '.pdf',
@@ -808,8 +808,8 @@ class _Departmentwise_att extends State<Departmentwise_att>
                 final uri = Uri.file(filename);
                 SimpleShare.share(
                     uri: uri.toString(),
-                    title: "Ubiattendance Report",
-                    msg: "Ubiattendance Report");
+                    title: "ubiSales Report",
+                    msg: "ubiSales Report");
               },
             ),
           ],

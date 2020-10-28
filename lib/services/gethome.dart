@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/services/services.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -101,6 +102,9 @@ class Home{
         ChangedPasswordMessage = timeinoutMap['ChangedPasswordMessage'].toString();
         TimeOffStartStatusMessage = timeinoutMap['TimeOffStartStatusMessage'].toString();
         TimeOffEndStatusMessage = timeinoutMap['TimeOffEndStatusMessage'].toString();
+        globals.MinimumWorkingHours=timeinoutMap['MinimumWorkingHours'].toString()??"00:00";
+
+        print(globals.MinimumWorkingHours);
 
 
 
@@ -125,9 +129,15 @@ class Home{
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
+        if(shiftType.toString()=='3'){
+          globals.offline_permission=0;
+        }
+        else
         globals.offline_permission=int.parse(timeinoutMap['Addon_offline_mode']);
         globals.deviceverification=int.parse(timeinoutMap['Addon_DeviceVerification']);
-        globals.facerecognition=int.parse(timeinoutMap['Addon_FaceRecognition']);
+        globals.facerecognition=int.parse(timeinoutMap['Addon_FaceRecognition'])??0;
+        globals.BasicLeave=int.parse(timeinoutMap['Addon_BasicLeave'])??0;
+
         globals.covidsurvey=int.parse(timeinoutMap['addon_COVID19']);
         globals.persistedface=timeinoutMap['persistedface'].toString();
         globals.deviceid=timeinoutMap['deviceid'].toString();
@@ -137,12 +147,14 @@ class Home{
         globals.registeruser=int.parse(timeinoutMap['registeremp']);
         globals.locationTrackingAddon=timeinoutMap['addon_livelocationtracking'];
         globals.trackLocationForCurrentUser=timeinoutMap['TrackLocationEnabled'];
-
+        globals.advancevisit=int.parse(timeinoutMap['Addon_advancevisit']);
         print("Testing line2");
         globals.attImage=int.parse(timeinoutMap['attImage']);
         print("Testing line3");
         globals.ableToMarkAttendance = int.parse(timeinoutMap['ableToMarkAttendance']);
+        prefs.setInt('ableToMarkAttendance',ableToMarkAttendance);
         globals.areaId=int.parse(timeinoutMap['areaId']);
+        prefs.setInt('areaId',globals.areaId);
         print("Testing line4");
 
         print("Area Id :"+globals.areaId.toString()+" geofence :"+globals.geoFence.toString());
@@ -150,12 +162,19 @@ class Home{
         prefs.setString("nextWorkingDay", timeinoutMap['nextWorkingDay']);
         prefs.setString("ReferralValidFrom", ReferralValidFrom);
         prefs.setString("ReferralValidTo", ReferralValidTo);
+        if(shiftType.toString()=='3'){
+          prefs.setInt("OfflineModePermission", 0);
+        }
+        else
         prefs.setInt("OfflineModePermission", int.parse(timeinoutMap['Addon_offline_mode']));
         prefs.setInt("ImageRequired", int.parse(timeinoutMap['attImage']));
         prefs.setInt("VisitImageRequired", int.parse(timeinoutMap['visitImage']));
         globals.assigned_lat=  (timeinoutMap['assign_lat']).toDouble();
         globals.assigned_long=    (timeinoutMap['assign_long']).toDouble();
         globals.assign_radius=  (timeinoutMap['assign_radius']).toDouble();
+        prefs.setDouble("assigned_lat",globals.assigned_lat);
+        prefs.setDouble("assigned_long",globals.assigned_long);
+        prefs.setDouble("assign_radius",globals.assign_radius);
         print("----visitImage------>"+globals.visitImage.toString());
       //  print(newpwd+" new pwd  and old pwd "+  prefs.getString('userpwd'));
        // print(timeinoutMap['pwd']);
@@ -172,7 +191,6 @@ class Home{
         prefs.setString('OrgTopic', timeinoutMap['OrgTopic']);
         prefs.setString('profile', profile);
         prefs.setString('newpwd', newpwd);
-
         prefs.setString("password_sts",password_sts);
         prefs.setString("admin_password_sts",changepasswordStatus);
 
@@ -199,8 +217,25 @@ class Home{
         String createdDate = timeinoutMap['CreatedDate'].toString();
         prefs.setString('CreatedDate',createdDate);
         globals.inactivestatus=timeinoutMap['inactivestatus'];
+        globals.defaultShiftTimings = timeinoutMap['defaultShiftTimings'];
+        globals.shiftType = timeinoutMap['ShiftType'];
+        globals.ShiftPlanner=int.parse(timeinoutMap['Addon_ShiftPlanner'])??0;
+        globals.fencearea=int.parse(timeinoutMap['fencearea'])??0;
+        prefs.setInt('geoFence',globals.geoFence);
+        prefs.setInt('fencearea',globals.fencearea);
+        areaSts= await getAreaStatus();
+        var areaSts1= await getAreaStatus();
+        print('thisis area sts'+areaSts1);
+        if (areaId != 0 && geoFence == 1) {
+          AbleTomarkAttendance = areaSts;
+          print('insideable to markatt gethome--------->>>>');
+          print('insideabletoattgethome'+areaId.toString());
+        }
 
-       /* if(timeinoutMap['inactivestatus'] == 'inactive') {
+
+
+
+        /* if(timeinoutMap['inactivestatus'] == 'inactive') {
           print("somya code");
           logout(context);
           print("logout called");

@@ -238,7 +238,7 @@ class _EmployeeList extends State<EmployeeList> {
                   //    padding: EdgeInsets.only(left: 15.0,right: 15.0),
                   itemBuilder: (BuildContext context, int index) {
                     getAcronym(var val) {
-                      if((snapshot.data[index].Name.trim()).contains(" ")){
+                      if((snapshot.data[index].Name.trim()).contains(" ")) {
                         name=snapshot.data[index].Name.split(" ");
                         print('print(name);');
                         print(name);

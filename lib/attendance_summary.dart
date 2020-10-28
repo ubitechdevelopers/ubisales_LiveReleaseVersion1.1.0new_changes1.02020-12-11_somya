@@ -13,6 +13,7 @@ import 'Bottomnavigationbar.dart';
 import 'Image_view.dart';
 import 'drawer.dart';
 import 'globals.dart' as globals;
+import 'globals.dart';
 import 'home.dart';
 //import 'package:intl/intl.dart';
 
@@ -343,7 +344,7 @@ getWidgets(context){
                                         children: <Widget>[
                                           Text(snapshot.data[index].TimeOut.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
                                           if(snapshot.data[index].timeindate.toString() != snapshot.data[index].timeoutdate.toString())
-                                            Text(" +1 \n Day",style: TextStyle(fontSize: 9.0,color: Colors.teal,fontWeight: FontWeight.bold),),
+                                            Text(" +1 \n Day",style: TextStyle(fontSize: 9.0,color: appcolor,fontWeight: FontWeight.bold),),
                                         ]),
                                           (index == 0 && snapshot.data[index].TimeOut.toString().trim() != '-'  &&  globals.PictureBase64Att != "")?
                                           Container(

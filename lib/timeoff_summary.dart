@@ -540,7 +540,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
                                             child: Text("End",style: TextStyle(color: Colors.white),),
                                           )
                                           */
-                                          :new Text(snapshot.data[index].hrs.toString(), style: TextStyle(fontWeight: FontWeight.bold, color:snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orange:Colors.teal),),
+                                          :new Text(snapshot.data[index].hrs.toString(), style: TextStyle(fontWeight: FontWeight.bold, color:snapshot.data[index].TimeTo.toString()=='00:00'?Colors.orange:appcolor),),
                                           // new Text(snapshot.data[index].ApprovalSts.toString(), style: TextStyle(color: snapshot.data[index].ApprovalSts.toString()=='Approved'?Colors.green.withOpacity(0.75):snapshot.data[index].ApprovalSts.toString()=='Rejected' || snapshot.data[index].ApprovalSts.toString()=='Cancel' ?Colors.red.withOpacity(0.65):snapshot.data[index].ApprovalSts.toString().startsWith('Pending')?buttoncolor:Colors.black54, fontSize: 14.0,),textAlign: TextAlign.center,),
 
 
@@ -723,7 +723,7 @@ class _TimeoffSummary extends State<TimeoffSummary> {
       //String tempstatus = timeoffstatus;
       if (issave=='true') {
         if(TimeOffEndStatus==13||TimeOffEndStatus==9||TimeOffEndStatus==11||TimeOffEndStatus==15){
-          sendPushNotification(eName + ' ' +TimeOffEndStatusMessage+' '+ date, '',
+          sendPushNotification(eName + ' has ended Time Off at '+ date, '',
               '(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
           print('(\'' + orgTopic + '\' in topics) && (\'admin\' in topics)');
 

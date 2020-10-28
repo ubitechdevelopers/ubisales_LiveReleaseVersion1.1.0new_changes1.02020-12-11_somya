@@ -37,23 +37,31 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='',new_ver='1.0.2'; String updatestatus = "0";
+  String cur_ver='1.0.5',new_ver='1.0.5';
+  String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override
   void initState() {
     super.initState();
     appVersion=cur_ver;
     getShared();
+
     checkNow().then((res){
       setState(() {
         new_ver=res;
+        print(new_ver);
+        print("static new version of ubiSales fetched from database");
       });
     });
+
     UpdateStatus().then((res){
       setState(() {
         updatestatus = res;
+        print(updatestatus);  // 1 for update , 0 for NO update
+        print("updatestatus");
       });
     });
+
     platform.setMethodCallHandler(_handleMethod);
   }
   static const platform = const MethodChannel('location.spoofing.check');
@@ -73,6 +81,25 @@ class _ShrineAppState extends State<ShrineApp> {
         assign_lat=double.parse(lat);
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
+
+        getAreaStatus().then((res) {
+          // print('called again');
+          print('app dot dart');
+          if (mounted) {
+            setState(() {
+              areaSts = res.toString();
+              print('response'+res.toString());
+              if (areaId != 0 && geoFence == 1) {
+                AbleTomarkAttendance = areaSts;
+                print('insideable to markatt --------->>>>');
+                print('insideabletoatt'+areaId.toString());
+              }
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
         print(call.arguments["mocked"].toString());
         globalstreamlocationaddr=address;
         if(call.arguments["TimeSpoofed"].toString()=="Yes"){
@@ -96,9 +123,10 @@ class _ShrineAppState extends State<ShrineApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ubiAttendance',
+      title: 'ubiSales',
       home: ((cur_ver == new_ver||new_ver=="error") || updatestatus=='0')?HomePage():CheckUpdate(),
       //home: (true)?HomePage():CheckUpdate(),
+     // home: CheckUpdate(),
       routes: {
         // When we navigate to the "/" route, build the FirstScreen Widget
         '/login': (context) => LoginPage(),

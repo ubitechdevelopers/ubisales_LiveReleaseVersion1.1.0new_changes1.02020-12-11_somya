@@ -267,7 +267,7 @@ class _ContactUs extends State<ContactUs> {
                                 Icons.message,
                                 size: 30.0,
 //                                color: Colors.black54,
-                                color: Colors.teal,
+                                color: appcolor,
                               ),
                               SizedBox(width: 10.0,),
                               Text(
@@ -275,7 +275,7 @@ class _ContactUs extends State<ContactUs> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,
-                                  color: Colors.teal,
+                                  color: appcolor,
                                 ),
                               ),
                             ],
@@ -314,7 +314,7 @@ class _ContactUs extends State<ContactUs> {
                               Icon(
                                 Icons.phone,
                                 size: 30.0,
-                                color: Colors.teal,
+                                color: appcolor,
 //                                  color: Colors.black54,
                               ),
                               SizedBox(width: 10.0,),
@@ -323,7 +323,7 @@ class _ContactUs extends State<ContactUs> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,
-                                  color: Colors.teal,
+                                  color: appcolor,
                                 ),
                               ),
                             ],

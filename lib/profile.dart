@@ -110,6 +110,14 @@ class _ProfilePageState extends State<ProfilePage> {
       default:
     }
   }
+  formatTime(String time){
+    if(time.contains(":")){
+      var a=time.split(":");
+      return a[0]+":"+a[1];
+    }
+    else return time;
+
+  }
 
   void showSnackBar(String content) {
     scaffoldState.currentState.showSnackBar(SnackBar(
@@ -471,11 +479,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height*.01),
-                      Row(
+                      shiftType!='3'?Row(
                         children: <Widget>[
                           Icon(Icons.timer,size: 20.0,color: Colors.black54,),SizedBox(width: 5.0),
                           new Text("Shift Timings: ", style: new TextStyle(fontSize: 15.0)),
                           new Text(" "+shifttiming, style: new TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold)),
+                        ],
+                      ):Row(
+                        children: <Widget>[
+                          Icon(Icons.timer,size: 20.0,color: Colors.black54,),SizedBox(width: 5.0),
+                          new Text("Minimum shift hours: ", style: new TextStyle(fontSize: 15.0)),
+                          new Text(" "+formatTime(MinimumWorkingHours.toString()), style: new TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold)),
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height*.02),

@@ -67,7 +67,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           prefs.setString('desinationId', user.desinationId);
           prefs.setString('profile', user.profile);
           prefs.setString('org_perm', user.org_perm);
-          prefs.setString('store', employeeMap["store"]);
+          prefs.setString('store', 'https://play.google.com/store/apps/details?id=org.ubitech.sales');
           prefs.setString('buysts', employeeMap["buysts"]);
           prefs.setString('trialstatus', employeeMap["trialstatus"]);
           prefs.setString('orgmail', employeeMap["orgmail"]);

@@ -265,7 +265,7 @@ class AppDrawerState extends State<AppDrawer> {
               );
             },
           ):new Center(),
-*/
+*//*
           flexi_permission ==1 ?
           new ListTile(
             title: Row(
@@ -295,7 +295,7 @@ class AppDrawerState extends State<AppDrawer> {
                 MaterialPageRoute(builder: (context) => Notifications()),
               );
             },
-          ):new Center(),
+          ):new Center(),*/
           /*(reportper ==1 || reportper ==2)&&geoFence==1?new ListTile(
             title: Row(
               children: <Widget>[
@@ -393,7 +393,7 @@ class AppDrawerState extends State<AppDrawer> {
               );
             },
           ),*/
-          (admin_sts==0)?
+          /*(admin_sts==0)?*/
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -403,12 +403,12 @@ class AppDrawerState extends State<AppDrawer> {
             ),
             onTap: () {
               final RenderBox box = context.findRenderObject();
-              Share.share("Check out ubiAttendance App. I use it to track attendance and visits of my employees. Get it for free at \n"+store,
+              Share.share("Check out ubiSales App. I use it to track attendance and visits of my employees. Get it for free at \n"+store,
                   sharePositionOrigin:
                   box.localToGlobal(Offset.zero) &
                   box.size);
             },
-          ):new ListTile(
+          ),/*:new ListTile(
             title: Row(
               children: <Widget>[
                 Icon(Icons.share,size: 20.0),SizedBox(width: 5.0),
@@ -419,7 +419,7 @@ class AppDrawerState extends State<AppDrawer> {
               generateAndShareReferralLink();
 
             },
-          ),
+          ),*/
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -430,7 +430,7 @@ class AppDrawerState extends State<AppDrawer> {
             onTap: () {
               prefix0.facebookChannel.invokeMethod("logRateEvent");
               LaunchReview.launch(
-                  androidAppId: "org.ubitech.attendance"
+                  androidAppId: "org.ubitech.sales"
               );
             },
           ),
@@ -505,7 +505,7 @@ class AppDrawerState extends State<AppDrawer> {
             },
           ),
 */
-        /*
+
           new ListTile(
             title: Row(
               children: <Widget>[
@@ -519,7 +519,7 @@ class AppDrawerState extends State<AppDrawer> {
                 MaterialPageRoute(builder: (context) => AboutApp()),
               );
             },
-          ),*/
+          ),
           new ListTile(
             title: Row(
               children: <Widget>[

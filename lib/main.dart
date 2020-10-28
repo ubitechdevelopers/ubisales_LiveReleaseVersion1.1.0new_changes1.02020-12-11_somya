@@ -16,6 +16,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:Shrine/location_tracking/util/geospatial.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -166,9 +167,14 @@ class _MyAppState extends State<MyApp> {
   String _motionActivity;
   String _odometer;
   String _content;
+  String areaStatus = '0';
+  bool status= false;
+
 
 
   void initState() {
+
+
     //checknetonpage(context);
     // StreamLocation sl = new StreamLocation();
     // sl.startStreaming(10);
@@ -185,13 +191,14 @@ class _MyAppState extends State<MyApp> {
 
   }
   Future<Null> _initPlatformState() async {
+
+    await FirebaseAuth.instance.signInAnonymously();
+
     SharedPreferences prefs = await _prefs;
     String orgname = prefs.getString("orgname");
     String username = prefs.getString("username");
 
     // Sanity check orgname & username:  if invalid, go back to HomeApp to re-register device.
-
-
     // Fetch a Transistor demo server Authorization token for tracker.transistorsoft.com.
     bg.TransistorAuthorizationToken token = await bg.TransistorAuthorizationToken.findOrCreate(orgname, username, ENV.TRACKER_HOST);
 
@@ -224,7 +231,9 @@ class _MyAppState extends State<MyApp> {
         encrypt: false,
         stopOnTerminate: false,
         startOnBoot: true,
-        enableHeadless: true
+        enableHeadless: true,
+        speedJumpFilter: 25     //25 metre/sec
+
     )).then((bg.State state) {
       print("[ready] ${state.toMap()}");
       setState(() {
@@ -315,10 +324,10 @@ class _MyAppState extends State<MyApp> {
     return Future.value(vm.degrees(atan2(y, x)));
   }
   var lastLati=0.0,lastLongi=0.0;
+
   void _onLocation(bg.Location location) async{
 
     if (location.sample) { return; }
-
     print("onlocation..........................");
     print(await bearingBetween(lastLati, lastLongi, double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString())));
     print(await Geospatial.getBearing(LatLng(lastLati, lastLongi), LatLng(double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString()))));
@@ -328,14 +337,18 @@ class _MyAppState extends State<MyApp> {
 
     var currDate=DateTime.now();
     SharedPreferences prefs = await _prefs;
-    String orgname = "ubi222";
-    String username = "ubiShashank";
+    String orgname = "";
+    String username = "";
     prefs.setString("username", username);
     prefs.setString("orgname", orgname);
     String employeeId=prefs.getString("empid");
     String orgId=prefs.getString("orgid");
+    var eName = prefs.getString('fname') ?? 'User';
+
     database = new firebaseDb.FirebaseDatabase();
     database.setPersistenceEnabled(true);
+
+
 
 
     //if(location.coords.accuracy<10)
@@ -365,6 +378,40 @@ class _MyAppState extends State<MyApp> {
     //}
 
     print('[${bg.Event.LOCATION}] - $location');
+
+
+    getAreaStatusForPushNotification(location.coords.latitude,location.coords.longitude).then((res) {
+
+      areaStatus = res.toString();
+      double accuracy = location.coords.accuracy;
+
+      print(location.coords.accuracy);
+      print("main dor dart");
+      print(areaStatus);
+      print(areaId);
+
+      if (areaStatus == '0' && accuracy <= 20.0 && areaId!=0) {
+
+        if (status == false) {
+          sendPushNotification(
+              eName + ' has gone outside the geofence.', '',
+              '(\'' + prefix0.globalOrgTopic +
+                  '\' in topics) && (\'admin\' in topics)');
+          status = true;
+        }
+      }
+      else{
+        if(accuracy <= 20.0)
+        status = false;
+        print('Within Geofence_homeview');
+      }
+
+      print(areaStatus);
+      print("areaStatus123123");
+    }).catchError((onError) {
+      print('Exception occured in clling function.......');
+      print(onError);
+    });
 
 
 
@@ -438,6 +485,24 @@ class _MyAppState extends State<MyApp> {
         assign_long=double.parse(long);
         address=await getAddressFromLati(lat, long);
         print(call.arguments["mocked"].toString());
+        getAreaStatus().then((res) {
+          // print('called again');
+          print('main dot dart');
+          if (mounted) {
+            setState(() {
+              areaSts = res.toString();
+              print('response'+res.toString());
+              if (areaId != 0 && geoFence == 1) {
+                AbleTomarkAttendance = areaSts;
+                print('insideable to markatt --------->>>>');
+                print('insideabletoatt'+areaId.toString());
+              }
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
 
         globalstreamlocationaddr=address;
 

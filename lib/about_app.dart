@@ -27,7 +27,7 @@ class _AboutApp extends State<AboutApp> {
   bool _isButtonDisabled = false;
   String admin_sts='0';
   String buystatus = "";
-  String new_ver='3.1.9';
+  String new_ver='1.0.5';
   TextEditingController textsms = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
@@ -94,7 +94,7 @@ class _AboutApp extends State<AboutApp> {
               SizedBox(height: 60,),
               Center(
                 child:Text(
-                    "ubiAttendance",
+                    "ubiSales",
                     style: new TextStyle(
                         fontSize: 32.0,
                         color:appcolor,
@@ -114,7 +114,7 @@ class _AboutApp extends State<AboutApp> {
               SizedBox(height: 10,),
               Center(
                 child: new_ver!=appVersion?Text(
-                  'This is not the latest version of ubiattendance.',
+                  'This is not the latest version of ubiSales.',
                   style: TextStyle(
                     fontSize: 16.0,
                   ),

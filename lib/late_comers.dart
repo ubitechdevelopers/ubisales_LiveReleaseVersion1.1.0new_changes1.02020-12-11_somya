@@ -398,7 +398,7 @@ class _LateComers extends State<LateComers> {
                           //SizedBox(height: 20.0,),
                           Container(
                             padding: EdgeInsets.only(left: 5.0),
-                            child: Text("  Total Late Comers: ${countL}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                            child: Text("  Total Late Comers: ${countL}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                           ),
                         ]
                     ):new Center(),
@@ -443,7 +443,7 @@ class _LateComers extends State<LateComers> {
                             child: new Text(
                               snapshot.data[index].diff.toString(),
                               style: TextStyle(
-                                  color:Colors.deepOrange),
+                                  color:Colors.red),
                             ),
                           ),
                         ],

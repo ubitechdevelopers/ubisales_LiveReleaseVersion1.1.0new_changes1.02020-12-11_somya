@@ -167,14 +167,14 @@ getWidgets(context){
 
         Divider(color: Colors.black54,height: 1.5,),
         RaisedButton(child: Text('Track Employees',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
-        onPressed: (){
-          Navigator.push(
+          onPressed: (){
+            Navigator.push(
 
-            context,
-            MaterialPageRoute(builder: (context) => TrackAllEmp(),
-          )
-          );
-        },
+                context,
+                MaterialPageRoute(builder: (context) => TrackAllEmp(),
+                )
+            );
+          },
 
         ),
 
@@ -298,9 +298,9 @@ getWidgets(context){
                                         InkWell(
                                           child: Text(snapshot.data[index].location
                                               .toString(), style: TextStyle(
-                                              color: Colors.black87,
+                                            color: Colors.black87,
 
-                                              fontSize: 16.0,
+                                            fontSize: 16.0,
 
                                           ),),
                                           onTap: (){
@@ -356,17 +356,17 @@ getWidgets(context){
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
-                                        //  Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
+                                          //  Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
 
-                                           Container(
+                                          Container(
                                             width: 62.0,
                                             height: 62.0,
                                             child:InkWell(
-                                              child: Container(
+                                                child: Container(
                                                   child: Text(snapshot.data[index].distance+ " km"),
-                                                  )),
+                                                )),
 
-                                            ),
+                                          ),
 
                                         ],
                                       )
@@ -404,7 +404,7 @@ Future<List<VisitsLT>> getSummary() async {
   return visitList;
 }
 
- getCurrentLocation(empid) async {
+getCurrentLocation(empid) async {
   final prefs = await SharedPreferences.getInstance();
   var result={"address":"","distance":""};
 
@@ -438,18 +438,22 @@ Future<List<VisitsLT>> getSummary() async {
           +
           locationList.toString() + ">>>" +
           locationList[locationList.length - 1].toString());
-var time,lastLocation,firstLocation;
+      var time,lastLocation,firstLocation;
       var map=locationList[locationList.length - 1];
       map.forEach((k,v){
         time=k;
         lastLocation=v;
       });
 
-     var map1=locationList[0];
+      var map1=locationList[0];
       map1.forEach((k,v){
 
         firstLocation=v;
+
       });
+
+      print(lastLocation);
+      print("latlocation list");
 
 
 
@@ -464,7 +468,6 @@ var time,lastLocation,firstLocation;
       var distanceTravelled=0.0;
 
       distanceTravelled=double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]);
-
       result["address"]=streamlocationaddr;
       result["distance"]=distanceTravelled.toString();
       return result;
@@ -474,24 +477,25 @@ var time,lastLocation,firstLocation;
       return result;
     }
 
-   // var snapshot = await FirebaseDatabase.instance.reference().child(
-   //     "Locations").once();
-   // print("data found"+snapshot.value.toString());
+    // var snapshot = await FirebaseDatabase.instance.reference().child(
+    //     "Locations").once();
+    // print("data found"+snapshot.value.toString());
   }catch(Object){
     print(Object.toString());
     return result;
     print("inside catchhhhh");
-   }
+  }
 
 }
 
 
 
 Future<List<VisitsLT>> createVisitList(List data)async{
+
   List<VisitsLT> list = new List();
   print("kjhkjdhkdh"+data.length.toString());
   for (int i = 0; i < data.length; i++) {
-   String empId = data[i]["empId"]==null?"-":data[i]["empId"];
+    String empId = data[i]["empId"]==null?"-":data[i]["empId"];
     String inImage=data[i]["inImage"]!=''&&data[i]["inImage"]!=null&&data[i]["inImage"].isNotEmpty?data[i]["inImage"]:'http://ubiattendance.ubihrm.com/assets/img/avatar.png';
     String outImage=data[i]["outImage"]!=''&&data[i]["outImage"]!=null&&data[i]["outImage"].isNotEmpty?data[i]["outImage"]:'http://ubiattendance.ubihrm.com/assets/img/avatar.png';
     String fName=data[i]["fName"];
@@ -499,7 +503,7 @@ Future<List<VisitsLT>> createVisitList(List data)async{
     String in_time=data[i]["in_time"];
     String out_time=data[i]["out_time"];
     String client=data[i]["client"]==null?"-":data[i]["client"];
-print((data[i]["outImage"]!=null).toString()+"\n");
+    print((data[i]["outImage"]!=null).toString()+"\n");
 
 
 ////////////for calculation diatance and location
@@ -515,14 +519,14 @@ print((data[i]["outImage"]!=null).toString()+"\n");
       var value;
       var date=DateTime.now().toString().split(".")[0].split(" ")[0];
       await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empId).child(date).once().then((data)async {
-
         //print("Locations found:::"+data.snapshot.value.toString());
         value=data.value;
-
       });
-//print("Locations found:::"+value);
+
 
       if(value!=null) {
+        print("Locations found:::");
+        print(value);
         var timesMap = new Map<String, dynamic>.from(value);
         List<Map<String, dynamic>> locationList = List();
         timesMap.forEach((k, v) => locationList.add({k: v}));
@@ -546,13 +550,32 @@ print((data[i]["outImage"]!=null).toString()+"\n");
 
         var map1=locationList[0];
         map1.forEach((k,v){
-
           firstLocation=v;
         });
 
+        print(locationList);
+        print("jlkjljl");
+        print(locationList[0]);
+
+        for(var i=0 ; i<locationList.length ; i++){
+          var map1=locationList[i];
+          map1.forEach((k,v){
+            firstLocation=v;
+          });
+          var ii = 0.0;
+
+           ii = double.parse(firstLocation["accuracy"]);
+
+          if(ii < 20.0){
+            lastLocation["odometer"] = firstLocation["odometer"];
+            break;
+          }
+        }
 
         print("first l odo:"+((double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]))/1000).toStringAsFixed(2));
         print("last l odo:"+double.parse(lastLocation["odometer"]).toString());
+
+
 
         var addresses = await Geocoder.local.findAddressesFromCoordinates(
             Coordinates(
@@ -562,16 +585,15 @@ print((data[i]["outImage"]!=null).toString()+"\n");
         var streamlocationaddr = "${first.addressLine}";
         //return streamlocationaddr;
         var distanceTravelled=0.0;
-
         distanceTravelled=((double.parse(lastLocation["odometer"])-double.parse(firstLocation["odometer"]))/1000);
 
         result["address"]=streamlocationaddr;
         result["distance"]=distanceTravelled.toStringAsFixed(2);
-       // return result;
+        // return result;
 
       }
       else{
-       // return result;
+        // return result;
       }
 
       // var snapshot = await FirebaseDatabase.instance.reference().child(
@@ -587,22 +609,8 @@ print((data[i]["outImage"]!=null).toString()+"\n");
     ////////////////////////////////
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   VisitsLT visit=new VisitsLT(client: client,empId: empId,inImage: inImage,outImage: outImage,fName: fName,lName: lName,in_time: in_time,out_time: out_time,location: result["address"],distance: result["distance"]);
-   list.add(visit);
+    VisitsLT visit=new VisitsLT(client: client,empId: empId,inImage: inImage,outImage: outImage,fName: fName,lName: lName,in_time: in_time,out_time: out_time,location: result["address"],distance: result["distance"]);
+    list.add(visit);
   }
   print("Listtttttt");
   print(list.toString());

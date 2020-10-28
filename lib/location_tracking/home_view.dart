@@ -1,4 +1,5 @@
 import 'package:Shrine/attendance_summary.dart';
+import 'package:Shrine/services/services.dart';
 import 'package:firebase_database/firebase_database.dart' as firebaseDb;
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
@@ -12,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'dart:math';
 import '../app.dart';
 import '../config/env.dart';
+import '../globals.dart';
 import 'map_view.dart';
 import 'event_list.dart';
 import './util/dialog.dart' as util;
@@ -19,6 +21,7 @@ import './util/test.dart';
 import 'package:vector_math/vector_math.dart' as vm;
 import 'util/geospatial.dart';
 import 'shared_events.dart';
+import 'package:Shrine/globals.dart' as globals;
 
 // For pretty-printing location JSON
 JsonEncoder encoder = new JsonEncoder.withIndent("     ");
@@ -47,6 +50,8 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
 
   String employeeId="";
   String orgId="";
+  String areaStatus = '0';
+  bool status= false;
 
   @override
   void initState() {
@@ -95,7 +100,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
   void initPlatformState() async {
     SharedPreferences prefs = await _prefs;
     String orgname = "ubi222";
-    String username = "ubiShashank";
+    String username = "";
     prefs.setString("username", username);
     prefs.setString("orgname", orgname);
     employeeId=prefs.getString("empid");
@@ -314,6 +319,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
     return Future.value(vm.degrees(atan2(y, x)));
   }
   var lastLati=0.0,lastLongi=0.0;
+
   void _onLocation(bg.Location location) async{
     if (location.sample) { return; }
     var currDate=DateTime.now();
@@ -349,6 +355,41 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
         print('Transaction  committed.');
       });
    // }
+
+    SharedPreferences prefs = await _prefs;
+    var eName = prefs.getString('fname') ?? 'User';
+
+
+    /*getAreaStatusForPushNotification(location.coords.latitude,location.coords.longitude).then((res) {
+
+      print(location.coords.accuracy);
+      print("main kgjgkjgkgk dart");
+      print(areaStatus);
+      print(areaId);
+
+      double accuracy = location.coords.accuracy;
+
+      areaStatus = res.toString();
+      if (areaStatus == '0' && accuracy <= 20.0 && areaId!=0) {
+        if (status == false) {
+          sendPushNotification(
+              eName + ' has gone outside the geofence.', '',
+              '(\'' + globals.globalOrgTopic +
+                  '\' in topics) && (\'admin\' in topics)');
+          status = true;
+        }
+      }
+      else{
+        status = false;
+        print('Within Geofence_homeview');
+      }
+      // });
+      print(areaStatus);
+      print("areaStatus123123");
+    }).catchError((onError) {
+      print('Exception occured in clling function.......');
+      print(onError);
+    });*/
 
     print('[${bg.Event.LOCATION}] - $location');
    // if(mounted)

@@ -154,12 +154,12 @@ class _VisitListEmp extends State<VisitListEmp> with SingleTickerProviderStateMi
               ),
             ),
 */
-           // getEmployee_DD(),
+            getEmployee_DD(),
             SizedBox(height: 2.0),
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(    
+                  child: Container(
                     color: Colors.white,
                     child: DateTimeField(
                       //dateOnly: true,
@@ -435,7 +435,7 @@ class _VisitListEmp extends State<VisitListEmp> with SingleTickerProviderStateMi
                 //    width: MediaQuery.of(context).size.width*.45,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Select an Employee',
+                    labelText: 'Select an employee',
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(1.0),
                       child: Icon(

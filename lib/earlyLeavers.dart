@@ -397,7 +397,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                             //SizedBox(height: 25.0,),
                             Container(
                               padding: EdgeInsets.only(left: 5.0),
-                              child: Text("  Total Early Leavers: ${countE}",style: TextStyle(color: Colors.orange,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                              child: Text("  Total Early Leavers: ${countE}",style: TextStyle(color:headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
                             ),
                           ]
                       ):new Center(),
@@ -438,7 +438,7 @@ class _EarlyLeavers extends State<EarlyLeavers> {
                               width: MediaQuery.of(context).size.width * 0.12,
                               child: new Text(
                                 snapshot.data[index].diff.toString(),
-                                style: TextStyle(color: Colors.deepOrange),
+                                style: TextStyle(color: Colors.red),
                               ),
                             ),
                           ],

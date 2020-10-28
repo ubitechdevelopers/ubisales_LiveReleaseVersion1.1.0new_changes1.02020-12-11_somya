@@ -77,6 +77,7 @@ class _Flexitime extends State<Flexitime> {
   String flexitimein = "";
   String fid = "";
   String sts ="";
+  String finalClientId ="";
 
   var FakeLocationStatus=0;
   bool internetAvailable=true;
@@ -415,7 +416,7 @@ class _Flexitime extends State<Flexitime> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Kindly enable location excess from settings',
+                'Kindly allow location permission from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -650,7 +651,7 @@ class _Flexitime extends State<Flexitime> {
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
-                                  child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                  child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: appcolor),
                                 ),
                                 new Text(
                               "Refresh location",
@@ -685,7 +686,7 @@ class _Flexitime extends State<Flexitime> {
     } else {
       return Column(children: [
         Text(
-            'Kindly enable location excess from settings',
+            'Kindly allow location permission from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -946,7 +947,7 @@ print('visit out called for visit id:'+visit_id);
     // client = _clientname.text;
     client ="";
     MarkVisit mk = new MarkVisit(
-        empid,client, prefix0.globalstreamlocationaddr, orgdir, prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus);
+        empid,client,finalClientId, prefix0.globalstreamlocationaddr, orgdir, prefix0.assign_lat.toString(), prefix0.assign_long.toString(),FakeLocationStatus);
     /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());

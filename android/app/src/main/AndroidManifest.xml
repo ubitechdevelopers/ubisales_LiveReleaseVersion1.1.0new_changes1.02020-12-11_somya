@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.ubitech.sales"
-    android:versionCode="10002"
+    android:versionCode="10005"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionName="1.0.2">
+    android:versionName="1.0.5">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application

@@ -155,6 +155,8 @@ String empId;
      // locationList.insert(0, Locations.fromFireBase(data.snapshot));
       var date=DateTime.now().toString().split(".")[0].split(" ")[0];
       var empId=data.snapshot.key.toString();
+      print(data.snapshot.value[date]);
+      print(data.snapshot.value);
       if(data.snapshot.value[date]!=null) {
         var timesMap = new Map<String, dynamic>.from(data.snapshot.value[date]);
         List<Map<String, dynamic>> locationList = List();

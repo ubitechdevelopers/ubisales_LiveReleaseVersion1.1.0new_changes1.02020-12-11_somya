@@ -25,12 +25,13 @@ class DbHelper{
     String path =
     join(documentsDirectory.path,'ubiattendance.db');
     print(path);
-    var db = await openDatabase(path, version: 31, onCreate: _onCreate,onUpgrade: _onUpgrade);
+    var db = await openDatabase(path, version: 51, onCreate: _onCreate,onUpgrade: _onUpgrade);
     return db;
     //}
   }
 
   _onCreate(Database db,int version) async{
+
       print("oncreate called");
     await db.execute("CREATE TABLE LoginOffline (	Id INTEGER PRIMARY KEY,"
         "UserTableId INTEGER,"
@@ -118,7 +119,9 @@ class DbHelper{
         "PictureBase64 TEXT,"
         "ActionId INTEGER,"
         "OrganizationId INTEGER,"
-        "Module TEXT"
+        "Module TEXT,"
+        "InterimAttendanceId TEXT,"
+        "ShiftId TEXT"
 
         ")");
   }
@@ -190,7 +193,6 @@ await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
     'VisitInLongitude TEXT,'
     'VisitInTime TEXT,'
     'VisitInDate TEXT,'
-
     'VisitOutLatitude TEXT,'
     'VisitOutLongitude TEXT,'
     'VisitOutTime TEXT,'
@@ -214,7 +216,9 @@ await db.execute("CREATE TABLE VisitsOffline (Id INTEGER PRIMARY KEY,"
         "PictureBase64 TEXT,"
         "ActionId INTEGER,"
         "OrganizationId INTEGER, "
-        "Module TEXT"
+        "Module TEXT,"
+        "InterimAttendanceId TEXT,"
+        "ShiftId TEXT"
       ")");
 
     }

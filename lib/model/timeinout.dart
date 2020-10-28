@@ -10,6 +10,8 @@ class MarkTime{
   String longi;
   int FakeLocationStatus;
   String city;
+  String appName;
+
 
   MarkTime(this.uid, this.location, this.aid, this.act, this.shiftid, this.refid, this.latit, this.longi,this.FakeLocationStatus,this.city);
 
@@ -44,6 +46,7 @@ class MarkTime{
 class MarkVisit{
 
   String uid;
+  String clientname;
   String cid;
   String location;
   String refid;
@@ -51,10 +54,11 @@ class MarkVisit{
   String longi;
   int FakeLocationStatus;
 
-  MarkVisit(this.uid,this.cid, this.location, this.refid, this.latit, this.longi,this.FakeLocationStatus);
+  MarkVisit(this.uid,this.clientname,this.cid, this.location, this.refid, this.latit, this.longi,this.FakeLocationStatus);
 
   MarkVisit.fromMap(Map map){
     uid = map[uid];
+    clientname=map[clientname];
     cid = map[cid];
     location = map[location];
     refid = map[refid];
@@ -64,6 +68,7 @@ class MarkVisit{
   }
   MarkVisit.fromJson(Map map){
     uid = map[uid];
+    clientname=map[clientname];
     cid = map[cid];
     location = map[location];
     refid = map[refid];

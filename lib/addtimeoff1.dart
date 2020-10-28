@@ -609,7 +609,7 @@ class _AddTimeoff extends State<AddTimeoff> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
-                                    child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                    child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: appcolor,),
                                   ),
                                   new Text(
                                     "Refresh location",

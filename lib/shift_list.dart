@@ -309,7 +309,7 @@ class _ShiftList extends State<ShiftList> {
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               }),
           new RaisedButton(
-              color: Colors.orangeAccent,
+              color: buttoncolor,
               child: const Text('UPDATE',style: TextStyle(color: Colors.white),),
               onPressed: ()
               {

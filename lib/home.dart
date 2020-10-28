@@ -11,10 +11,12 @@ import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/model/timeinout.dart';
+import 'package:Shrine/punchlocation.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:Shrine/userviewShiftPlanner.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
@@ -24,16 +26,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Bottomnavigationbar.dart';
+import 'ShiftPlannerList.dart';
 import 'askregister.dart';
 import 'attendance_summary.dart';
 import 'bulkatt.dart';
@@ -45,10 +51,11 @@ import 'faceIdScreen.dart';
 import 'globals.dart';
 import 'leave_summary.dart';
 import 'location_tracking/home_view.dart';
+import 'myleave.dart';
 import "offline_home.dart";
 import 'payment.dart';
-import 'punchlocation.dart';
-import 'punchlocation_summary.dart';
+import 'punchlocationOld.dart';
+import 'punchlocation_summaryOld.dart';
 import 'services/services.dart';
 import 'settings.dart';
 import 'timeoff_summary.dart';
@@ -63,6 +70,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
   static const platform = const MethodChannel('location.spoofing.check');
   AppLifecycleState state;
 
@@ -74,6 +82,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   /*var _defaultimage =
       new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
+  var Rating;
+  bool FirstAttendance=false;
+  bool RateusDialogShown=false;
+  bool FeedbackDialogShown=false;
+  bool FiveStarRating=false;
+  String datetoShowFeedbackDialog='';
+  String dateShowedFeedbackDialog='';
+  String datetoShowRatingDialog='';
+  String dateShowedRatingDialog='';
   bool _checkLoaded = true;
   int _currentIndex = 1;
   String userpwd = "new";
@@ -84,7 +101,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String admin_sts = '0';
   bool glow = true;
   String mail_varified = '1';
-  String AbleTomarkAttendance = '0';
+  //String AbleTomarkAttendance = '0';
   String act = "";
   String act1 = "";
   int alertdialogcount = 0;
@@ -125,6 +142,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String dateShowedCovidSurvey='';
   String datetoShowCovidSurvey='';
   var currDate = DateTime.now();
+  var now = new DateTime.now();
+  var formatter = new DateFormat('yyyy-MM-dd');
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
   var token = "";
@@ -133,6 +152,110 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _newPass = TextEditingController();
   FocusNode __oldPass = new FocusNode();
   FocusNode __newPass = new FocusNode();
+
+  showInSnackBarforTimeInOut(var val1,var val2,var val3) {
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor:const Color(0xFF0E3311).withOpacity(0.0) ,
+        builder: (builder) {
+          return Container(
+            //color:const Color(0xFF0E3311).withOpacity(0.5),
+            height:200,
+            padding: new EdgeInsets.fromLTRB(10.0, 20.0, 5.0, 16.0),
+            child: new Stack(
+              children: <Widget>[
+                new Container(
+                  child: Container(
+                    padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
+                    //constraints: new BoxConstraints.expand(),
+                    child: new Column(
+                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Container(height: 3.0),
+                        new Text("Time: "+val1, style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                        new Container(height: 6.0),
+                        Container(
+                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                          child: val3.toString().length >=170 ? new Text(val3.toString().substring(0,170),style: TextStyle(fontSize: 14,color: Colors.white),):new Text(val3.toString(),style: TextStyle(fontSize: 14,color: Colors.white),),
+
+
+                        ),
+
+
+                        /* new Container(
+                          margin: new EdgeInsets.symmetric(vertical: 8.0),
+                          height: 2.0,
+                          width: 18.0,
+                          color: new Color(0xff00c6ff)
+                      ),*/
+                        /* new Row(
+                        children: <Widget>[
+                          new Image.asset("'assets/avatar.png'", height: 12.0),
+                          new Container(width: 8.0),
+                          new Text("planet.distance",
+                            style: regularTextStyle,
+                          ),
+                          new Container(width: 24.0),
+                          new Image.asset("'assets/avatar.png'", height: 12.0),
+                          new Container(width: 8.0),
+                          new Text("planet.gravity",
+                            style: regularTextStyle,
+                          ),
+                        ],
+                      ),*/
+                      ],
+                    ),
+                  ),
+                  height: 150.0,
+                  width: 350,
+                  margin: new EdgeInsets.only(left: 46.0),
+                  decoration: new BoxDecoration(
+                    //color: Color.fromRGBO(0, 0, 0, 0.5),
+                    //color: Color.fromRGBO(199, 130, 10, 0.6),
+                    //  color: Color.fromRGBO(2, 112, 85, 0.6),
+                    // color: Colors.orangeAccent[200],
+                    //color: Colors.teal[500],
+                    color: Color.fromRGBO(255, 177, 33, 0.8),
+                    shape: BoxShape.rectangle,
+                    borderRadius: new BorderRadius.circular(8.0),
+                    /*boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 5.0,
+                      offset: new Offset(0.0, 10.0),
+                    ),
+                  ],*/
+                  ),
+                ),
+                Container(
+                  margin: new EdgeInsets.symmetric(vertical: 13.0),
+                  alignment: FractionalOffset.centerLeft,
+                  child: Container(
+                    //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                      width: MediaQuery.of(context).size.height * .13,
+                      height: MediaQuery.of(context).size.height * .13,
+                      decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: new DecorationImage(
+                            fit: BoxFit.cover,
+
+                            image: facerecognition.toString()=='1'?(val2!=null?new NetworkImage(val2):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
+                            //image: AssetImage('assets/avatar.png')
+                          ))),
+                ),
+              ],
+            ),
+          );
+        });
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage())
+      );
+    });
+  }
 
 
   var tooltiptimein = SuperTooltip(
@@ -214,7 +337,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                "Welcome to ubiAttendance\n Click here to mark time out",
+                "Welcome to ubiSales\n Click here to mark time out",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               RaisedButton(
@@ -367,8 +490,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
-
-
   }
 
   _getPositions() async {
@@ -475,7 +596,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       var country = prefs.getString("CountryName") ?? '';
       var orgTopic = prefs.getString("OrgTopic") ?? '';
       var isAdmin = admin_sts = prefs.getString('sstatus').toString() ?? '0';
+      var employeeTopic = prefs.getString("EmployeeTopic") ?? '';
+
+   //   _firebaseMessaging.subscribeToTopic('geofenceStatus');
+
       //_firebaseMessaging.subscribeToTopic('101');
+      // _firebaseMessaging.subscribeToTopic('testtopic');
+
+
+
       if (isAdmin == '1') {
         _firebaseMessaging.subscribeToTopic('admin');
         print("Admin topic subscribed");
@@ -483,6 +612,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         print("employee topic subscribed");
         if (orgTopic.isNotEmpty)
           _firebaseMessaging.subscribeToTopic('employee');
+    }
+      if (globals.globalEmployeeTopic.isNotEmpty) {
+        // _firebaseMessaging.unsubscribeFromTopic(employeeTopic.replaceAll(' ', ''));
+        _firebaseMessaging
+            .subscribeToTopic(globals.globalEmployeeTopic.replaceAll(' ', ''));
+
+        print('globals.globalEmployeeTopic' + globals.globalEmployeeTopic.toString());
+
+        prefs.setString("EmployeeTopic", globals.globalEmployeeTopic);
+      } else {
+        if (employeeTopic.isNotEmpty)
+          _firebaseMessaging.subscribeToTopic(employeeTopic.replaceAll(' ', ''));
+        print('globals.globalEMployeeTopic11111' + employeeTopic);
       }
 
       if (globals.globalOrgTopic.isNotEmpty) {
@@ -531,7 +673,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
         // sendPushNotification("https://fcm.googleapis.com/fcm/send", token.toString(),"This is notification from mobile","Mobile Notification");
 
-        print("token--------------->"+token.toString()+"-------------");
+        // print("token--------------->"+token.toString()+"-------------"+country);
       });
 
       _firebaseMessaging.configure(
@@ -546,22 +688,84 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 ? ''
                 : message['notification']['body'].toString(),
             "pageToOpenOnClick":
-                message['data'].isEmpty ? '' : message['data']['pageToNavigate']
+            message['data'].isEmpty ? '' : message['data']['pageToNavigate']
           });
         },
         onResume: (Map<String, dynamic> message) async {
           print('on resume $message');
           var navigate =
-              message['data'].isEmpty ? '' : message['data']['pageToNavigate'];
+          message['data'].isEmpty ? '' : message['data']['pageToNavigate'];
           navigateToPageAfterNotificationClicked(navigate, context);
+
         },
         onLaunch: (Map<String, dynamic> message) async {
           print('on launch $message');
           var navigate =
-              message['data'].isEmpty ? '' : message['data']['pageToNavigate'];
+          message['data'].isEmpty ? '' : message['data']['pageToNavigate'];
           navigateToPageAfterNotificationClicked(navigate, context);
+
         },
       );
+
+/*
+      _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('on message $message'+message['data'].isEmpty.toString());
+//{notification: {title: ABC has marked his Time In, body: null}, data: {}}
+          cameraChannel.invokeMethod("showNotification",{"title":message['notification']['title']==null?'':message['notification']['title'].toString(),"description":message['notification']['body']==null?'':message['notification']['body'].toString(),"pageToOpenOnClick":message['data'].isEmpty?'':message['data']['pageToNavigate']});
+
+        },
+        onResume: (Map<String, dynamic> message) async {
+          print('on resume $message');
+//        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+//        navigateToPageAfterNotificationClicked(navigate, context);
+          /*
+        navigatorKey.currentState.push(
+            MaterialPageRoute(builder: (_) => Reports())
+        );
+        */
+          setState(() {
+            id=message['data']['body'];
+          });
+          if(id=='123'){
+            navigatorKey.currentState.push(
+                MaterialPageRoute(builder: (_) =>
+                    TimeOffList()
+                )
+            );
+          }else{
+            navigatorKey.currentState.push(
+                MaterialPageRoute(builder: (_) =>
+                    Reports()
+                )
+            );
+
+          }
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          print('on launch $message');
+//        var navigate=message['data'].isEmpty?'':message['data']['pageToNavigate'];
+//        navigateToPageAfterNotificationClicked(navigate, context);
+          setState(() {
+            id=message['data']['id'];
+          });
+          if(id=='123'){
+            navigatorKey.currentState.push(
+                MaterialPageRoute(builder: (_) =>
+                    TimeOffList()
+                )
+            );
+          }else{
+            navigatorKey.currentState.push(
+                MaterialPageRoute(builder: (_) =>
+                    Reports()
+                )
+            );
+
+          }
+        },
+      );
+      */
     }
   }
 
@@ -598,7 +802,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             "Password": qrs[i].Password,
             "FakeLocationStatus": qrs[i].FakeLocationStatus,
             "FakeTimeStatus": qrs[i].FakeTimeStatus,
-            "Address": address
+            "Address": address,
+            "appName": "ubiSales"
           });
         }
         var jsonList1 = json.encode(jsonList);
@@ -674,9 +879,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           // print('called again');
           if (mounted) {
             setState(() {
-              areaStatus = res.toString();
+              areaSts = res.toString();
               if (areaId != 0 && geoFence == 1)
-                AbleTomarkAttendance = res.toString();
+                AbleTomarkAttendance = areaSts;
             });
           }
         }).catchError((onError) {
@@ -821,7 +1026,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             "FakeLocationStatus": attendances[i].FakeLocationStatus,
             "FakeTimeStatus": attendances[i].FakeTimeStatus,
             "Address": address,
-            "appVersion": globals.appVersion
+            "appVersion": globals.appVersion,
+            "appName":"ubiSales"
           });
         }
         var jsonList1 = json.encode(jsonList);
@@ -1055,7 +1261,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               textAlign: TextAlign.center,
             ),
             description: Text(
-              "Get 10% off your first purchase of ubiAttendance. Hurry! Offer ends in 2 days"
+              "Get 10% off your first purchase of ubiSales. Hurry! Offer ends in 2 days"
                   .toString(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -1242,7 +1448,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ReferrerNotificationList[1] = {
         "title": "Refer and Earn",
         "description":
-        "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay.. Hurry! Offer ends in ${referralValidForDays} days"
+        "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay.. Hurry! Offer ends in ${referralValidForDays} days"
       };
       ReferrerNotificationList[2] = {
         "title": "Discounts that count",
@@ -1252,7 +1458,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ReferrerNotificationList[3] = {
         "title": "${referrerAmt} Off every Payment",
         "description":
-        "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in ${referralValidForDays} days"
+        "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in ${referralValidForDays} days"
       };
       ReferrerNotificationList[4] = {
         "title": "Discounts to smile about",
@@ -1383,7 +1589,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ReferrerNotificationList[1] = {
       "title": "Refer and Earn",
       "description":
-      "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
     };
     ReferrerNotificationList[2] = {
       "title": "Discounts that count",
@@ -1393,7 +1599,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ReferrerNotificationList[3] = {
       "title": "${referrerAmt} Off every Payment",
       "description":
-      "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
     };
     ReferrerNotificationList[4] = {
       "title": "Discounts to smile about",
@@ -1523,7 +1729,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ReferrerNotificationList[1] = {
       "title": "Refer and Earn",
       "description":
-      "Invite your friends to try ubiAttendance. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
     };
     ReferrerNotificationList[2] = {
       "title": "Discounts that count",
@@ -1533,7 +1739,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ReferrerNotificationList[3] = {
       "title": "${referrerAmt} Off every Payment",
       "description":
-      "Tell Your friends about ubiAttendance & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
     };
     ReferrerNotificationList[4] = {
       "title": "Discounts to smile about",
@@ -1659,6 +1865,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     setState(() {
       companyFreshlyRegistered =
           prefs.getBool("companyFreshlyRegistered") ?? false;
+      FirstAttendance =
+          prefs.getBool("FirstAttendance") ?? false;
+      FiveStarRating =
+          prefs.getBool("FiveStarRating") ?? false;
+      RateusDialogShown =
+          prefs.getBool("RateusDialogShown") ?? false;
+      FeedbackDialogShown =
+          prefs.getBool("FeedbackDialogShown") ?? false;
+      Rating= prefs.getDouble('Rating') ?? 0.0;
+      DateTime date = new DateTime(currDate.year, currDate.month, currDate.day);
+      datetoShowFeedbackDialog=prefs.getString("datetoShowFeedbackDialog") ?? date.toString();
+      dateShowedFeedbackDialog=prefs.getString("dateShowedFeedbackDialog") ?? '';
+      datetoShowRatingDialog=prefs.getString("datetoShowRatingDialog") ?? date.toString();
+      dateShowedRatingDialog=prefs.getString("dateShowedRatingDialog") ?? '';
     });
 
     Future.delayed(const Duration(milliseconds: 3000), () {
@@ -1688,9 +1908,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       // print('called again');
       if (mounted) {
         setState(() {
-          areaStatus = res.toString();
+          areaSts = res.toString();
           if (areaId != 0 && geoFence == 1)
-            AbleTomarkAttendance = res.toString();
+            AbleTomarkAttendance = areaSts;
         });
       }
     }).catchError((onError) {
@@ -1745,9 +1965,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           setaddress();
           // _checkLoaded = false;
           // //print("1-"+profile);
-          profileimage
-              .resolve(new ImageConfiguration())
-              .addListener(new ImageStreamListener((_, __) {
+          profileimage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
             if (mounted) {
               setState(() {
                 _checkLoaded = false;
@@ -1787,6 +2005,41 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     print(changepasswordStatus);
     print(Password_sts);
     print("changepasswordStatus");
+    FirstAttendance= prefs.getBool('FirstAttendance')?? false;
+    FiveStarRating= prefs.getBool('FiveStarRating')?? false;
+    RateusDialogShown = prefs.getBool('RateusDialogShown')?? false;
+    FeedbackDialogShown = prefs.getBool("FeedbackDialogShown") ?? false;
+    Rating= prefs.getDouble('Rating') ?? 0.0;
+    String date = formatter.format(now);
+    datetoShowFeedbackDialog=prefs.getString("datetoShowFeedbackDialog") ?? date.toString();
+    //datetoShowFeedbackDialog='2020-09-16';
+
+    dateShowedFeedbackDialog=prefs.getString("dateShowedFeedbackDialog") ?? '';
+    datetoShowRatingDialog=prefs.getString("datetoShowRatingDialog") ?? date.toString();
+    dateShowedRatingDialog=prefs.getString("dateShowedRatingDialog") ?? '';
+    //dateShowedFeedbackDialog='2020-09-15';
+    print('Over here--------------->>>>>>>>>>>>>>');
+    print(FirstAttendance.toString()+'------------>>>>one');
+    print(FiveStarRating.toString()+'-------->>>second');
+    print((FirstAttendance && !FiveStarRating).toString()+'------->>>third');
+    print((FirstAttendance&& RateusDialogShown && !FiveStarRating).toString()+'--------->>>>>fourth');
+    print(RateusDialogShown.toString()+'five---------->>>>>>');
+    print(datetoShowFeedbackDialog.toString()+'six---------->>>>>>');
+    print(dateShowedFeedbackDialog.toString()+'seven---------->>>>>>');
+    print(FirstAttendance&& RateusDialogShown && !FiveStarRating && dateShowedFeedbackDialog!=date.toString()+'------->>>>>eight');
+    print((datetoShowFeedbackDialog.toString()==date.toString()).toString()+'--------->>>Nine');
+    print(date.toString()+'Ten');
+    print(datetoShowRatingDialog.toString()+'Eleven<----------');
+    print(dateShowedRatingDialog.toString()+'Twelve<----------');
+    if(FirstAttendance && !FiveStarRating && !RateusDialogShown && dateShowedRatingDialog!=date.toString()) {
+      if(datetoShowRatingDialog.toString()==date.toString()) {
+        showRateUsDialog();
+      }
+    }else if(FirstAttendance&& RateusDialogShown && !FiveStarRating && dateShowedFeedbackDialog!=date.toString()){
+      if(datetoShowFeedbackDialog.toString()==date.toString()) {
+        showfeedbackDialog();
+      }
+    }
 
   }
 
@@ -1886,131 +2139,120 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   getmainhomewidget() {
-    return Stack(
-      children: <Widget>[
-        new WillPopScope(
-            onWillPop: () async => true,
-            child: new Scaffold(
-              backgroundColor: Colors.white,
-              key: _scaffoldKey,
-              appBar: AppBar(
-
-                title: Row(
-
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Text(org_name, style: new TextStyle(fontSize: 20.0)),
-                  ],
-                ),
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: <Color>[
-                            Color.fromRGBO(0, 176, 217, 1),
-                            Color.fromRGBO(0, 135, 180, 1),
-                          ])
+    return MaterialApp(
+        navigatorKey: navigatorKey,
+        home:Stack(
+          children: <Widget>[
+            new WillPopScope(
+                onWillPop: () async => true,
+                child: new Scaffold(
+                  backgroundColor: Colors.white,
+                  key: _scaffoldKey,
+                  appBar: AppBar(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Text(org_name, style: new TextStyle(fontSize: 20.0)),
+                      ],
+                    ),
+                    automaticallyImplyLeading: false,
+                    backgroundColor: appcolor,
+                    // backgroundColor: Color.fromARGB(255,63,163,128),
                   ),
-                ),
-                automaticallyImplyLeading: false,
-                backgroundColor: appcolor,
-                // backgroundColor: Color.fromARGB(255,63,163,128),
-              ),
-              //bottomSheet: getQuickLinksWidget(),
-              persistentFooterButtons: <Widget>[
-                quickLinkList1(),
-              ],
+                  //bottomSheet: getQuickLinksWidget(),
+                  persistentFooterButtons: <Widget>[
+                    quickLinkList1(),
+                  ],
 
-              bottomNavigationBar: Bottomnavigationbar(),
+                  bottomNavigationBar: Bottomnavigationbar(),
 
-              endDrawer: new AppDrawer(),
-              body:
+                  endDrawer: new AppDrawer(),
+                  body:
                   (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-              floatingActionButton: (((companyFreshlyRegistered &&
-                              !attendanceNotMarkedButEmpAdded) &&
-                          glow) &&
+                  floatingActionButton: (((companyFreshlyRegistered &&
+                      !attendanceNotMarkedButEmpAdded) &&
+                      glow) &&
                       (admin_sts == '1' || admin_sts == '2'))
-                  ? Container(
-                      alignment: Alignment(1.55, 1.25),
-                      child: (admin_sts == '1' || admin_sts == '2')
-                          ? AvatarGlow(
-                              glowColor: Colors.blue,
-                              child: new FloatingActionButton(
-                                mini: false,
-                                key: _keyBlue,
-                                backgroundColor: buttoncolor,
-                                onPressed: () {
-                                  print('hellowassup' +
-                                      (((!companyFreshlyRegistered &&
-                                                      attendanceNotMarkedButEmpAdded) ||
-                                                  !glow) &&
-                                              (admin_sts == '1' ||
-                                                  admin_sts == '2'))
-                                          .toString());
-                                  print('!companyFreshlyRegistered' +
-                                      (companyFreshlyRegistered == false)
-                                          .toString());
-                                  print('attendanceNotMarkedButEmpAdded' +
-                                      attendanceNotMarkedButEmpAdded
-                                          .toString());
+                      ? Container(
+                    alignment: Alignment(1.55, 1.25),
+                    child: (admin_sts == '1' || admin_sts == '2')
+                        ? AvatarGlow(
+                      glowColor: Colors.blue,
+                      child: new FloatingActionButton(
+                        mini: false,
+                        key: _keyBlue,
+                        backgroundColor: buttoncolor,
+                        onPressed: () {
+                          print('hellowassup' +
+                              (((!companyFreshlyRegistered &&
+                                  attendanceNotMarkedButEmpAdded) ||
+                                  !glow) &&
+                                  (admin_sts == '1' ||
+                                      admin_sts == '2'))
+                                  .toString());
+                          print('!companyFreshlyRegistered' +
+                              (companyFreshlyRegistered == false)
+                                  .toString());
+                          print('attendanceNotMarkedButEmpAdded' +
+                              attendanceNotMarkedButEmpAdded
+                                  .toString());
 
-                                  print('!glow' + (glow == false).toString());
+                          print('!glow' + (glow == false).toString());
 
-                                  if (((globals.registeruser) >=
-                                          (globals.userlimit + 5)) &&
-                                      buysts != '0')
-                                    showDialogWidget(
-                                        "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-                                  else
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddEmployee()),
-                                    );
-                                  // tooltiptwo.close();
-                                  istooltiponeshown = true;
-                                  print(istooltiponeshown);
-                                },
-                                tooltip: 'Add Employee',
-                                child: new Icon(Icons.person_add),
-                              ),
-                              endRadius: 90.0,
-                            )
-                          : new Center(),
+                          if (((globals.registeruser) >=
+                              (globals.userlimit + 5)) &&
+                              buysts != '0')
+                            showDialogWidget(
+                                "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                          else
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddEmployee()),
+                            );
+                          // tooltiptwo.close();
+                          istooltiponeshown = true;
+                          print(istooltiponeshown);
+                        },
+                        tooltip: 'Add Employee',
+                        child: new Icon(Icons.person_add),
+                      ),
+                      endRadius: 90.0,
                     )
-                  : (admin_sts == '1' || admin_sts == '2')
+                        : new Center(),
+                  )
+                      : (admin_sts == '1' || admin_sts == '2')
                       ? new FloatingActionButton(
-                          mini: false,
-                          //key: _keyBlue,
-                          backgroundColor: buttoncolor,
-                          onPressed: () {
-                          //sendNotificationtouser();
-                           // return false;
+                    mini: false,
+                    //key: _keyBlue,
+                    backgroundColor: buttoncolor,
+                    onPressed: () {
+                      //sendNotificationtouser();
+                      // return false;
 
-                            print('hello');
-                            print(glow);
-                            _getPositions();
-                            if (((globals.registeruser) >=
-                                    (globals.userlimit + 5)) &&
-                                buysts != '0')
-                              showDialogWidget(
-                                  "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-                            else
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AddEmployee()),
-                              );
-                          },
-                          tooltip: 'Add Employee',
-                          child: new Icon(Icons.person_add),
-                        )
+                      print('hello');
+                      print(glow);
+                      _getPositions();
+                      if (((globals.registeruser) >=
+                          (globals.userlimit + 5)) &&
+                          buysts != '0')
+                        showDialogWidget(
+                            "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+                      else
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddEmployee()),
+                        );
+                    },
+                    tooltip: 'Add Employee',
+                    child: new Icon(Icons.person_add),
+                  )
                       : Container(),
-            )), // First child
-        // BlurryEffect(0.5,0.1,Colors.grey.shade200)    //  Second Child
-      ],
-    );
+                )), // First child
+            // BlurryEffect(0.5,0.1,Colors.grey.shade200)    //  Second Child
+          ],
+        ));
   }
 
   checkalreadylogin() {
@@ -2143,18 +2385,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       );
     } else {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Kindly refresh the page to fetch the location.',
+        Text('Kindly allow location permission from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
-          child: Text('Refresh'),
-          color: globals.buttoncolor,
+          child: Text('Open Settings'),
           onPressed: () {
-            cameraChannel.invokeMethod("startAssistant");
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            PermissionHandler().openAppSettings();
           },
         ),
       ]);
@@ -2235,6 +2472,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   mainbodyWidget() {
     ////to do check act1 for poor network connection
 
+    if(globalstreamlocationaddr == "Location not fetched."){
+      return Padding(
+        padding: const EdgeInsets.only(left:45.0),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text('Kindly allow location permission from settings',
+              textAlign: TextAlign.center,
+              style: new TextStyle(fontSize: 14.0, color: Colors.red)),
+          RaisedButton(
+            child: Text('Open Settings'),
+            onPressed: () {
+              PermissionHandler().openAppSettings();
+            },
+          )],),
+      );
+
+
+
+
+    }
+
     if (act1 == "Poor network connection") {
       return poorNetworkWidget();
     } else {
@@ -2290,6 +2547,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                 Text(fname.toUpperCase() + " " + lname.toUpperCase(),
                     key: _keyRed,
+                    textAlign: TextAlign.center,
+
                     style: new TextStyle(
                       color: Colors.black87,
                       fontSize: 18.0,
@@ -2378,7 +2637,46 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             )),
       ));
     }
-    widList.add(Container(
+
+    if(globals.ShiftPlanner==1) {
+      widList.add(Container(
+        padding: EdgeInsets.only(top: 5.0),
+        constraints: BoxConstraints(
+          maxHeight: 50.0,
+          minHeight: 20.0,
+        ),
+        child: new GestureDetector(
+          onTap: () {
+
+            admin_sts == '1' || admin_sts == '2'?
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => shiftPlannerList()),
+            ): Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => userViewShiftPlanner()),
+            );
+            },
+          child: Column(
+            children: [
+              Icon(
+                const IconData(0xe80e, fontFamily: "CustomIcon"),
+                size: 29.0,
+                color: iconcolor,
+              ),
+              admin_sts == '1' || admin_sts == '2'? Text('Shift Planner',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(fontSize: 12.0, color: iconcolor)):Text('Shifts ',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(fontSize: 12.0, color: iconcolor)),
+            ],
+          ),
+        ),
+      ));
+    }
+
+
+/*    widList.add(Container(
       padding: EdgeInsets.only(top: 5.0),
       constraints: BoxConstraints(
         maxHeight: 50.0,
@@ -2403,7 +2701,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   style: new TextStyle(fontSize: 12.0, color: iconcolor)),
             ],
           )),
-    ));
+    ));*/
 
     if (visitpunch.toString() == '1') {
       widList.add(Container(
@@ -2435,7 +2733,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ));
     }
 
-    if (timeOff.toString() == '1') {
+    if (timeOff.toString() == '1'&&shiftType.toString()!='3') {
       widList.add(Container(
         padding: EdgeInsets.only(top: 5.0),
         constraints: BoxConstraints(
@@ -2466,6 +2764,33 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   color: iconcolor,
                 ),
                 Text(' Time Off',
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
+              ],
+            )),
+      ));
+    }
+
+    if (BasicLeave.toString() == '1') {
+      widList.add(Container(
+        padding: EdgeInsets.only(top: 5.0),
+        constraints: BoxConstraints(
+          maxHeight: 50.0,
+          minHeight: 20.0,
+        ),
+        child: new GestureDetector(
+            onTap: () {
+              /*showInSnackBar("Under development.");*/
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyLeave()),
+              );
+            },
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/leave-icon.png', height: 30.0, width: 30.0,color: Colors.black45,),
+                Text('Leave',
                     textAlign: TextAlign.center,
                     style: new TextStyle(fontSize: 12.0, color: iconcolor)),
               ],
@@ -2696,7 +3021,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         const IconData(0xe81a,
                                             fontFamily: "CustomIcon"),
                                         size: 15.0,
-                                        color: Colors.teal,
+                                        color: appcolor,
                                       ),
                                       Text("  "),
                                       Text(
@@ -2744,7 +3069,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           )
                         else
                           (areaId != 0 && geoFence == 1)
-                              ? areaStatus == '0'
+                              ? areaSts == '0'
                                   ? Container(
                                       padding:
                                           EdgeInsets.only(top: 5.0, right: 5.0),
@@ -2897,6 +3222,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     //tracker.onEnabledChange(true);
 
   }
+
   void stopLiveLocationTracking() {
 
     HomeViewState tracker=HomeViewState();
@@ -2904,7 +3230,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     tracker.onClickEnable(false);
     //tracker.onClickChangePace();
     //tracker.onEnabledChange(true);
-
   }
 
   saveImage() async {
@@ -2914,10 +3239,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     var FakeLocationStatus = 0;
 
     //startLiveLocationTracking();
-    if(areaStatus == '0'){
+  /*  if(areaStatus == '0'){
       geofence="Outside Fenced Area";
     }else{
       geofence="Within Fenced Area";
+    }*/
+
+    if(globals.geoFence==1) {
+      if (areaSts == '0') {
+        if(areaId==0 || areaId.toString()==""){
+          geofence = "";
+        }else{
+          geofence = "Outside Geofence";
+        }
+
+        print('thisisgeofencefortesting123---->>>>'+geofence);
+        print('thisisabletomarkatt---->>>>'+ableToMarkAttendance.toString());
+
+        if(ableToMarkAttendance==1 || fencearea==1) {
+          print('thisisgeofencefortesting456---->>>>'+geofence);
+          await showDialog(
+              context: context,
+              // ignore: deprecated_member_use
+              child: new AlertDialog(
+                //title: new Text("Warning!"),
+                content: new Text(
+                    "You Can't punch Attendance Outside Geofence."),
+              ));
+          return null;
+        }
+
+      } else {
+        geofence = "Within Geofence";
+        print('thisisgeofencefortesting789---->>>>'+geofence);
+      }
     }
 
     if(globals.departmentid==1||globals.departmentid==0){
@@ -2961,7 +3316,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           // ignore: deprecated_member_use
           child: new AlertDialog(
             //title: new Text("Warning!"),
-            content: new Text("You Can't punch Attendance from Outside fence."),
+            content: new Text("You Can't punch Attendance from Outside Geofence"),
           ));
       return null;
     }
@@ -2989,15 +3344,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
       SaveImage saveImage = new SaveImage();
-      bool issave = false;
-     var prefs = await SharedPreferences.getInstance();
+      Map issave;
+      var prefs = await SharedPreferences.getInstance();
       globals.showAppInbuiltCamera =
-          prefs.getBool("showAppInbuiltCamera") ?? false;
+          prefs.getBool("showAppInbuiltCamera") ?? true;
       issave = globals.showAppInbuiltCamera
           ? await saveImage.saveTimeInOutImagePickerAppCamera(mk, context)
           : await saveImage.saveTimeInOutImagePicker(mk, context);
       print(issave);
-      if (issave == null) {
+      if (issave['status'] == 3) {
         globals.timeWhenButtonPressed = null;
         showDialog(
             context: context,
@@ -3013,7 +3368,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         );
       }
 
-      if (issave) {
+      if (issave['status'] == 1 || issave['status']==2) {
         // Sync image
         saveImage.SendTempimage(context , true);
         if(act1=='TimeIn'){
@@ -3029,10 +3384,27 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           var empId = prefs.getString('empid') ?? '';
           var orgId = prefs.getString("orgid") ?? '';
           var eName = prefs.getString('fname') ?? 'User';
+          var formatter = new DateFormat('HH:mm');
+          var date= formatter.format(DateTime.now());
           String topic = empId + 'TI' + orgId;
           if (InPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked Time In', '',
+            /*sendPushNotification(eName + ' has marked Time In', '',
+                '\'' + topic + '\' in topics');*/
+            sendPushNotification(eName + ' has marked Time In at '+ date, '',
                 '\'' + topic + '\' in topics');
+          }
+          if (FakeLocationStatus==1) {
+            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
+              String subject="Fake Location";
+              String content= eName + ' has punched Time In from a spoofed location';
+              sendMailByAppToAdmin(subject, content);
+            }
+            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
+              sendPushNotification(
+                  eName + ' has punched Time In from a spoofed location', '',
+                  '(\'' + globals.globalOrgTopic +
+                      '\' in topics) && (\'admin\' in topics)');
+            }
           }
         }
         else{
@@ -3047,12 +3419,30 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           var empId = prefs.getString('empid') ?? '';
           var orgId = prefs.getString("orgid") ?? '';
           var eName = prefs.getString('fname') ?? 'User';
+          var formatter = new DateFormat('HH:mm');
+          var date= formatter.format(DateTime.now());
           String topic = empId + 'TO' + orgId;
           if (OutPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked Time Out', '',
+            sendPushNotification(eName + ' has marked Time Out at '+ date, '',
                 '\'' + topic + '\' in topics');
+            /*sendPushNotification(eName + ' has marked Time Out', '',
+                '\'' + topic + '\' in topics');*/
 
             print('\'' + topic + '\' in topics');
+          }
+
+          if (FakeLocationStatus==1) {
+            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
+              String subject="Fake Location";
+              String content= eName + ' has punched Time Out from a spoofed location';
+              sendMailByAppToAdmin(subject, content);
+            }
+            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
+              sendPushNotification(
+                  eName + ' has punched Time Out from a spoofed location', '',
+                  '(\'' + globals.globalOrgTopic +
+                      '\' in topics) && (\'admin\' in topics)');
+            }
           }
 
         }
@@ -3064,9 +3454,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         }
         //var prefs = await SharedPreferences.getInstance();
         prefs.setBool("firstAttendanceMarked", true);
+        prefs.setBool("FirstAttendance", true);
         //prefs.setBool("companyFreshlyRegistered",false );
 
-        showDialog(
+        showInSnackBarforTimeInOut(issave['TimeInOut'],issave['EntryExitImage'],issave['checkInOutLoc'],);
+
+
+        /*  showDialog(
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
@@ -3075,24 +3469,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MyApp()),
-        );
+        );*/
         if (mounted) {
           setState(() {
             act1 = act;
           });
         }
-      } else {
+      } else if(issave['status']==4) {
         showDialog(
             context: context,
             // ignore: deprecated_member_use
             child: new AlertDialog(
-              content: new Text("Selfie was not captured. Please try again."),
+              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
             ));
         if (mounted) {
           setState(() {
             act1 = act;
           });
         }
+      }
+      else{      //
+
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
+            ));
+
+
       }
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -3137,15 +3542,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }*/
   }
 
-  void dialogwidget(BuildContext context) {
+  void dialogwidget(BuildContext context) async{
     print("Sohan patel");
     showDialog(
         context: context,
         barrierDismissible: false,
         // ignore: deprecated_member_use
         child: new AlertDialog(
-          content: new Text('Do you want mark yesterday timeout?'),
+          content: new Text('Your Time Out was not punched Yesterday. Kindly contact Admin to regularize Attendance'),
           actions: <Widget>[
+            /*
             RaisedButton(
               child: Text(
                 ' Yes ',
@@ -3174,9 +3580,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   act1 = act;
                 });
               },
-            ),
+            ), */
           ],
+
         ));
+    Home ho = new Home();
+    await ho.updateTimeOut(empid, orgdir);
   }
 
 /*
@@ -3457,6 +3866,7 @@ var FakeLocationStatus=0;
                     "latit": lat,
                     "longi": long,
                     "file": new UploadFileInfo(imagei, "image.png"),
+                    "appName":"ubiSales"
                   });
                   print("5");
                   dio
@@ -3595,6 +4005,7 @@ var FakeLocationStatus=0;
                 "refid": mk.refid,
                 "latit": lat,
                 "longi": long,
+                "appName":"ubiSales"
                 //   "file": new UploadFileInfo(imagei, "image.png"),
               });
               print("5");
@@ -3697,7 +4108,7 @@ var FakeLocationStatus=0;
         !shown &&
         isAdmin == '1') {
       cameraChannel.invokeMethod("showNotification", {
-        "title": "Please verify your email address for ubiAttendance",
+        "title": "Please verify your email address for ubiSales",
         "description": ""
       });
       prefs.setBool("EmailVerifacitaionReminderShown", true);
@@ -3887,6 +4298,318 @@ var FakeLocationStatus=0;
             ),
           )
         ]).show();
+  }
+
+  showRateUsDialog()async{
+    var prefs= await SharedPreferences.getInstance();
+    String date = formatter.format(now);
+    var twoDaysFromNow = currDate.add(new Duration(days: 2));
+    String date1 = formatter.format(twoDaysFromNow);
+    dateShowedRatingDialog = date.toString();
+    datetoShowRatingDialog = date1.toString();
+    prefs.setString('dateShowedRatingDialog', dateShowedRatingDialog);
+    prefs.setString('datetoShowRatingDialog', datetoShowRatingDialog);
+    prefs.remove("FirstAttendance");
+    //prefs.setBool('RateusDialogShown', true);
+    return showDialog(context: context, builder:(context) {
+
+      return new AlertDialog(
+
+
+
+          title: new Text(
+            "Rate your Experience",textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15.0),),
+          content: RatingBar(
+            initialRating: Rating,
+            minRating: 1,
+            direction: Axis.horizontal,
+            allowHalfRating: true,
+            itemCount: 5,
+            itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+            itemBuilder: (context, _) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            onRatingUpdate: (rating) async{
+              print(rating);
+              prefs.setBool('RateusDialogShown', true);
+              if(rating>3.0){
+                print("you are good");
+                prefs.setBool("FiveStarRating", true);
+                setState(() {
+                  Rating=rating;
+                  prefs.setDouble('Rating',Rating);
+                });
+                print(Rating);
+                Navigator.pop(context);
+                storeRating(empid,orgid,Rating,'');
+                await showDialog(
+                    context: context,
+                    // ignore: deprecated_member_use
+                    child: new AlertDialog(
+                      //title: new Text("Warning!"),
+                      content: Container(
+                        height: MediaQuery.of(context).size.height*0.11,
+                        child: Column(
+                            children: <Widget>[
+                              new Text(
+                                  "Rate us on Play Store"),
+                              Padding(
+                                padding: const EdgeInsets.only(top:5.0),
+                                child: RaisedButton(elevation: 2.0,
+                                  highlightElevation: 5.0,
+                                  highlightColor: Colors.transparent,
+                                  disabledElevation: 0.0,
+                                  focusColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  color: buttoncolor,
+                                  child: Text('Go',style: TextStyle(color: Colors.white),),
+                                  onPressed: (){
+
+                                    globals.facebookChannel.invokeMethod("logRateEvent");
+                                    LaunchReview.launch(
+                                        androidAppId: "org.ubitech.sales"
+                                    );
+                                  },
+                                ),
+                              )
+                            ]),
+                      ),
+                    ));
+
+              }else{
+                print("you are bad");
+                setState(() {
+                  Rating=rating;
+                  prefs.setDouble('Rating',Rating);
+                  prefs.remove("FirstAttendance");
+                });
+                print(Rating);
+                Navigator.pop(context);
+                Future.delayed(Duration(seconds: 2), () => showfeedbackDialog());
+                //showfeedbackDialog();
+
+              }
+            },
+          )
+      );
+    }
+    );
+  }
+
+  showfeedbackDialog()async {
+    var prefs= await SharedPreferences.getInstance();
+    String date = formatter.format(now);
+    var twoDaysFromNow = currDate.add(new Duration(days: 2));
+    String date1 = formatter.format(twoDaysFromNow);
+    dateShowedFeedbackDialog = date.toString();
+    datetoShowFeedbackDialog = date1.toString();
+    prefs.setString('dateShowedFeedbackDialog', dateShowedFeedbackDialog);
+    prefs.setString('datetoShowFeedbackDialog', datetoShowFeedbackDialog);
+    final FocusNode myFocusNodeFeedback = FocusNode();
+    TextEditingController feedbackController = new TextEditingController();
+    return showDialog(context: context, builder:(context) {
+
+      return new AlertDialog(
+        title: new Text(
+          'Help us resolve your Query',textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 15.0),),
+        content: Container(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: new Container(
+
+            decoration: new BoxDecoration(
+                color: globals.buttoncolor.withOpacity(0.1),
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(0.0),
+                    topRight: const Radius.circular(0.0))),
+
+
+            alignment: Alignment.topCenter,
+            child: Wrap(
+                children: <Widget>[
+                  RatingBar(
+                    initialRating: Rating,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) async{
+                      print(rating);
+//                      String date = formatter.format(now);
+//                      var twoDaysFromNow = currDate.add(new Duration(days: 2));
+//                      String date1 = formatter.format(twoDaysFromNow);
+//                      dateShowedFeedbackDialog = date.toString();
+//                      datetoShowFeedbackDialog = date1.toString();
+//                      prefs.setString('dateShowedFeedbackDialog', dateShowedFeedbackDialog);
+//                      prefs.setString('datetoShowFeedbackDialog', datetoShowFeedbackDialog);
+                      if(rating>3.0){
+                        print("you are good");
+                        prefs.setBool("FiveStarRating", true);
+                        setState(() {
+                          Rating=rating;
+                          prefs.setDouble('Rating',Rating);
+                        });
+                        print(Rating);
+                        storeRating(empid,orgid,Rating,feedbackController.text);
+
+                        /*
+                        Navigator.pop(context);
+                        await showDialog(
+                            context: context,
+                            // ignore: deprecated_member_use
+                            child: new AlertDialog(
+                              //title: new Text("Warning!"),
+                              content: new Text(
+                                  "Thanks for Rating Us"),
+                            ));
+
+                         */
+                      }else{
+                        print("you are bad");
+                        setState(() {
+                          Rating=rating;
+                          prefs.setDouble('Rating',Rating);
+                          prefs.remove("FirstAttendance");
+                        });
+                        print(Rating);
+                        //Navigator.pop(context);
+                        // Future.delayed(Duration(seconds: 3), () => showfeedbackDialog());
+                        //showfeedbackDialog();
+
+                      }
+                    },
+                  ),
+                  Container(
+                    child: Wrap(children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 20.0, bottom: 20.0, left: 20.0, right: 20.0),
+                        child: TextFormField(
+                          focusNode: myFocusNodeFeedback,
+                          controller: feedbackController,
+                          keyboardType: TextInputType.emailAddress,
+                          onFieldSubmitted: (String value) {
+                            FocusScope.of(context).requestFocus(myFocusNodeFeedback);
+                          },
+                          style: TextStyle(
+                              fontFamily: "WorkSansSemiBold",
+                              fontSize: 16.0,
+                              height: 1.0,
+                              color: Colors.black),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            fillColor: Colors.white, filled: true,
+                            hintText: "Write here",
+                            hintStyle: TextStyle(
+                                fontFamily: "WorkSansSemiBold", fontSize: 15.0 ),
+                          ),
+
+                          maxLines: 3,
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              top: 10.0, bottom: 0.0, left: 75.0, right: 7.0),
+                          child:  ButtonTheme(
+                            minWidth: 50.0,
+                            child: new RaisedButton(
+                              child: new Text('Submit',style: TextStyle(color: Colors.white),),
+                              elevation: 2.0,
+                              highlightElevation: 5.0,
+                              highlightColor: Colors.transparent,
+                              disabledElevation: 0.0,
+                              focusColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+
+                              color: buttoncolor,
+
+                              onPressed: () async  {
+                                print(feedbackController.text);
+                                storeRating(empid,orgid,Rating,feedbackController.text);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomePage()),
+                                );
+                                /*
+                                showDialog(
+                                    context: context,
+                                    // ignore: deprecated_member_use
+                                    child: new AlertDialog(
+                                      content: new Text("Thanks for Rating us!"),
+                                    ));
+
+                                 */
+                                if(Rating>3.0){
+                                  await showDialog(
+                                      context: context,
+                                      // ignore: deprecated_member_use
+                                      child: new AlertDialog(
+                                        //title: new Text("Warning!"),
+                                        content: Container(
+                                          height: MediaQuery.of(context).size.height*0.11,
+                                          child: Column(
+                                              children: <Widget>[
+                                                new Text(
+                                                    "Rate us on Play Store"),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top:5.0),
+                                                  child: RaisedButton(elevation: 2.0,
+                                                    highlightElevation: 5.0,
+                                                    highlightColor: Colors.transparent,
+                                                    disabledElevation: 0.0,
+                                                    focusColor: Colors.transparent,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(5),
+                                                    ),
+                                                    color: buttoncolor,
+                                                    child: Text('Go',style: TextStyle(color: Colors.white),),
+                                                    onPressed: (){
+
+                                                      globals.facebookChannel.invokeMethod("logRateEvent");
+                                                      LaunchReview.launch(
+                                                          androidAppId: "org.ubitech.sales"
+                                                      );
+                                                    },
+                                                  ),
+                                                )
+                                              ]),
+                                        ),
+                                      ));}
+
+
+
+                              },),
+                            //borderSide: BorderSide(color: Colors.green[700],),
+
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(0.0),),
+
+                          )
+
+
+                      )
+
+                    ],),
+                  )
+                  ,
+                ]),
+          ),
+        ),
+
+      );
+    }
+    );
   }
 //////////////////////////////////////////////////////////////////
 }

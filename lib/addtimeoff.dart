@@ -368,7 +368,7 @@ class _AddTimeoff extends State<AddTimeoff> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-                'Kindly enable location excess from settings',
+                'Kindly allow location permission from settings',
                 textAlign: TextAlign.center,
                 style: new TextStyle(fontSize: 14.0, color: Colors.red)),
             RaisedButton(
@@ -587,7 +587,7 @@ class _AddTimeoff extends State<AddTimeoff> {
                   height: MediaQuery.of(context).size.height * .15,
                   child:
                   Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text('You are at: ',style: new TextStyle(fontSize: 14.0,color: Colors.teal)), FlatButton(
+                    Text('You are at: ',style: new TextStyle(fontSize: 14.0,color: appcolor)), FlatButton(
                       child: new Text(prefix0.globalstreamlocationaddr,
                           textAlign: TextAlign.center,
                           style: new TextStyle(fontSize: 14.0,color: Colors.black54)),
@@ -608,7 +608,7 @@ class _AddTimeoff extends State<AddTimeoff> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
-                                    child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: Colors.teal,),
+                                    child: Icon(const IconData(0xe81a, fontFamily: "CustomIcon"),size: 15.0,color: appcolor,),
                                   ),
                                   new Text(
                                     "Refresh location",
@@ -643,7 +643,7 @@ class _AddTimeoff extends State<AddTimeoff> {
     } else {
       return Column(children: [
         Text(
-            'Kindly enable location excess from settings',
+            'Kindly allow location permission from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'home.dart';
 import 'otpvarify.dart';
 import 'askregister.dart';
 import 'globals.dart' as globals;
@@ -17,7 +19,7 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MyHomePage(title: 'ubiAttendance');
+    return new MyHomePage(title: 'ubiSales');
   }
 }
 
@@ -348,7 +350,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            new Text("ubiAttendance", style: new TextStyle(fontSize: 20.0)),
+            new Text("ubiSales", style: new TextStyle(fontSize: 20.0)),
             //new Text(AppTranslations.of(context).text("key_app_title"), style: new TextStyle(fontSize: 20.0)),
           ],
         ),
@@ -523,35 +525,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                   SizedBox(height: 15.0),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 1.0,
-                        ),]
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: new TextFormField(
-                        decoration:  InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.location_city,
-                              color: Colors.black38,
-                            ),
-                            hintText: 'City',
-                            //hintText: AppTranslations.of(context).text("key_city"),
-                            hintStyle: TextStyle(
-                              color: Colors.black45,
-                            )
-                        ),
-                        //controller: _city,
+                  Visibility(
+                    visible: false,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width*0.9,
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFBFBFB),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          boxShadow: [new BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 1.0,
+                          ),]
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: new TextFormField(
+                          decoration:  InputDecoration(
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.location_city,
+                                color: Colors.black38,
+                              ),
+                              hintText: 'City',
+                              //hintText: AppTranslations.of(context).text("key_city"),
+                              hintStyle: TextStyle(
+                                color: Colors.black45,
+                              )
+                          ),
+                          //controller: _city,
 
-                        controller: locController1,
-                        keyboardType:  TextInputType.text,
+                          controller: locController1,
+                          keyboardType:  TextInputType.text,
+                        ),
                       ),
                     ),
                   ),
@@ -762,6 +767,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ));
                               return null;
                             }
+                            /*
                             else if(locController1.text.trim()=='') {
                               // ignore: deprecated_member_use
                               // FocusScope.of(context).requestFocus(__name);
@@ -772,7 +778,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 //content: new Text(AppTranslations.of(context).text("key_enter_company_name")),
                               ));
                               return null;
-                            }
+                            }*/
                             else if(_cname.text.trim()=='') {
                               // ignore: deprecated_member_use
                               showDialog(context: context, child:
@@ -858,10 +864,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "ReferralValidTo":ReferralValidTo,
                                 "referrerAmt":referrerAmt,
                                 "referrenceAmt":referrenceAmt,
-                                "platform":'android'
-                              }) .then((response)async {
+                                "platform":'android',
+                                "skipOTP":'1'
+
+                              }) .then((response) {
                                 if  (response.statusCode == 200) {
-                                  var prefs=await SharedPreferences.getInstance();
+
                                   prefs.setBool("companyFreshlyRegistered",true );
 
                                   // prefs.setBool("firstTimeInMarked",false );
@@ -886,15 +894,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                     globals.facebookChannel.invokeMethod("logCompleteRegistrationEvent");
 
-                                    gethome () async{
-                                      await new Future.delayed(const Duration(seconds: 1));
+                                    // await new Future.delayed(const Duration(seconds: 2));
                                       // login(_phone.text, _pass.text, context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => Otp(_email.text,_pass.text,context)),
-                                      );
-                                    }
-                                    gethome ();  // comment by sohan
+
+
+                                    varifyotp('00000',_email.text,_pass.text).then((a){
+                                            print("Navigated");
+
+                                    });
+
+
+                                   // comment by sohan
                                     /*  showDialog(context: context,
                                         barrierDismissible: false,
                                         child: new AlertDialog(
@@ -920,7 +930,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
+                                      title: new Text("ubiSales"),
                                       content: new Text("Email ID is already registered. Please Sign In"),
                                       //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
                                     ));
@@ -928,7 +938,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
+                                      title: new Text("ubiSales"),
                                       content: new Text("Phone No. is already registered"),
                                       // content: new Text(AppTranslations.of(context).text("key_phone_already_registered")),
                                     ));
@@ -936,7 +946,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // ignore: deprecated_member_use
                                     showDialog(context: context, child:
                                     new AlertDialog(
-                                      title: new Text("ubiAttendance"),
+                                      title: new Text("ubiSales"),
                                       content: new Text("Oops!! Poor network connection. Company could not be registered."),
                                       //content: new Text(AppTranslations.of(context).text("key_poor_network_connection")),
                                     ));
@@ -988,6 +998,96 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+
+  varifyotp(otp,  username1 ,password1) async{
+//    print(username1);
+//    print(password1);
+//    print("user pass");
+    var prefs=await SharedPreferences.getInstance();
+    Dio dio = new Dio();
+//    FormData formData = new FormData.from({
+//      "otp":otp,
+//      "username":username1,
+//      "password":password1
+//      // "file": new UploadFileInfo(imagei, "image.png"),
+//    });
+    print(globals.path+"verifyOTPNew?otp=$otp&username=$username1&password=$password1");
+    //Response<String> response1 = await dio.post(globals.path + "resend_otp", data: formData);
+    var url = globals.path+"verifyOTPNew";
+//    setState(() {
+//      otploader = true;
+//    });
+    http.post(url, body: {
+      "otp": '00000',
+      "username": username1,
+      "password": password1
+    }).then((response)async {
+      print(response);
+      print(response.statusCode);
+      if  (response.statusCode == 200) {
+        var prefs=await SharedPreferences.getInstance();
+        //  prefs.setBool("companyFreshlyRegistered",true );
+        print(response.body.toString());
+        Map res = json.decode(response.body);
+        print("This si a return value");
+        print(res);
+       if (res['sts'] == 'true') {
+          globals.facebookChannel.invokeMethod("logStartTrialEvent");
+          gethome () async{
+            await new Future.delayed(const Duration(seconds: 1));
+            login(res['phone'], res['pass'], context);
+          }
+          gethome ();
+        }
+        /*        else if(res['sts'] == 'timeout'){
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Your OTP has expired"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+        else if(res['sts'] == 'otpused')
+        {
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("OTP already used, Please register again"),
+          ));
+        }
+        else{
+          setState(() {
+            otploader = false;
+          });
+          showDialog(context: context, child:
+          new AlertDialog(
+            // title: new Text("ubiAttendance"),
+            content: new Text("Invalid OTP, Please try again"),
+            //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+          ));
+        }
+*/
+      }
+    }).catchError((onError) {
+      setState(() {
+        setState(() {
+         // otploader = false;
+        });
+        showDialog(context: context, child:
+        new AlertDialog(
+          // title: new Text("ubiAttendance"),
+          content: new Text("Unable to Connect server."),
+          //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
+        ));
+      });
+    });
+  }
   login(var username,var userpassword, BuildContext context) async{
     var user = User(username,userpassword);
     Login dologin = Login();
@@ -1021,7 +1121,6 @@ class _MyHomePageState extends State<MyHomePage> {
           SnackBar(content: Text("Poor network connection.")));
     }
   }
-
 
   runloader(){
     return new Container(

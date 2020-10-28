@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'employee_list.dart';
+import 'globals.dart';
 
 class EditEmployee extends StatefulWidget {
   @override
@@ -637,7 +638,7 @@ class _EditEmployee extends State<EditEmployee> {
               Padding(
                 padding: const EdgeInsets.only(top: 20.0,bottom: 20.0),
                 child: Center(
-                  child:Text("Edit Employee",style: new TextStyle(fontSize: 22.0,color:Colors.teal)),
+                  child:Text("Edit Employee",style: new TextStyle(fontSize: 22.0,color: appcolor)),
                 ),
               ),
               new Expanded(

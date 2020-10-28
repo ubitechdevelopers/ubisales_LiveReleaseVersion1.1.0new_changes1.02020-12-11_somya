@@ -1,3 +1,4 @@
+import 'package:Shrine/myleave.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/suspicious_selfies.dart';
 import 'package:flutter/material.dart';
@@ -672,8 +673,8 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
 
-            (flexi_permission ==1 && admin_sts=='1') ? SizedBox(height: 0.0):Center(),
-            (flexi_permission ==1 && admin_sts=='1') ? new RaisedButton(
+            (geoFence ==1 && admin_sts=='1') ? SizedBox(height: 0.0):Center(),
+            (geoFence ==1 && admin_sts=='1') ? new RaisedButton(
               child: Container(
                 padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
                 child: Row(

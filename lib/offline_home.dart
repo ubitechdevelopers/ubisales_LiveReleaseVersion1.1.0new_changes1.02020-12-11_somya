@@ -416,7 +416,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
               actions: [
 
                 RaisedButton.icon(
-                    color:Colors.teal,
+                    color:appcolor,
                     onPressed: (){
                       Navigator.push(
                         context,
@@ -447,7 +447,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
                 ],
               ),
               automaticallyImplyLeading: false,
-              backgroundColor: Colors.teal,
+              backgroundColor: appcolor,
               // backgroundColor: Color.fromARGB(255,63,163,128),
             ),
             //bottomSheet: getQuickLinksWidget(),
@@ -1359,7 +1359,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     } else {
       return Column(children: [
         Text(
-            'Kindly enable location excess from settings',
+            'Kindly allow location permission from settings',
             textAlign: TextAlign.center,
             style: new TextStyle(fontSize: 14.0, color: Colors.red)),
         RaisedButton(
@@ -1396,7 +1396,7 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
         // ignore: deprecated_member_use
         showDialog(context: context, child:
         new AlertDialog(
-          content: new Text("Sorry You are not connected to internet!"),
+          content: new Text("Sorry your device is not connected to internet!"),
         )
         );
       }

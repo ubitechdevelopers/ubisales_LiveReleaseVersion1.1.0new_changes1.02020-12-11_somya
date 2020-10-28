@@ -1,4 +1,5 @@
 import 'package:Shrine/FaceIdlist.dart';
+import 'package:Shrine/applyLeave.dart';
 import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/push_notification_for_employee_settings.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Bottomnavigationbar.dart';
 import 'cameraSettings.dart';
 import 'change_password.dart';
+import 'clients.dart';
 import 'department.dart';
 import 'designation.dart';
 import 'drawer.dart';
@@ -15,6 +17,7 @@ import 'employee_list.dart';
 import 'globals.dart';
 import 'holidays.dart';
 import 'home.dart';
+import 'myleave.dart';
 import 'notification_settings.dart';
 import 'payment.dart';
 import 'permission.dart';
@@ -292,29 +295,19 @@ class _Settings extends State<Settings> {
         onWillPop: ()=> sendToHome(),
     child: new Scaffold(
       key: _scaffoldKey,
-      appBar:AppBar(
-
+      appBar: AppBar(
         title: Row(
-
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+
             new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+            /*  Image.asset(
+                    'assets/logo.png', height: 40.0, width: 40.0),*/
           ],
         ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Color.fromRGBO(0, 176, 217, 1),
-                    Color.fromRGBO(0, 135, 180, 1),
-                  ])
-          ),
-        ),
-        automaticallyImplyLeading: false,
-        backgroundColor: appcolor,
-        // backgroundColor: Color.fromARGB(255,63,163,128),
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed:(){
+          sendToHome();}),
+        backgroundColor:appcolor,
       ),
       bottomNavigationBar: Bottomnavigationbar(),
       endDrawer: new AppDrawer(),
@@ -325,7 +318,7 @@ class _Settings extends State<Settings> {
           children: <Widget>[
             SizedBox(height: 8.0),
             Text('Settings',
-              style: new TextStyle(fontSize: 22.0, color: Colors.teal,),),
+              style: new TextStyle(fontSize: 22.0, color: appcolor),),
             SizedBox(height: 5.0),
             new Expanded(
               child: getSettingsWidget(),
@@ -393,6 +386,51 @@ class _Settings extends State<Settings> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => EmployeeList()),
+          );
+          // Perform some action
+        },
+      ));
+      list.add( SizedBox(height: 0.0));
+    }
+
+    if((admin_sts == '1' || admin_sts == '2')&& advancevisit==1){
+      list.add(new RaisedButton(
+        child: Container(
+          padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Icon(const IconData(0xe806, fontFamily: 'CustomIcon'), size: 30.0,),
+              SizedBox(width: 20.0,),
+              Expanded(
+                //widthFactor: MediaQuery.of(context).size.width*0.10,
+                child:Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        child: Text('Clients',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Container(
+                          child: Text('Manage Clients ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.keyboard_arrow_right,size: 30.0,),
+            ],
+          ),
+        ),
+        color: Colors.white,
+        elevation: 0.0,
+        splashColor: splashcolor,
+        textColor: textcolor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ClientList()),
           );
           // Perform some action
         },
@@ -670,6 +708,7 @@ class _Settings extends State<Settings> {
         textColor: textcolor,
         onPressed: () {
           showDialogWidget("To configure Geo Fence, login to the web admin panel");
+
           // Perform some action
         },
       ));
@@ -743,7 +782,7 @@ class _Settings extends State<Settings> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
-                        child: Text('Choose phone camera or ubiAttendance camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                        child: Text('Choose Camera',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
                     ),
                   ),
                 ],
@@ -934,6 +973,8 @@ class _Settings extends State<Settings> {
         );
       },
     ));
+
+
 
     return list;
   }

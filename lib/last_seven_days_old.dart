@@ -39,6 +39,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
     _controller = new TabController(length: 4, vsync: this);
     getOrgName();
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -89,7 +90,7 @@ class _LastSeven extends State<LastSeven> with SingleTickerProviderStateMixin {
               Text('Early Leavers(EL)',style: TextStyle(color:appcolor,fontSize: 12.0),),
             ],
           ),
-          Divider(),
+         Divider(),
           new Container(
             decoration: new BoxDecoration(color: Colors.black54),
             child: new TabBar(
