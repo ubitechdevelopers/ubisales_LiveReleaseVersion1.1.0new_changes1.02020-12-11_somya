@@ -388,6 +388,8 @@ print("marker added............");
         'assets/TimeInMapIcon.png');
   }
 
+
+
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
@@ -1075,7 +1077,8 @@ print("marker added............");
     return data.buffer.asUint8List();
   }
 
-  Future<Uint8List> getBytesFromCanvasForCircleMarker(int width, int height, int markerPoint) async  {
+
+  Future<Uint8List> getBytesFromCanvasForCircleMarker(int width, int height, int markerPoint) async  {    //IMP
 
     print(markerPoint);
     print("countOfPositionMarker");

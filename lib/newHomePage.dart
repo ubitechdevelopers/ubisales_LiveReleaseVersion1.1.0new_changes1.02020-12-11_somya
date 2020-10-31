@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as Math;
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:Shrine/avatar_glow.dart';
@@ -153,6 +154,12 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
   var Last;
   var initials;
   bool _checkLoaded = false;
+  List popupLocations= new List();
+  var closeEmp = false;
+  PersistentBottomSheetController controller;
+  bool setLoader=false;
+  bool mapLoader = false;
+
 
   var _shifts;
   // this will hold the generated polylines
@@ -197,6 +204,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     initPlatformState();
     getOrgName();
     _getLocation();
+
     //opacityLevel=2.0;
   }
 
@@ -221,7 +229,6 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _orgName = prefs.getString('org_name') ?? '';
-
     });
   }
   TabController _controller1;
@@ -241,6 +248,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
       var date=DateTime.now().toString().split(".")[0].split(" ")[0];
       var empId=data.snapshot.key.toString();
 
+      setLoader = true;
       if(data.snapshot.value[date]!=null) {
         var timesMap = new Map<String, dynamic>.from(data.snapshot.value[date]);
         List<Map<String, dynamic>> locationList = List();
@@ -321,22 +329,42 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
         NameList.add(("("+empId+") "+employeeMap["info"][0]['FirstName'].toString()+" "+employeeMap["info"][0]['LastName'].toString()));
         print(Name);
         print(NameList);
-        print("name is uiiugjutit");
+        print("--------------------------------------------123");
         StoreLocation.addAll({empId:[values[0]['latitude'],values[0]['longitude'],locationList[locationList.length - 1].keys, employeeMap["info"][0]['FirstName']+" "+employeeMap["info"][0]['LastName'], "https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName'], address]});
         print(StoreLocation);
         print("storelocation123");
 
-        /*   for(int i = 0; i<StoreLocation.length; i++) {
+       /* for(int i = 0; i<StoreLocation.length ; i++){
 
-          for(int j = i+1 ; j<StoreLocation.length;j++) {
+          double LAT1 = double.parse(StoreLocation.values.elementAt(StoreLocation.length-1)[0]);
+          double LONG1 = double.parse(StoreLocation.values.elementAt(StoreLocation.length-1)[1]);
 
-            var initialLati = StoreLocation.values.elementAt(i)[0];   //comparing latitiude
-            var initialLongi = StoreLocation.values.elementAt(i)[1];   //comparing longitude
+          print(LAT1);
+          print(LONG1);
+          print("last lat long");
 
-            var lati = StoreLocation.values.elementAt(j)[0];
-            var longi = StoreLocation.values.elementAt(j)[1];
 
-          //  getradius(double.parse(initialLati),double.parse(initialLongi),double.parse(lati),double.parse(longi));
+          var LAT2 = double.parse(StoreLocation.values.elementAt(i)[0]);
+          var LONG2 = double.parse(StoreLocation.values.elementAt(i)[1]);
+
+          print(LAT2);
+          print(LONG2);
+          print("i dont know");
+
+
+       //   double LAT2 = double.parse(v[0]);
+       //   double LONG2 = double.parse(v[1]);
+
+
+          double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+
+          if(distance<10) {
+
+            print(StoreLocation.values.elementAt(i)[3]);//if they are less then at a distance of 10 meters
+            print("hi Somya..!!!!");//if they are less then at a distance of 10 meters
+         //   count++;
+          //  print(count);
+            print("count is");
           }
         }*/
 
@@ -356,11 +384,12 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
             });
           },
-          /*
-          infoWindow: InfoWindow(
-              title: visits[i].client,
-              snippet:visits[i].desc
+
+        /*  infoWindow: InfoWindow(
+              //title: visits[i].client,
+              //snippet:visits[i].desc
           ),*/
+
         );
         Future.delayed(Duration(seconds: 1),(){
           setState(() {
@@ -369,16 +398,77 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
         });
         j++;
       }
-    } );
+    });
     setSourceAndDestinationIcons();
+
   }
 
-  void _add(lat, long, image) async{
+
+
+  void _add(lat, long, image1, name) async {
+    var count = 0;
+    _markers.clear();
 
     print(lat);
     print(long);
-    print(image);
+    print(image1);
     print("image iss");
+
+    var Name = name;
+
+
+    //  getAcronym(var name) {
+
+    if((Name.trim()).contains(" ")) {
+      var name=Name.split(" ");
+      print('print(name);');
+      print(name);
+      First=name[0][0].trim();
+      print(First);
+      Last=name[1][0].trim().toString().toUpperCase();
+      print(Last);
+      initials =  First+Last;
+      print(initials);
+      print("initials ");
+    }else{
+      First=Name[0];
+      print('print(First)else');
+      print(First);
+      initials =  First;
+      print(initials);
+
+    }
+
+    StoreLocation.forEach((k, v) {
+
+      double LAT1 = lat;
+      double LONG1 = long;
+      double LAT2 = double.parse(v[0]);
+      double LONG2 = double.parse(v[1]);
+
+
+      double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+      print(distance);
+      print("distance is");
+      if(distance<10) {
+        //if they are less then at a distance of 10 meters
+        count++;
+        print(count);
+        print("count is");
+      }
+
+      // }
+    });
+    _checkLoaded = false;
+    var image = NetworkImage(image1);
+
+    var image2 = image1;
+    image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+      _checkLoaded = true;
+    }));
+
+    print(_checkLoaded);
+    print("checkloaded");
 
     final int markerCount = markers.length;
 
@@ -397,21 +487,11 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     print(_markerIdCounter);
     print("_markerIdCounter");
 
-    /*  final Marker marker = Marker(
-      markerId: markerId,
-        icon: await getMarkerIcon(image, Size(150.0, 150.0),_markerIdCounter),
-        position: LatLng(lat, long),
-      onTap: () {
-        _onMarkerTapped(markerId);
-      },
-    );*/
-
     int j =0;
-
     var m = Marker(
       markerId: MarkerId('sourcePin$j'),
       position: LatLng(lat,long),
-      icon: await getMarkerIcon(image, Size(150.0, 150.0),j+1),
+      icon: _checkLoaded == true ? await getMarkerProfile(image2, count ,lat, long) : await getMarker(initials,lat, long ,count),
 
       onTap: () {
 
@@ -434,7 +514,6 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     setState(() {
       _markers.add(m);
       j++;
-
       //markers[markerId] = marker;
     });
   }
@@ -453,54 +532,6 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
         }
       });
     }
-  }
-
-  getradius(iniLati, iniLongi, lati, longi){
-
-    print(iniLati);
-    print(iniLongi);
-    print(lati);
-    print(longi);
-    print("lati+longi");
-
-    double lat = lati;
-    double long = longi;
-    double assign_lat = iniLati;
-    double assign_long = iniLongi;
-    double assign_radius = .250;
-
-
-    String status = '0';
-
-    //if (empid != null && empid != '' && empid != 0) {
-    double calculateDistance(lat1, lon1, lat2, lon2) {
-      var p = 0.017453292519943295;
-      var c = cos;
-      var a = 0.5 -
-          c((lat2 - lat1) * p) / 2 +
-          c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-      return 12742 * asin(sqrt(a));
-    }
-
-    double totalDistance = calculateDistance(lat, long, assign_lat, assign_long);
-    status = (assign_radius >= totalDistance) ? '1' : '0';
-
-    if(status =='1') {
-      print("YES, IT IS INSIDE GEOFENCE");
-      StoreLocation.forEach((k, v) {
-        if(double.parse(v[0]) == lat && double.parse(v[1]) == long ){
-          insideGeo.add([v[0], v[1]]);
-          distinctIds = insideGeo.toSet().toList();
-          print(distinctIds);
-          print(insideGeo);
-          print("distinctIds");
-        }
-      });
-    }
-    else{
-      print("NO, OUTSIDE GEOFENCE");
-    }
-    // return status;
   }
 
   Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size,int number) async {
@@ -612,6 +643,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
     return BitmapDescriptor.fromBytes(uint8List);
   }
+
+
   Future<ui.Image> getUiImage(String imageAssetPath, int height, int width) async {
 
     final ByteData assetImageByteData = await rootBundle.load(imageAssetPath);
@@ -653,9 +686,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
   void setSourceAndDestinationIcons() async {
     sourceIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5), 'assets/driving_pin.png');
-    destinationIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/destination_map_marker.png');
+    destinationIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/destination_map_marker.png');
   }
   var formatter = new intl.DateFormat('dd-MMM-yyyy');
 
@@ -990,10 +1021,10 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                     });
                   },
                 ),
-                MapPinPillComponent(
+               /* MapPinPillComponent(
                     pinPillPosition: pinPillPosition,
                     currentlySelectedPin: currentlySelectedPin
-                ),
+                ),*/
 
                 AnimatedOpacity(
                   opacity: opacityLevel1,
@@ -1025,35 +1056,17 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                               padding: EdgeInsets.only(top: 5),
                               children: newDataList.map((data) {
                                 return ListTile(
-                                  /*  leading: ConstrainedBox(
-                                  constraints: BoxConstraints(
-
-                                    minWidth: 44,
-                                    minHeight: 44,
-                                    maxWidth: 64,
-                                    maxHeight: 64,
-                                  ),
-                                  child: Image.network(newDataList1.elementAt(1), fit: BoxFit.cover),
-                                ),*/
-
-                                  /*DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
-                                )*/
-                                  /* leading:  CircleAvatar(
-                                  backgroundImage: Image.asset(newDataList1.elementAt(1)// no matter how big it is, it won't overflow
-                                ),*/
-                                  // title: Text(newDataList1.elementAt(0)),
                                     title: Text(data),
                                     onTap: () {
-                                      // Tap = true;
+
                                       String result = data.substring(1, data.indexOf(')'));
+
                                       for (var keys in StoreLocation.keys) {
                                         if(result==keys.toString()){
                                           List searchedLocation = StoreLocation[result];
                                           print(searchedLocation);
                                           print("searchedLocation");
-                                          _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4));
+                                          _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
                                           //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
                                           // newDataList.clear();
                                         }
@@ -1062,6 +1075,10 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                                       newDataList.clear();
                                       print(newDataList);
                                       print("sadsadnewDataList");
+                                    //  _changeOpacity1();
+                                      _textController.clear();
+                                      opacityLevel1=0.0;
+
                                     });
                               }).toList(),
                             ):Container(),
@@ -1166,11 +1183,14 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                       showTwoGlows: true,
 
                       child:Container(
+                      //  color: Colors.red,
                         child:  new GestureDetector(
-                            child: ClipOval(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
                               child: FadeInImage.assetNetwork(
                                 placeholder: 'assets/avatar.png',
                                 image: profile,
+                                fit: BoxFit.fill,
                               ),
                             ),
                             onTap: (){
@@ -1198,10 +1218,10 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                       ],
                       image: new DecorationImage(
                         fit: BoxFit.fill,
-                       // image: NetworkImage(profile),
-                        image: NetworkImage(profile),
-                      ),
-                    ),*/
+                           // image: NetworkImage(profile),
+                            image: NetworkImage(profile),
+                          ),
+                        ),*/
                       ),
                     )
                 ),
@@ -1228,12 +1248,13 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                               // color: Colors.blue[100],
                               child: Icon(Icons.search)),
                           onTap: (){
+
                             _changeOpacity1();
                             /// });
                           }
                       ),
-                      width: MediaQuery.of(context).size.height * .05,
-                      height: MediaQuery.of(context).size.height * .05,
+                      width: MediaQuery.of(context).size.height * .07,
+                      height: MediaQuery.of(context).size.height * .07,
                       /* decoration: new BoxDecoration(
                    color: Colors.black,
                      shape: BoxShape.circle,
@@ -1248,12 +1269,13 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                      image: new DecorationImage(
                        fit: BoxFit.fill,
                        image: NetworkImage(profile),
-                     ))*/)
+                     ))*/
+                      )
                 ):Container(),
 
                 Positioned(
                   //top: 570,
-                    top: 475,
+                    top:  MediaQuery.of(context).size.height *.68,
                     // bottom: 310,
                     child:Align(
                       //alignment: FractionalOffset.bottomRight,
@@ -1263,10 +1285,10 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                           child: getProfileWidget()
                       ),
                     )
-                )
+                ),
 
+                setLoader != true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
               ],
-
             ),
           ),
         ],
@@ -1450,9 +1472,14 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
   }
 
+  double getDistance(double LAT1, double LONG1, double LAT2, double LONG2) {
+    double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+    print(distance);
+    print("distanve isdjkkjkjhgkgh");
+  }
 
 
-  getProfileWidget() {
+  getProfileWidget()  {
 
     return new ListView.builder(
 
@@ -1462,6 +1489,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
          // var image =  StoreLocation.values.elementAt(index)[4];
           _checkLoaded = false;
+
+          var count=0;
           var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
           image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
               _checkLoaded = true;
@@ -1494,13 +1523,11 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
               print(initials);
 
             }
-
-         // }
+            // }
 
           return  new Column(
               children: <Widget>[
                 new FlatButton(
-
                     child : new Row(
                       // crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1526,15 +1553,72 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                               fit: BoxFit.fill,
                               image: StoreLocation.values.elementAt(index)[4],
                             ),
-                          ):CircleAvatar(
+                          ): CircleAvatar(
                             child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
                           ),
                       ),
                         onTap: () async {
 
-                         // getMarkerIconForClients( StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), 1);
-                        print("ontap executed");
-                        var iconurl ="your url";
+                        _markers.clear();
+                        setLoader = false;
+                        var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
+                        image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+                          _checkLoaded = true;
+                        }));
+
+                        var Name = StoreLocation.values.elementAt(index)[3];
+                        print(Name);
+                        print("name is the client");
+                        print(_checkLoaded);
+
+                        //  getAcronym(var name) {
+
+                        if((Name.trim()).contains(" ")) {
+                          var name=Name.split(" ");
+                          print('print(name);');
+                          print(name);
+                          First=name[0][0].trim();
+                          print(First);
+                          Last=name[1][0].trim().toString().toUpperCase();
+                          print(Last);
+                          initials =  First+Last;
+                          print(initials);
+                          print("initials ");
+                        }else{
+                          First=Name[0];
+                          print('print(First)else');
+                          print(First);
+                          initials =  First;
+                          print(initials);
+
+                        }
+
+
+                        StoreLocation.forEach((k, v) {
+
+
+                          double LAT1 = double.parse(StoreLocation.values.elementAt(index)[0]);
+                          double LONG1 = double.parse(StoreLocation.values.elementAt(index)[1]);
+                          double LAT2 = double.parse(v[0]);
+                          double LONG2 = double.parse(v[1]);
+
+
+                          double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+                            print(distance);
+                            print("distance is");
+                          if(distance<10) {
+                            //if they are less then at a distance of 10 meters
+                            count++;
+                            print(count);
+                            print("count is");
+                          }
+
+                          // }
+                        });
+
+                        print(initials);
+                        print("hjkhk,hklhlkjhkljlkjoiuo");
+
                         var dataBytes;
                         var request = await http.get(StoreLocation.values.elementAt(index)[4]);
                         var bytes = await request.bodyBytes;
@@ -1547,16 +1631,27 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                             double.parse(StoreLocation.values.elementAt(index)[0]),
                             double.parse(StoreLocation.values.elementAt(index)[1]));
 
-                        _markers.add( Marker(
-                          icon: await getMarkerIconForClients(StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), 1),
+                       // var loader = await getMarkerIconForClients(StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), count);
+
+                        _checkLoaded?
+                        getMarkerProfile(StoreLocation.values.elementAt(index)[4], count ,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]))
+                            : getMarker(initials,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]),count);
+
+                        /*_markers.add(
+                            Marker(
+                          icon: loader,
                           markerId: MarkerId(_lastMapPositionPoints.toString()),
                           position: _lastMapPositionPoints,
+                          onTap: (){
+                            getPopup(double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]));
+                            },
                           infoWindow: InfoWindow(
                             title: "Delivery Point",
                             snippet:"My Position",
                           ),
-                        ));
-                        print("onpressed on pin");
+                        ))*/
+
+
                         getLocation(double.parse(StoreLocation.values.elementAt(index)[0]),double.parse(StoreLocation.values.elementAt(index)[1]));
 
                         },
@@ -1566,34 +1661,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
                     onPressed: ()  {
 
-                     /* var iconurl ="your url";
-                      var dataBytes;
-                      var request = await http.get(StoreLocation.values.elementAt(index)[4]);
-                      var bytes = await request.bodyBytes;
-
-                      setState(() {
-                        dataBytes = bytes;
-                      });
-
-                      LatLng _lastMapPositionPoints = LatLng(
-                          double.parse("22.7339"),
-                          double.parse("75.8499"));
-
-                      _markers.add( Marker(
-                        icon: BitmapDescriptor.fromBytes(dataBytes.buffer.asUint8List()),
-                        markerId: MarkerId(_lastMapPositionPoints.toString()),
-                        position: _lastMapPositionPoints,
-                        infoWindow: InfoWindow(
-                          title: "Delivery Point",
-                          snippet:
-                          "My Position",
-                        ),
-                      ));
-                      print("onpressed on pin");*/
-
-
-                      currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: StoreLocation.values.elementAt(index)[4], location: LatLng(0, 0), client: StoreLocation.values.elementAt(index)[3],description: 'At: '+StoreLocation.values.elementAt(index)[4],in_time: "19:20",out_time: '-', labelColor: Colors.grey);
-                      pinPillPosition = 50;
+                     // currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: StoreLocation.values.elementAt(index)[4], location: LatLng(0, 0), client: StoreLocation.values.elementAt(index)[3],description: 'At: '+StoreLocation.values.elementAt(index)[4],in_time: "19:20",out_time: '-', labelColor: Colors.grey);
+                   //   pinPillPosition = 50;
 
                     }
                 ),
@@ -1604,6 +1673,400 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
   }
 
+  Future<Uint8List> getMarkerIconForClients(String imagePath, Size size,int number) async {
+
+    print(number);
+    print("number issss");
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    final Radius radius = Radius.circular(size.width / 2);
+
+    final Paint tagPaint = Paint()..color = Colors.blue;
+    final double tagWidth = 40.0;
+
+    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
+    final double shadowWidth = 15.0;
+
+    final Paint borderPaint = Paint()..color = Colors.white;
+    final double borderWidth = 3.0;
+
+    final double imageOffset = shadowWidth + borderWidth;
+
+    // Add shadow circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              0.0,
+              0.0,
+              size.width,
+              size.height
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        shadowPaint);
+
+    // Add border circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              shadowWidth,
+              shadowWidth,
+              size.width - (shadowWidth * 2),
+              size.height - (shadowWidth * 2)
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        borderPaint);
+
+    // Add tag circle
+
+    if(number!=1) {
+      canvas.drawRRect(
+          RRect.fromRectAndCorners(
+            Rect.fromLTWH(
+                size.width - tagWidth,
+                0.0,
+                tagWidth,
+                tagWidth
+            ),
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius,
+          ),
+          tagPaint);
+
+      // Add tag text
+      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+      textPainter.text = TextSpan(
+        text: "+" + number.toString(),
+        style: TextStyle(fontSize: 25.0, color: Colors.white),
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+          canvas,
+          Offset(
+              size.width - tagWidth / 2 - textPainter.width / 2,
+              tagWidth / 2 - textPainter.height / 2
+          )
+      );
+    }
+
+    // Oval for the image
+    Rect oval = Rect.fromLTWH(
+        imageOffset,
+        imageOffset,
+        size.width - (imageOffset * 2),
+        size.height - (imageOffset * 2)
+    );
+    // Add path for oval image
+    canvas.clipPath(Path()
+      ..addOval(oval));
+
+    // Add image
+    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
+    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+
+    // Convert canvas to image
+    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
+        size.width.toInt(),
+        size.height.toInt()
+    );
+
+    // Convert image to bytes
+    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+    return uint8List;
+  }
+
+
+  getMarkerProfile( profile,count ,latitude, longitude) async {
+
+    print(profile);
+    print("PlatformException123456");
+
+    final Uint8List markerIcon  = await getMarkerIconForClients(profile,  Size(140.0, 140.0), count) ;
+
+    //  if(showPolylines == true || showMarker == true) {
+    var m = Marker(
+      markerId: MarkerId(initials.toString()),
+      position: LatLng(latitude,longitude),
+      onTap:(){
+        getPopup(latitude, longitude);
+      },
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+      infoWindow: InfoWindow(
+        title: initials.toString(),
+      ),
+    );
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        print(setLoader);
+        print("setloader21");
+        _markers.add(m);
+        setLoader= true;
+        print(setLoader);
+        //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+      });
+    });
+    //  }
+  }
+
+
+
+  getMarker(String initials, latitude,longitude, count ) async {
+
+    final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(150, 150, initials,count);
+
+  //  if(showPolylines == true || showMarker == true) {
+      var m = Marker(
+        markerId: MarkerId(initials.toString()),
+        position: LatLng(latitude,longitude),
+        onTap:(){
+          getPopup(latitude, longitude);
+        },
+        icon: BitmapDescriptor.fromBytes(markerIcon),
+        infoWindow: InfoWindow(
+          title: "+"+count.toString(),
+        ),
+      );
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _markers.add(m);
+          setLoader= true;
+          //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+        });
+      });
+  //  }
+  }
+
+  Future<Uint8List> getBytesFromCanvasForCircleMarker(int width, int height, String markerPoint,count) async  {    //IMP
+
+    print(markerPoint);
+    print("countOfPositionMarker");
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    final Radius radius = Radius.circular(width/2);
+    final Paint tagPaint = Paint()..color = Colors.blue;
+
+
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(0.0, 0.0, width.toDouble(),  height.toDouble()),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        paint);
+    TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = TextSpan(
+      text: markerPoint,
+      style: TextStyle(fontSize: 50.0, color: Colors.white,fontWeight: FontWeight.bold),
+    );
+
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              100,
+              0.0,
+              50,
+              50
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        tagPaint);
+
+    // Add tag text
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    textPainter.text = TextSpan(
+      text: "+"+count.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white),
+    );
+
+    textPainter.layout();       //
+    textPainter.paint(
+        canvas,
+        Offset(
+            250 / 2 - textPainter.width / 2,
+            50 / 2 - textPainter.height / 2
+        )
+    );
+
+    painter.layout();
+    painter.paint(
+        canvas,
+        Offset((width * 0.5) - painter.width * 0.5,
+            (height * .5) - painter.height * 0.5));
+    final img = await pictureRecorder.endRecording().toImage(width, height);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data.buffer.asUint8List();
+  }
+
+
+  getPopup(LAT1 , LONG1) {
+    popupLocations.clear();
+
+    print(LAT1);
+    print(LONG1);
+
+    StoreLocation.forEach((k, v) {
+
+        double LAT2 = double.parse(v[0]);
+        double LONG2 = double.parse(v[1]);
+
+        double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+
+        if(distance<10) {            //if they are less then at a distance of 10 meters
+          closeEmp = true;
+          print("coming lati longi");
+
+          print(StoreLocation);
+          popupLocations.add([k,v[0],v[1],v[3],v[4]]);
+          print(popupLocations);
+          print(distance);
+          print("distanve is");
+        }
+
+       // }
+      });
+
+      if(closeEmp)
+      showBottomNavigation(popupLocations);
+  }
+
+  void showBottomNavigation(List popupLocations){
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor:const Color(0xFF0E3311).withOpacity(0.0) ,
+        builder: (builder) {
+          return new Container(
+              height: MediaQuery.of(context).size.height*0.35,
+              color: appcolor.withOpacity(0.0),
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  //   SizedBox(height: 20.0,),
+                  /*Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Update profile photo", style: TextStyle(fontWeight: FontWeight.bold),)
+                ],),*/
+                  // SizedBox(height: 20.0,),
+                  Expanded(
+                    child:ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.all(20.0),
+                      itemCount: popupLocations.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          //color:const Color(0xFF0E3311).withOpacity(0.5),
+                          height:100,
+                          padding: new EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 16.0),
+
+                          child: new Stack(
+                            children: <Widget>[
+                              new Container(
+                                child: Container(
+                                  padding: new EdgeInsets.fromLTRB(70.0, 5.0, 16.0, 10.0),
+                                  //constraints: new BoxConstraints.expand(),
+                                  child: new Column(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      new Container(height: 3.0),
+                                      new Text(popupLocations[index][3].toString(), style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                      new Container(height: 6.0),
+                                      Container(
+                                        //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                        child: true ? new Text("Latitude: "+popupLocations[index][1].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                      ),Container(
+                                        //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                        child: true ? new Text("Longitude: "+popupLocations[index][2].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                height: 75.0,
+                                width: 350,
+                                margin: new EdgeInsets.only(left: 46.0),
+                                decoration: new BoxDecoration(
+                                  //color: Color.fromRGBO(0, 0, 0, 0.5),
+                                  //color: Color.fromRGBO(199, 130, 10, 0.6),
+                                  //  color: Color.fromRGBO(2, 112, 85, 0.6),
+                                  // color: Colors.orangeAccent[200],
+                                  //color: Colors.teal[500],
+                                  color: Colors.cyanAccent.withOpacity(0.7),
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: new BorderRadius.circular(8.0),
+                                  /*boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 5.0,
+                      offset: new Offset(0.0, 10.0),
+                    ),
+                  ],*/
+                                ),
+                              ),
+                              Container(
+                                margin: new EdgeInsets.symmetric(vertical: 13.0),
+                                alignment: FractionalOffset.centerLeft,
+                                child: Container(
+                                  //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                                    width: MediaQuery.of(context).size.width * .20,
+                                    height: MediaQuery.of(context).size.height * .22,
+                                    decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: new DecorationImage(
+                                          fit: BoxFit.fill,
+
+                                          image: true?(true?new NetworkImage(popupLocations[index][4]):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
+                                          //image: AssetImage('assets/avatar.png')
+                                        )
+                                    )),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20.0,),
+                  Divider(color: Colors.black,height: 3.0,),
+                 /* Container(
+                      color: appcolor.withOpacity(0.15),
+                      child:Column(
+                        children: <Widget>[
+                          Center(
+                              child:FlatButton(child:Text("Cancel"),onPressed: (){
+                                controller.close();
+                              },)
+                          )
+                        ],
+                      )
+                  )*/
+
+                ],
+              ));
+        });
+
+  }
+
+/*
   Future<BitmapDescriptor> getMarkerIconForClients(String imagePath, Size size,int number) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -1672,8 +2135,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     // Add tag text
     TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
-      text: number.toString(),
-      style: TextStyle(fontSize: 20.0, color: Colors.white),
+      text: "+"+number.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white),
     );
 
     textPainter.layout();
@@ -1713,6 +2176,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
     return BitmapDescriptor.fromBytes(uint8List);
   }
+*/
 
   loader() {
     return new Container(
@@ -1852,8 +2316,11 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
     print(opacityLevel);
     print("opacityLevel23456");
   }
+
   void _changeOpacity1() {
     setState(() => opacityLevel1 = opacityLevel1 == 0 ? 1.0 : 0.0);
+    print(opacityLevel1);
+    print("oipacity level");
   }
 
   _doanimation(){

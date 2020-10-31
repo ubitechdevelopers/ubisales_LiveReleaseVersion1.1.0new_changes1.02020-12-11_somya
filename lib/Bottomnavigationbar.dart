@@ -2,6 +2,7 @@
 import 'package:Shrine/attendance_logs_for_flexi_shift.dart';
 import 'package:Shrine/attendance_summary.dart';
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:Shrine/newHomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,9 +82,7 @@ class _Bottomnavigationbar extends State<Bottomnavigationbar> {
             );
 
          // }
-
-
-          return;
+            return;
         }
         if(newIndex==3){
           Navigator.push(

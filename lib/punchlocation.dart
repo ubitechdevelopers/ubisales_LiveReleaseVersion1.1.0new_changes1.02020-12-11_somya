@@ -762,48 +762,32 @@ class _PunchLocation extends State<PunchLocation> {
           style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () async {
-        if(_searchQueryController.text.trim().isEmpty) {
-          showDialog(
-              context: context,
-              // ignore: deprecated_member_use
-              child: new AlertDialog(
-
-                content: new Text(
-                    "Please select a client first"),
-              ));
-          return null;
-        }
         globalCameraOpenedStatus=true;
-        /*print(res.length.toString()+' length of res list');
-        if (res.length == 0) {
-          showInSnackBar('Invalid client name');
-          return null;
-        }*/
         if(advancevisit==1) {
-          for (final r in res) {
-            if (r['Name'].trim() == _searchQueryController.text.trim()) {
-              finalClientId = r['Id'].toString();
-              print('----');
-              print(r['Name']);
-              print(r['Id']);
-              print('----');
-              break;
-            }
-            finalClientId = '';
-          }
-          /*if(finalClientId=='0') {
-            showInSnackBar('Invalid client name ');
-            return null;
-          }else {
-            saveVisitImage();
-          }*/
-          saveVisitImage();
-          return true;
-        }else{
-          if(_clientname.text.trim() == '') {
-            showInSnackBar('Please enter client name first');
+          if (_searchQueryController.text.trim().isEmpty) {
+            showDialog(
+                context: context,
+// ignore: deprecated_member_use
+                child: new AlertDialog(
+                  content: new Text(
+                      "Please select a client first"),
+                ));
             return false;
-          }else {
+          }else{
+            saveVisitImage();
+            return true;
+          }
+        }else{
+          if(_clientname.text.trim().isEmpty) {
+            showDialog(
+                context: context,
+// ignore: deprecated_member_use
+                child: new AlertDialog(
+                  content: new Text("Please enter client name first"),
+                ));
+//showInSnackBar('Please enter client name first');
+            return false;
+          } else {
             saveVisitImage();
             return true;
           }

@@ -979,7 +979,7 @@ class _AddClientState extends State<AddClient> {
                                   new AlertDialog(
                                     title: new Text("ubiSales"),
                                     content: new Text(
-                                        "Client added successfully"),
+                                        "Client edited successfully"),
                                     //content: new Text(AppTranslations.of(context).text("key_email_already_registered")),
                                   ));
                                 } else

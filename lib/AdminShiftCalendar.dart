@@ -1874,18 +1874,7 @@ class _MyHomePageState extends State<MyHomePage1> {
           //print(_holiday.length);
         }));
 
-        if (weekoff.containsKey(_selectedEvents)) {
-          _markedDateMap.removeAll(day);
-          _markedDateMap.add(
-            _selectedEvents,
-            new Event(
-              date: _selectedEvents,
-              title: 'Event 5',
-              icon: _absentIcon(_selectedEvents.day.toString()),
-            ),
-          );
-        }
-        else if(holidayDateList.contains(_selectedEvents)){
+         if(holidayDateList.contains(_selectedEvents)){
           _markedDateMap.removeAll(day);
           _markedDateMap.add(
             _selectedEvents,
@@ -1896,6 +1885,16 @@ class _MyHomePageState extends State<MyHomePage1> {
             ),
           );
 
+        } else if (weekoff.containsKey(_selectedEvents)) {
+          _markedDateMap.removeAll(day);
+          _markedDateMap.add(
+            _selectedEvents,
+            new Event(
+              date: _selectedEvents,
+              title: 'Event 5',
+              icon: _absentIcon(_selectedEvents.day.toString()),
+            ),
+          );
         }
         else{
           _markedDateMap.removeAll(day);
