@@ -865,7 +865,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "referrerAmt":referrerAmt,
                                 "referrenceAmt":referrenceAmt,
                                 "platform":'android',
-                                "skipOTP":'1'
+                                "skipOTP":'1',
+                                "app":"ubiSales"
 
                               }) .then((response) {
                                 if  (response.statusCode == 200) {

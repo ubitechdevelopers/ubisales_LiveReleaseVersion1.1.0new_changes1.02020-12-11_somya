@@ -25,6 +25,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:location/location.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 //import 'package:search_map_place/search_map_place.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unicorndial/unicorndial.dart';
@@ -121,16 +122,18 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
   Completer<GoogleMapController> _controller = Completer();
   // this set will hold my markers
   Set<Marker> _markers = {};
-  bool selected = false;
+  bool selected = true;
   String _colorName = 'No';
   var profile;
+  String fname ="";
+  String lname ="";
   bool scrollVisible = true;
   Color _color = Colors.black;
   List<LatLng> latlng = List();
   bool dialVisible = true;
   LatLng _new = SOURCE_LOCATION;
   LatLng _news = DEST_LOCATION ;
-  double opacityLevel = 0.0;
+  double opacityLevel = 1.0;
   double opacityLevel1 = 0.0;
   bool visible = false;
   Map<String, dynamic> StoreLocation ={};
@@ -154,6 +157,9 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
   var Last;
   var initials;
   bool _checkLoaded = false;
+  bool _checkLoaded1 = false;
+  bool profileLoaded = false;
+
   List popupLocations= new List();
   var closeEmp = false;
   PersistentBottomSheetController controller;
@@ -181,6 +187,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
   MarkerId selectedMarker;
   int _markerIdCounter = 1;
   bool Tap = false;
+  var profileImage;
 
 
 
@@ -241,6 +248,49 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
     var orgId=prefs.get("orgid");
     profile = prefs.getString('profile') ?? '';
+    fname = prefs.getString('fname') ?? '';
+    lname = prefs.getString('lname') ?? '';
+    profileImage = NetworkImage(profile);
+
+
+    var fullName = fname + lname;
+
+    if((fullName.trim()).contains(" ")) {
+      var name=fullName.split(" ");
+      print('print(name);');
+      print(name);
+      First=name[0][0].trim();
+      print(First);
+      Last=name[1][0].trim().toString().toUpperCase();
+      print(Last);
+      initials =  First+Last;
+      print(initials);
+      print("initials ");
+    }else{
+      First=Name[0];
+      print('print(First)else');
+      print(First);
+      initials =  First;
+      print(initials);
+
+    }
+    print(profileImage);
+
+    profileImage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+      if (mounted) {
+        setState(() {
+          profileLoaded = true;
+        });
+      }
+    }));
+
+    print(profileImage);
+
+    print(profileLoaded);
+    print(initials);
+    print("initials platformstate");
+
+
     final GoogleMapController controller = await _controller.future;
 
     updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgId).onChildAdded.listen((data)async {
@@ -406,6 +456,9 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
 
   void _add(lat, long, image1, name) async {
+
+
+    print("inside _add tab");
     var count = 0;
     _markers.clear();
 
@@ -459,15 +512,15 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
       // }
     });
-    _checkLoaded = false;
+    _checkLoaded1 = false;
     var image = NetworkImage(image1);
 
     var image2 = image1;
     image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
-      _checkLoaded = true;
+      _checkLoaded1 = true;
     }));
 
-    print(_checkLoaded);
+    print(_checkLoaded1);
     print("checkloaded");
 
     final int markerCount = markers.length;
@@ -489,9 +542,9 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
     int j =0;
     var m = Marker(
-      markerId: MarkerId('sourcePin$j'),
+      markerId: MarkerId('searchMarkerId'),
       position: LatLng(lat,long),
-      icon: _checkLoaded == true ? await getMarkerProfile(image2, count ,lat, long) : await getMarker(initials,lat, long ,count),
+      icon: _checkLoaded1 == true ? await getMarkerProfile(image2, count ,lat, long) : await getMarker(initials,lat, long ,count),
 
       onTap: () {
 
@@ -504,11 +557,11 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
         });
       },
-      /*
-          infoWindow: InfoWindow(
-              title: visits[i].client,
-              snippet:visits[i].desc
-          ),*/
+
+//          infoWindow: InfoWindow(
+//              title: visits[i].client,
+//              snippet:visits[i].desc
+//          ),
     );
 
     setState(() {
@@ -979,6 +1032,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
         ),
       ),*/
       appBar: AppBar(
+
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -1112,6 +1166,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                   child: new Container(
                     //margin: new EdgeInsets.symmetric(vertical: 55.0),
                     height: selected!=false?160:1,
+                   // height: 160,
+                  //  width: 350,
                     width: selected!=false?350:1,
                     child: Container(
                       padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
@@ -1182,7 +1238,34 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                       animate:true,
                       showTwoGlows: true,
 
-                      child:Container(
+                      child: /* Container(
+                        height:  MediaQuery.of(context).size.height*0.09,
+                        width:  MediaQuery.of(context).size.width*0.15,
+                        decoration: new BoxDecoration(
+                          color: Colors.black,
+                          border: Border.all(
+                              width: 4, color: Colors.blue//                   <--- border width here
+                          ),
+                          shape: BoxShape.circle,
+                          *//*image: new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
+                              )*//*),
+                        // width: MediaQuery.of(context).size.width*0.30,
+                        child: profileLoaded? ClipOval(
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'l',
+                            fit: BoxFit.fill,
+                            image: profile,
+                          ),
+                        ): CircleAvatar(
+                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                        ),
+                      ),*/
+
+
+
+                      Container(
                       //  color: Colors.red,
                         child:  new GestureDetector(
                             child: ClipRRect(
@@ -1205,7 +1288,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                         ),
                         width: MediaQuery.of(context).size.height * .10,
                         height: MediaQuery.of(context).size.height * .10,
-                        /* decoration: new BoxDecoration(
+                         decoration: new BoxDecoration(
                     color: Colors.black,
                       shape: BoxShape.circle,
                       boxShadow: <BoxShadow>[
@@ -1221,7 +1304,7 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                            // image: NetworkImage(profile),
                             image: NetworkImage(profile),
                           ),
-                        ),*/
+                        ),
                       ),
                     )
                 ),
@@ -1491,6 +1574,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
           _checkLoaded = false;
 
           var count=0;
+
+
           var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
           image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
               _checkLoaded = true;
@@ -1561,15 +1646,21 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
                         _markers.clear();
                         setLoader = false;
+                        _checkLoaded = false;
                         var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
+                        print(image);
+                        print("image is");
+                        print("name is the client123");
+                        print(_checkLoaded);
+
                         image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
                           _checkLoaded = true;
                         }));
 
                         var Name = StoreLocation.values.elementAt(index)[3];
                         print(Name);
-                        print("name is the client");
                         print(_checkLoaded);
+
 
                         //  getAcronym(var name) {
 
@@ -1617,7 +1708,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                         });
 
                         print(initials);
-                        print("hjkhk,hklhlkjhkljlkjoiuo");
+                        print("checkloaded");
+                        print(_checkLoaded);
 
                         var dataBytes;
                         var request = await http.get(StoreLocation.values.elementAt(index)[4]);
@@ -1825,6 +1917,8 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
 
   getMarker(String initials, latitude,longitude, count ) async {
 
+    print("inside getmarker");
+
     final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(150, 150, initials,count);
 
   //  if(showPolylines == true || showMarker == true) {
@@ -1973,76 +2067,82 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
                       padding: EdgeInsets.all(20.0),
                       itemCount: popupLocations.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          //color:const Color(0xFF0E3311).withOpacity(0.5),
-                          height:100,
-                          padding: new EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 16.0),
+                        return InkWell(
+                          child: Container(
 
-                          child: new Stack(
-                            children: <Widget>[
-                              new Container(
-                                child: Container(
-                                  padding: new EdgeInsets.fromLTRB(70.0, 5.0, 16.0, 10.0),
-                                  //constraints: new BoxConstraints.expand(),
-                                  child: new Column(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      new Container(height: 3.0),
-                                      new Text(popupLocations[index][3].toString(), style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                      new Container(height: 6.0),
-                                      Container(
-                                        //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
-                                        child: true ? new Text("Latitude: "+popupLocations[index][1].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
-                                      ),Container(
-                                        //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
-                                        child: true ? new Text("Longitude: "+popupLocations[index][2].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
-                                      ),
-                                    ],
+                            //color:const Color(0xFF0E3311).withOpacity(0.5),
+                            height:100,
+                            padding: new EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 16.0),
+
+                            child: new Stack(
+                              children: <Widget>[
+                                new Container(
+                                  child: Container(
+                                    padding: new EdgeInsets.fromLTRB(70.0, 5.0, 16.0, 10.0),
+                                    //constraints: new BoxConstraints.expand(),
+                                    child: new Column(
+                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        new Container(height: 3.0),
+                                        new Text(popupLocations[index][3].toString(), style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                        new Container(height: 6.0),
+                                        Container(
+                                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                          child: true ? new Text("Latitude: "+popupLocations[index][1].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                        ),Container(
+                                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                          child: true ? new Text("Longitude: "+popupLocations[index][2].toString(),style: TextStyle(fontSize: 14,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                height: 75.0,
-                                width: 350,
-                                margin: new EdgeInsets.only(left: 46.0),
-                                decoration: new BoxDecoration(
-                                  //color: Color.fromRGBO(0, 0, 0, 0.5),
-                                  //color: Color.fromRGBO(199, 130, 10, 0.6),
-                                  //  color: Color.fromRGBO(2, 112, 85, 0.6),
-                                  // color: Colors.orangeAccent[200],
-                                  //color: Colors.teal[500],
-                                  color: Colors.cyanAccent.withOpacity(0.7),
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: new BorderRadius.circular(8.0),
-                                  /*boxShadow: <BoxShadow>[
+                                  height: 75.0,
+                                  width: 350,
+                                  margin: new EdgeInsets.only(left: 46.0),
+                                  decoration: new BoxDecoration(
+                                    //color: Color.fromRGBO(0, 0, 0, 0.5),
+                                    //color: Color.fromRGBO(199, 130, 10, 0.6),
+                                    //  color: Color.fromRGBO(2, 112, 85, 0.6),
+                                    // color: Colors.orangeAccent[200],
+                                    //color: Colors.teal[500],
+                                    color: Colors.cyanAccent.withOpacity(0.7),
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: new BorderRadius.circular(8.0),
+                                    /*boxShadow: <BoxShadow>[
                     new BoxShadow(
                       color: Colors.black54,
                       blurRadius: 5.0,
                       offset: new Offset(0.0, 10.0),
                     ),
                   ],*/
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                margin: new EdgeInsets.symmetric(vertical: 13.0),
-                                alignment: FractionalOffset.centerLeft,
-                                child: Container(
-                                  //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                                    width: MediaQuery.of(context).size.width * .20,
-                                    height: MediaQuery.of(context).size.height * .22,
-                                    decoration: new BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: new DecorationImage(
-                                          fit: BoxFit.fill,
-
-                                          image: true?(true?new NetworkImage(popupLocations[index][4]):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
-                                          //image: AssetImage('assets/avatar.png')
-                                        )
-                                    )),
-                              ),
-                            ],
+                                Container(
+                                  margin: new EdgeInsets.symmetric(vertical: 13.0),
+                                  alignment: FractionalOffset.centerLeft,
+                                  child: Container(
+                                    //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                                      width: MediaQuery.of(context).size.width * .20,
+                                      height: MediaQuery.of(context).size.height * .22,
+                                      decoration: new BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: true?(true?new NetworkImage(popupLocations[index][4]):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
+                                            //image: AssetImage('assets/avatar.png')
+                                          )
+                                      )
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          onTap:_onAlertForAbsent(popupLocations) ,      //ontapstart
                         );
-                      },
+                        },
+
+
                     ),
                   ),
                   SizedBox(height: 20.0,),
@@ -2189,6 +2289,571 @@ class _NewHomePageState extends State<NewHomePage>  with SingleTickerProviderSta
             ]),
       ),
     );
+  }
+
+  _onAlertForAbsent(List popupLocations) {
+
+
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromBottom,
+      isCloseButton: false,
+      isOverlayTapDismiss: true,
+      descStyle: TextStyle(fontWeight: FontWeight.bold),
+      animationDuration: Duration(milliseconds: 400),
+
+    );
+    Alert(
+        style: alertStyle,
+        context: context,
+        title: "Absent",
+        image: Image.asset('assets/AbsentIcon.png',
+          width: 50, height: 50,),
+
+        /* content: Wrap(
+
+            children: <Widget>[
+              Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.45,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.70,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .end,
+                      children: <Widget>[
+                      ],
+                    ),
+
+                    SizedBox(height: 10.0),
+                    *//* new Text(
+                    snapshot.data[index].Name.toString(),
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600
+                    ),
+                  ),*//*
+                    //SizedBox(height: 20,),
+                    Table(
+                      defaultVerticalAlignment: TableCellVerticalAlignment
+                          .top,
+                      columnWidths: {
+
+                        0: FlexColumnWidth(5),
+                        // 0: FlexColumnWidth(4.501), // - is ok
+                        // 0: FlexColumnWidth(4.499), //- ok as well
+                        1: FlexColumnWidth(5),
+                        //2: FlexColumnWidth(5),
+                      },
+                      children: [
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      "Time In",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      "Time Out",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ) ,
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      userlist.isEmpty?"-": userlist[0].TimeIn,
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      userlist.isEmpty?"-": userlist[0].TimeOut,
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: 70.0,
+                                          height: 70.0,
+//                               child: FadeInImage.assetNetwork(
+//                                  placeholder: 'assets/user_profile.png',
+//                                  ),
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  width: 2, color: Colors.teal//                   <--- border width here
+                                              ),
+                                              shape: BoxShape.circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image:
+//                                          AssetImage('assets/user_profile.png'),
+//                                            _checkLoaded
+//                                                ? AssetImage('assets/imgloader.gif')
+//                                                :
+                                                  userlist.isNotEmpty?NetworkImage(
+                                                      userlist[0].EntryImage):AssetImage('assets/avatar.png')
+
+                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                              )
+                                          )
+                                      ),
+                                      onTap: () {
+
+                                        if( userlist.isNotEmpty) {
+                                          Navigator.of(
+                                              context, rootNavigator: true)
+                                              .pop();
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ImageView(
+                                                        myimage: userlist[0]
+                                                            .EntryImage,
+                                                        org_name: _orgName)),
+                                          );
+                                        }
+
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: 70.0,
+                                          height: 70.0,
+//                               child: FadeInImage.assetNetwork(
+//                                  placeholder: 'assets/user_profile.png',
+//                                  ),
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  width: 2, color: Colors.teal//                   <--- border width here
+                                              ),
+                                              shape: BoxShape.circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image:
+//                                          AssetImage('assets/user_profile.png'),
+//                                            _checkLoaded
+//                                                ? AssetImage('assets/imgloader.gif')
+//                                                :
+                                                  userlist.isNotEmpty?NetworkImage(
+                                                      userlist[0].ExitImage):AssetImage('assets/avatar.png')
+
+                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                              )
+                                          )
+                                      ),
+                                      onTap: () {
+                                        if( userlist.isNotEmpty) {
+                                          Navigator.of(
+                                              context, rootNavigator: true)
+                                              .pop();
+
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ImageView(
+                                                        myimage: userlist[0]
+                                                            .ExitImage,
+                                                        org_name: _orgName)),
+                                          );
+                                        }
+
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),
+                        //TableRow(),
+
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 40,
+                                      child:  new Container(
+                                        //color: Colors.red,
+                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            InkWell(
+                                              child:Center(
+                                                child: Text(
+                                                  userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
+                                              ),
+                                              onTap: () {
+                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_in,userlist.isEmpty?"-": userlist[0].longi_in);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 40,
+                                      child:  new Container(
+                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+
+                                            InkWell(
+                                              child:Center(
+                                                child: Text(
+                                                  userlist.isEmpty?"-": userlist[0].CheckOutLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
+                                              ),
+                                              onTap: () {
+                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_out,userlist.isEmpty?"-": userlist[0].longi_out);
+                                              },
+                                            ),
+                                            *//*Container(
+                                              padding: EdgeInsets.all(2.0),
+                                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                                              child: Text(snapshot.data[index].instatus,
+                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                              ),
+                                            ),*//*
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),
+                        *//*TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  // crossAxisAlignment: CrossAxisAlignment.end,
+                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 37,
+                                      child:  new Container(
+                                        //width: MediaQuery.of(context).size.width * 0.37,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            *//**//* new Text(
+                                    snapshot.data[index].client.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
+                                  ),*//**//*
+                                            InkWell(
+                                              child:Text(
+                                                userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                                              onTap: () {
+                                               // goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
+                                              },
+                                            ),
+                                           *//**//* Container(
+                                              padding: EdgeInsets.all(2.0),
+                                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                                              child: Text(snapshot.data[index].instatus,
+                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                              ),
+                                            ),*//**//*
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      '',
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),*//*
+                      ],
+                    ),
+                    *//* Expanded(
+                      flex: 37,
+                      child:  new Container(
+                        //width: MediaQuery.of(context).size.width * 0.37,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            *//**//* new Text(
+                                    snapshot.data[index].client.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
+                                  ),*//**//*
+                            InkWell(
+                              child:Text(
+                                userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                              *//**//*onTap: () {
+                                goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
+                              },*//**//*
+                            ),
+                           *//**//* Container(
+                              padding: EdgeInsets.all(2.0),
+                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                              child: Text(snapshot.data[index].instatus,
+                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                              ),
+                            )*//**//*
+                          ],
+                        ),
+                      ),
+                    ),*//*
+                    //SizedBox(height: 10.0),
+                    Divider(color: Colors.black54,height: 1.5,),
+                    SizedBox(height: 19,),
+                    Container(
+                      padding: new EdgeInsets.only(left: 15.0, right: 10.0),
+                      decoration: new ShapeDecoration(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                          color: Colors.white.withOpacity(0.1)
+                      ) ,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.timelapse, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift Timings: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                              new Text(
+                                  userlist.isEmpty ? "-"
+                                      : userlist[0].ShiftTimeIn+" - "+userlist[0].ShiftTimeOut,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.access_time, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Logged Hours: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                              new Text(
+                                  userlist.isEmpty ? "-" : userlist[0].thours,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),
+                            ],
+                          ),
+                          *//*SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),*//*
+                          *//*Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift TimeIn: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                              new Text(userlist.isEmpty ? "-"
+                                  : userlist[0].ShiftTimeIn,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift TimeOut: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                              new Text(userlist.isEmpty ? "-"
+                                  : userlist[0].ShiftTimeOut,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),
+                            ],
+                          ),*//*
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          (date.toString().substring(0,10).compareTo(now.toString().substring(0,10))) != 0?Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+
+                              userlist.isEmpty ?new Text("Undertime: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold))
+
+                                  :userlist[0].overtime.contains("-")?new Text("Undertime: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold))
+
+                                  :Text("Overtime: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+
+
+                              userlist.isEmpty ?new Text("-"):userlist[0].overtime.contains("-")?Text(userlist[0].overtime,style: new TextStyle(fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,color: Colors.red)):Text(userlist[0].overtime,style: new TextStyle(fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,color: Colors.green)),
+                            ],
+                          ):Container(),
+
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                        ],
+
+                      ),
+                    )
+                  ],),
+
+              ),
+            ],
+          ),*/
+
+        buttons: [
+          DialogButton(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.22,
+            color: Colors.orangeAccent,
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          )
+        ]).show();
+    ///});
   }
 
 

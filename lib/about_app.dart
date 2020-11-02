@@ -27,7 +27,7 @@ class _AboutApp extends State<AboutApp> {
   bool _isButtonDisabled = false;
   String admin_sts='0';
   String buystatus = "";
-  String new_ver='1.0.6';
+  String new_ver='1.0.7';
   TextEditingController textsms = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
