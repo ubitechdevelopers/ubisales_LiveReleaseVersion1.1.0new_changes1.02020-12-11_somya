@@ -380,7 +380,7 @@ class _MyAppState extends State<MyApp> {
     print('[${bg.Event.LOCATION}] - $location');
 
 
-    getAreaStatusForPushNotification(location.coords.latitude,location.coords.longitude).then((res) {
+    /*getAreaStatusForPushNotification(location.coords.latitude,location.coords.longitude).then((res) {
 
       areaStatus = res.toString();
       double accuracy = location.coords.accuracy;
@@ -412,7 +412,7 @@ class _MyAppState extends State<MyApp> {
       print('Exception occured in clling function.......');
       print(onError);
     });
-
+*/
 
 
 

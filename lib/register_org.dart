@@ -1137,9 +1137,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _getCurrentLocation() {
-    geolocator
-        .getCurrentPosition(desiredAccuracy:LocationAccuracy.best)
-        .then((Position position) {
+    geolocator.getCurrentPosition(desiredAccuracy:LocationAccuracy.best).then((Position position) {
       setState(() {
         _currentPosition = position;
       });

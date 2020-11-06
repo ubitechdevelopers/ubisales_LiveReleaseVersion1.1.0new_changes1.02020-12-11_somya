@@ -4,83 +4,230 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as Math;
 import 'dart:math';
-import 'dart:ui';
+import 'dart:typed_data';
 import 'package:Shrine/addEmployee.dart';
-import 'package:Shrine/database_models/attendance_offline.dart';
+import 'package:Shrine/askregister.dart';
+import 'package:Shrine/avatar_glow.dart';
+import 'package:Shrine/covid19servey.dart';
+import 'package:Shrine/database_models/qr_offline.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
-import 'package:Shrine/globals.dart' as globals;
+import 'package:Shrine/drawer.dart';
+import 'package:Shrine/every7dayscovidsurvey.dart';
+import 'package:Shrine/faceIdScreen.dart';
+import 'package:Shrine/home.dart';
+import 'package:Shrine/location_tracking/home_view.dart';
 import 'package:Shrine/model/timeinout.dart';
-import 'package:Shrine/punchlocation.dart';
+import 'package:Shrine/myleave.dart';
+import 'package:Shrine/offline_home.dart';
+import 'package:Shrine/payment.dart';
+import 'package:Shrine/profile.dart';
+import 'package:Shrine/punchlocation_summaryOld.dart';
+import 'package:Shrine/reports.dart';
 import 'package:Shrine/services/gethome.dart';
-import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
-import 'package:Shrine/services/services.dart';
+import 'package:Shrine/settings.dart';
+//import 'package:Shrine/punchlocation_summary.dart';
+import 'package:Shrine/timeoff_summary.dart';
 import 'package:Shrine/userviewShiftPlanner.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
+//import 'package:circular_menu/circular_menu.dart';
 import 'package:dio/dio.dart';
+import 'package:Shrine/visits_list_emp.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:easy_dialog/easy_dialog.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:flutter_boom_menu/flutter_boom_menu.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:launch_review/launch_review.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
+//import 'package:search_map_place/search_map_place.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unicorndial/unicorndial.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'Bottomnavigationbar.dart';
-import 'ShiftPlannerList.dart';
-import 'askregister.dart';
+//import 'Search.dart';
 import 'attendance_summary.dart';
 import 'bulkatt.dart';
-import 'covid19servey.dart';
-import 'database_models/qr_offline.dart';
-import 'drawer.dart';
-import 'every7dayscovidsurvey.dart';
-import 'faceIdScreen.dart';
+import 'database_models/attendance_offline.dart';
 import 'globals.dart';
-import 'leave_summary.dart';
-import 'location_tracking/home_view.dart';
-import 'myleave.dart';
-import "offline_home.dart";
-import 'payment.dart';
-import 'punchlocationOld.dart';
-import 'punchlocation_summaryOld.dart';
+import 'location_tracking/map_pin_pill.dart';
+import 'location_tracking/pin_pill_info.dart';
 import 'services/services.dart';
-import 'settings.dart';
-import 'timeoff_summary.dart';
-import 'avatar_glow.dart';
-import 'super_tooltip.dart';
-import 'services/services.dart';
-
+import 'dart:ui' as ui;
+import 'package:Shrine/globals.dart' as globals;
+import 'package:image/image.dart' as image;
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 // This app is a stateful, it tracks the user's current choice.
+
+const double CAMERA_ZOOM = 13;
+const double CAMERA_TILT = 0;
+const double CAMERA_BEARING = 30;
+const LatLng SOURCE_LOCATION = LatLng(26.19675, 78.1970444);
+const LatLng DEST_LOCATION = LatLng(26.19675, 78.1970424);
+double pinPillPosition = -470;
+PinInformation currentlySelectedPin = PinInformation(pinPath: '', avatarPath: '', location: LatLng(0, 0), client: '',description: '', labelColor: Colors.grey,in_time: '',out_time: '');
+PinInformation sourcePinInfo;
+PinInformation destinationPinInfo;
+var cameraSource=LatLng(26.19675, 78.1970424);
+
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
-  static const platform = const MethodChannel('location.spoofing.check');
-  AppLifecycleState state;
+class Locations {
+  String longitude;
+  String latitude;
+  String accuracy;
+  String activity;
+  String altitude;
+  String battery_level;
+  String heading;
+  String is_charging;
+  String is_moving;
+  String odometer;
+  String speed;
+  String uuid;
+  String time;
+  Locations.fromFireBase1(Map<String,dynamic> map) {
+    var snapshot;
+    var key;
+    map.forEach((k,v){
+      this.time=k;
+      snapshot=v;
+    });
 
-  // StreamLocation sl = new StreamLocation();
+    this.longitude = snapshot["longitude"] ?? '0.0';
+    this.latitude = snapshot["latitude"] ?? '0.0';
+    this.accuracy = snapshot["accuracy"] ?? '.0';
+    this.activity = snapshot["activity"] ?? 'Unknown user';
+    this.altitude = snapshot["altitude"] ?? 'Unknown user';
+    this.battery_level = snapshot["battery_level"] ?? 'Unknown user';
+    this.heading = snapshot["heading"] ?? 'Unknown user';
+    this.is_charging = snapshot["is_charging"] ?? 'Unknown user';
+    this.is_moving = snapshot["is_moving"] ?? 'Unknown user';
+    this.odometer = snapshot["odometer"] ?? 'Unknown user';
+    this.speed = snapshot["speed"] ?? 'Unknown user';
+    this.uuid = snapshot["uuid"] ?? 'Unknown user';
+
+  }
+
+  Locations.fromFireBase(DataSnapshot snapshot) {
+    this.longitude = snapshot.value["longitude"] ?? '0.0';
+    this.latitude = snapshot.value["latitude"] ?? '0.0';
+    this.accuracy = snapshot.value["accuracy"] ?? '.0';
+    this.activity = snapshot.value["activity"] ?? 'Unknown user';
+    this.altitude = snapshot.value["altitude"] ?? 'Unknown user';
+    this.battery_level = snapshot.value["battery_level"] ?? 'Unknown user';
+    this.heading = snapshot.value["heading"] ?? 'Unknown user';
+    this.is_charging = snapshot.value["is_charging"] ?? 'Unknown user';
+    this.is_moving = snapshot.value["is_moving"] ?? 'Unknown user';
+    this.odometer = snapshot.value["odometer"] ?? 'Unknown user';
+    this.speed = snapshot.value["speed"] ?? 'Unknown user';
+    this.uuid = snapshot.value["uuid"] ?? 'Unknown user';
+    this.time = snapshot.key ?? '00:00:00';
+
+  }
+}
+
+
+class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
+  Completer<GoogleMapController> _controller = Completer();
+  // this set will hold my markers
+  Set<Marker> _markers = {};
+  Set<Marker> _markers1 = {};
+  bool selected = true;
+  String _colorName = 'No';
+  String profile ="";
+  String fname ="";
+  String lname ="";
+  bool scrollVisible = true;
+  Color _color = Colors.black;
+  List<LatLng> latlng = List();
+  bool dialVisible = true;
+  LatLng _new = SOURCE_LOCATION;
+  LatLng _news = DEST_LOCATION ;
+  double opacityLevel = 1.0;
+  double opacityLevel1 = 0.0;
+  bool visible = false;
+  Map<String, dynamic> StoreLocation ={};
+  List<List<dynamic>> insideGeo = new List();
+  var distinctIds;
+  var currlat;
+  var currlong;
+  String streamlocationaddr1 ="";
+  String clat='';
+  String clong='';
+  bool search = false;
+  String empname = "";
+  bool res = true;
+  TextEditingController _textController = TextEditingController();
+  static List<dynamic> Name = new List();
+  static List<dynamic> NameList = new List();
+  // List<dynamic> newDataList;
+  List<dynamic> newDataList1=[];
+  List<dynamic> searchedName=[];
+  var First;
+  var Last;
+  var initials;
+  bool _checkLoaded = false;
+  bool _checkLoaded1 = false;
+  bool profileLoaded = false;
+
+  List popupLocations= new List();
+  var closeEmp = false;
+  PersistentBottomSheetController controller;
+  bool setLoader=false;
+  bool mapLoader = false;
+  var _shifts;
+  // this will hold the generated polylines
+  Set<Polyline> _polylines = {};
+  // this will hold each polyline coordinate as Lat and Lng pairs
+  List<LatLng> polylineCoordinates = [];
+
+  List <Locations> locationList = [];
+  String _orgName = "";
+  var ContainerWidth =0.0;
+  var ContainerHeight =0.0;
+  StreamSubscription <Event> updates;
+  final GlobalKey<FabCircularMenuState> fabKey1 = GlobalKey();
+  final GlobalKey<FabCircularMenuState> fabKey2 = GlobalKey();
+  var childButtons = List<UnicornButton>();
+  Completer<GoogleMapController> controller2 = Completer();
+  bool _IsSearching;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  MarkerId selectedMarker;
+  int _markerIdCounter = 1;
+  bool Tap = false;
+  var profileImage;
+  var count1=0;
+
+
+
+  // this is the key object - the PolylinePoints
+  // which generates every polyline between start and finish
+  PolylinePoints polylinePoints = PolylinePoints();
+  String googleAPIKey = "AIzaSyDYh77SKpI6kAD1jiILwbiISZEwEOyJLtM";
+  // for my custom icons
+  BitmapDescriptor sourceIcon;
+  BitmapDescriptor destinationIcon;
+  String empId;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  GlobalKey _keyRed = GlobalKey();
-  GlobalKey _keyBlue = GlobalKey();
-
-  /*var _defaultimage =
-      new NetworkImage("http://ubiattendance.ubihrm.com/assets/img/avatar.png");*/
   var profileimage;
   var Rating;
   bool FirstAttendance=false;
@@ -91,7 +238,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String dateShowedFeedbackDialog='';
   String datetoShowRatingDialog='';
   String dateShowedRatingDialog='';
-  bool _checkLoaded = true;
   int _currentIndex = 1;
   String userpwd = "new";
   String newpwd = "new";
@@ -113,11 +259,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String changepasswordStatus ='';
   String covid_first="0";
   String covid_second="0";
- // var workingHoursTimer;
+  // var workingHoursTimer;
   final Widget removedChild = Center();
-  String fname = "",
-      lname = "",
-      empid = "",
+  String empid = "",
       email = "",
       status = "",
       orgid = "",
@@ -125,8 +269,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       sstatus = "",
       org_name = "",
       desination = "",
-      desinationId = "",
-      profile;
+      desinationId = "";
   bool issave = false;
   String areaStatus = '0';
   String aid = "";
@@ -143,7 +286,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String datetoShowCovidSurvey='';
   var currDate = DateTime.now();
   var now = new DateTime.now();
-  var formatter = new DateFormat('yyyy-MM-dd');
+  var formatter = new intl.DateFormat('yyyy-MM-dd');
   var ReferrerNotificationList = new List(5);
   var ReferrerenceMessagesList = new List(7);
   var token = "";
@@ -152,445 +295,373 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _newPass = TextEditingController();
   FocusNode __oldPass = new FocusNode();
   FocusNode __newPass = new FocusNode();
-
-  showInSnackBarforTimeInOut(var val1,var val2,var val3) {
-
-    showModalBottomSheet(
-        context: context,
-        backgroundColor:const Color(0xFF0E3311).withOpacity(0.0) ,
-        builder: (builder) {
-          return Container(
-            //color:const Color(0xFF0E3311).withOpacity(0.5),
-            height:200,
-            padding: new EdgeInsets.fromLTRB(10.0, 20.0, 5.0, 16.0),
-            child: new Stack(
-              children: <Widget>[
-                new Container(
-                  child: Container(
-                    padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
-                    //constraints: new BoxConstraints.expand(),
-                    child: new Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Container(height: 3.0),
-                        new Text("Time: "+val1, style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                        new Container(height: 6.0),
-                        Container(
-                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
-                          child: val3.toString().length >=170 ? new Text(val3.toString().substring(0,170),style: TextStyle(fontSize: 14,color: Colors.white),):new Text(val3.toString(),style: TextStyle(fontSize: 14,color: Colors.white),),
-
-
-                        ),
-
-
-                        /* new Container(
-                          margin: new EdgeInsets.symmetric(vertical: 8.0),
-                          height: 2.0,
-                          width: 18.0,
-                          color: new Color(0xff00c6ff)
-                      ),*/
-                        /* new Row(
-                        children: <Widget>[
-                          new Image.asset("'assets/avatar.png'", height: 12.0),
-                          new Container(width: 8.0),
-                          new Text("planet.distance",
-                            style: regularTextStyle,
-                          ),
-                          new Container(width: 24.0),
-                          new Image.asset("'assets/avatar.png'", height: 12.0),
-                          new Container(width: 8.0),
-                          new Text("planet.gravity",
-                            style: regularTextStyle,
-                          ),
-                        ],
-                      ),*/
-                      ],
-                    ),
-                  ),
-                  height: 150.0,
-                  width: 350,
-                  margin: new EdgeInsets.only(left: 46.0),
-                  decoration: new BoxDecoration(
-                    //color: Color.fromRGBO(0, 0, 0, 0.5),
-                    //color: Color.fromRGBO(199, 130, 10, 0.6),
-                    //  color: Color.fromRGBO(2, 112, 85, 0.6),
-                    // color: Colors.orangeAccent[200],
-                    //color: Colors.teal[500],
-                    color: Color.fromRGBO(255, 177, 33, 0.8),
-                    shape: BoxShape.rectangle,
-                    borderRadius: new BorderRadius.circular(8.0),
-                    /*boxShadow: <BoxShadow>[
-                    new BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 5.0,
-                      offset: new Offset(0.0, 10.0),
-                    ),
-                  ],*/
-                  ),
-                ),
-                Container(
-                  margin: new EdgeInsets.symmetric(vertical: 13.0),
-                  alignment: FractionalOffset.centerLeft,
-                  child: Container(
-                    //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                      width: MediaQuery.of(context).size.height * .13,
-                      height: MediaQuery.of(context).size.height * .13,
-                      decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            fit: BoxFit.cover,
-
-                            image: facerecognition.toString()=='1'?(val2!=null?new NetworkImage(val2):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
-                            //image: AssetImage('assets/avatar.png')
-                          ))),
-                ),
-              ],
-            ),
-          );
-        });
-
-    Future.delayed(const Duration(seconds: 3), () {
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-          (Route<dynamic> route) => false,
-    );
-  });
-
-  }
-
-
-  var tooltiptimein = SuperTooltip(
-    popupDirection: TooltipDirection.up,
-    arrowTipDistance: 20.0,
-    //x: ab,
-    //y: cd,
-    //arrowLength: 40.0,
-    //top: 150.0,
-    //right: 150.0,
-    // left: 50.0,
-    //bottom: 100.0,
-    //showCloseButton: ShowCloseButton.outside,
-    hasShadow: true,
-
-    content: new Material(
-        child: Container(
-      width: 250.0,
-      height: 110.0,
-      child: Padding(
-          padding: const EdgeInsets.all(11.0),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                "Punch your \'Time In\'",
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              RaisedButton(
-                color: globals.buttoncolor,
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () async {
-                  var prefs = await SharedPreferences.getInstance();
-                  //print('jshjsh');
-                  // prefs.setInt("TimeInToolTipShown",1);
-                  SuperTooltip.a.close();
-
-                  istooltiptimeinshown = true;
-                },
-              ),
-            ],
-          )),
-    )),
-  );
-
-  int callbackCalled = 0;
-
-  bool textPostionGotten = false;
-
-  stopWorkingHoursTimer() {
-    //workingHoursTimer.cancel();
-  }
-
-  static var tooltiptimeout = SuperTooltip(
-    popupDirection: TooltipDirection.up,
-    arrowTipDistance: 20.0,
-    x: -200,
-    y: -380,
-    //arrowLength: 40.0,
-    //top: 50.0,
-    //right: 1.0,
-    // left: 50.0,
-    //bottom: 100.0,
-    //showCloseButton: ShowCloseButton.outside,
-    hasShadow: false,
-    content: new Material(
-        child: Container(
-      width: 250.0,
-      height: 100.0,
-      child: Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                "Welcome to ubiSales\n Click here to mark time out",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              RaisedButton(
-                child: Text('Next'),
-                onPressed: () {
-                  //print('jshjsh');
-
-                  SuperTooltip.a.close();
-                  //tooltipClicked(SuperTooltip.ctx);
-                  istooltiponeshown = true;
-                },
-              ),
-            ],
-          )),
-    )),
-  );
-
-  static var tooltipone = SuperTooltip(
-    popupDirection: TooltipDirection.up,
-    arrowTipDistance: 20.0,
-    x: ef,
-    y: gh,
-    //arrowLength: 40.0,
-    //top: 50.0,
-    //right: 1.0,
-    // left: 50.0,
-    //bottom: 100.0,
-    //showCloseButton: ShowCloseButton.outside,
-    hasShadow: false,
-    content: new Material(
-        child: Container(
-      width: 300.0,
-      height: 90.0,
-      child: Padding(
-          padding: const EdgeInsets.all(0.0),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                "Try adding an employee",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              RaisedButton(
-                color: globals.buttoncolor,
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () async {
-                  //print('jshjsh');
-
-                  SuperTooltip.a.close();
-                  //tooltiptimeinClicked(SuperTooltip.ctx);
-                  // istooltiptimeinshown=true;
-                },
-              ),
-            ],
-          )),
-    )),
-  );
-
-  static var tooltiptwo = SuperTooltip(
-    popupDirection: TooltipDirection.up,
-    arrowTipDistance: 20.0,
-    x: -70,
-    y: -30,
-    //arrowLength: 40.0,
-    //top: 50.0,
-    //right: 1.0,
-    // left: 50.0,
-    //bottom: 100.0,
-    //showCloseButton: ShowCloseButton.outside,
-    hasShadow: false,
-    content: new Material(
-        child: Container(
-      width: 300.0,
-      height: 150.0,
-      child: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
-          children: <Widget>[
-            Text(
-              "You can setup the Departments, Designations & Shifts",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            RaisedButton(
-              child: Text("Next"),
-              onPressed: () {
-                SuperTooltip.a.close();
-                tooltiptwoClicked(SuperTooltip.ctx);
-                istooltiptwoshown = true;
-              },
-            ),
-          ],
-        ),
-      ),
-    )),
-  );
-
   bool companyFreshlyRegistered = false;
-
   bool attendanceNotMarkedButEmpAdded = false;
-
-  String loggedInSince = '';
-
-  static tooltiptimeinClicked(context) async {
-    // HomePage h=new HomePage();
-    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
-    //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var admin_sts_static = prefs.getString('sstatus').toString() ?? '0';
-    print('hello' + admin_sts_static);
-    if (admin_sts_static == '1' || admin_sts_static == '2') {
-      tooltipone.showtool(context);
-    }
-  }
-
-  static tooltipClicked(context) async {
-    // HomePage h=new HomePage();
-    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
-    //Future.delayed(Duration(seconds: 1), () => SuperTooltip.tooltiptwo.show(context));
-    //tooltiptwo.show(context);
-  }
-
-  static tooltiptwoClicked(var context) async {
-    //HomePage h=new HomePage();
-    Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext context) => Settings(), maintainState: false));
-  }
-
-//  static tooltiptimeinClicked(context) async{
-//    // HomePage h=new HomePage();
-//    // Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => AddEmployee(),maintainState: false));
-//    Future.delayed(Duration(seconds: 3), () => tooltiptimeout.show(context));
-//    //tooltiptimeout.show(context);
-//
-//  }
-
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  var firstTimeinPopup;
+  var occurences=0;
+  bool fabOpen = false;
+  var childExist = false;
+
+
+  /* bool companyFreshlyRegistered = false;
+  bool FiveStarRating=false;
+  bool RateusDialogShown=false;
+  bool FirstAttendance=false;
+  bool FeedbackDialogShown=false;
+  var Rating;
+  var currDate = DateTime.now();
+  String datetoShowFeedbackDialog='';
+  String dateShowedFeedbackDialog='';
+  String datetoShowRatingDialog='';
+  String dateShowedRatingDialog='';
+  bool glow = true;
+  bool attendanceNotMarkedButEmpAdded = false;
+  String empid = "",
+      email = "",
+      status = "",
+      orgid = "",
+      orgdir = "",
+      sstatus = "",
+      org_name = "",
+      desination = "",
+      desinationId = "";
+  String createdDate = "";
+  String dateShowed = "";
+  String dateShowedCovidSurvey='';
+  String datetoShowCovidSurvey='';
+  int response;
+  String buysts = '0';*/
+  // var _scaffoldKey;
 
   @override
   void initState() {
-    print('aintitstate');
+    Name.clear();
+    NameList.clear();
     super.initState();
-
     WidgetsBinding.instance.addObserver(this);
-    checknetonpage(context);
     initPlatformState();
-    //setLocationAddress();
-    // startTimer();
-    platform.setMethodCallHandler(_handleMethod);
+    getOrgName();
+    _getLocation();
+
+    //opacityLevel=2.0;
   }
 
-  _getPositions() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var timeInToolTipShown=prefs.getInt("TimeInToolTipShown")??0;
-    _afterLayoutAddEmp();
-    if (_keyRed != null) if (_keyRed.currentContext != null) {
-      textPostionGotten = true;
-      final RenderBox renderBoxRed = _keyRed.currentContext.findRenderObject();
-      final positionRed = renderBoxRed.localToGlobal(Offset.zero);
-      final sizeRed = renderBoxRed.size;
-      print("POSITION of Red: $positionRed ");
-      print("Size of Red: $sizeRed");
+  void _getLocation() async {
 
-      print(positionRed);
-      double a = positionRed.dx;
-      double b = positionRed.dy;
 
-      double e = sizeRed.height;
-      double f = sizeRed.width;
 
-      print("this is $a and this is $b");
-      setState(() {
-        ab = a + (f / 2);
-        cd = b + 2 * e;
+
+    var location = new Location();
+    try {
+      await location.getLocation().then((onValue) {
+        setState(() {
+          currlat = onValue.latitude.toDouble();
+          currlong =  onValue.longitude.toDouble();
+
+        });
       });
-
-      var prefs = await SharedPreferences.getInstance();
-      var companyFreshlyRegistered =
-          prefs.getBool("companyFreshlyRegistered") ?? false;
-      var firstAttendanceMarked =
-          prefs.getBool("firstAttendanceMarked") ?? false;
-      // print(companyFreshlyRegistered.toString()+"companyFreshlyRegistered");
-      // print(firstAttendanceMarked.toString()+"firstAttendanceMarked");
-      if (!timeInToolTipShown) if (companyFreshlyRegistered) if (!firstAttendanceMarked) {
-        Future.delayed(
-            Duration(seconds: 1), () => tooltiptimein.show(context, ab, cd));
-        globals.timeInToolTipShown = true;
+    } catch (e) {
+      print(e);
+      if (e.code == 'PERMISSION_DENIED') {
       }
     }
   }
 
-  _afterLayout(_) {
-    print("after layout" + _keyRed.currentContext.toString());
-    _getPositions();
-    //getPositionofFAB();
+  // Platform messages are asynchronous, so we initialize in an async method.
+  getOrgName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _orgName = prefs.getString('org_name') ?? '';
+    });
   }
+  TabController _controller1;
 
-  _afterLayoutAddEmp() {
-    getPositionofFAB();
-  }
+  syncOfflineQRData() async {
+    address = await getAddressFromLati(
+        globals.assign_lat.toString(), globals.assign_long.toString());
+    print(address +
+        "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
-  void getPositionofFAB() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int serverAvailable = await checkConnectionToServer();
+    if (serverAvailable == 1) {
+      /*****************************For Attendances***********************************************/
 
-    var admin_sts = prefs.getString('sstatus').toString() ?? '0';
+      QROffline qrOffline = new QROffline.empty();
 
-    if ((admin_sts == '1' || admin_sts == '2')) {
-      if (_keyBlue != null) if (_keyBlue.currentContext != null) {
-        textPostionGotten = true;
-        final RenderBox renderBoxBlue =
-            _keyBlue.currentContext.findRenderObject();
-        final positionBlue = renderBoxBlue.localToGlobal(Offset.zero);
-        final sizeBlue = renderBoxBlue.size;
-        print("POSITION of Blue: $positionBlue ");
-        print("Size of Blue: $sizeBlue");
-        double c = positionBlue.dx;
-        double d = positionBlue.dy;
-        double g = sizeBlue.height;
-        double h = sizeBlue.width;
+      List<QROffline> qrs = await qrOffline.select();
 
-        setState(() {
-          ef = c + (h / 2);
-          gh = d + (g / 2);
+      List<Map> jsonList = [];
+      if (qrs.isNotEmpty) {
+        for (int i = 0; i < qrs.length; i++) {
+          var address = await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
+          print(address);
+          jsonList.add({
+            "Id": qrs[i].Id,
+            "SupervisorId": qrs[i].SupervisorId,
+            "Action": qrs[i].Action, // 0 for time in and 1 for time out
+            "Date": qrs[i].Date,
+            "OrganizationId": qrs[i].OrganizationId,
+            "PictureBase64": qrs[i].PictureBase64,
+            "Latitude": qrs[i].Latitude,
+            "Longitude": qrs[i].Longitude,
+            "Time": qrs[i].Time,
+            "UserName": qrs[i].UserName,
+            "Password": qrs[i].Password,
+            "FakeLocationStatus": qrs[i].FakeLocationStatus,
+            "FakeTimeStatus": qrs[i].FakeTimeStatus,
+            "Address": address,
+            "appName": "ubiSales"
+          });
+        }
+        var jsonList1 = json.encode(jsonList);
+        //LogPrint('response1: ' + jsonList1.toString());
+        //LogPrint(attendances);
+        FormData formData = new FormData.from({"data": jsonList1});
+
+        Dio dioForSavingOfflineAttendance = new Dio();
+        dioForSavingOfflineAttendance
+            .post(path + "saveOfflineQRData", data: formData)
+            .then((responseAfterSavingOfflineData) async {
+          var response = json.decode(responseAfterSavingOfflineData.toString());
+
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
+          print(responseAfterSavingOfflineData);
+
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
+          for (int i = 0; i < response.length; i++) {
+            var map = response[i];
+            map.forEach((localDbId, status) {
+              QROffline qrOffline = QROffline.empty();
+              print(status);
+              qrOffline.delete(int.parse(localDbId));
+            });
+          }
         });
-
-        var prefs = await SharedPreferences.getInstance();
-        var companyFreshlyRegistered =
-            prefs.getBool("companyFreshlyRegistered") ?? false;
-        var firstAttendanceMarked =
-            prefs.getBool("firstAttendanceMarked") ?? false;
-        var employeeAdded = prefs.getBool("EmployeeAdded") ?? false;
-
-        print('companyFreshlyRegistered' +
-            companyFreshlyRegistered.toString() +
-            'firstAttendanceMarked' +
-            firstAttendanceMarked.toString() +
-            "EmployeeAdded" +
-            employeeAdded.toString());
-        if (!globals
-            .addEmpToolTipShown) if (companyFreshlyRegistered) if (firstAttendanceMarked) if (!employeeAdded) {
-          tooltiptimeinClicked(context);
-          globals.addEmpToolTipShown = true;
+      } else {
+        if (mounted) {
+          setState(() {
+            //  offlineDataSaved=true;
+          });
         }
       }
     }
+
+    /*****************************For Attendances***********************************************/
   }
+
+  syncVisits(visits) async {
+    for (int i = 0; i < visits.length; i++) {
+      if (visits[i].VisitInLatitude.isEmpty) visits[i].VisitInLatitude = "0.0";
+      if (visits[i].VisitOutLatitude.isEmpty)
+        visits[i].VisitOutLatitude = "0.0";
+      if (visits[i].VisitInLongitude.isEmpty)
+        visits[i].VisitInLongitude = "0.0";
+      if (visits[i].VisitOutLongitude.isEmpty)
+        visits[i].VisitOutLongitude = "0.0";
+
+      var VisitInaddress = await getAddressFromLati_offline(
+          double.parse(visits[i].VisitInLatitude),
+          double.parse(visits[i].VisitInLongitude));
+      print("-------------------------------jhkhk--------------------------");
+      print(visits[i].VisitOutLatitude + "   ");
+      print(visits[i].VisitOutLongitude);
+      var VisitOutaddress = await getAddressFromLati_offline(
+          double.parse(visits[i].VisitOutLatitude),
+          double.parse(visits[i].VisitOutLongitude));
+      // print(address);
+      List<Map> jsonList = [];
+      jsonList.add({
+        'Id': visits[i].Id,
+        'EmployeeId': visits[i].EmployeeId,
+        'VisitInLatitude': visits[i].VisitInLatitude,
+        'VisitInLongitude': visits[i].VisitInLongitude,
+        'VisitInTime': visits[i].VisitInTime,
+        'VisitInDate': visits[i].VisitInDate,
+        'VisitOutLatitude': visits[i].VisitOutLatitude,
+        'VisitOutLongitude': visits[i].VisitOutLongitude,
+        'VisitOutTime': visits[i].VisitOutTime,
+        'VisitOutDate': visits[i].VisitOutDate,
+        'ClientName': visits[i].ClientName,
+        'VisitInDescription': visits[i].VisitInDescription,
+        'VisitOutDescription': visits[i].VisitOutDescription,
+        'OrganizationId': visits[i].OrganizationId,
+        'Skipped': visits[i].Skipped,
+        'VisitInImage': visits[i].VisitInImage,
+        'VisitOutImage': visits[i].VisitOutImage,
+        'VisitInAddress': VisitInaddress,
+        'VisitOutAddress': VisitOutaddress,
+        'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
+        'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut,
+        'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,
+        'FakeVisitOutTimeStatus': visits[i].FakeVisitOutTimeStatus
+      });
+
+      var jsonList1 = json.encode(jsonList);
+      LogPrint('response1: ' + jsonList1.toString());
+      //LogPrint(attendances);
+      FormData formData = new FormData.from({"data": jsonList1});
+
+      Dio dioForSavingOfflineAttendance = new Dio();
+      dioForSavingOfflineAttendance
+          .post(globals.path + "saveOfflineVisits", data: formData)
+          .then((responseAfterSavingOfflineData) async {
+        var response = json.decode(responseAfterSavingOfflineData.toString());
+
+        print(
+            '--------------------- Visit Syncing Response--------------------------------');
+        LogPrint(responseAfterSavingOfflineData);
+
+        print(
+            '--------------------- Visit Syncing Response--------------------------------');
+        for (int i = 0; i < response.length; i++) {
+          var map = response[i];
+          map.forEach((localDbId, status) {
+            VisitsOffline visitsOffline = VisitsOffline.empty();
+            print(status);
+            visitsOffline.delete(int.parse(localDbId));
+          });
+        }
+        setState(() {
+          offlineDataSaved = true;
+        });
+      });
+    }
+  }
+
+  static void LogPrint(Object object) async {
+    int defaultPrintLength = 1020;
+    if (object == null || object.toString().length <= defaultPrintLength) {
+      print(object);
+    } else {
+      String log = object.toString();
+      int start = 0;
+      int endIndex = defaultPrintLength;
+      int logLength = log.length;
+      int tmpLogLength = log.length;
+      while (endIndex < logLength) {
+        print(log.substring(start, endIndex));
+        endIndex += defaultPrintLength;
+        start += defaultPrintLength;
+        tmpLogLength -= defaultPrintLength;
+      }
+      if (tmpLogLength > 0) {
+        print(log.substring(start, logLength));
+      }
+    }
+  }
+
+  syncOfflineData() async {
+    int serverAvailable = await checkConnectionToServer();
+    if (serverAvailable == 1) {
+
+      /*  sync only  image code  */
+      SaveImage saveImage = new SaveImage();
+      saveImage.SendTempimage(context , false);
+
+      /*****************************For Attendances***********************************************/
+      await syncOfflineQRData();
+
+      AttendanceOffline attendanceOffline = new AttendanceOffline.empty();
+      VisitsOffline visitsOffline = VisitsOffline.empty();
+
+      List<AttendanceOffline> attendances = await attendanceOffline.select();
+      List<VisitsOffline> visits = await visitsOffline.select();
+
+      List<Map> jsonList = [];
+      List<Map> jsonListVisits = [];
+      if (visits.isNotEmpty) {
+        await syncVisits(visits);
+      } else {
+        offlineDataSaved = true;
+      }
+      if (attendances.isNotEmpty) {
+        for (int i = 0; i < attendances.length; i++) {
+          var address = await getAddressFromLati_offline(
+              double.parse(attendances[i].Latitude),
+              double.parse(attendances[i].Longitude));
+          print(address);
+          jsonList.add({
+            "Id": attendances[i].Id,
+            "UserId": attendances[i].UserId,
+            "Action": attendances[i].Action, // 0 for time in and 1 for time out
+            "Date": attendances[i].Date,
+            "OrganizationId": attendances[i].OrganizationId,
+            "PictureBase64": attendances[i].PictureBase64,
+            "Latitude": attendances[i].Latitude,
+            "Longitude": attendances[i].Longitude,
+            "Time": attendances[i].Time,
+            "FakeLocationStatus": attendances[i].FakeLocationStatus,
+            "FakeTimeStatus": attendances[i].FakeTimeStatus,
+            "Address": address,
+            "appVersion": globals.appVersion,
+            "appName":"ubiSales"
+          });
+        }
+        var jsonList1 = json.encode(jsonList);
+        //LogPrint('response1: ' + jsonList1.toString());
+        //LogPrint(attendances);
+        FormData formData = new FormData.from({"data": jsonList1});
+
+        Dio dioForSavingOfflineAttendance = new Dio();
+        dioForSavingOfflineAttendance
+            .post(globals.path + "saveOfflineData", data: formData)
+            .then((responseAfterSavingOfflineData) async {
+          var response = json.decode(responseAfterSavingOfflineData.toString());
+
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
+          LogPrint(responseAfterSavingOfflineData);
+
+          print(
+              '--------------------- Data Syncing Response--------------------------------');
+          for (int i = 0; i < response.length; i++) {
+            var map = response[i];
+            map.forEach((localDbId, status) {
+              AttendanceOffline attendanceOffline = AttendanceOffline.empty();
+              print(status);
+              attendanceOffline.delete(int.parse(localDbId));
+            });
+          }
+          setState(() {
+            offlineDataSaved = true;
+          });
+
+          Home ho = new Home();
+
+          act = await ho.checkTimeIn(empid, orgdir,context);
+          print("Action from check time in");
+          ho.managePermission(empid, orgdir, desinationId);
+
+          setState(() {
+            act1 = act;
+          });
+        });
+      } else {
+        if (mounted) {
+          setState(() {
+            offlineDataSaved = true;
+          });
+        }
+      }
+    }
+
+    Home ho = new Home();
+    act = await ho.checkTimeIn(empid, orgdir,context);
+    print("Action from check time in1");
+    if (timeoutdate == 'nextdate' && act == 'TimeOut') dialogwidget(context);
+    ho.managePermission(empid, orgdir, desinationId);
+    if (mounted) {
+      setState(() {
+        act1 = act;
+      });
+    }
+
+    /*****************************For Attendances***********************************************/
+  }
+
 
   void firebaseCloudMessaging_Listeners() async {
     var serverConnected = await checkConnectionToServer();
@@ -602,7 +673,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       var isAdmin = admin_sts = prefs.getString('sstatus').toString() ?? '0';
       var employeeTopic = prefs.getString("EmployeeTopic") ?? '';
 
-   //   _firebaseMessaging.subscribeToTopic('geofenceStatus');
+      //   _firebaseMessaging.subscribeToTopic('geofenceStatus');
 
       //_firebaseMessaging.subscribeToTopic('101');
       // _firebaseMessaging.subscribeToTopic('testtopic');
@@ -616,7 +687,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         print("employee topic subscribed");
         if (orgTopic.isNotEmpty)
           _firebaseMessaging.subscribeToTopic('employee');
-    }
+      }
       if (globals.globalEmployeeTopic.isNotEmpty) {
         // _firebaseMessaging.unsubscribeFromTopic(employeeTopic.replaceAll(' ', ''));
         _firebaseMessaging
@@ -773,1085 +844,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
-  syncOfflineQRData() async {
-    address = await getAddressFromLati(
-        globals.assign_lat.toString(), globals.assign_long.toString());
-    print(address +
-        "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
-    int serverAvailable = await checkConnectionToServer();
-    if (serverAvailable == 1) {
-      /*****************************For Attendances***********************************************/
-
-      QROffline qrOffline = new QROffline.empty();
-
-      List<QROffline> qrs = await qrOffline.select();
-
-      List<Map> jsonList = [];
-      if (qrs.isNotEmpty) {
-        for (int i = 0; i < qrs.length; i++) {
-          var address = await getAddressFromLati(qrs[i].Latitude, qrs[i].Longitude);
-          print(address);
-          jsonList.add({
-            "Id": qrs[i].Id,
-            "SupervisorId": qrs[i].SupervisorId,
-            "Action": qrs[i].Action, // 0 for time in and 1 for time out
-            "Date": qrs[i].Date,
-            "OrganizationId": qrs[i].OrganizationId,
-            "PictureBase64": qrs[i].PictureBase64,
-            "Latitude": qrs[i].Latitude,
-            "Longitude": qrs[i].Longitude,
-            "Time": qrs[i].Time,
-            "UserName": qrs[i].UserName,
-            "Password": qrs[i].Password,
-            "FakeLocationStatus": qrs[i].FakeLocationStatus,
-            "FakeTimeStatus": qrs[i].FakeTimeStatus,
-            "Address": address,
-            "appName": "ubiSales"
-          });
-        }
-        var jsonList1 = json.encode(jsonList);
-        //LogPrint('response1: ' + jsonList1.toString());
-        //LogPrint(attendances);
-        FormData formData = new FormData.from({"data": jsonList1});
-
-        Dio dioForSavingOfflineAttendance = new Dio();
-        dioForSavingOfflineAttendance
-            .post(path + "saveOfflineQRData", data: formData)
-            .then((responseAfterSavingOfflineData) async {
-          var response = json.decode(responseAfterSavingOfflineData.toString());
-
-          print(
-              '--------------------- Data Syncing Response--------------------------------');
-          print(responseAfterSavingOfflineData);
-
-          print(
-              '--------------------- Data Syncing Response--------------------------------');
-          for (int i = 0; i < response.length; i++) {
-            var map = response[i];
-            map.forEach((localDbId, status) {
-              QROffline qrOffline = QROffline.empty();
-              print(status);
-              qrOffline.delete(int.parse(localDbId));
-            });
-          }
-        });
-      } else {
-        if (mounted) {
-          setState(() {
-            //  offlineDataSaved=true;
-          });
-        }
-      }
-    }
-
-    /*****************************For Attendances***********************************************/
-  }
-
-  Future<dynamic> _handleMethod(MethodCall call) async {
-    switch (call.method) {
-      case "navigateToPage":
-        navigateToPageAfterNotificationClicked(
-            call.arguments["page"].toString(), context);
-        break;
-      case "locationAndInternet":
-        locationThreadUpdatedLocation = true;
-        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
-        // Map<String,String> responseMap=call.arguments;
-        if (call.arguments["internet"].toString() == "Internet Not Available") {
-          internetAvailable = false;
-          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
-          //Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage(),maintainState: false));
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => OfflineHomePage()),
-            (Route<dynamic> route) => false,
-          );
-        }
-        var long = call.arguments["longitude"].toString();
-        var lat = call.arguments["latitude"].toString();
-        //lat=assign_lat.toString();
-        //long=assign_long.toString();
-        assign_lat = double.parse(lat);
-        assign_long = double.parse(long);
-        address = await getAddressFromLati(lat, long);
-        print(address +
-            "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
-        globalstreamlocationaddr = address;
-        print(call.arguments["mocked"].toString());
-        getAreaStatus().then((res) {
-          // print('called again');
-          if (mounted) {
-            setState(() {
-              areaSts = res.toString();
-              if (areaId != 0 && geoFence == 1)
-                AbleTomarkAttendance = areaSts;
-            });
-          }
-        }).catchError((onError) {
-          print('Exception occured in clling function.......');
-          print(onError);
-        });
-        setState(() {
-          if (call.arguments["mocked"].toString() == "Yes") {
-            fakeLocationDetected = true;
-          } else {
-            fakeLocationDetected = false;
-          }
-          if (call.arguments["TimeSpoofed"].toString() == "Yes") {
-            timeSpoofed = true;
-          }
-        });
-        break;
-
-        return new Future.value("");
-    }
-  }
-
-  syncVisits(visits) async {
-    for (int i = 0; i < visits.length; i++) {
-      if (visits[i].VisitInLatitude.isEmpty) visits[i].VisitInLatitude = "0.0";
-      if (visits[i].VisitOutLatitude.isEmpty)
-        visits[i].VisitOutLatitude = "0.0";
-      if (visits[i].VisitInLongitude.isEmpty)
-        visits[i].VisitInLongitude = "0.0";
-      if (visits[i].VisitOutLongitude.isEmpty)
-        visits[i].VisitOutLongitude = "0.0";
-
-      var VisitInaddress = await getAddressFromLati_offline(
-          double.parse(visits[i].VisitInLatitude),
-          double.parse(visits[i].VisitInLongitude));
-      print("-------------------------------jhkhk--------------------------");
-      print(visits[i].VisitOutLatitude + "   ");
-      print(visits[i].VisitOutLongitude);
-      var VisitOutaddress = await getAddressFromLati_offline(
-          double.parse(visits[i].VisitOutLatitude),
-          double.parse(visits[i].VisitOutLongitude));
-      // print(address);
-      List<Map> jsonList = [];
-      jsonList.add({
-        'Id': visits[i].Id,
-        'EmployeeId': visits[i].EmployeeId,
-        'VisitInLatitude': visits[i].VisitInLatitude,
-        'VisitInLongitude': visits[i].VisitInLongitude,
-        'VisitInTime': visits[i].VisitInTime,
-        'VisitInDate': visits[i].VisitInDate,
-        'VisitOutLatitude': visits[i].VisitOutLatitude,
-        'VisitOutLongitude': visits[i].VisitOutLongitude,
-        'VisitOutTime': visits[i].VisitOutTime,
-        'VisitOutDate': visits[i].VisitOutDate,
-        'ClientName': visits[i].ClientName,
-        'VisitInDescription': visits[i].VisitInDescription,
-        'VisitOutDescription': visits[i].VisitOutDescription,
-        'OrganizationId': visits[i].OrganizationId,
-        'Skipped': visits[i].Skipped,
-        'VisitInImage': visits[i].VisitInImage,
-        'VisitOutImage': visits[i].VisitOutImage,
-        'VisitInAddress': VisitInaddress,
-        'VisitOutAddress': VisitOutaddress,
-        'FakeLocationStatusVisitIn': visits[i].FakeLocationStatusVisitIn,
-        'FakeLocationStatusVisitOut': visits[i].FakeLocationStatusVisitOut,
-        'FakeVisitInTimeStatus': visits[i].FakeVisitInTimeStatus,
-        'FakeVisitOutTimeStatus': visits[i].FakeVisitOutTimeStatus
-      });
-
-      var jsonList1 = json.encode(jsonList);
-      LogPrint('response1: ' + jsonList1.toString());
-      //LogPrint(attendances);
-      FormData formData = new FormData.from({"data": jsonList1});
-
-      Dio dioForSavingOfflineAttendance = new Dio();
-      dioForSavingOfflineAttendance
-          .post(globals.path + "saveOfflineVisits", data: formData)
-          .then((responseAfterSavingOfflineData) async {
-        var response = json.decode(responseAfterSavingOfflineData.toString());
-
-        print(
-            '--------------------- Visit Syncing Response--------------------------------');
-        LogPrint(responseAfterSavingOfflineData);
-
-        print(
-            '--------------------- Visit Syncing Response--------------------------------');
-        for (int i = 0; i < response.length; i++) {
-          var map = response[i];
-          map.forEach((localDbId, status) {
-            VisitsOffline visitsOffline = VisitsOffline.empty();
-            print(status);
-            visitsOffline.delete(int.parse(localDbId));
-          });
-        }
-        setState(() {
-          offlineDataSaved = true;
-        });
-      });
-    }
-  }
-
-  syncOfflineData() async {
-    int serverAvailable = await checkConnectionToServer();
-    if (serverAvailable == 1) {
-
-     /*  sync only  image code  */
-      SaveImage saveImage = new SaveImage();
-      saveImage.SendTempimage(context , false);
-
-      /*****************************For Attendances***********************************************/
-      await syncOfflineQRData();
-
-      AttendanceOffline attendanceOffline = new AttendanceOffline.empty();
-      VisitsOffline visitsOffline = VisitsOffline.empty();
-
-      List<AttendanceOffline> attendances = await attendanceOffline.select();
-      List<VisitsOffline> visits = await visitsOffline.select();
-
-      List<Map> jsonList = [];
-      List<Map> jsonListVisits = [];
-      if (visits.isNotEmpty) {
-        await syncVisits(visits);
-      } else {
-        offlineDataSaved = true;
-      }
-      if (attendances.isNotEmpty) {
-        for (int i = 0; i < attendances.length; i++) {
-          var address = await getAddressFromLati_offline(
-              double.parse(attendances[i].Latitude),
-              double.parse(attendances[i].Longitude));
-          print(address);
-          jsonList.add({
-            "Id": attendances[i].Id,
-            "UserId": attendances[i].UserId,
-            "Action": attendances[i].Action, // 0 for time in and 1 for time out
-            "Date": attendances[i].Date,
-            "OrganizationId": attendances[i].OrganizationId,
-            "PictureBase64": attendances[i].PictureBase64,
-            "Latitude": attendances[i].Latitude,
-            "Longitude": attendances[i].Longitude,
-            "Time": attendances[i].Time,
-            "FakeLocationStatus": attendances[i].FakeLocationStatus,
-            "FakeTimeStatus": attendances[i].FakeTimeStatus,
-            "Address": address,
-            "appVersion": globals.appVersion,
-            "appName":"ubiSales"
-          });
-        }
-        var jsonList1 = json.encode(jsonList);
-        //LogPrint('response1: ' + jsonList1.toString());
-        //LogPrint(attendances);
-        FormData formData = new FormData.from({"data": jsonList1});
-
-        Dio dioForSavingOfflineAttendance = new Dio();
-        dioForSavingOfflineAttendance
-            .post(globals.path + "saveOfflineData", data: formData)
-            .then((responseAfterSavingOfflineData) async {
-          var response = json.decode(responseAfterSavingOfflineData.toString());
-
-          print(
-              '--------------------- Data Syncing Response--------------------------------');
-          LogPrint(responseAfterSavingOfflineData);
-
-          print(
-              '--------------------- Data Syncing Response--------------------------------');
-          for (int i = 0; i < response.length; i++) {
-            var map = response[i];
-            map.forEach((localDbId, status) {
-              AttendanceOffline attendanceOffline = AttendanceOffline.empty();
-              print(status);
-              attendanceOffline.delete(int.parse(localDbId));
-            });
-          }
-          setState(() {
-            offlineDataSaved = true;
-          });
-
-          Home ho = new Home();
-
-          act = await ho.checkTimeIn(empid, orgdir,context);
-          print("Action from check time in");
-          ho.managePermission(empid, orgdir, desinationId);
-
-          setState(() {
-            act1 = act;
-          });
-        });
-      } else {
-        if (mounted) {
-          setState(() {
-            offlineDataSaved = true;
-          });
-        }
-      }
-    }
-
-    Home ho = new Home();
-    act = await ho.checkTimeIn(empid, orgdir,context);
-    print("Action from check time in1");
-    if (timeoutdate == 'nextdate' && act == 'TimeOut') dialogwidget(context);
-    ho.managePermission(empid, orgdir, desinationId);
-    if (mounted) {
-      setState(() {
-        act1 = act;
-      });
-    }
-
-    /*****************************For Attendances***********************************************/
-  }
-
-  static void LogPrint(Object object) async {
-    int defaultPrintLength = 1020;
-    if (object == null || object.toString().length <= defaultPrintLength) {
-      print(object);
-    } else {
-      String log = object.toString();
-      int start = 0;
-      int endIndex = defaultPrintLength;
-      int logLength = log.length;
-      int tmpLogLength = log.length;
-      while (endIndex < logLength) {
-        print(log.substring(start, endIndex));
-        endIndex += defaultPrintLength;
-        start += defaultPrintLength;
-        tmpLogLength -= defaultPrintLength;
-      }
-      if (tmpLogLength > 0) {
-        print(log.substring(start, logLength));
-      }
-    }
-  }
-
-  timerResumePause() async {
-    //print("app resumed paused home");
-    SystemChannels.lifecycle.setMessageHandler((msg) async {
-      print("app resumed paused home");
-      if (msg == 'AppLifecycleState.resumed') {
-        //startWorkingHoursTimer();
-        print("app resumed and timer started");
-      }
-
-      if (msg == 'AppLifecycleState.paused') {
-        //stopWorkingHoursTimer();
-        print("app paused and timer stopped");
-      }
-    });
-  }
-
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    /*
-    setState(() {
-      state = appLifecycleState;
-      if(state==AppLifecycleState.resumed){
-        //print('WidgetsBindingObserver called');
-
-        if(timerrefresh.isActive){
-          timerrefresh.cancel();
-        }
-        if(refreshsts) {
-          //timerrefresh.cancel();
-          if(timerrefresh.isActive){
-            timerrefresh.cancel();
-          }
-          refreshsts=false;
-          print('WidgetsBindingObserver called refreshsts false');
-          initPlatformState();
-          setLocationAddress();
-          startTimer();
-        }
-      }else if(state==AppLifecycleState.paused){
-       // print('AppLifecycleState.paused');
-
-        const tenSec = const Duration(seconds: 180);
-        timerrefresh = new Timer.periodic(tenSec, (Timer t) {
-          print('refreshsts true');
-          refreshsts=true;
-          timerrefresh.cancel();
-        });
-      }
-    });*/
-  }
-
-/*
-  startTimer() {
-    const fiveSec = const Duration(seconds: 2);
-    int count = 0;
-    // print('called timer');
-    timer = new Timer.periodic(fiveSec, (Timer t) {
-      //print("timmer is running");
-      count++;
-      //print("timer counter" + count.toString());
-     // setLocationAddress();
-      if (stopstreamingstatus) {
-        t.cancel();
-        //print("timer canceled");
-      }
-      /*  if(count==5){
-        t.cancel();
-      }*/
-    });
-  }
-
-  startTimer1() {
-    const fiveSec = const Duration(seconds: 1);
-    int count = 0;
-    timer1 = new Timer.periodic(fiveSec, (Timer t) {
-      print("timer is running");
-    });
-  }
-
-  setLocationAddress() async {
-
-    //print('called');
-    getAreaStatus().then((res) {
-      // print('called again');
-      if (mounted) {
-        setState(() {
-          areaStatus = res.toString();
-        });
-      }
-    }).catchError((onError) {
-      print('Exception occured in clling function.......');
-      print(onError);
-    });
-    if (mounted) {
-      setState(() {
-        streamlocationaddr = globalstreamlocationaddr;
-        print('loc: ' + streamlocationaddr);
-        if (list != null && list.length > 0) {
-          lat = list[list.length - 1].latitude.toString();
-          long = list[list.length - 1].longitude.toString();
-          if (streamlocationaddr == '') {
-            streamlocationaddr = lat + ", " + long;
-          }
-        }
-        if (streamlocationaddr == '') {
-          print('again');
-          timer.cancel();
-        //  sl.startStreaming(5);
-         // startTimer();
-        }
-        //print("home addr" + streamlocationaddr);
-        //print(lat + ", " + long);
-
-        //print(stopstreamingstatus.toString());
-      });
-    }
-  }
-*/
-  launchMap(String lat, String long) async {
-    String url = "https://maps.google.com/?q=" + lat + "," + long;
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      //print('Could not launch $url');
-    }
-  }
-  void showReferralReminder() async{
-
-    var prefs=await SharedPreferences.getInstance();
-
-    String referrerId=prefs.getString("referrerId")??"0";
-
-    String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
-    var currDate=DateTime.now();
-
-    if(referrerId!='0'&&ReferralValidTo!='0000-00-00'){
-      if(DateTime.parse("ReferralValidTo").day==(currDate.day+2))
-      {
-        EasyDialog(
-            title: Text(
-              "Reminder",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            description: Text(
-              "Get 10% off your first purchase of ubiSales. Hurry! Offer ends in 2 days"
-                  .toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            height: 220,
-            contentList: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      "GO!",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      navigateToPaymentsPage();
-                    },
-                    color: Colors.green,
-                  ),
-                  SizedBox(
-                    width: 10,
-                    height: 10,
-                  ),
-                ],
-              )
-            ]).show(context);
-      }
-    }
-  }
-
-  void deviceverification() async{
-
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    print('Running on ${androidInfo.brand}');
-    print('Running on ${androidInfo.model}');
-    String devicename= androidInfo.model;
-    String devicebrand= androidInfo.brand;
-    devicenamebrand = devicebrand+' '+devicename;
-
-
-
-
-    var prefs = await SharedPreferences.getInstance();
-    //deviceid= prefs.getString("deviceid") ?? '';
-    print('thisisdeviceid'+deviceid);
-    String deviceidmobile=prefs.getString("deviceid")??"";
-    bool deviceVerifyPopupShown=prefs.getBool("deviceVerifyPopupShown")??false;
-    print('thisisdeviceidmobile'+deviceidmobile);
-    if(deviceidmobile=='' && globals.deviceverification==1){
-      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-      String RandomString(int strlen) {
-        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
-        String result = "";
-        for (var i = 0; i < strlen; i++) {
-          result += chars[rnd.nextInt(chars.length)];
-        }
-        return result;
-      }
-
-
-      print("RandomString:"+RandomString(60));
-      deviceidmobile= RandomString(60);
-      prefs.setString("deviceid",deviceidmobile);
-
-
-
-    }
-
-    if(deviceid=='' && globals.deviceverification==1){
-
-      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-      String RandomString(int strlen) {
-        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
-        String result = "";
-        for (var i = 0; i < strlen; i++) {
-          result += chars[rnd.nextInt(chars.length)];
-        }
-        return result;
-      }
-
-
-      print("RandomString:"+RandomString(60));
-      deviceidmobile= RandomString(60);
-      if(deviceVerifyPopupShown==false && deviceid=='') {
-        // if(deviceid=='') {
-        //
-        EasyDialog(
-            title: Text(
-              'This Mobile Device has been registered as your Device ID',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            description: Text(
-              devicebrand+" "+devicename,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            height: 180,
-            contentList: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                  ),
-
-                  SizedBox(
-                    width: 10,
-                    height: 10,
-                  ),
-                ],
-              )
-            ]).show(context);
-
-        prefs.setBool("deviceVerifyPopupShown",true);
-        prefs.setString("deviceid",deviceidmobile);
-        storeDeviceInfo(empid, deviceidmobile, devicebrand+' '+devicename);
-      }
-    }
-  }
-
-
-  showReferralPopup(BuildContext context, String cDateS) async {
-
-
-    if(globals.currentOrgStatus=="TrialOrg"){
-
-      showTrialReferralPopup(context,cDateS);
-
-    }
-
-    else
-    if(globals.currentOrgStatus=="PremiumCustomizedOrg")
-    {
-      int dateToSend = 0;
-
-
-      var prefs = await SharedPreferences.getInstance();
-      var buyStatus = int.parse(prefs.get("buysts") ?? "123455");
-      var createdDate = DateTime.parse("2019-12-26");
-
-      //print(">>>>----- current org status"+globals.currentOrgStatus);
-
-
-      var startDate =
-      DateTime.parse(prefs.get("ReferralValidFrom") ?? "2019-12-26");
-      var endDate = DateTime.parse(prefs.get("ReferralValidTo") ?? "2019-12-26");
-
-/*
-        var startDate =
-        DateTime.parse( "2020-02-22");
-        var endDate = DateTime.parse("2020-02-29");
-*/
-
-
-      var currDate = DateTime.now();
-      dateShowed = prefs.getString('date') ?? "2010-10-10";
-
-      var referralValidForDays=endDate.difference(currDate).inDays;
-
-
-      print("datetime.parse" + dateShowed);
-      // print("hello"+dateShowed);
-      var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
-      var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
-      ReferrerNotificationList[0] = {
-        "title": "Win Win Deal",
-        "description":
-        "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in ${referralValidForDays} days"
-      };
-      ReferrerNotificationList[1] = {
-        "title": "Refer and Earn",
-        "description":
-        "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay.. Hurry! Offer ends in ${referralValidForDays} days"
-      };
-      ReferrerNotificationList[2] = {
-        "title": "Discounts that count",
-        "description":
-        "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in ${referralValidForDays} days"
-      };
-      ReferrerNotificationList[3] = {
-        "title": "${referrerAmt} Off every Payment",
-        "description":
-        "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in ${referralValidForDays} days"
-      };
-      ReferrerNotificationList[4] = {
-        "title": "Discounts to smile about",
-        "description":
-        "Give managers the gift of ease in recording attendance and get ${referrerAmt} off on your next purchase. Hurry! Offer ends in ${referralValidForDays} days"
-      };
-
-      var referrerName = "";
-      var validity = prefs.getString("ReferralValidity");
-
-      var rng = new Random();
-      var referrerRandom = rng.nextInt(4);
-      double height = 220;
-      if (referrerRandom == 2 || referrerRandom == 4) height = 260;
-      if (referrerRandom == 0) height = 170;
-
-      print("----> currdate" + currDate.toString());
-
-      if (createdDate == '') {
-        dateToSend = 12;
-      }
-      // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
-
-      //print("difference dates"+currDate.difference(cDate).inDays.toString());
-      //print("created date"+createdDate);
-
-      // } // for other organizations i.e pop up for every created date day of the month
-      // else{
-      dateToSend = createdDate.day;
-      print('startDate');
-      print(startDate);
-//      print(currDate);
-//      print(prefs.getString('date'));
-      //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
-      if (//currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
-      (currDate.day == startDate.day &&
-          currDate.month == startDate.month &&
-          currDate.year == startDate.year) ||
-          (currDate.day == endDate.subtract(new Duration(days: 2)).day &&
-              currDate.month == endDate.month &&
-              currDate.year == endDate.year)) {
-
-        print("inside referral check");
-        //        prefs.setString('date',currDate.toString());
-        // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
-        //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
-//        prefs.setString('date', newDate.toString());
-//        print("hello");
-//        print(prefs.getString('date'));
-        print(currDate);
-        //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
-        //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
-        //var newDate = currDate.add(new Duration(days: 3));
-        dateShowed = currDate.toString();
-        prefs.setString('date', dateShowed);
-        print("hello" + currDate.toString());
-        EasyDialog(
-            title: Text(
-              ReferrerNotificationList[referrerRandom]['title'].toString(),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            description: Text(
-              ReferrerNotificationList[referrerRandom]['description']
-                  .toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            height: height,
-            contentList: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      "GO!",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      generateAndShareReferralLink();
-                    },
-                    color: Colors.green,
-                  ),
-                  SizedBox(
-                    width: 10,
-                    height: 10,
-                  ),
-                ],
-              )
-            ]).show(context);
-      }
-    }
-    else{
-     // showOtherReferralPopup(context,cDateS);
-    }
-    // }
-  }
-
-
-  void showTrialReferralPopup(BuildContext context, String cDateS) async {
-    int dateToSend = 0;
-    var prefs = await SharedPreferences.getInstance();
-
-    var createdDate = DateTime.parse(cDateS);
-
-    //print(">>>>----- current org status"+globals.currentOrgStatus);
-
-    var currDate = DateTime.now();
-    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
-
-    print("datetime.parse" + dateShowed);
-    // print("hello"+dateShowed);
-    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
-    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
-    ReferrerNotificationList[0] = {
-      "title": "Win Win Deal",
-      "description":
-      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[1] = {
-      "title": "Refer and Earn",
-      "description":
-      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[2] = {
-      "title": "Discounts that count",
-      "description":
-      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[3] = {
-      "title": "${referrerAmt} Off every Payment",
-      "description":
-      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[4] = {
-      "title": "Discounts to smile about",
-      "description":
-      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
-    };
-
-    var referrerName = "";
-    var validity = prefs.getString("ReferralValidity");
-
-    var rng = new Random();
-    var referrerRandom = rng.nextInt(4);
-    double height = 220;
-    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
-    if (referrerRandom == 0) height = 170;
-
-    print("----> currdate" + currDate.toString());
-
-    if (createdDate == '') {
-      dateToSend = 12;
-    }
-    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
-
-    //print("difference dates"+currDate.difference(cDate).inDays.toString());
-    //print("created date"+createdDate);
-
-    // } // for other organizations i.e pop up for every created date day of the month
-    // else{
-    dateToSend = createdDate.day;
-    print('startDate');
-
-//      print(currDate);
-//      print(prefs.getString('date'));
-    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
-    if (currDate.day!=DateTime.parse(dateShowed).day&&
-        (currDate.day == (createdDate.add(Duration(days: 7)).day) &&
-            currDate.month == createdDate.month &&
-            currDate.year == createdDate.year) ) {
-      print(">>>--- inside trial popup condition check");
-      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
-      //        prefs.setString('date',currDate.toString());
-      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
-      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
-//        prefs.setString('date', newDate.toString());
-//        print("hello");
-//        print(prefs.getString('date'));
-
-      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
-      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
-
-      dateShowed = currDate.toString();
-      prefs.setString('TrailReferralShownDate', dateShowed);
-      prefs.setString("ReferralValidFrom", cDateS);
-      prefs.setString("ReferralValidTo", DateFormat("yyyy-MM-dd").format(nextValidity));
-
-      print("hello" + currDate.toString());
-
-      EasyDialog(
-          title: Text(
-            ReferrerNotificationList[referrerRandom]['title'].toString(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          description: Text(
-            ReferrerNotificationList[referrerRandom]['description']
-                .toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          height: height,
-          contentList: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 40,
-                ),
-                RaisedButton(
-                  child: Text(
-                    "GO!",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    generateAndShareReferralLink();
-                  },
-                  color: Colors.green,
-                ),
-                SizedBox(
-                  width: 10,
-                  height: 10,
-                ),
-              ],
-            )
-          ]).show(context);
-    }
-
-  }
-
-  void showOtherReferralPopup(BuildContext context, String cDateS) async{
-    int dateToSend = 0;
-    var prefs = await SharedPreferences.getInstance();
-
-    var createdDate = DateTime.parse(cDateS);
-
-    //print(">>>>----- current org status"+globals.currentOrgStatus);
-
-
-
-
-    var currDate = DateTime.now();
-    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
-
-    print("datetime.parse" + dateShowed);
-    // print("hello"+dateShowed);
-    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
-    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
-    ReferrerNotificationList[0] = {
-      "title": "Win Win Deal",
-      "description":
-      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[1] = {
-      "title": "Refer and Earn",
-      "description":
-      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[2] = {
-      "title": "Discounts that count",
-      "description":
-      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[3] = {
-      "title": "${referrerAmt} Off every Payment",
-      "description":
-      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
-    };
-    ReferrerNotificationList[4] = {
-      "title": "Discounts to smile about",
-      "description":
-      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
-    };
-
-    var referrerName = "";
-    var validity = prefs.getString("ReferralValidity");
-
-    var rng = new Random();
-    var referrerRandom = rng.nextInt(4);
-    double height = 220;
-    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
-    if (referrerRandom == 0) height = 170;
-
-    print("----> currdate" + currDate.toString());
-
-    if (createdDate == '') {
-      dateToSend = 12;
-    }
-    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
-
-    //print("difference dates"+currDate.difference(cDate).inDays.toString());
-    //print("created date"+createdDate);
-
-    // } // for other organizations i.e pop up for every created date day of the month
-    // else{
-    dateToSend = createdDate.day;
-    print('startDate');
-
-//      print(currDate);
-//      print(prefs.getString('date'));
-    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
-    if (currDate.day!=DateTime.parse(dateShowed).day&&
-        (currDate.day == (createdDate.day) ) ) {
-      print("inside refer");
-
-      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
-      //        prefs.setString('date',currDate.toString());
-      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
-      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
-//        prefs.setString('date', newDate.toString());
-//        print("hello");
-//        print(prefs.getString('date'));
-
-      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
-      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
-
-      dateShowed = currDate.toString();
-      prefs.setString('TrailReferralShownDate', dateShowed);
-      prefs.setString("ReferralValidFrom", DateFormat("yyyy-MM-dd").format(currDate));
-      prefs.setString("ReferralValidTo", DateFormat("yyyy-MM-dd").format(nextValidity));
-
-      print("hello" + currDate.toString());
-
-      EasyDialog(
-          title: Text(
-            ReferrerNotificationList[referrerRandom]['title'].toString(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          description: Text(
-            ReferrerNotificationList[referrerRandom]['description']
-                .toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          height: height,
-          contentList: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 40,
-                ),
-                RaisedButton(
-                  child: Text(
-                    "GO!",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    generateAndShareReferralLink();
-                  },
-                  color: Colors.green,
-                ),
-                SizedBox(
-                  width: 10,
-                  height: 10,
-                ),
-              ],
-            )
-          ]).show(context);
-    }
-
-
-  }
-
-
-
-  // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    /*await availableCameras();*/
+
     checknetonpage(context);
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
@@ -1863,8 +858,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     //showAddingShiftReminder();
     var prefs = await SharedPreferences.getInstance();
+    firstTimeinPopup=prefs.getInt("firstTimein")??0;
+    // occurences++;
 
-    startWorkingHoursTimer();
+    if(firstTimeinPopup<10){
+      print(firstTimeinPopup);
+      print("gjkmgjkgkjgkjgkgju");
+      selected = true;
+      opacityLevel = 1.0;
+      opacityLevel1 = 0.0;
+    }
+    else{
+      selected = false;
+      opacityLevel = 0.0;
+      opacityLevel1 = 0.0;
+    }
+
+    // startWorkingHoursTimer();
 
     setState(() {
       companyFreshlyRegistered =
@@ -1939,6 +949,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           print("New pwd" + newpwd + "  User ped" + userpwd);
 
           admin_sts = prefs.getString('sstatus').toString() ?? '0';
+          print(admin_sts);
           covid_second = prefs.getString('covid_second') ?? '';
           covid_first = prefs.getString('covid_first') ?? '0';
           //glow= prefs.getBool('tool');
@@ -2045,2263 +1056,425 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       }
     }
 
-  }
-
-  setaddress() async {
-    globalstreamlocationaddr = await getAddressFromLati(
-        globals.assign_lat.toString(), globals.assign_long.toString());
-
-    var serverConnected = await checkConnectionToServer();
-    if (serverConnected != 0) if (globals.assign_lat == 0.0 ||
-        globals.assign_lat == null ||
-        !locationThreadUpdatedLocation) {
-      cameraChannel.invokeMethod("openLocationDialog");
-      /*
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return WillPopScope(
-                onWillPop: () {},
-                child: new AlertDialog(
-            title: new Text(""),
-            content: new Text("Sorry we can't continue without GPS"),
-            actions: <Widget>[
-              RaisedButton(
-                child: new Text(
-                  "Turn On",
-                  style: new TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                color: Colors.orangeAccent,
-                onPressed: () async{
-                  cameraChannel.invokeMethod("openLocationDialog");
-                  //openLocationSetting();
-                },
-              ),
-              RaisedButton(
-                child: new Text(
-                  "Done",
-                  style: new TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                color: Colors.orangeAccent,
-                onPressed: () {
-                  cameraChannel.invokeMethod("startAssistant");
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                 /*
-                  Navigator.of(context, rootNavigator: true)
-                      .pop();
-*/
-                },
-              ),
-            ],
-          ));});
-
-       */
-    }
-    print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
-    if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!textPostionGotten) {
-      WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
-    }
-
-    // mail verify code .... comment by sohan
-   /* (mail_varified == '0' && alertdialogcount == 0 && admin_sts == '1')
-        ? Future.delayed(Duration.zero, () => _showAlert(context))
-        : "";*/
-
-    return (response == 0 ||
-            userpwd != newpwd ||
-            Is_Delete != 0 ||
-            orgid == '10932')
-        ? new AskRegisterationPage()
-        : getmainhomewidget();
-    /* return MaterialApp(
-      home: (response==0) ? new AskRegisterationPage() : getmainhomewidget(),
-    );*/
-  }
-
-  void showInSnackBar(String value) {
-    final snackBar = SnackBar(
-        content: Text(
-      value,
-      textAlign: TextAlign.center,
-    ));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  getmainhomewidget() {
-    return MaterialApp(
-        navigatorKey: navigatorKey,
-        home:Stack(
-          children: <Widget>[
-            new WillPopScope(
-                onWillPop: () async => true,
-                child: new Scaffold(
-                  backgroundColor: Colors.white,
-                  key: _scaffoldKey,
-                  appBar: AppBar(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        new Text(org_name, style: new TextStyle(fontSize: 20.0)),
-                      ],
-                    ),
-                    automaticallyImplyLeading: false,
-                    backgroundColor: appcolor,
-                    // backgroundColor: Color.fromARGB(255,63,163,128),
-                  ),
-                  //bottomSheet: getQuickLinksWidget(),
-                  persistentFooterButtons: <Widget>[
-                    quickLinkList1(),
-                  ],
-
-                  bottomNavigationBar: Bottomnavigationbar(),
-
-                  endDrawer: new AppDrawer(),
-                  body:
-                  (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
-                  floatingActionButton: (((companyFreshlyRegistered &&
-                      !attendanceNotMarkedButEmpAdded) &&
-                      glow) &&
-                      (admin_sts == '1' || admin_sts == '2'))
-                      ? Container(
-                    alignment: Alignment(1.55, 1.25),
-                    child: (admin_sts == '1' || admin_sts == '2')
-                        ? AvatarGlow(
-                      glowColor: Colors.blue,
-                      child: new FloatingActionButton(
-                        mini: false,
-                        key: _keyBlue,
-                        backgroundColor: buttoncolor,
-                        onPressed: () {
-                          print('hellowassup' +
-                              (((!companyFreshlyRegistered &&
-                                  attendanceNotMarkedButEmpAdded) ||
-                                  !glow) &&
-                                  (admin_sts == '1' ||
-                                      admin_sts == '2'))
-                                  .toString());
-                          print('!companyFreshlyRegistered' +
-                              (companyFreshlyRegistered == false)
-                                  .toString());
-                          print('attendanceNotMarkedButEmpAdded' +
-                              attendanceNotMarkedButEmpAdded
-                                  .toString());
-
-                          print('!glow' + (glow == false).toString());
-
-                          if (((globals.registeruser) >=
-                              (globals.userlimit + 5)) &&
-                              buysts != '0')
-                            showDialogWidget(
-                                "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-                          else
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddEmployee()),
-                            );
-                          // tooltiptwo.close();
-                          istooltiponeshown = true;
-                          print(istooltiponeshown);
-                        },
-                        tooltip: 'Add Employee',
-                        child: new Icon(Icons.person_add),
-                      ),
-                      endRadius: 90.0,
-                    )
-                        : new Center(),
-                  )
-                      : (admin_sts == '1' || admin_sts == '2')
-                      ? new FloatingActionButton(
-                    mini: false,
-                    //key: _keyBlue,
-                    backgroundColor: buttoncolor,
-                    onPressed: () {
-                      //sendNotificationtouser();
-                      // return false;
-
-                      print('hello');
-                      print(glow);
-                      _getPositions();
-                      if (((globals.registeruser) >=
-                          (globals.userlimit + 5)) &&
-                          buysts != '0')
-                        showDialogWidget(
-                            "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
-                      else
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddEmployee()),
-                        );
-                    },
-                    tooltip: 'Add Employee',
-                    child: new Icon(Icons.person_add),
-                  )
-                      : Container(),
-                )), // First child
-            // BlurryEffect(0.5,0.1,Colors.grey.shade200)    //  Second Child
-          ],
-        ));
-  }
-
-  checkalreadylogin() {
-    ////print("---->"+response.toString());
-    if (response == 1) {
-      return new IndexedStack(
-        index: _currentIndex,
-        children: <Widget>[
-          underdevelopment(),
-          (globalstreamlocationaddr != "Location not fetched." ||
-                  globals.globalstreamlocationaddr.isNotEmpty)
-              ? mainbodyWidget()
-              : refreshPageWidgit(),
-          //(false) ? mainbodyWidget() : refreshPageWidgit(),
-          underdevelopment()
-        ],
-      );
-    } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-        (Route<dynamic> route) => false,
-      );
-    }
-
-    /* if(userpwd!=newpwd){
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-            (Route<dynamic> route) => false,
-      );
-    }*/
-  }
-
-  refreshPageWidgit() {
-    if (globals.globalstreamlocationaddr.isNotEmpty) {
-      return new Container(
-        child: Center(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    /*
-                    Icon(
-                      Icons.all_inclusive,
-                      color: Colors.teal,
-                    ),
-                    Text(
-                      "Sorry! can't fetch location. \nPlease check if GPS is enabled on your device",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.red),
-                    )*/
-                    Container(
-                      decoration: new ShapeDecoration(
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(13.0)),
-                        color: Colors.red,
-                      ),
-                      child: Text(
-                        '\nProblem Getting Location! Please turn on GPS and try again.',
-                        textAlign: TextAlign.center,
-                        style:
-                            new TextStyle(color: Colors.white, fontSize: 15.0),
-                      ),
-                      width: 220.0,
-                      height: 90.0,
-                    ),
-                  ]),
-              SizedBox(height: 15.0),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    /*
-                    Text(
-                      "Note: ",
-                      style: new TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.right,
-                    ),
-                    Text(
-                      " If Location not being fetched automatically?",
-                      style: new TextStyle(fontSize: 12.0, color: Colors.black),
-                      textAlign: TextAlign.left,
-                    ),*/
-                    /* new InkWell(
-                      child: new Text(
-                        "Fetch Location now",
-                        style: new TextStyle(
-                            color: Colors.teal,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-                        sl.startStreaming(5);
-                        startTimer();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      },
-                    )*/
-                  ]),
-              FlatButton(
-                child: new Text(
-                  "Try now",
-                  style: new TextStyle(
-                      color: appcolor, decoration: TextDecoration.underline),
-                ),
-                onPressed: () {
-                  //  sl.startStreaming(5);
-                  // startTimer();
-                  cameraChannel.invokeMethod("startAssistant");
-                  /* Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );*/
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Kindly allow location permission from settings',
-            textAlign: TextAlign.center,
-            style: new TextStyle(fontSize: 14.0, color: Colors.red)),
-        RaisedButton(
-          child: Text('Open Settings'),
-          onPressed: () {
-            PermissionHandler().openAppSettings();
-          },
-        ),
-      ]);
-    }
-  }
-
-  loader() {
-    return new Container(
-      child: Center(
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Image.asset('assets/spinner.gif', height: 50.0, width: 50.0),
-            ]),
-      ),
-    );
-  }
-
-  underdevelopment() {
-    return new Container(
-      child: Center(
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Icon(
-                Icons.android,
-                color: appcolor,
-              ),
-              Text(
-                "Under development",
-                style: new TextStyle(fontSize: 30.0, color: appcolor),
-              )
-            ]),
-      ),
-    );
-  }
-
-  poorNetworkWidget() {
-    return Container(
-      child: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.error,
-                      color: appcolor,
-                    ),
-                    Text(
-                      " Poor network connection.",
-                      style: new TextStyle(fontSize: 20.0, color: appcolor),
-                    ),
-                  ]),
-              SizedBox(height: 5.0),
-              FlatButton(
-                child: new Text(
-                  "Refresh Page",
-                  style: new TextStyle(
-                      color: appcolor, decoration: TextDecoration.underline),
-                ),
-                onPressed: () {
-                  // sl.startStreaming(5);
-                  // startTimer();
-                  cameraChannel.invokeMethod("startAssistant");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                },
-              ),
-            ]),
-      ),
-    );
-  }
-
-  mainbodyWidget() {
-    ////to do check act1 for poor network connection
-
-    if(globalstreamlocationaddr == "Location not fetched."){
-      return Padding(
-        padding: const EdgeInsets.only(left:45.0),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text('Kindly allow location permission from settings',
-              textAlign: TextAlign.center,
-              style: new TextStyle(fontSize: 14.0, color: Colors.red)),
-          RaisedButton(
-            child: Text('Open Settings'),
-            onPressed: () {
-              PermissionHandler().openAppSettings();
-            },
-          )],),
-      );
 
 
 
 
-    }
-
-    if (act1 == "Poor network connection") {
-      return poorNetworkWidget();
-    } else {
-      return ListView(
-        physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          Container(
-            // foregroundDecoration: BoxDecoration(color:Colors.red ),
-            height: MediaQuery.of(context).size.height * 0.80,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: MediaQuery.of(context).size.height * .06),
-                new GestureDetector(
-                  onTap: () {
-                    // profile navigation
-                    /* Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));*/
-                  },
-                  child: new Stack(children: <Widget>[
-                    Container(
-                        //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
-                        width: MediaQuery.of(context).size.height * .16,
-                        height: MediaQuery.of(context).size.height * .16,
-                        decoration: new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                              fit: BoxFit.fill,
-                              image: _checkLoaded
-                                  ? AssetImage('assets/avatar.png')
-                                  : profileimage,
-                              //image: AssetImage('assets/avatar.png')
-                            ))),
-                    /*new Positioned(
-                    left: MediaQuery.of(context).size.width*.14,
-                    top: MediaQuery.of(context).size.height*.11,
-                    child: new RawMaterialButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-                      },
-                      child: new Icon(
-                        Icons.edit,
-                        size: 18.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 0.5,
-                      fillColor: Colors.teal,
-                      padding: const EdgeInsets.all(1.0),
-                    ),
-                  ),*/
-                  ]),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * .02),
-
-                Text(fname.toUpperCase() + " " + lname.toUpperCase(),
-                    key: _keyRed,
-                    textAlign: TextAlign.center,
-
-                    style: new TextStyle(
-                      color: Colors.black87,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 3.0,
-                    )),
-
-                SizedBox(height: MediaQuery.of(context).size.height * .01),
-                // SizedBox(height: MediaQuery.of(context).size.height*.01),
-                (act1 == '') ? loader() : getMarkAttendanceWidgit(),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-  }
-
-  getMarkAttendanceWidgit() {
-    if (act1 == "Imposed") {
-      return getAlreadyMarkedWidgit();
-    } else {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            /* Text('Mark Attendance',
-                style: new TextStyle(fontSize: 30.0, color: Colors.teal)),
-            SizedBox(height: 10.0),*/
-            getwidget(globals.globalstreamlocationaddr),
-            //    SizedBox(height: MediaQuery.of(context).size.height*.1),
-            /*      Container(
-            //foregroundDecoration: BoxDecoration(color:Colors.green ),
-            margin: EdgeInsets.only(bottom:MediaQuery.of(context).size.height*0),
-            //padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.02,bottom:MediaQuery.of(context).size.height*0.02),
-              height: MediaQuery.of(context).size.height*.10,
-              color: Colors.teal.withOpacity(0.8),
-              child: Column(
-                  children:[
-                    SizedBox(height: 10.0,),
-                    getQuickLinksWidget()
-                  ]),
-            ),
-         */
-          ]);
-    }
-  }
-
-  Widget quickLinkList1() {
-    return Container(
-      // color: appcolor,
-
-      width: MediaQuery.of(context).size.width * 0.95,
-      // padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.03,bottom:MediaQuery.of(context).size.height*0.03, ),
-      child: getBulkAttnWid(),
-    );
-  }
-
-  Widget getBulkAttnWid() {
-    List<Widget> widList = List<Widget>();
-
-    if (bulkAttn.toString() == '1' && (admin_sts == '1' || admin_sts == '2')) {
-      widList.add(Container(
-        padding: EdgeInsets.only(top: 5.0),
-        constraints: BoxConstraints(
-          maxHeight: 50.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Bulkatt()),
-              );
-            },
-            child: Column(
-              children: [
-                Icon(
-                  const IconData(0xe81d, fontFamily: "CustomIcon"),
-                  size: 30.0,
-                  color: iconcolor,
-                ),
-                Text('Group',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-              ],
-            )),
-      ));
-    }
-
-    if(globals.ShiftPlanner==1) {
-      widList.add(Container(
-        padding: EdgeInsets.only(top: 5.0),
-        constraints: BoxConstraints(
-          maxHeight: 50.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-          onTap: () {
-
-            admin_sts == '1' || admin_sts == '2'?
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => shiftPlannerList()),
-            ): Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => userViewShiftPlanner()),
-            );
-            },
-          child: Column(
-            children: [
-              Icon(
-                const IconData(0xe80e, fontFamily: "CustomIcon"),
-                size: 29.0,
-                color: iconcolor,
-              ),
-              admin_sts == '1' || admin_sts == '2'? Text('Shift Planner',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 12.0, color: iconcolor)):Text('Shifts ',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-            ],
-          ),
-        ),
-      ));
-    }
 
 
-/*    widList.add(Container(
-      padding: EdgeInsets.only(top: 5.0),
-      constraints: BoxConstraints(
-        maxHeight: 50.0,
-        minHeight: 20.0,
-      ),
-      child: new GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MyApp()),
-            );
-          },
-          child: Column(
-            children: [
-              Icon(
-                const IconData(0xe81c, fontFamily: "CustomIcon"),
-                size: 30.0,
-                color: iconcolor,
-              ),
-              Text('Log',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-            ],
-          )),
-    ));*/
 
-    if (visitpunch.toString() == '1') {
-      widList.add(Container(
-        padding: EdgeInsets.only(top: 5.0),
-        constraints: BoxConstraints(
-          maxHeight: 50.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-            onTap: () {
-              /*showInSnackBar("Under development.");*/
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PunchLocationSummary()),
-              );
-            },
-            child: Column(
-              children: [
-                Icon(
-                  const IconData(0xe821, fontFamily: "CustomIcon"),
-                  size: 30.0,
-                  color: iconcolor,
-                ),
-                Text('Visits',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-              ],
-            )),
-      ));
-    }
 
-    if (timeOff.toString() == '1'&&shiftType.toString()!='3') {
-      widList.add(Container(
-        padding: EdgeInsets.only(top: 5.0),
-        constraints: BoxConstraints(
-          maxHeight: 50.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-            onTap: () {
-              //  //print('----->>>>>'+getOrgPerm(1).toString());
-              getOrgPerm(1).then((res) {
-                {
-                  //   //print('----->>>>>'+res.toString());
-                  if (res) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => TimeoffSummary()),
-                    );
-                  } else
-                    showInSnackBar('Please buy this feature');
-                }
-              });
-            },
-            child: Column(
-              children: [
-                Icon(
-                  const IconData(0xe818, fontFamily: "CustomIcon"),
-                  size: 30.0,
-                  color: iconcolor,
-                ),
-                Text(' Time Off',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-              ],
-            )),
-      ));
-    }
+    ///////////////////////////////////////////////////merging work /////////////////////////////////////////////////////////
 
-    if (BasicLeave.toString() == '1') {
-      widList.add(Container(
-        padding: EdgeInsets.only(top: 5.0),
-        constraints: BoxConstraints(
-          maxHeight: 50.0,
-          minHeight: 20.0,
-        ),
-        child: new GestureDetector(
-            onTap: () {
-              /*showInSnackBar("Under development.");*/
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyLeave()),
-              );
-            },
-            child: Column(
-              children: [
-                Image.asset(
-                  'assets/leave-icon.png', height: 30.0, width: 30.0,color: Colors.black45,),
-                Text('Leave',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(fontSize: 12.0, color: iconcolor)),
-              ],
-            )),
-      ));
-    }
+  //  print("adsadadadsadadadadsadsadadsadad");
+    //_controller1 = new TabController(length: 2, vsync: this);
 
-    /* widList.add();
-    widList.add();*/
-    return (Row(
-      children: widList,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    ));
-  }
+    var orgId=prefs.get("orgid");
+    profile = prefs.getString('profile') ?? '';
+    fname = prefs.getString('fname') ?? '';
+    lname = prefs.getString('lname') ?? '';
+    profileImage = NetworkImage(profile);
 
-  List<GestureDetector> quickLinkList() {
-    List<GestureDetector> list = new List<GestureDetector>();
-    // //print("permission list-->>>>>>"+data.toString());
-    list.add(new GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MyApp()),
-          );
-        },
-        child: Column(
-          children: [
-            Icon(
-              Icons.calendar_today,
-              size: 30.0,
-              color: Colors.white,
-            ),
-            Text('Attendance',
-                textAlign: TextAlign.center,
-                style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-          ],
-        )));
 
-    if (punchlocation_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            /*showInSnackBar("Under development.");*/
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PunchLocation()),
-            );
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.add_location,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Visits',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
+    var fullName = fname + lname;
 
-    if (timeoff_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            //  //print('----->>>>>'+getOrgPerm(1).toString());
-            getOrgPerm(1).then((res) {
-              {
-                //   //print('----->>>>>'+res.toString());
-                if (res) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TimeoffSummary()),
-                  );
-                } else
-                  showInSnackBar('Please buy this feature');
-              }
-            });
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.access_alarm,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Time Off',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
-
-    if (leave_permission == 1) {
-      list.add(new GestureDetector(
-          onTap: () {
-            getOrgPerm(1).then((res) {
-              {
-                //   //print('----->>>>>'+res.toString());
-                if (res) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LeaveSummary()),
-                  );
-                } else
-                  showInSnackBar('Please buy this feature');
-              }
-            });
-          },
-          child: Column(
-            children: [
-              Icon(
-                Icons.exit_to_app,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              Text('Leave',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(fontSize: 15.0, color: Colors.white)),
-            ],
-          )));
-    }
-    return list;
-  }
-
-  getQuickLinksWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: quickLinkList(),
-    );
-  }
-
-  getAlreadyMarkedWidgit() {
-    return Column(children: <Widget>[
-      SizedBox(height: MediaQuery.of(context).size.height * .05),
-      Padding(
-        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-        child: Card(
-          elevation: 0.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-              color: Colors.amber.withOpacity(0.5),
-              width: 2,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Container(
-              child: Text(
-                ' Attendance has been marked. Thank You!',
-                textAlign: TextAlign.center,
-                style: new TextStyle(
-                    color: Colors.amber,
-                    fontSize: 18.0,
-                    letterSpacing: 2.0,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ]);
-  }
-
-  getwidget(String addrloc) {
-    if (addrloc != "Location could not be fetched.") {
-      return Column(children: [
-        ButtonTheme(
-          minWidth: 120.0,
-          height: 45.0,
-          child: getTimeInOutButton(),
-        ),
-        SizedBox(height: MediaQuery.of(context).size.height * .04),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(
-                color: Colors.grey.withOpacity(0.5),
-                width: 1,
-              ),
-            ),
-            elevation: 0.0,
-            borderOnForeground: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: Padding(
-              padding: const EdgeInsets.only(left:5.0,right:5.0),
-              child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height * .18,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (loggedInSince.isNotEmpty)
-                          Text(
-                            loggedInSince,
-                            style: TextStyle(color: Colors.green),
-                          ),
-                        FlatButton(
-                          child: new Text(
-                              globals.globalstreamlocationaddr != null
-                                  ? 'You are at: '+globals.globalstreamlocationaddr
-                                  : "Location could not be fetched",
-                              textAlign: TextAlign.center,
-                              style: new TextStyle(
-                                  fontSize: 14.0, color: Colors.black54)),
-                          onPressed: () {
-                            launchMap(globals.assign_lat.toString(),
-                                globals.assign_long.toString());
-                            /* Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );*/
-                          },
-                        ),
-                        new Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                new InkWell(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        const IconData(0xe81a,
-                                            fontFamily: "CustomIcon"),
-                                        size: 15.0,
-                                        color: appcolor,
-                                      ),
-                                      Text("  "),
-                                      Text(
-                                        "Refresh Location", // main  widget
-                                        style: new TextStyle(
-                                            color: appcolor,
-                                            decoration: TextDecoration.none),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    //  startTimer();
-                                    //  sl.startStreaming(5);
-                                    cameraChannel
-                                        .invokeMethod("startAssistant");
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HomePage()),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-//                    SizedBox(
-//                      height: 5.0,
-//                    ),
-                        if (fakeLocationDetected)
-                          Container(
-                            padding: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: Color(0xfffc6203),
-                              //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                            ),
-                            child: Text(
-                              'Fake Location',
-                              style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.amber,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.0),
-                            ),
-                          )
-                        else
-                          (areaId != 0 && geoFence == 1)
-                              ? areaSts == '0'
-                                  ? Container(
-                                      padding:
-                                          EdgeInsets.only(top: 5.0, right: 5.0),
-                                      child: Text(
-                                        ' Outside Geofence ',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white,
-                                            backgroundColor: Colors.red,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1.0),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: EdgeInsets.all(5.0),
-                                      child: Text(
-                                        ' Within Geofence ',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.white,
-                                            backgroundColor: Colors.green,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1.0),
-                                      ),
-                                    )
-                              : Center(),
-                      ])),
-            ),
-          ),
-        ),
-      ]);
-    } else {
-      return Column(children: [
-        Text('Kindly refresh the page to fetch the location',
-            textAlign: TextAlign.center,
-            style: new TextStyle(fontSize: 14.0, color: Colors.red)),
-        RaisedButton(
-          child: Text('Refresh'),
-          color: globals.buttoncolor,
-          onPressed: () {
-            cameraChannel.invokeMethod("startAssistant");
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          },
-        ),
-      ]);
-    }
-  }
-
-  getTimeInOutButton() {
-    if (act1 == 'TimeIn') {
-      return RaisedButton(
-        elevation: 0.0,
-        highlightElevation: 0.0,
-        highlightColor: Colors.transparent,
-        disabledElevation: 0.0,
-        focusColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-//          side: BorderSide( color: Colors.green.withOpacity(0.5), width: 2,),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Text('TIME IN',
-            style: new TextStyle(
-                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
-        color: globals.buttoncolor,
-        onPressed: () async {
-          globals.globalCameraOpenedStatus = true;
-          // if(changepasswordStatus == '0' || changepasswordStatus == '')
-          //saveImage();
-          print('covidfirst'+covid_first);
-          print('covidfirst'+covid_second);
-          print('covidfirst'+covidsurvey.toString());
-
-          if(covid_first=='1' && globals.covidsurvey==1)
-          {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Every7dayscovidsurvey()), (Route<dynamic> route) => true,
-            );
-          }
-          else if(covid_second=='1'  && globals.covidsurvey==1)
-          {
-
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Covid19serve()), (Route<dynamic> route) => true,
-              );
-
-          }else if(changepasswordStatus == '1') {
-            if (Password_sts == '0')
-              _onAlertWithCustomContentPressed(context);
-            if (Password_sts == '1')
-              saveImage();
-          }
-          else{
-            saveImage();
-          }
-
-          //Navigator.pushNamed(context, '/home');
-        },
-      );
-    } else if (act1 == 'TimeOut') {
-      return RaisedButton(
-        clipBehavior: Clip.antiAlias,
-        elevation: 0.0,
-        highlightElevation: 0.0,
-        highlightColor: Colors.transparent,
-        disabledElevation: 50.0,
-        focusColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
-        ),
-        child: Text('TIME OUT',
-            style: new TextStyle(
-                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
-        color: globals.buttoncolor,
-        onPressed: () async {
-          globals.globalCameraOpenedStatus = true;
-          // //print("Time out button pressed");
-          saveImage();
-        },
-      );
-    }
-  }
-
-  Text getText(String addrloc) {
-    if (addrloc != "PermissionStatus.deniedNeverAsk") {
-      return Text('You are at: ' + addrloc,
-          textAlign: TextAlign.center, style: new TextStyle(fontSize: 14.0));
-    } else {
-      return new Text(
-          'Location access is denied. Enable the access through the settings.',
-          textAlign: TextAlign.center,
-          style: new TextStyle(fontSize: 14.0, color: Colors.red));
-      /*return new  Text('Location is restricted from app settings, click here to allow location permission and refresh', textAlign: TextAlign.center, style: new TextStyle(fontSize: 14.0,color: Colors.red));*/
-    }
-  }
-
-  void startLiveLocationTracking()async {
-
-    HomeViewState tracker=HomeViewState();
-    tracker.initState();
-    await tracker.onClickMenu();
-    tracker.onClickEnable(true);
-    tracker.onClickChangePace();
-    //tracker.onEnabledChange(true);
-
-  }
-
-  void stopLiveLocationTracking() {
-
-    HomeViewState tracker=HomeViewState();
-    tracker.initState();
-    tracker.onClickEnable(false);
-    //tracker.onClickChangePace();
-    //tracker.onEnabledChange(true);
-  }
-
-  saveImage() async {
-    timeWhenButtonPressed = DateTime.now();
-    //  sl.startStreaming(5);
-    print('aidId' + aid);
-    var FakeLocationStatus = 0;
-
-    //startLiveLocationTracking();
-  /*  if(areaStatus == '0'){
-      geofence="Outside Fenced Area";
+    if((fullName.trim()).contains(" ")) {
+      var name=fullName.split(" ");
+      print('print(name);');
+      print(name);
+      First=name[0][0].trim();
+      print(First);
+      Last=name[1][0].trim().toString().toUpperCase();
+      print(Last);
+      initials =  First+Last;
+      print(initials);
+      print("initials ");
     }else{
-      geofence="Within Fenced Area";
-    }*/
+      First=fullName;
+      print('print(First)else');
+      print(First);
+      initials =  First;
+      print(initials);
+    }
 
-    if(globals.geoFence==1) {
-      if (areaSts == '0') {
-        if(areaId==0 || areaId.toString()==""){
-          geofence = "";
-        }else{
-          geofence = "Outside Geofence";
-        }
 
-        print('thisisgeofencefortesting123---->>>>'+geofence);
-        print('thisisabletomarkatt---->>>>'+ableToMarkAttendance.toString());
+    print(profileImage);
 
-        if(ableToMarkAttendance==1 || fencearea==1) {
-          print('thisisgeofencefortesting456---->>>>'+geofence);
-          await showDialog(
-              context: context,
-              // ignore: deprecated_member_use
-              child: new AlertDialog(
-                //title: new Text("Warning!"),
-                content: new Text(
-                    "You Can't punch Attendance Outside Geofence."),
-              ));
-          return null;
-        }
-
-      } else {
-        geofence = "Within Geofence";
-        print('thisisgeofencefortesting789---->>>>'+geofence);
+    profileImage.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+      if (mounted) {
+        setState(() {
+          profileLoaded = true;
+        });
       }
-    }
+    }));
 
-    if(globals.departmentid==1||globals.departmentid==0){
-      await showDialog(
-          context: context,
-          // ignore: deprecated_member_use
-          child: new AlertDialog(
-            //title: new Text("Warning!"),
-            content: new Text("Department has not been assigned"),
-          ));
-      return null;
-    }
-    if(globals.designationid==0){
-      await showDialog(
-          context: context,
-          // ignore: deprecated_member_use
-          child: new AlertDialog(
-            //title: new Text("Warning!"),
-            content: new Text("Designation has not been assigned"),
-          ));
-      return null;
-    }
-    print("ssssssssssssssssshift"+shiftId.toString());
-    if(globals.shiftId==''||globals.shiftId==null||globals.shiftId=='0'){
-      await showDialog(
-          context: context,
-          // ignore: deprecated_member_use
-          child: new AlertDialog(
-            //title: new Text("Warning!"),
-            content: new Text("Shift has not been assigned"),
-          ));
-      return null;
-    }
+    print(profileImage);
+
+    print(profileLoaded);
+    print(initials);
+    print("initials platformstate");
 
 
-    if (AbleTomarkAttendance != '1' &&
-        globals.ableToMarkAttendance == 1 &&
-        geoFence == 1) {
-      await showDialog(
-          context: context,
-          // ignore: deprecated_member_use
-          child: new AlertDialog(
-            //title: new Text("Warning!"),
-            content: new Text("You Can't punch Attendance from Outside Geofence"),
-          ));
-      return null;
-    }
 
-    if (fakeLocationDetected) {
-      FakeLocationStatus = 1;
-    }
-    MarkTime mk = new MarkTime(
-        empid,
-        globals.globalstreamlocationaddr,
-        aid,
-        act1,
-        shiftId,
-        orgdir,
-        globals.assign_lat.toString(),
-        assign_long.toString(),
-        FakeLocationStatus,
-        globalcity);
+    final GoogleMapController controller = await _controller.future;
 
-    var connectivityResult = await (new Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      /* Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CameraExampleHome()),
-      );*/
-      SaveImage saveImage = new SaveImage();
-      Map issave;
-      var prefs = await SharedPreferences.getInstance();
-      globals.showAppInbuiltCamera =
-          prefs.getBool("showAppInbuiltCamera") ?? true;
-      issave = globals.showAppInbuiltCamera
-          ? await saveImage.saveTimeInOutImagePickerAppCamera(mk, context)
-          : await saveImage.saveTimeInOutImagePicker(mk, context);
-      print(issave);
-      if (issave['status'] == 3) {
-        globals.timeWhenButtonPressed = null;
-        showDialog(
-            context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              title: new Text(""),
-              content: new Text(
-                  "Sorry you have taken more time than expected to mark attendance. Please mark again!"),
-            ));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      }
+    if(admin_sts == '1' || admin_sts == '2') {
+      updates = await FirebaseDatabase.instance
+          .reference()
+          .child("Locations")
+          .child(orgId)
+          .onChildAdded
+          .listen((data) async {
+        // locationList.insert(0, Locations.fromFireBase(data.snapshot));
+        var date = DateTime.now().toString().split(".")[0].split(" ")[0];
+        var empId = data.snapshot.key.toString();
 
-      if (issave['status'] == 1 || issave['status']==2) {
-        // Sync image
-        saveImage.SendTempimage(context , true);
-        if(act1=='TimeIn'){
-          if(locationTrackingAddon=='1'){
-            startLiveLocationTracking();
-          }
+        setLoader = true;
+        if (data.snapshot.value[date] != null) {
+          var timesMap = new Map<String, dynamic>.from(data.snapshot.value[date]);
+          List<Map<String, dynamic>> locationList = List();
+          timesMap.forEach((k, v) => locationList.add({k: v}));
 
-          print("This is time in block " + act1);
-          var prefs = await SharedPreferences.getInstance();
-
-          String InPushNotificationStatus =
-              await prefs.getString("InPushNotificationStatus") ?? '0';
-          var empId = prefs.getString('empid') ?? '';
-          var orgId = prefs.getString("orgid") ?? '';
-          var eName = prefs.getString('fname') ?? 'User';
-          var formatter = new DateFormat('HH:mm');
-          var date= formatter.format(DateTime.now());
-          String topic = empId + 'TI' + orgId;
-          if (InPushNotificationStatus == '1') {
-            /*sendPushNotification(eName + ' has marked Time In', '',
-                '\'' + topic + '\' in topics');*/
-            sendPushNotification(eName + ' has marked Time In at '+ date, '',
-                '\'' + topic + '\' in topics');
-          }
-          if (FakeLocationStatus==1) {
-            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
-              String subject="Fake Location";
-              String content= eName + ' has punched Time In from a spoofed location';
-              sendMailByAppToAdmin(subject, content);
-            }
-            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
-              sendPushNotification(
-                  eName + ' has punched Time In from a spoofed location', '',
-                  '(\'' + globals.globalOrgTopic +
-                      '\' in topics) && (\'admin\' in topics)');
-            }
-          }
-        }
-        else{
-
-
-          stopLiveLocationTracking();
-          print("This is time timeout block"+ act1);
-          var prefs = await SharedPreferences.getInstance();
-
-          String OutPushNotificationStatus =
-              await prefs.getString("OutPushNotificationStatus") ?? '0';
-          var empId = prefs.getString('empid') ?? '';
-          var orgId = prefs.getString("orgid") ?? '';
-          var eName = prefs.getString('fname') ?? 'User';
-          var formatter = new DateFormat('HH:mm');
-          var date= formatter.format(DateTime.now());
-          String topic = empId + 'TO' + orgId;
-          if (OutPushNotificationStatus == '1') {
-            sendPushNotification(eName + ' has marked Time Out at '+ date, '',
-                '\'' + topic + '\' in topics');
-            /*sendPushNotification(eName + ' has marked Time Out', '',
-                '\'' + topic + '\' in topics');*/
-
-            print('\'' + topic + '\' in topics');
-          }
-
-          if (FakeLocationStatus==1) {
-            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
-              String subject="Fake Location";
-              String content= eName + ' has punched Time Out from a spoofed location';
-              sendMailByAppToAdmin(subject, content);
-            }
-            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
-              sendPushNotification(
-                  eName + ' has punched Time Out from a spoofed location', '',
-                  '(\'' + globals.globalOrgTopic +
-                      '\' in topics) && (\'admin\' in topics)');
-            }
-          }
-
-        }
-
-        if (mounted) {
-          setState(() {
-            act1 = "";
+          locationList.sort((a, b) {
+            return DateTime.parse(date + " " + a.keys.first).compareTo(
+                DateTime.parse(date + " " + b.keys.first));
           });
-        }
-        //var prefs = await SharedPreferences.getInstance();
-        prefs.setBool("firstAttendanceMarked", true);
-        prefs.setBool("FirstAttendance", true);
-        //prefs.setBool("companyFreshlyRegistered",false );
-
-        showInSnackBarforTimeInOut(issave['TimeInOut'],issave['EntryExitImage'],issave['checkInOutLoc'],);
 
 
-        /*  showDialog(
-            context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("Attendance marked successfully!"),
-            ));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-        );*/
-        if (mounted) {
+          print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>" +
+              locationList.length.toString()
+              +
+              locationList.toString() + ">>>" +
+              locationList[locationList.length - 1].toString());
+//var lastLocation=timesList[timesList.length - 1];
+          var currentLoc = Locations.fromFireBase1(
+              locationList[locationList.length - 1]);
+
           setState(() {
-            act1 = act;
-          });
-        }
-      } else if(issave['status']==4) {
-        showDialog(
-            context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
-            ));
-        if (mounted) {
-          setState(() {
-            act1 = act;
-          });
-        }
-      }
-      else{      //
 
-        showDialog(
-            context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
-            ));
-
-
-      }
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int offlinemode = prefs.getInt("OfflineModePermission");
-      if (offlinemode == 1) {
-        print("Routing");
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => OfflineHomePage()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        showDialog(
-            context: context,
-            // ignore: deprecated_member_use
-            child: new AlertDialog(
-              content: new Text("Internet connection not found!."),
-            ));
-      }
-    }
-
-    /*SaveImage saveImage = new SaveImage();
-    bool issave = false;
-    setState(() {
-      act1 = "";
-    });
-    issave = await saveImage.saveTimeInOut(mk);
-    ////print(issave);
-    if (issave) {
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyApp()),
-      );
-      setState(() {
-        act1 = act;
-      });
-    } else {
-      setState(() {
-        act1 = act;
-      });
-    }*/
-  }
-
-  void dialogwidget(BuildContext context) async{
-    print("Sohan patel");
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        // ignore: deprecated_member_use
-        child: new AlertDialog(
-          content: new Text('Your Time Out was not punched Yesterday. Kindly contact Admin to regularize Attendance'),
-          actions: <Widget>[
-            /*
-            RaisedButton(
-              child: Text(
-                ' Yes ',
-                style: TextStyle(color: Colors.white),
+            childExist = true;
+            // create a Polyline instance
+            // with an id, an RGB color and the list of LatLng pairs
+            controller.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(
+                bearing: 0,
+                target: LatLng(double.parse(currentLoc.latitude),
+                    double.parse(currentLoc.longitude)),
+                zoom: 17.0,
               ),
-              color: Colors.amber,
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop();
-              },
-            ),
-            FlatButton(
-              child: Text(' No '),
-              shape: Border.all(),
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                Home ho = new Home();
-                print("Test");
-                await ho.updateTimeOut(empid, orgdir);
-                act = await ho.checkTimeIn(empid, orgdir,context);
-                print("Action from check time in1");
-                if (timeoutdate == 'nextdate' && act == 'TimeOut')
-                  dialogwidget(context);
-                ho.managePermission(empid, orgdir, desinationId);
+            ));
+            /*
+        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+        _polylines.add(Polyline(
+          polylineId: PolylineId("1"),
+          visible: true,
+          //latlng is List<LatLng>
 
-                setState(() {
-                  act1 = act;
-                });
-              },
-            ), */
-          ],
+          points: latlng,
+          color: Colors.blue,
+        ));*/
+          });
 
-        ));
-    Home ho = new Home();
-    await ho.updateTimeOut(empid, orgdir);
-  }
+          var res = await Dio().post(globals.path + "getProfile?uid=" + empId);
+          Map employeeMap = await json.decode(res.data);
 
-/*
-  saveImage_old() async {
-   // sl.startStreaming(5);
-var FakeLocationStatus=0;
-    if(fakeLocationDetected){
-      FakeLocationStatus=1;
-    }
-    MarkTime mk = new MarkTime(
-        empid, streamlocationaddr, aid, act1, shiftId, orgdir, lat, long,FakeLocationStatus
-    );
-    /* mk1 = mk;*/
+          //print("https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName'].toString());
 
-    var connectivityResult = await (new Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      /* Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CameraExampleHome()),
-      );*/
-      SaveImage saveImage = new SaveImage();
-      if (mounted)
-        setState(() {
-          act1 = "";
-        });
+          print(globals.path + "getProfile?uid=" + empId);
 
-      saveTimeInOutImagePicker_new(mk).then((res) {
-        /*
-           print("res: "+res.toString());
-           print("issave: "+issave.toString());
-           if (issave==true || res==true) {
-             showDialog(context: context, child:
-             new AlertDialog(
-               content: new Text("Attendance marked successfully!"),
-             )
-             );
-             Navigator.push(
-               context,
-               MaterialPageRoute(builder: (context) => MyApp()),
-             );
-             setState(() {
-               act1 = act;
-             });
-           } else {
-             showDialog(context: context, child:
-             new AlertDialog(
-               title: new Text("Warning!"),
-               content: new Text("Problem while marking attendance, try again."),
-             )
-             );
-             setState(() {
-               act1 = act;
-             });
-           }*/
+          /* List values = locationList[locationList.length - 1].values.toList();
+        StoreLocation.addAll({empId:[values[0]['latitude'],values[0]['longitude'],locationList[locationList.length - 1].keys, employeeMap["info"][0]['FirstName']+" "+employeeMap["info"][0]['LastName'], "https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName']]});
+         print(StoreLocation);
+           print("storelocation123");
+
+        for(int i = 0; i<StoreLocation.length; i++) {
+
+          for(int j = i+1 ; j<StoreLocation.length;j++) {
+
+            var initialLati = StoreLocation.values.elementAt(i)[0];   //comparing latitiude
+            var initialLongi = StoreLocation.values.elementAt(i)[1];   //comparing longitude
+
+            var lati = StoreLocation.values.elementAt(j)[0];
+            var longi = StoreLocation.values.elementAt(j)[1];
+
+            getradius(double.parse(initialLati),double.parse(initialLongi),double.parse(lati),double.parse(longi));
+          }
+        }*/
+          var j = 0;
+
+          var address = await getAddressFromLati_offline(
+              double.parse(currentLoc.latitude),
+              double.parse(currentLoc.longitude));
+
+          List values = locationList[locationList.length - 1].values.toList();
+          print(values);
+
+          //  Name.add(employeeMap["info"][0]['FirstName'].toString()+" "+employeeMap["info"][0]['LastName'].toString());
+
+          Name.add([
+            "(" + empId + ") " +
+                employeeMap["info"][0]['FirstName'].toString() + " " +
+                employeeMap["info"][0]['LastName'].toString(),
+            "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
+                employeeMap["info"][0]['ImageName'],
+            empId
+          ]);
+          NameList.add(("(" + empId + ") " +
+              employeeMap["info"][0]['FirstName'].toString() + " " +
+              employeeMap["info"][0]['LastName'].toString()));
+          print(Name);
+          print(NameList);
+          print("--------------------------------------------123");
+          StoreLocation.addAll({
+            empId: [
+              values[0]['latitude'],
+              values[0]['longitude'],
+              locationList[locationList.length - 1].keys,
+              employeeMap["info"][0]['FirstName'] + " " +
+                  employeeMap["info"][0]['LastName'],
+              "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
+                  employeeMap["info"][0]['ImageName'],
+              address
+            ]
+          });
+          print(StoreLocation.length);
+          print(StoreLocation);
+          print(StoreLocation.values.elementAt(StoreLocation.length - 1));
+          var LastValue = StoreLocation.values.elementAt(
+              StoreLocation.length - 1);
+          var LastLatitude = LastValue[0];
+          var LastLongitude = LastValue[1];
+          print(currentLoc.latitude);
+          print(currentLoc.longitude);
+          print("hklhlhlkhlkhkl");
+          var latestLati = currentLoc.latitude;
+          var latestLongi = currentLoc.longitude;
+          print(LastValue[3]);
+          print(LastLatitude + LastLongitude);
+          print("storelocation123");
+          count1 = 0;
+
+          StoreLocation.forEach((k, v) {
+            double LAT1 = double.parse(LastLatitude);
+            print(LAT1);
+            double LONG1 = double.parse(LastLongitude);
+            print(LONG1);
+            double LAT2 = double.parse(v[0]);
+            double LONG2 = double.parse(v[1]);
+            print(LAT2);
+            print(LONG2);
+            print("latiiiii");
+
+
+            double distance = 2 * 6371000 *
+                Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) -
+                    LAT1 * (3.14159 / 180)) / 2)), 2) +
+                    Math.cos(LAT2 * (3.14159 / 180)) *
+                        Math.cos(LAT1 * (3.14159 / 180)) *
+                        Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 *
+                            (3.14159 / 180)) / 2), 2))));
+            print(distance);
+            print("distance is");
+
+            if (distance <
+                10) { //if they are less then at a distance of 10 meters
+              count1++;
+              print(count1);
+              print("count is");
+            }
+          });
+
+
+          var m = Marker(
+            markerId: MarkerId('sourcePin$j'),
+            position: LatLng(double.parse(currentLoc.latitude),
+                double.parse(currentLoc.longitude)),
+            icon: await getMarkerIcon(
+                "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
+                    employeeMap["info"][0]['ImageName'], Size(150.0, 150.0),
+                j + 1, count1),
+
+            onTap: () {
+              getPopup(double.parse(LastLatitude), double.parse(LastLongitude));
+
+              var moving = currentLoc.is_moving == "false" ? "Still" : "Moving";
+              setState(() {
+                currentlySelectedPin = PinInformation(
+                    pinPath: 'assets/friend1.jpg',
+                    avatarPath: "https://ubitech.ubihrm.com/public/uploads/" +
+                        orgId + "/" + employeeMap["info"][0]['ImageName'],
+                    location: LatLng(0, 0),
+                    client: employeeMap["info"][0]['FirstName'] + " " +
+                        employeeMap["info"][0]['LastName'],
+                    description: 'At: ' + address,
+                    in_time: currentLoc.time.toString() + " (" + moving + ")",
+                    out_time: '-',
+                    labelColor: Colors.grey);
+                pinPillPosition = 50;
+              });
+            },
+
+            /* infoWindow: InfoWindow(
+              title: "Current known location at:",
+              snippet:address.toString()
+          ),*/
+
+          );
+          Future.delayed(Duration(seconds: 1), () {
+            setState(() {
+              _markers.add(m);
+            });
+          });
+          j++;
+        }
       });
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int offlinemode=prefs.getInt("OfflineModePermission");
-      if(offlinemode==1){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+    }
+
+    print(childExist);
+    print("childexit before");
+
+
+    Future.delayed(Duration(seconds: 3), () {
+
+      if(childExist == false){
+        _markers1.clear();
+        var j=0;
+        j++;
+
+
+        print("inside childExist");
+        print(childExist);
+
+        controller.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            bearing: 0,
+            target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+            zoom: 19.0,
+          ),
+        ));
+
+        var m1 = Marker(
+            markerId: MarkerId('noChildExist$j'),
+            position: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+            icon: BitmapDescriptor.defaultMarker,
+            infoWindow: InfoWindow(
+            title: "You are here",
+          //  snippet:globals.assign_lat.toString()+","+globals.assign_long.toString()
+        )
+
         );
 
-      }
-      else{
-        showDialog(
-            context: context,
-            child: new AlertDialog(
-              content: new Text("Internet connection not found!."),
-            ));
-      }
-    }
+      Future.delayed(Duration(seconds: 1),(){
+      setState(() {
+      _markers1.add(m1);
+      });
+      });
 
-    /*SaveImage saveImage = new SaveImage();
-    bool issave = false;
-    setState(() {
-      act1 = "";
+      }
+
+
     });
-    issave = await saveImage.saveTimeInOut(mk);
-    ////print(issave);
-    if (issave) {
+    setSourceAndDestinationIcons();
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyApp()),
-      );
-      setState(() {
-        act1 = act;
-      });
-    } else {
-      setState(() {
-        act1 = act;
-      });
-    }*/
-  }
-*/
-/*  saveImage() async {
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CameraApp()),
-      );
-
-  }*/
-
-  resendVarification() async {
-    NewServices ns = new NewServices();
-    bool res = await ns.resendVerificationMail(orgid);
-    if (res) {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                  content: Row(children: <Widget>[
-                Text(
-                    "Verification link has been sent to \nyour organization's registered \nEmail."),
-              ])));
-    }
   }
 
- /* void _showAlert(BuildContext context) {
-    globalalertcount = 1;
-    if (mounted)
-      setState(() {
-        alertdialogcount = 1;
-      });
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-            title: Text("Verify Email"),
-            content: Container(
-                height: MediaQuery.of(context).size.height * 0.22,
-                child: Column(children: <Widget>[
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Text(
-                          "Your organization's Email is not verified. Please verify now.")),
-                  new Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        ButtonBar(
-                          children: <Widget>[
-                            FlatButton(
-                              child: Text('Later'),
-                              shape: Border.all(color: Colors.black54),
-                              onPressed: () {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              },
-                            ),
-                            new RaisedButton(
-                              child: new Text(
-                                "Verify",
-                                style: new TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              color: globals.buttoncolor,
-                              onPressed: () {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                                resendVarification();
-                              },
-                            ),
-                          ],
-                        ),
-                      ])
-                ]))));
-  }*/
+  void deviceverification() async{
 
-  //////////////////////////////////////////////////////////////////
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    print('Running on ${androidInfo.brand}');
+    print('Running on ${androidInfo.model}');
+    String devicename= androidInfo.model;
+    String devicebrand= androidInfo.brand;
+    devicenamebrand = devicebrand+' '+devicename;
 
-  showDialogWidget(String loginstr) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return new AlertDialog(
-            title: new Text(
-              loginstr,
-              style: TextStyle(fontSize: 15.0),
-            ),
-            content: ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text('Later', style: TextStyle(fontSize: 13.0)),
-                  shape: Border.all(),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                ),
-                RaisedButton(
-                  child: Text(
-                    'Pay Now',
-                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                  ),
-                  color: Colors.orangeAccent,
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PaymentPage()),
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }
 
-  Future<bool> saveTimeInOutImagePicker_new(MarkTime mk) async {
-    String base64Image;
-    String base64Image1;
-    print('saveTimeInOutImagePicker_new CALLED');
-    String location = globalstreamlocationaddr;
 
-    String lat = assign_lat.toString();
-    String long = assign_long.toString();
-    try {
-      ///////////////////////////
-      StreamLocation sl = new StreamLocation();
-      // sl.startStreaming(5);
-      Location _location = new Location();
 
-      ////////////////////////////////suumitted block
-      File imagei = null;
-      imageCache.clear();
-      if (globals.attImage == 1) {
-        ImagePicker.pickImage(
-                source: ImageSource.camera, maxWidth: 200.0, maxHeight: 200.0)
-            .then((img) async {
-          if (imagei != null) {
-            _location.getLocation().then((res) {
-              if (res.latitude != '') {
-                var addresses = '';
-                Geocoder.local
-                    .findAddressesFromCoordinates(
-                        Coordinates(res.latitude, res.longitude))
-                    .then((add) {
-                  print(
-                      'Location taekn--------------------------------------------------');
-                  print(
-                      res.latitude.toString() + ' ' + res.longitude.toString());
-                  var first = add.first;
-                  print("${first.addressLine}");
-                  print(
-                      'Location taekn--------------------------------------------------');
-                  lat = res.latitude.toString();
-                  long = res.longitude.toString();
+    var prefs = await SharedPreferences.getInstance();
+    //deviceid= prefs.getString("deviceid") ?? '';
+    print('thisisdeviceid'+deviceid);
+    String deviceidmobile=prefs.getString("deviceid")??"";
+    bool deviceVerifyPopupShown=prefs.getBool("deviceVerifyPopupShown")??false;
+    print('thisisdeviceidmobile'+deviceidmobile);
+    if(deviceidmobile=='' && globals.deviceverification==1){
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-                  //// sending this base64image string +to rest api
-                  Dio dio = new Dio();
-
-                  print("saveImage?uid=" +
-                      mk.uid +
-                      "&location=" +
-                      location +
-                      "&aid=" +
-                      mk.aid +
-                      "&act=" +
-                      mk.act +
-                      "&shiftid=" +
-                      mk.shiftid +
-                      "&refid=" +
-                      mk.refid +
-                      "&latit=" +
-                      lat +
-                      "&longi=" +
-                      long);
-                  FormData formData = new FormData.from({
-                    "uid": mk.uid,
-                    "location": location,
-                    "aid": mk.aid,
-                    "act": mk.act,
-                    "shiftid": mk.shiftid,
-                    "refid": mk.refid,
-                    "latit": lat,
-                    "longi": long,
-                    "file": new UploadFileInfo(imagei, "image.png"),
-                    "appName":"ubiSales"
-                  });
-                  print("5");
-                  dio
-                      .post(globals.path + "saveImage", data: formData)
-                      .then((response1) {
-                    print('response1: ' + response1.toString());
-                    imagei.deleteSync();
-                    imageCache.clear();
-                    /*getTempImageDirectory();*/
-                    Map MarkAttMap = json.decode(response1.data);
-                    print('MarkAttMap["status"]: ' +
-                        MarkAttMap["status"].toString());
-                    if (MarkAttMap["status"] == 1 ||
-                        MarkAttMap["status"] == 2) {
-                      print("res: " + res.toString());
-                      print("issave: " + issave.toString());
-                      //     if (issave==true || res==true) {
-
-                      showDialog(
-                          context: context,
-                          // ignore: deprecated_member_use
-                          child: new AlertDialog(
-                            content:
-                                new Text("Attendance marked successfully !"),
-                          ));
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MyApp()),
-                      );
-                      if (mounted)
-                        setState(() {
-                          act1 = act;
-                        });
-                    } else {
-                      showDialog(
-                          context: context,
-                          // ignore: deprecated_member_use
-                          child: new AlertDialog(
-                            content: new Text(
-                                "Selfie was not captured. Please try again."),
-                          ));
-                      if (mounted)
-                        setState(() {
-                          act1 = act;
-                        });
-                    }
-                    /* setState(() {
-                        issave=true;
-                        print('new issave'+issave.toString());
-                      });*/
-                  }).catchError((err) {
-                    print('Exception in setting data in saveImage' +
-                        err.toString());
-                    return true;
-                  });
-                });
-              } else {
-                showDialog(
-                    context: context,
-                    // ignore: deprecated_member_use
-                    child: new AlertDialog(
-                      title: new Text("Warning!"),
-                      content: new Text("Location not fetched..."),
-                    ));
-              }
-            });
-            //*****
-          } else {
-            ///////////////////////////// camera closed by pressing back button
-
-            showDialog(
-                context: context,
-                // ignore: deprecated_member_use
-                child: new AlertDialog(
-                  title: new Text("Warning!"),
-                  content: new Text("Camera closed improperly"),
-                ));
-            if (mounted)
-              setState(() {
-                act1 = act;
-              });
-
-            ///////////////////////////// camera closed by pressing back button/
-            print("6");
-            return false;
-          }
-          return true;
-        }).catchError((err) {
-          print('Exception Occured in getting FILE' + err.toString());
-          return true;
-        });
-      } else {
-        // block for marking attendance without taking the picture
-        _location.getLocation().then((res) {
-          if (res.latitude != '') {
-            var addresses = '';
-            Geocoder.local
-                .findAddressesFromCoordinates(
-                    Coordinates(res.latitude, res.longitude))
-                .then((add) {
-              print(
-                  'Location taekn 2--------------------------------------------------');
-              print(res.latitude.toString() + ' ' + res.longitude.toString());
-              var first = add.first;
-              print("${first.addressLine}");
-              print(
-                  'Location taekn 2--------------------------------------------------');
-              lat = res.latitude.toString();
-              long = res.longitude.toString();
-
-              //// sending this base64image string +to rest api
-              Dio dio = new Dio();
-
-              print("--saveImage?uid=" +
-                  mk.uid +
-                  "&location=" +
-                  location +
-                  "&aid=" +
-                  mk.aid +
-                  "&act=" +
-                  mk.act +
-                  "&shiftid=" +
-                  mk.shiftid +
-                  "&refid=" +
-                  mk.refid +
-                  "&latit=" +
-                  lat +
-                  "&longi=" +
-                  long);
-              FormData formData = new FormData.from({
-                "uid": mk.uid,
-                "location": location,
-                "aid": mk.aid,
-                "act": mk.act,
-                "shiftid": mk.shiftid,
-                "refid": mk.refid,
-                "latit": lat,
-                "longi": long,
-                "appName":"ubiSales"
-                //   "file": new UploadFileInfo(imagei, "image.png"),
-              });
-              print("5");
-              dio
-                  .post(globals.path + "saveImage", data: formData)
-                  .then((response1) {
-                print('response2: ' + response1.toString());
-                //     imagei.deleteSync();
-                //    imageCache.clear();
-                /*getTempImageDirectory();*/
-                Map MarkAttMap = json.decode(response1.data);
-                print(
-                    'MarkAttMap["status"]: ' + MarkAttMap["status"].toString());
-                if (MarkAttMap["status"] == 1 || MarkAttMap["status"] == 2) {
-                  print("res: " + res.toString());
-                  print("issave: " + issave.toString());
-                  //     if (issave==true || res==true) {
-
-                  showDialog(
-                      context: context,
-                      // ignore: deprecated_member_use
-                      child: new AlertDialog(
-                        content: new Text("Attendance marked successfully !"),
-                      ));
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyApp()),
-                  );
-                  if (mounted)
-                    setState(() {
-                      act1 = act;
-                    });
-                } else {
-                  showDialog(
-                      context: context,
-                      // ignore: deprecated_member_use
-                      child: new AlertDialog(
-                        content: new Text(
-                            "Selfie was not captured. Please try again."),
-                      ));
-                  if (mounted)
-                    setState(() {
-                      act1 = act;
-                    });
-                }
-                /* setState(() {
-                        issave=true;
-                        print('new issave'+issave.toString());
-                      });*/
-              }).catchError((err) {
-                print(
-                    'Exception in setting data in saveImage' + err.toString());
-                return true;
-              });
-            });
-          } else {
-            showDialog(
-                context: context,
-                // ignore: deprecated_member_use
-                child: new AlertDialog(
-                  title: new Text("Warning!"),
-                  content: new Text("Location not fetched..."),
-                ));
-          }
-        });
-        //*****
-
+      String RandomString(int strlen) {
+        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+        String result = "";
+        for (var i = 0; i < strlen; i++) {
+          result += chars[rnd.nextInt(chars.length)];
+        }
+        return result;
       }
-      ////////////////////////////////suumitted block/
-      ///////////////////////////
-    } catch (e) {
-      print(e.toString());
-      return false;
+
+
+      print("RandomString:"+RandomString(60));
+      deviceidmobile= RandomString(60);
+      prefs.setString("deviceid",deviceidmobile);
+
+
+
     }
-  }
 
-  @override
-  void dispose() {
-   // WidgetsBinding.instance.removeObserver(this);
+    if(deviceid=='' && globals.deviceverification==1){
 
-    //workingHoursTimer.cancel();
+      const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-    super.dispose();
-  }
-
-  void showEmailVerificationReminder() async {
-    var prefs = await SharedPreferences.getInstance();
-    // var createdDate=DateTime.parse(prefs.getString("CreatedDate")??'2019-01-01');
-    var createdDate = DateTime.parse('2020-01-11');
-    String mail_varified = await prefs.getString("mail_varified") ?? '0';
-    var shown = prefs.getBool("EmailVerifacitaionReminderShown") ?? false;
-    var isAdmin = prefs.getString("sstatus") ?? '0';
-    var currDate = DateTime.now();
-
-    var threeDayAfterCreated =
-        new DateTime(createdDate.year, createdDate.month, createdDate.day + 3);
-
-    if (currDate.isAfter(threeDayAfterCreated) &&
-        mail_varified == '0' &&
-        !shown &&
-        isAdmin == '1') {
-      cameraChannel.invokeMethod("showNotification", {
-        "title": "Please verify your email address for ubiSales",
-        "description": ""
-      });
-      prefs.setBool("EmailVerifacitaionReminderShown", true);
-
-      print("Emil verify notification sent");
-    }
-  }
-
-  void showAddingShiftReminder() async {
-    var prefs = await SharedPreferences.getInstance();
-    bool employeeAdded = prefs.getBool("EmployeeAdded");
-    bool shiftAdded = prefs.getBool("ShiftAdded");
-
-    if (employeeAdded && !shiftAdded) {
-      Future.delayed(Duration(seconds: 1), () => tooltiptwo.showtool(context));
-    }
-  }
-
-  void startWorkingHoursTimer() async {
-
-    /*
-    var prefs = await SharedPreferences.getInstance();
-
-    var timeInTime = prefs.get("TimeInTime") ?? '';
-    print(timeInTime + "time in time");
-    var currentTime = DateTime.now();
-    var loggedInTime;
-    if (timeInTime.isNotEmpty) {
-      loggedInTime = currentTime.difference(DateTime.parse(timeInTime));
-      print(loggedInTime.toString() + "logged in time");
-
-      var i = 0;
-      workingHoursTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-        //print(DateTime.now());
-        setState(() {
-          var duration = new Duration(seconds: i);
-          print("lllllengthg" + ('01:22:23').length.toString());
-          //loggedInSince=(DateTime.parse( ('2020-01-01 0'+loggedInTime.toString().split(".")[0]).length==18?'2020-01-01 '+loggedInTime.toString().split(".")[0]:'2020-01-01 0'+loggedInTime.toString().split(".")[0]).add(duration).toString()).split(" ")[1].split(".")[0];
-          loggedInSince = (DateTime.parse(
-                      (loggedInTime.toString().split(".")[0]).length == 8
-                          ? '2020-01-01 ' +
-                              loggedInTime.toString().split(".")[0]
-                          : '2020-01-01 0' +
-                              loggedInTime.toString().split(".")[0])
-                  .add(duration)
-                  .toString())
-              .split(" ")[1]
-              .split(".")[0];
-          print('testing date' +
-              DateTime.parse(
-                      "2020-01-01 0" + loggedInTime.toString().split(".")[0])
-                  .toString());
-          i++;
-        });
-      });
-    }*/
-  }
-
-  _onAlertWithCustomContentPressed(context) {
-    var alertStyle = AlertStyle(
-      animationType: AnimationType.fromTop,
-      isCloseButton: false,
-      isOverlayTapDismiss: true,
-      descStyle: TextStyle(fontWeight: FontWeight.bold),
-      animationDuration: Duration(milliseconds: 400),
-
-    );
-    Alert(
-        style: alertStyle,
-        context: context,
-        title: "Change Your Password",
-        content: Container(
-          child: Form(
-            key: _formKey,
-            child:Column(
-              children: <Widget>[
-                TextFormField(
-//                  inputFormatters: [
-//                    WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
-//                  ],
-                  controller: _oldPass,
-                  obscureText: true,
-
-                  onFieldSubmitted: (String value) {
-                    FocusScope.of(context).requestFocus(__newPass);
-                  },
-                  decoration: InputDecoration(
-                    // ignore: dead_code
-                    //errorText: validatePassword ? "dasdasd" : "dasd" ,
-                    icon: Icon(Icons.lock),
-                    labelText: 'New Password',
-                  ),
-                  validator: (value){
-
-//                    Pattern pattern = '[a-zA-Z0-9]';
-//                    RegExp regex = new RegExp(pattern);
-//                    if (!regex.hasMatch(value))
-//                      return 'Password should not contain \nany special chararters';
+      String RandomString(int strlen) {
+        Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+        String result = "";
+        for (var i = 0; i < strlen; i++) {
+          result += chars[rnd.nextInt(chars.length)];
+        }
+        return result;
+      }
 
 
-
-//                    if(value.contains(RegExp("[a-zA-Z0-9]"))) {
-//                      print("special");
-//                      return "Password should not contain any special chararters";
-//                    }
-
-                    if (value.isEmpty || value==null  ) {
-                      return 'Password cannot be blank';
-                    }
-                  },
-
-                  // password should not contain special char
-                ),
-                TextFormField(
-//                  inputFormatters: [
-//                    WhitelistingTextInputFormatter(RegExp("[a-zA-Z0-9]")),
-//                  ],
-                  controller: _newPass,
-                  focusNode: __newPass,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.lock),
-                    labelText: 'Confirm Password',
-                  ),
-                  validator: (value) {
-
-//                    Pattern pattern = 'a-zA-Z0-9';
-//                    RegExp regex = new RegExp(pattern);
-//                    if (!regex.hasMatch(value))
-//                      return 'Password should not contain \nany special characters';
-
-
-                    if (value.isEmpty || value==null  ) {
-                      return 'Password cannot be blank';
-                    }
-
-//                    Pattern pattern = 'a-zA-Z0-9';
-//                    RegExp regex = new RegExp(pattern);
-//                    if (!regex.hasMatch(value))
-//                      return 'Password should not contain \nany special characters';
-
-                    if(value.length<6 )
-                    {
-                      return 'Password must contain atleast \n6 characters';
-                    }
-                    if(value != _oldPass.text){
-                      return 'Password did not match!!!';
-                    }
-
-                    Pattern pattern = r'^[a-zA-Z0-9]+$';
-                    RegExp regex = new RegExp(pattern);
-                    if (!regex.hasMatch(value))
-                      return 'Password should not contain \nany special characters';
-                  },
-                ),
-              ],
+      print("RandomString:"+RandomString(60));
+      deviceidmobile= RandomString(60);
+      if(deviceVerifyPopupShown==false && deviceid=='') {
+        // if(deviceid=='') {
+        //
+        EasyDialog(
+            title: Text(
+              'This Mobile Device has been registered as your Device ID',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ),
-
-        buttons: [
-          DialogButton(
-            width:MediaQuery.of(context).size.width * 0.27,
-            color: Colors.orangeAccent,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                if (_oldPass.text == _newPass.text) {
-                  setState(() {
-                    Password_sts = "1";
-                  });
-                  firstPassword(_oldPass.text, _newPass.text, Password_sts).then((res) {
-                    if(res==1) {
-                      showInSnackBar("Password changed successfully");
-                    }
-                  }).catchError((onError){
-                    showInSnackBar("Unable to change password");
-                    print(onError);
-                  });
-                }
-              }
-              if(Password_sts == "1")
-                Navigator.of(context, rootNavigator: true).pop();
-            },
-            child: Text(
-              "SUBMIT",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+            description: Text(
+              devicebrand+" "+devicename,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+              ),
             ),
-          )
-        ]).show();
+            height: 180,
+            contentList: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                  ),
+
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                ],
+              )
+            ]).show(context);
+
+        prefs.setBool("deviceVerifyPopupShown",true);
+        prefs.setString("deviceid",deviceidmobile);
+        storeDeviceInfo(empid, deviceidmobile, devicebrand+' '+devicename);
+      }
+    }
   }
 
   showRateUsDialog()async{
@@ -4403,6 +1576,7 @@ var FakeLocationStatus=0;
     }
     );
   }
+
 
   showfeedbackDialog()async {
     var prefs= await SharedPreferences.getInstance();
@@ -4615,29 +1789,5258 @@ var FakeLocationStatus=0;
     }
     );
   }
-//////////////////////////////////////////////////////////////////
-}
 
-class BlurryEffect extends StatelessWidget {
-  final double opacity;
-  final double blurry;
-  final Color shade;
 
-  BlurryEffect(this.opacity, this.blurry, this.shade);
+  timerResumePause() async {
+    //print("app resumed paused home");
+    SystemChannels.lifecycle.setMessageHandler((msg) async {
+      print("app resumed paused home");
+      if (msg == 'AppLifecycleState.resumed') {
+        //startWorkingHoursTimer();
+        print("app resumed and timer started");
+      }
+
+      if (msg == 'AppLifecycleState.paused') {
+        //stopWorkingHoursTimer();
+        print("app paused and timer stopped");
+      }
+    });
+  }
+
+  void dialogwidget(BuildContext context) async{
+    print("Sohan patel");
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        // ignore: deprecated_member_use
+        child: new AlertDialog(
+          content: new Text('Your Time Out was not punched Yesterday. Kindly contact Admin to regularize Attendance'),
+          actions: <Widget>[
+            /*
+            RaisedButton(
+              child: Text(
+                ' Yes ',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.amber,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+            FlatButton(
+              child: Text(' No '),
+              shape: Border.all(),
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                Home ho = new Home();
+                print("Test");
+                await ho.updateTimeOut(empid, orgdir);
+                act = await ho.checkTimeIn(empid, orgdir,context);
+                print("Action from check time in1");
+                if (timeoutdate == 'nextdate' && act == 'TimeOut')
+                  dialogwidget(context);
+                ho.managePermission(empid, orgdir, desinationId);
+
+                setState(() {
+                  act1 = act;
+                });
+              },
+            ), */
+          ],
+
+        ));
+    Home ho = new Home();
+    await ho.updateTimeOut(empid, orgdir);
+  }
+
+  showReferralPopup(BuildContext context, String cDateS) async {
+
+
+    if(globals.currentOrgStatus=="TrialOrg"){
+
+      showTrialReferralPopup(context,cDateS);
+
+    }
+
+    else
+    if(globals.currentOrgStatus=="PremiumCustomizedOrg")
+    {
+      int dateToSend = 0;
+
+
+      var prefs = await SharedPreferences.getInstance();
+      var buyStatus = int.parse(prefs.get("buysts") ?? "123455");
+      var createdDate = DateTime.parse("2019-12-26");
+
+      //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+
+      var startDate =
+      DateTime.parse(prefs.get("ReferralValidFrom") ?? "2019-12-26");
+      var endDate = DateTime.parse(prefs.get("ReferralValidTo") ?? "2019-12-26");
+
+/*
+        var startDate =
+        DateTime.parse( "2020-02-22");
+        var endDate = DateTime.parse("2020-02-29");
+*/
+
+
+      var currDate = DateTime.now();
+      dateShowed = prefs.getString('date') ?? "2010-10-10";
+
+      var referralValidForDays=endDate.difference(currDate).inDays;
+
+
+      print("datetime.parse" + dateShowed);
+      // print("hello"+dateShowed);
+      var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+      var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+      ReferrerNotificationList[0] = {
+        "title": "Win Win Deal",
+        "description":
+        "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[1] = {
+        "title": "Refer and Earn",
+        "description":
+        "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay.. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[2] = {
+        "title": "Discounts that count",
+        "description":
+        "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[3] = {
+        "title": "${referrerAmt} Off every Payment",
+        "description":
+        "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+      ReferrerNotificationList[4] = {
+        "title": "Discounts to smile about",
+        "description":
+        "Give managers the gift of ease in recording attendance and get ${referrerAmt} off on your next purchase. Hurry! Offer ends in ${referralValidForDays} days"
+      };
+
+      var referrerName = "";
+      var validity = prefs.getString("ReferralValidity");
+
+      var rng = new Random();
+      var referrerRandom = rng.nextInt(4);
+      double height = 220;
+      if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+      if (referrerRandom == 0) height = 170;
+
+      print("----> currdate" + currDate.toString());
+
+      if (createdDate == '') {
+        dateToSend = 12;
+      }
+      // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+      //print("difference dates"+currDate.difference(cDate).inDays.toString());
+      //print("created date"+createdDate);
+
+      // } // for other organizations i.e pop up for every created date day of the month
+      // else{
+      dateToSend = createdDate.day;
+      print('startDate');
+      print(startDate);
+//      print(currDate);
+//      print(prefs.getString('date'));
+      //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+      if (//currDate.isAfter(startDate) && currDate.isBefore(endDate) ||
+      (currDate.day == startDate.day &&
+          currDate.month == startDate.month &&
+          currDate.year == startDate.year) ||
+          (currDate.day == endDate.subtract(new Duration(days: 2)).day &&
+              currDate.month == endDate.month &&
+              currDate.year == endDate.year)) {
+
+        print("inside referral check");
+        //        prefs.setString('date',currDate.toString());
+        // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+        //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+        print(currDate);
+        //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+        //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+        //var newDate = currDate.add(new Duration(days: 3));
+        dateShowed = currDate.toString();
+        prefs.setString('date', dateShowed);
+        print("hello" + currDate.toString());
+        EasyDialog(
+            title: Text(
+              ReferrerNotificationList[referrerRandom]['title'].toString(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            description: Text(
+              ReferrerNotificationList[referrerRandom]['description']
+                  .toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            height: height,
+            contentList: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "GO!",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      generateAndShareReferralLink();
+                    },
+                    color: Colors.green,
+                  ),
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                ],
+              )
+            ]).show(context);
+      }
+    }
+    else{
+      // showOtherReferralPopup(context,cDateS);
+    }
+    // }
+  }
+
+
+  void showTrialReferralPopup(BuildContext context, String cDateS) async {
+    int dateToSend = 0;
+    var prefs = await SharedPreferences.getInstance();
+
+    var createdDate = DateTime.parse(cDateS);
+
+    //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+    var currDate = DateTime.now();
+    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
+
+    print("datetime.parse" + dateShowed);
+    // print("hello"+dateShowed);
+    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+    ReferrerNotificationList[0] = {
+      "title": "Win Win Deal",
+      "description":
+      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[1] = {
+      "title": "Refer and Earn",
+      "description":
+      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[2] = {
+      "title": "Discounts that count",
+      "description":
+      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[3] = {
+      "title": "${referrerAmt} Off every Payment",
+      "description":
+      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[4] = {
+      "title": "Discounts to smile about",
+      "description":
+      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
+    };
+
+    var referrerName = "";
+    var validity = prefs.getString("ReferralValidity");
+
+    var rng = new Random();
+    var referrerRandom = rng.nextInt(4);
+    double height = 220;
+    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+    if (referrerRandom == 0) height = 170;
+
+    print("----> currdate" + currDate.toString());
+
+    if (createdDate == '') {
+      dateToSend = 12;
+    }
+    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+    //print("difference dates"+currDate.difference(cDate).inDays.toString());
+    //print("created date"+createdDate);
+
+    // } // for other organizations i.e pop up for every created date day of the month
+    // else{
+    dateToSend = createdDate.day;
+    print('startDate');
+
+//      print(currDate);
+//      print(prefs.getString('date'));
+    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+    if (currDate.day!=DateTime.parse(dateShowed).day&&
+        (currDate.day == (createdDate.add(Duration(days: 7)).day) &&
+            currDate.month == createdDate.month &&
+            currDate.year == createdDate.year) ) {
+      print(">>>--- inside trial popup condition check");
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
+      //        prefs.setString('date',currDate.toString());
+      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+
+      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+
+      dateShowed = currDate.toString();
+      prefs.setString('TrailReferralShownDate', dateShowed);
+      prefs.setString("ReferralValidFrom", cDateS);
+      prefs.setString("ReferralValidTo", intl.DateFormat("yyyy-MM-dd").format(nextValidity));
+
+      print("hello" + currDate.toString());
+
+      EasyDialog(
+          title: Text(
+            ReferrerNotificationList[referrerRandom]['title'].toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          description: Text(
+            ReferrerNotificationList[referrerRandom]['description']
+                .toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          height: height,
+          contentList: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 40,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "GO!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    generateAndShareReferralLink();
+                  },
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 10,
+                  height: 10,
+                ),
+              ],
+            )
+          ]).show(context);
+    }
+
+  }
+
+  void showOtherReferralPopup(BuildContext context, String cDateS) async{
+    int dateToSend = 0;
+    var prefs = await SharedPreferences.getInstance();
+
+    var createdDate = DateTime.parse(cDateS);
+
+    //print(">>>>----- current org status"+globals.currentOrgStatus);
+
+
+
+
+    var currDate = DateTime.now();
+    dateShowed = prefs.getString('TrailReferralShownDate') ?? "2010-10-10";
+
+    print("datetime.parse" + dateShowed);
+    // print("hello"+dateShowed);
+    var referrerAmt = prefs.getString("ReferrerDiscount") ?? "1%";
+    var referrenceAmt = prefs.getString("ReferrenceDiscount") ?? "1%";
+    ReferrerNotificationList[0] = {
+      "title": "Win Win Deal",
+      "description":
+      "Refer our App and get ${referrerAmt} off on your next payment. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[1] = {
+      "title": "Refer and Earn",
+      "description":
+      "Invite your friends to try ubiSales. Get ${referrerAmt} Off when they pay. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[2] = {
+      "title": "Discounts that count",
+      "description":
+      "For every organization you refer which pays up for our Premium plan, we will give you both ${referrerAmt}/ ${referrenceAmt} off. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[3] = {
+      "title": "${referrerAmt} Off every Payment",
+      "description":
+      "Tell Your friends about ubiSales & get ${referrerAmt} Discount when he pays. Hurry! Offer ends in 10 days"
+    };
+    ReferrerNotificationList[4] = {
+      "title": "Discounts to smile about",
+      "description":
+      "Give managers the gift of ease in recording attendanceand get ${referrerAmt} off on your next purchase. Hurry! Offer ends in 10 days"
+    };
+
+    var referrerName = "";
+    var validity = prefs.getString("ReferralValidity");
+
+    var rng = new Random();
+    var referrerRandom = rng.nextInt(4);
+    double height = 220;
+    if (referrerRandom == 2 || referrerRandom == 4) height = 260;
+    if (referrerRandom == 0) height = 170;
+
+    print("----> currdate" + currDate.toString());
+
+    if (createdDate == '') {
+      dateToSend = 12;
+    }
+    // if(buyStatus!=0){  // for trial popup that should show on the seventh day of purchase
+
+    //print("difference dates"+currDate.difference(cDate).inDays.toString());
+    //print("created date"+createdDate);
+
+    // } // for other organizations i.e pop up for every created date day of the month
+    // else{
+    dateToSend = createdDate.day;
+    print('startDate');
+
+//      print(currDate);
+//      print(prefs.getString('date'));
+    //print("----> currdate"+((DateTime.parse(dateShowed).day==startDate.day)&&(DateTime.parse(dateShowed).month==startDate.month)&&(DateTime.parse(dateShowed).year==startDate.year)).toString());
+    if (currDate.day!=DateTime.parse(dateShowed).day&&
+        (currDate.day == (createdDate.day) ) ) {
+      print("inside refer");
+
+      var nextValidity=new DateTime(currDate.year, currDate.month, currDate.add(Duration(days: 10)).day);
+      //        prefs.setString('date',currDate.toString());
+      // var newDate = new DateTime(startDate.year, startDate.month, startDate.day+3);
+      //if (currDate.isAfter(newDate) && currDate.isBefore(endDate)) {
+//        prefs.setString('date', newDate.toString());
+//        print("hello");
+//        print(prefs.getString('date'));
+
+      //if(((DateTime.parse(dateShowed).day==currDate.day)&&(DateTime.parse(dateShowed).month==currDate.month)&&(DateTime.parse(dateShowed).year==currDate.year))){
+      //var newDate = new DateTime(currDate.year, currDate.month, currDate.day+3);
+
+      dateShowed = currDate.toString();
+      prefs.setString('TrailReferralShownDate', dateShowed);
+      prefs.setString("ReferralValidFrom", intl.DateFormat("yyyy-MM-dd").format(currDate));
+      prefs.setString("ReferralValidTo", intl.DateFormat("yyyy-MM-dd").format(nextValidity));
+
+      print("hello" + currDate.toString());
+
+      EasyDialog(
+          title: Text(
+            ReferrerNotificationList[referrerRandom]['title'].toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          description: Text(
+            ReferrerNotificationList[referrerRandom]['description']
+                .toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          height: height,
+          contentList: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 40,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "GO!",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    generateAndShareReferralLink();
+                  },
+                  color: Colors.green,
+                ),
+                SizedBox(
+                  width: 10,
+                  height: 10,
+                ),
+              ],
+            )
+          ]).show(context);
+    }
+
+
+  }
+
+  void showReferralReminder() async{
+
+    var prefs=await SharedPreferences.getInstance();
+
+    String referrerId=prefs.getString("referrerId")??"0";
+
+    String ReferralValidTo=prefs.getString("ReferralValidTo")??"0000-00-00";
+    var currDate=DateTime.now();
+
+    if(referrerId!='0'&&ReferralValidTo!='0000-00-00'){
+      if(DateTime.parse("ReferralValidTo").day==(currDate.day+2))
+      {
+        EasyDialog(
+            title: Text(
+              "Reminder",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            description: Text(
+              "Get 10% off your first purchase of ubiSales. Hurry! Offer ends in 2 days"
+                  .toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            height: 220,
+            contentList: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "GO!",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      navigateToPaymentsPage();
+                    },
+                    color: Colors.green,
+                  ),
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                ],
+              )
+            ]).show(context);
+      }
+    }
+  }
+
+  setaddress() async {
+    globalstreamlocationaddr = await getAddressFromLati(globals.assign_lat.toString(), globals.assign_long.toString());
+
+    var serverConnected = await checkConnectionToServer();
+    if (serverConnected != 0) if (globals.assign_lat == 0.0 ||
+        globals.assign_lat == null ||
+        !locationThreadUpdatedLocation) {
+      cameraChannel.invokeMethod("openLocationDialog");
+      /*
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return WillPopScope(
+                onWillPop: () {},
+                child: new AlertDialog(
+            title: new Text(""),
+            content: new Text("Sorry we can't continue without GPS"),
+            actions: <Widget>[
+              RaisedButton(
+                child: new Text(
+                  "Turn On",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () async{
+                  cameraChannel.invokeMethod("openLocationDialog");
+                  //openLocationSetting();
+                },
+              ),
+              RaisedButton(
+                child: new Text(
+                  "Done",
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                color: Colors.orangeAccent,
+                onPressed: () {
+                  cameraChannel.invokeMethod("startAssistant");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                 /*
+                  Navigator.of(context, rootNavigator: true)
+                      .pop();
+*/
+                },
+              ),
+            ],
+          ));});
+
+       */
+    }
+    print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
+    if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
+    }
+  }
+
+  /* getCurrentMarker( Map StoreLocation){
+    print(StoreLocation);
+    print( StoreLocation.length);
+    print( "lgjkgjkgkjgik");
+  var index = StoreLocation.length;
+
+     var lastValue = StoreLocation.values.elementAt(StoreLocation.length);
+     print(lastValue);
+     print("last valur issss");
+
+
+
+
+  *//*  StoreLocation.forEach((k, v) {
+     // double LAT1 = lat;
+    //  double LONG1 = long;
+      double LAT2 = double.parse(v[0]);
+      double LONG2 = double.parse(v[1]);
+
+
+  //    double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+      print(distance);
+      print("distance is");
+      if(distance<10) {
+        //if they are less then at a distance of 10 meters
+     //   count++;
+      //  print(count);
+        print("count is");
+      }
+
+      // }
+    });*//*
+
+  }*/
+
+
+
+  void _add(lat, long, image1, name) async {
+
+    //  var address= await getAddressFromLati(lat.toString(),long.toString());
+
+    print("inside _add tab");
+    var count = 0;
+    _markers.clear();
+
+    print(lat);
+    print(long);
+    print(image1);
+    print("image iss");
+
+    var Name = name;
+
+
+    //  getAcronym(var name) {
+
+    if((Name.trim()).contains(" ")) {
+      var name=Name.split(" ");
+      print('print(name);');
+      print(name);
+      First=name[0][0].trim();
+      print(First);
+      Last=name[1][0].trim().toString().toUpperCase();
+      print(Last);
+      initials =  First+Last;
+      print(initials);
+      print("initials ");
+    }else{
+      First=Name;
+      print('print(First)else');
+      print(First);
+      initials =  First;
+      print(initials);
+
+    }
+
+    StoreLocation.forEach((k, v) {
+
+      double LAT1 = lat;
+      double LONG1 = long;
+      double LAT2 = double.parse(v[0]);
+      double LONG2 = double.parse(v[1]);
+
+
+      double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+      print(distance);
+      print("distance is");
+      if(distance<10) {
+        //if they are less then at a distance of 10 meters
+        count++;
+        print(count);
+        print("count is");
+      }
+
+      // }
+    });
+    _checkLoaded1 = false;
+    var image = NetworkImage(image1);
+
+    var image2 = image1;
+    image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+      _checkLoaded1 = true;
+    }));
+
+    print(_checkLoaded1);
+    print("checkloaded");
+
+    final int markerCount = markers.length;
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(lat	,long),
+        zoom: 15.0,
+      ),
+    ));
+
+    final String markerIdVal = 'marker_id_$_markerIdCounter';
+    _markerIdCounter++;
+    final MarkerId markerId = MarkerId(markerIdVal);
+    print(_markerIdCounter);
+    print("_markerIdCounter");
+
+    int j =0;
+    var m = Marker(
+      markerId: MarkerId('searchMarkerId'),
+      position: LatLng(lat,long),
+      icon: _checkLoaded1 == true ? await getMarkerProfile(image2, count ,lat, long) : await getMarker(initials,lat, long ,count),
+
+      onTap: () {
+
+        // var moving=currentLoc.is_moving=="false"?"Still":"Moving";
+
+        setState(() {
+
+          //   currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: "https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName'], location: LatLng(0, 0), client: employeeMap["info"][0]['FirstName']+" "+employeeMap["info"][0]['LastName'],description: 'At: '+address,in_time: currentLoc.time.toString()+" ("+moving+")",out_time: '-', labelColor: Colors.grey);
+          //    pinPillPosition = 50;
+
+        });
+      },
+
+      infoWindow: InfoWindow(
+          title:"Current known location at:",
+          snippet:address.toString()
+      ),
+    );
+
+    setState(() {
+      _markers.add(m);
+      j++;
+      //markers[markerId] = marker;
+    });
+  }
+
+
+
+
+  void _onMarkerTapped(MarkerId markerId) {
+    print("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
+    final Marker tappedMarker = markers[markerId];
+    if (tappedMarker != null) {
+      setState(() {
+        if (markers.containsKey(selectedMarker)) {
+          print("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        }
+      });
+    }
+  }
+
+  Future<BitmapDescriptor> getMarkerIcon(String imagePath, Size size,int number,count1) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    final Radius radius = Radius.circular(size.width / 2);
+
+    final Paint tagPaint = Paint()..color = Colors.blue;
+    final double tagWidth = 40.0;
+
+    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
+    final double shadowWidth = 15.0;
+
+    final Paint borderPaint = Paint()..color = Colors.white;
+    final double borderWidth = 3.0;
+
+    final double imageOffset = shadowWidth + borderWidth;
+
+    // Add shadow circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              0.0,
+              0.0,
+              size.width,
+              size.height
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        shadowPaint);
+
+    // Add border circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              shadowWidth,
+              shadowWidth,
+              size.width - (shadowWidth * 2),
+              size.height - (shadowWidth * 2)
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        borderPaint);
+
+    // Add tag circle
+
+    if(count1!=1) {
+
+      canvas.drawRRect(
+          RRect.fromRectAndCorners(
+
+            Rect.fromLTWH(
+                size.width - tagWidth,
+                0.0,
+                tagWidth,
+                tagWidth
+            ),
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius,
+          ),
+          tagPaint);
+
+      // Add tag text
+      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+      textPainter.text = TextSpan(
+        text: "+" + count1.toString(),
+        style: TextStyle(fontSize: 20.0, color: Colors.white),
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+          canvas,
+          Offset(
+              size.width - tagWidth / 2 - textPainter.width / 2,
+              tagWidth / 2 - textPainter.height / 2
+          )
+      );
+    }
+
+    // Oval for the image
+    Rect oval = Rect.fromLTWH(
+        imageOffset,
+        imageOffset,
+        size.width - (imageOffset * 2),
+        size.height - (imageOffset * 2)
+    );
+
+    // Add path for oval image
+    canvas.clipPath(Path()
+      ..addOval(oval));
+
+    // Add image
+    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
+    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+
+    // Convert canvas to image
+    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
+        size.width.toInt(),
+        size.height.toInt()
+    );
+
+    // Convert image to bytes
+    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(uint8List);
+  }
+
+
+  Future<ui.Image> getUiImage(String imageAssetPath, int height, int width) async {
+
+    final ByteData assetImageByteData = await rootBundle.load(imageAssetPath);
+    image.Image baseSizeImage = image.decodeImage(assetImageByteData.buffer.asUint8List());
+    image.Image resizeImage = image.copyResize(baseSizeImage, height: height, width: width);
+    ui.Codec codec = await ui.instantiateImageCodec(image.encodePng(resizeImage));
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
+
+  }
+
+  Future<ui.Image> getImageFromNetwork(String path) async {
+
+    Completer<ImageInfo> completer = Completer();;
+    var img = new NetworkImage(path);
+    img.resolve(ImageConfiguration()).addListener(ImageStreamListener((ImageInfo info,bool _){
+      completer.complete(info);
+    }));
+    ImageInfo imageInfo = await completer.future;
+    return imageInfo.image;
+
+  }
+
+
+
+  Future<ui.Image> getImageFromPath(String imagePath) async {
+    File imageFile = File(imagePath);
+
+    Uint8List imageBytes = imageFile.readAsBytesSync();
+
+    final Completer<ui.Image> completer = new Completer();
+
+    ui.decodeImageFromList(imageBytes, (ui.Image img) {
+      return completer.complete(img);
+    });
+    return completer.future;
+  }
+
+  void setSourceAndDestinationIcons() async {
+    sourceIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/driving_pin.png');
+    destinationIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), 'assets/destination_map_marker.png');
+  }
+  //var formatter = new intl.DateFormat('dd-MMM-yyyy');
+
+  void _handleSearchStart() {
+    setState(() {
+      _IsSearching = true;
+    });
+  }
+
+
+  //newDataList = List.from(Name);
+
+  /* onItemChanged(String value) {
+
+ // newDataList = List.from(Name);      //search bar
+  print(newDataList);
+  print(Name);
+  print("ghjgcnewDataList");
+  setState(() {
+      newDataList = NameList.where((string) => string.toLowerCase().contains(value.toLowerCase())).toList();
+      print(newDataList);
+      print("newDataListghgfhf");
+  });
+  for(int i = 0; i<Name.length; i++) {
+    if(newDataList.contains(Name[i][0])) {
+      newDataList1 = Name[i];
+    }
+  }
+  print(newDataList1);
+  print("newDguoiuyoiyoataList1");
+  }*/
+
+
+
+  static List<String> mainDataList = [
+    "Apple",
+    "Apricot",
+    "Banana",
+    "Blackberry",
+    "Coconut",
+    "Date",
+    "Fig",
+    "Gooseberry",
+    "Grapes",
+    "Lemon",
+    "Litchi",
+    "Mango",
+    "Orange",
+    "Papaya",
+    "Peach",
+    "Pineapple",
+    "Pomegranate",
+    "Starfruit"
+  ];
+
+  // Copy Main List into New List.
+  List<dynamic> newDataList = List.from(Name);
+
+  onItemChanged(String value) {
+
+    //   newDataList1.clear();
+    // searchedName.clear();
+
+    setState(() {
+
+      newDataList = NameList.where((string) => string.toLowerCase().contains(value.toLowerCase())).toList();
+      print(newDataList);
+      print("matched names list");
+
+    });
+
+/*    for(int i = 0; i<Name.length; i++) {
+      print(Name[i][0]);
+      print("name in main list");
+
+      if(newDataList.contains(Name[i][0])) {
+        print("inside if");
+        newDataList1.add(Name[i]);
+        searchedName.add(Name[i][0]);
+        print(searchedName);
+        print(newDataList1);
+        print("list is is");
+      }
+    }*/
+    /*newDataList1.clear();
+    searchedName.clear();*/
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blurry, sigmaY: blurry),
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(color: shade.withOpacity(opacity)),
+
+    print(response);
+    print(userpwd);
+    print(newpwd);
+    print(Is_Delete);
+    print("after build context");
+
+    return ( response == 0 ||
+        userpwd != newpwd ||
+        Is_Delete != 0 ||
+        orgid == '10932')
+        ? new AskRegisterationPage()
+        : getmainhomewidget();
+  }
+
+  getmainhomewidget(){
+
+    return WillPopScope(
+      onWillPop: () async => true,
+      child: new Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Text(_orgName, style: new TextStyle(fontSize: 20.0)),
+
+              /*  Image.asset(
+                      'assets/logo.png', height: 40.0, width: 40.0),*/
+            ],
           ),
+          /*
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              }),*/
+          backgroundColor: appcolor,
+          automaticallyImplyLeading: false,
+
+        ),
+        // bottomNavigationBar: Bottomnavigationbar(),
+        endDrawer: new AppDrawer(),
+        body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
+
+        /*new ListView(
+          physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            new Container(
+              height: MediaQuery.of(context).size.height*0.90,
+              child:Stack(
+                children: <Widget>[
+
+                  GoogleMap(
+                    myLocationEnabled: false,
+                    compassEnabled: true,
+                    tiltGesturesEnabled: false,
+                    markers: _markers,
+                    polylines: _polylines,
+                    mapType: MapType.normal,
+                    initialCameraPosition: initialLocation,
+                    onMapCreated: onMapCreated,
+                    mapToolbarEnabled:true,
+                    zoomControlsEnabled: false,  // hide zoom button
+                    onTap: (LatLng location) {
+                      setState(() {
+                        pinPillPosition = -470;
+                      });
+                    },
+                  ),
+                 *//* MapPinPillComponent(
+                      pinPillPosition: pinPillPosition,
+                      currentlySelectedPin: currentlySelectedPin
+                  ),*//*
+
+                  AnimatedOpacity(
+                    opacity: opacityLevel1,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.linear,
+                    child: Container(
+                      child: Padding(
+                        padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Card(
+                                elevation: 2.0,
+                                child:TextField(
+                                  controller: _textController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    prefixIcon: Icon(Icons.search),
+                                    hintText: 'Search',
+                                    focusColor: Colors.white,
+                                  ),
+                                  onChanged: onItemChanged,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: _textController.text!=""?ListView(
+                                padding: EdgeInsets.only(top: 5),
+                                children: newDataList.map((data) {
+                                  return ListTile(
+                                      title: Text(data),
+                                      onTap: () {
+
+                                        String result = data.substring(1, data.indexOf(')'));
+
+                                        for (var keys in StoreLocation.keys) {
+                                          if(result==keys.toString()){
+                                            List searchedLocation = StoreLocation[result];
+                                            print(searchedLocation);
+                                            print("searchedLocation");
+                                            _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
+                                            //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
+                                            // newDataList.clear();
+                                          }
+                                        }
+                                        print(data);
+                                        newDataList.clear();
+                                        print(newDataList);
+                                        print("sadsadnewDataList");
+                                      //  _changeOpacity1();
+                                        _textController.clear();
+                                        opacityLevel1=0.0;
+
+                                      });
+                                }).toList(),
+                              ):Container(),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),*//* Container(
+                      padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                      child: SearchMapPlaceWidget(
+                        apiKey: googleAPIKey,
+                        placeholder: "Search",
+                        location: LatLng(currlat , currlong),
+                        icon:null,
+                        radius: 30000,
+                        onSelected: (place) async {
+                          final geolocation = await place.geolocation;
+                          final GoogleMapController controller = await controller2.future;
+                          controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+                          controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+                        },
+                      ),
+                    ),*//*
+                  ),
+
+                  (act1 == '') ? loader() : getMarkAttendanceWidgit(),
+
+
+                  *//*AnimatedOpacity(
+                    opacity: opacityLevel,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.linear,
+                    child: new Container(
+                      //margin: new EdgeInsets.symmetric(vertical: 55.0),
+                      height: selected!=false?160:1,
+                     // height: 160,
+                    //  width: 350,
+                      width: selected!=false?350:1,
+                      child: Container(
+                        padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
+                        //constraints: new BoxConstraints.expand(),
+                        child: new Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Container(height: 3.0),
+                            new Text("Somya Goyal", style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                            new Container(height: 6.0),
+                            Container(
+                              child: new Text("City Center, Gwalior, Madhya Pradesh, India",
+                                style: TextStyle(fontSize: 16,color: Colors.white),),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(right: 28,top: 5),
+                              child: new Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  RaisedButton(
+                                    color: buttoncolor,
+                                    elevation: 0.0,
+                                    disabledElevation: 0.0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Text('TIME IN',
+                                        style: new TextStyle(
+                                            fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+                                    onPressed: () {
+
+                                      },
+                                  )
+
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+
+                      margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
+                      decoration: new BoxDecoration(
+                        color: Colors.blue[300],
+                        shape: BoxShape.rectangle,
+                        boxShadow: <BoxShadow>[
+                          new BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10.0,
+                            offset: new Offset(0.0, 10.0),
+                          ),
+                        ],
+                        borderRadius: new BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),*//*
+
+                  Container(
+                      margin: new EdgeInsets.symmetric(vertical: 10.0),
+                      alignment: FractionalOffset.topLeft,
+                      child:AvatarGlow(
+                        endRadius: 63.0,
+                        glowColor: appcolor,
+                        duration: Duration(milliseconds: 1500),
+                        animate:true,
+                        showTwoGlows: true,
+
+                        child: *//* Container(
+                          height:  MediaQuery.of(context).size.height*0.09,
+                          width:  MediaQuery.of(context).size.width*0.15,
+                          decoration: new BoxDecoration(
+                            color: Colors.black,
+                            border: Border.all(
+                                width: 4, color: Colors.blue//                   <--- border width here
+                            ),
+                            shape: BoxShape.circle,
+                            *//**//*image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
+                                )*//**//*),
+                          // width: MediaQuery.of(context).size.width*0.30,
+                          child: profileLoaded? ClipOval(
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'l',
+                              fit: BoxFit.fill,
+                              image: profile,
+                            ),
+                          ): CircleAvatar(
+                            child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                          ),
+                        ),*//*
+
+
+
+                        Container(
+                        //  color: Colors.red,
+                          child:  new GestureDetector(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50.0),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/avatar.png',
+                                  image: profile,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  selected= !selected;
+                                  ContainerHeight==0.0?ContainerHeight=160:ContainerHeight=0.0;
+                                  ContainerWidth==0.0?ContainerWidth=350:ContainerWidth=0.0;
+                                  _changeOpacity();
+                                });
+                              }
+
+                          ),
+                          width: MediaQuery.of(context).size.height * .10,
+                          height: MediaQuery.of(context).size.height * .10,
+                           decoration: new BoxDecoration(
+                      color: Colors.black,
+                        shape: BoxShape.circle,
+                        boxShadow: <BoxShadow>[
+                          new BoxShadow(
+                            color: appcolor,
+                            blurRadius: 10.0,
+                           // offset: new Offset(0.0, 10.0),
+                            spreadRadius: 2.0,
+                          ),
+                        ],
+                        *//*image: new DecorationImage(
+                          fit: BoxFit.fill,
+                             // image: NetworkImage(profile),
+                              image: NetworkImage(profile),
+                            ),*//*
+                          ),
+                        ),
+                      )
+                  ),
+
+                  selected!=true? Container(
+                      margin: new EdgeInsets.symmetric(vertical: 35.0,horizontal: 5),
+                      alignment: FractionalOffset.topRight,
+                      child:Container(
+                        child:  new GestureDetector(
+                            child: Container(
+                                decoration: new BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.blue[100],
+                                  boxShadow: <BoxShadow>[
+                                    new BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 20.0,
+                                      //offset: new Offset(0.0, 10.0),
+                                    ),
+                                  ],
+
+
+                                ),
+                                // color: Colors.blue[100],
+                                child: Icon(Icons.search)),
+                            onTap: (){
+
+                              _changeOpacity1();
+                              /// });
+                            }
+                        ),
+                        width: MediaQuery.of(context).size.height * .07,
+                        height: MediaQuery.of(context).size.height * .07,
+                        *//* decoration: new BoxDecoration(
+                     color: Colors.black,
+                       shape: BoxShape.circle,
+                       boxShadow: <BoxShadow>[
+                         new BoxShadow(
+                           color: appcolor,
+                           blurRadius: 10.0,
+                          // offset: new Offset(0.0, 10.0),
+                           spreadRadius: 2.0,
+                         ),
+                       ],
+                       image: new DecorationImage(
+                         fit: BoxFit.fill,
+                         image: NetworkImage(profile),
+                       ))*//*
+                        )
+                  ):Container(),
+
+                  Positioned(
+                    //top: 570,
+                      top:  MediaQuery.of(context).size.height *.68,
+                      // bottom: 310,
+                      child:Align(
+                        //alignment: FractionalOffset.bottomRight,
+                        child: SizedBox(
+                            height: MediaQuery.of(context).size.height * .80 ,
+                            width:MediaQuery.of(context).size.width * .80 ,
+                            child: getProfileWidget()
+                        ),
+                      )
+                  ),
+
+                  setLoader != true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
+                ],
+              ),
+            ),
+          ],
+        ),*/
+
+        floatingActionButton:  FabCircularMenu(
+          key: fabKey1,
+          // alignment: Alignment(2.58, 3.25),
+          alignment: Alignment.bottomRight,
+          ringColor: Colors.blue.withAlpha(110),
+          ringDiameter: 450.0,
+          ringWidth: 130.0,
+          fabSize: 60.0,
+          fabElevation: 8.0,
+          fabColor: Color.fromRGBO(0, 135, 180, 1),
+          fabOpenIcon: Icon(Icons.menu, color: Colors.white),
+          fabCloseIcon: Icon(Icons.close, color: Colors.white),
+          fabMargin: const EdgeInsets.all(16.0),
+          animationDuration: const Duration(milliseconds: 800),
+          animationCurve: Curves.easeInOutCirc,
+          onDisplayChange: (isOpen) {
+            fabOpen=!fabOpen;
+            print(fabOpen);
+            print("fabopen");
+            //_showSnackBar(context, "The menu is ${isOpen ? "open" : "closed"}");
+          },
+          children: <Widget>[
+
+            if(admin_sts == '1' || admin_sts == '2')
+              RaisedButton(
+                color: Colors.blue.withAlpha(150),
+                onPressed:_addEmployee,
+                shape: CircleBorder(),
+                // padding: const EdgeInsets.only(left:10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        InkWell(
+                          child: Icon(
+                            Icons.group_add,
+                            size: 24.0,
+                            color: Colors.white,
+                          ),
+                          onTap: (){
+                            _addEmployee();
+                          },
+                        ),
+                        Text("+ Employee",style: TextStyle(color: Colors.white,fontSize: 12),)
+                      ],
+                    )
+                ),
+              ),
+
+            if (visitpunch.toString() == '1')
+              RaisedButton(
+                color:Colors.blue.withAlpha(150),
+                onPressed:_visitPunch,
+                shape: CircleBorder(),
+                // padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.directions_walk,
+                          size: 24.0,
+                          color: Colors.white,
+                        ),
+                        Text("Visits",style: TextStyle(color: Colors.white,fontSize: 12),),
+
+                      ],
+                    )
+                ),
+              ),
+            if(admin_sts == '1' || admin_sts == '2')
+              RaisedButton(
+                color: Colors.blue.withAlpha(150),
+                onPressed:_reports,
+                shape: CircleBorder(),
+                //   padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.content_paste,
+                          size: 24.0,
+                          color: Colors.white,
+                        ),
+                        Text("Reports",style: TextStyle(color: Colors.white,fontSize: 12),)
+                      ],
+                    )
+                ),
+              ),
+            if(globals.ShiftPlanner==1 && admin_sts=='0')
+              RaisedButton(
+                color: Colors.blue.withAlpha(150),
+                onPressed:_shiftsCalendar,
+                shape: CircleBorder(),
+                //   padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          const IconData(0xe80e, fontFamily: "CustomIcon"),
+                          size: 24.0,
+                          color: Colors.white,
+                        ),
+                        Text("Shifts",style: TextStyle(color: Colors.white,fontSize: 12),)
+                      ],
+                    )
+                ),
+              ),
+
+
+            if(admin_sts == '0')
+              RaisedButton(
+                color: Colors.blue.withAlpha(150),
+                onPressed:_profile,
+                shape: CircleBorder(),
+                //   padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.person,
+                          size: 24.0,
+                          color: Colors.white,
+                        ),
+                        Text("Log",style: TextStyle(color: Colors.white,fontSize: 12),)
+                      ],
+                    )
+                ),
+              ),
+
+
+
+            if (BasicLeave.toString() == '1')
+              RaisedButton(
+                color: Colors.blue.withAlpha(150),
+                onPressed: _myLeave,
+                shape: CircleBorder(),
+                // padding: const EdgeInsets.all(10.0),
+                child: Container(
+                  // color: Colors.blue.withAlpha(120),
+                    height: 59,
+                    // color: ,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          'assets/leave-icon.png', height: 25.0,
+                          width: 25.0,
+                          color: Colors.white,),
+                        Text("Leave",
+                          style: TextStyle(color: Colors.white, fontSize: 15),)
+                      ],
+                    )
+                ),
+              ),
+
+            RaisedButton(
+              color: Colors.blue.withAlpha(150),
+              onPressed:_settings,
+              shape: CircleBorder(),
+              //   padding: const EdgeInsets.all(10.0),
+              child: Container(
+                // color: Colors.blue.withAlpha(120),
+                  height: 59,
+                  // color: ,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.settings,
+                        size: 24.0,
+                        color: Colors.white,
+                      ),
+                      Text("Settings",style: TextStyle(color: Colors.white,fontSize: 12),)
+                    ],
+                  )
+              ),
+            ),
+
+
+          ],
+        ),
+/*
+        floatingActionButton: Stack(
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(left:31,bottom: 40),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                  onPressed: null,
+                  child: Icon(Icons.camera_alt),
+                ),
+              ),
+             ),
+            Padding(
+              padding: const EdgeInsets.only(left:31,bottom: 100),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                  onPressed: null,
+                  child: Icon(Icons.backup),
+                ),
+              ),
+            ),
+          ],
+        ),*/
+      ),
+    );
+
+
+
+  }
+
+  checkalreadylogin() {
+    ////print("---->"+response.toString());
+    if (response == 1) {
+      return new IndexedStack(
+        index: _currentIndex,
+        children: <Widget>[
+          underdevelopment(),
+          (globalstreamlocationaddr != "Location not fetched." ||
+              globals.globalstreamlocationaddr.isNotEmpty)
+              ? mainbodyWidget()
+              : refreshPageWidgit(),
+          //(false) ? mainbodyWidget() : refreshPageWidgit(),
+          underdevelopment()
+        ],
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
+            (Route<dynamic> route) => false,
+      );
+    }
+
+    /* if(userpwd!=newpwd){
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
+            (Route<dynamic> route) => false,
+      );
+    }*/
+  }
+
+
+  mainbodyWidget() {
+
+    CameraPosition initialLocation = CameraPosition(
+        zoom: CAMERA_ZOOM,
+        bearing: CAMERA_BEARING,
+        tilt: CAMERA_TILT,
+        target: cameraSource);
+
+    ////to do check act1 for poor network connection
+
+    if(globalstreamlocationaddr == "Location not fetched."){
+      return Padding(
+        padding: const EdgeInsets.only(left:45.0),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text('Kindly allow location permission from settings',
+              textAlign: TextAlign.center,
+              style: new TextStyle(fontSize: 14.0, color: Colors.red)),
+          RaisedButton(
+            child: Text('Open Settings'),
+            onPressed: () {
+              PermissionHandler().openAppSettings();
+            },
+          )],),
+      );
+    }
+
+    if (act1 == "Poor network connection") {
+      return poorNetworkWidget();
+    } else {
+      return   new ListView(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          new Container(
+            height: MediaQuery.of(context).size.height*0.90,
+            child:Stack(
+              children: <Widget>[
+
+                GoogleMap(
+                  myLocationEnabled: false,
+                  compassEnabled: true,
+                  tiltGesturesEnabled: false,
+                  markers: (admin_sts == '1' || admin_sts =='2') && childExist == true? _markers:_markers1,
+                  polylines: _polylines,
+                  mapType: MapType.normal,
+                  initialCameraPosition: initialLocation,
+                  onMapCreated: onMapCreated,
+                  mapToolbarEnabled:true,
+                  zoomControlsEnabled: false,  // hide zoom button
+                  onTap: (LatLng location) {
+                    setState(() {
+                      pinPillPosition = -470;
+                    });
+                  },
+                ),
+                /* MapPinPillComponent(
+                    pinPillPosition: pinPillPosition,
+                    currentlySelectedPin: currentlySelectedPin
+                ),*/
+
+                AnimatedOpacity(
+                  opacity: opacityLevel1,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                  child: Container(
+                    child: Padding(
+                      padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Card(
+                              elevation: 2.0,
+                              child:TextField(
+                                controller: _textController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: Icon(Icons.search),
+                                  hintText: 'Employee Name',
+                                  focusColor: Colors.white,
+                                ),
+                                onChanged: onItemChanged,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: _textController.text!=""?ListView(
+                              padding: EdgeInsets.only(top: 5),
+                              //  scrollDirection:Axis.horizontal,
+                              children: newDataList.map((data) {
+                                return ListTile(
+                                    title: Text(data),
+                                    onTap: () {
+                                      String result = data.substring(1, data.indexOf(')'));
+
+                                      for (var keys in StoreLocation.keys) {
+                                        if(result==keys.toString()){
+                                          List searchedLocation = StoreLocation[result];
+                                          print(searchedLocation);
+                                          print("searchedLocation");
+                                          _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
+                                          //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
+                                          // newDataList.clear();
+                                        }
+                                      }
+                                      print(data);
+                                      newDataList.clear();
+                                      print(newDataList);
+                                      print("sadsadnewDataList");
+                                      //  _changeOpacity1();
+                                      _textController.clear();
+                                      opacityLevel1=0.0;
+
+                                    });
+                              }).toList(),
+                            ):Container(),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),/* Container(
+                    padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                    child: SearchMapPlaceWidget(
+                      apiKey: googleAPIKey,
+                      placeholder: "Search",
+                      location: LatLng(currlat , currlong),
+                      icon:null,
+                      radius: 30000,
+                      onSelected: (place) async {
+                        final geolocation = await place.geolocation;
+                        final GoogleMapController controller = await controller2.future;
+                        controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+                        controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+                      },
+                    ),
+                  ),*/
+                ),
+
+                (act1 == '') ? loader() : getMarkAttendanceWidgit(),
+
+                Container(
+                    margin: new EdgeInsets.symmetric(vertical: 10.0),
+                    alignment: FractionalOffset.topLeft,
+                    child:AvatarGlow(
+                      endRadius: 63.0,
+                      glowColor: appcolor,
+                      duration: Duration(milliseconds: 1500),
+                      animate:true,
+                      showTwoGlows: true,
+
+                      child: /* Container(
+                        height:  MediaQuery.of(context).size.height*0.09,
+                        width:  MediaQuery.of(context).size.width*0.15,
+                        decoration: new BoxDecoration(
+                          color: Colors.black,
+                          border: Border.all(
+                              width: 4, color: Colors.blue//                   <--- border width here
+                          ),
+                          shape: BoxShape.circle,
+                          *//*image: new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
+                              )*//*),
+                        // width: MediaQuery.of(context).size.width*0.30,
+                        child: profileLoaded? ClipOval(
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'l',
+                            fit: BoxFit.fill,
+                            image: profile,
+                          ),
+                        ): CircleAvatar(
+                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                        ),
+                      ),*/
+
+
+
+                      Container(
+                        //  color: Colors.red,
+                        child:  new GestureDetector(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'assets/avatar.png',
+                                image: profile,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            onTap: (){
+                              setState(() {
+
+                                selected= !selected;
+                                _changeOpacity();
+
+                              });
+                            }
+
+                        ),
+                        width: MediaQuery.of(context).size.height * .10,
+                        height: MediaQuery.of(context).size.height * .10,
+                        decoration: new BoxDecoration(
+                          color: Colors.black,
+                          shape: BoxShape.circle,
+                          boxShadow: <BoxShadow>[
+                            new BoxShadow(
+                              color: appcolor,
+                              blurRadius: 10.0,
+                              // offset: new Offset(0.0, 10.0),
+                              spreadRadius: 2.0,
+                            ),
+                          ],
+                          /*image: new DecorationImage(
+                        fit: BoxFit.fill,
+                           // image: NetworkImage(profile),
+                            image: NetworkImage(profile),
+                          ),*/
+                        ),
+                      ),
+                    )
+                ),
+
+
+                (admin_sts =='1' || admin_sts == '2') && selected!=true? Container(
+                    margin: new EdgeInsets.symmetric(vertical: 35.0,horizontal: 5),
+                    alignment: FractionalOffset.topRight,
+                    child:Container(
+                      child:  new GestureDetector(
+                          child: Container(
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue[100],
+                                boxShadow: <BoxShadow>[
+                                  new BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 20.0,
+                                    //offset: new Offset(0.0, 10.0),
+                                  ),
+                                ],
+                              ),
+                              // color: Colors.blue[100],
+                              child: Icon(Icons.search)),
+                          onTap: (){
+                            _changeOpacity1();
+                            /// });
+                          }
+                      ),
+                      width: MediaQuery.of(context).size.height * .07,
+                      height: MediaQuery.of(context).size.height * .07,
+                      /* decoration: new BoxDecoration(
+                   color: Colors.black,
+                     shape: BoxShape.circle,
+                     boxShadow: <BoxShadow>[
+                       new BoxShadow(
+                         color: appcolor,
+                         blurRadius: 10.0,
+                        // offset: new Offset(0.0, 10.0),
+                         spreadRadius: 2.0,
+                       ),
+                     ],
+                     image: new DecorationImage(
+                       fit: BoxFit.fill,
+                       image: NetworkImage(profile),
+                     ))*/
+                    )
+                ):Container(),
+
+                (admin_sts =='1' || admin_sts == '2') && fabOpen == false? Positioned(
+                  //top: 570,
+                    top:  MediaQuery.of(context).size.height *.75,
+                    // bottom: 310,
+                    child:Align(
+                      //alignment: FractionalOffset.bottomRight,
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.height * .80 ,
+                          width:MediaQuery.of(context).size.width * .80 ,
+                          child: getProfileWidget()
+                      ),
+                    )
+                ):Container(),
+
+                (admin_sts == '1' || admin_sts=='2') &&  setLoader != true && childExist == true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
+              ],
+            ),
+          ),
+        ],
+      );
+
+      /*new ListView(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          new Container(
+            height: MediaQuery.of(context).size.height*0.90,
+            child:Stack(
+              children: <Widget>[
+
+                GoogleMap(
+                  myLocationEnabled: false,
+                  compassEnabled: true,
+                  tiltGesturesEnabled: false,
+                  markers: _markers,
+                  polylines: _polylines,
+                  mapType: MapType.normal,
+                  initialCameraPosition: initialLocation,
+                  onMapCreated: onMapCreated,
+                  mapToolbarEnabled:true,
+                  zoomControlsEnabled: false,  // hide zoom button
+                  onTap: (LatLng location) {
+                    setState(() {
+                      pinPillPosition = -470;
+                    });
+                  },
+                ),
+               *//* MapPinPillComponent(
+                    pinPillPosition: pinPillPosition,
+                    currentlySelectedPin: currentlySelectedPin
+                ),*//*
+
+                AnimatedOpacity(
+                  opacity: opacityLevel1,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                  child: Container(
+                    child: Padding(
+                      padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Card(
+                              elevation: 2.0,
+                              child:TextField(
+                                controller: _textController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: Icon(Icons.search),
+                                  hintText: 'Search',
+                                  focusColor: Colors.white,
+                                ),
+                                onChanged: onItemChanged,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: _textController.text!=""?ListView(
+                              padding: EdgeInsets.only(top: 5),
+                              children: newDataList.map((data) {
+                                return ListTile(
+                                    title: Text(data),
+                                    onTap: () {
+
+                                      String result = data.substring(1, data.indexOf(')'));
+
+                                      for (var keys in StoreLocation.keys) {
+                                        if(result==keys.toString()){
+                                          List searchedLocation = StoreLocation[result];
+                                          print(searchedLocation);
+                                          print("searchedLocation");
+                                          _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
+                                          //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
+                                          // newDataList.clear();
+                                        }
+                                      }
+                                      print(data);
+                                      newDataList.clear();
+                                      print(newDataList);
+                                      print("sadsadnewDataList");
+                                    //  _changeOpacity1();
+                                      _textController.clear();
+                                      opacityLevel1=0.0;
+
+                                    });
+                              }).toList(),
+                            ):Container(),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),*//* Container(
+                    padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
+                    child: SearchMapPlaceWidget(
+                      apiKey: googleAPIKey,
+                      placeholder: "Search",
+                      location: LatLng(currlat , currlong),
+                      icon:null,
+                      radius: 30000,
+                      onSelected: (place) async {
+                        final geolocation = await place.geolocation;
+                        final GoogleMapController controller = await controller2.future;
+                        controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
+                        controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
+                      },
+                    ),
+                  ),*//*
+                ),
+
+                (act1 == '') ? loader() : getMarkAttendanceWidgit(),
+
+
+                *//*AnimatedOpacity(
+                  opacity: opacityLevel,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                  child: new Container(
+                    //margin: new EdgeInsets.symmetric(vertical: 55.0),
+                    height: selected!=false?160:1,
+                   // height: 160,
+                  //  width: 350,
+                    width: selected!=false?350:1,
+                    child: Container(
+                      padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
+                      //constraints: new BoxConstraints.expand(),
+                      child: new Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new Container(height: 3.0),
+                          new Text("Somya Goyal", style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                          new Container(height: 6.0),
+                          Container(
+                            child: new Text("City Center, Gwalior, Madhya Pradesh, India",
+                              style: TextStyle(fontSize: 16,color: Colors.white),),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 28,top: 5),
+                            child: new Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                RaisedButton(
+                                  color: buttoncolor,
+                                  elevation: 0.0,
+                                  disabledElevation: 0.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Text('TIME IN',
+                                      style: new TextStyle(
+                                          fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+                                  onPressed: () {
+
+                                    },
+                                )
+
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+
+                    margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
+                    decoration: new BoxDecoration(
+                      color: Colors.blue[300],
+                      shape: BoxShape.rectangle,
+                      boxShadow: <BoxShadow>[
+                        new BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10.0,
+                          offset: new Offset(0.0, 10.0),
+                        ),
+                      ],
+                      borderRadius: new BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),*//*
+
+                Container(
+                    margin: new EdgeInsets.symmetric(vertical: 10.0),
+                    alignment: FractionalOffset.topLeft,
+                    child:AvatarGlow(
+                      endRadius: 63.0,
+                      glowColor: appcolor,
+                      duration: Duration(milliseconds: 1500),
+                      animate:true,
+                      showTwoGlows: true,
+
+                      child: *//* Container(
+                        height:  MediaQuery.of(context).size.height*0.09,
+                        width:  MediaQuery.of(context).size.width*0.15,
+                        decoration: new BoxDecoration(
+                          color: Colors.black,
+                          border: Border.all(
+                              width: 4, color: Colors.blue//                   <--- border width here
+                          ),
+                          shape: BoxShape.circle,
+                          *//**//*image: new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
+                              )*//**//*),
+                        // width: MediaQuery.of(context).size.width*0.30,
+                        child: profileLoaded? ClipOval(
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'l',
+                            fit: BoxFit.fill,
+                            image: profile,
+                          ),
+                        ): CircleAvatar(
+                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                        ),
+                      ),*//*
+
+
+
+                      Container(
+                      //  color: Colors.red,
+                        child:  new GestureDetector(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'assets/avatar.png',
+                                image: profile,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            onTap: (){
+                              setState(() {
+                                selected= !selected;
+                                ContainerHeight==0.0?ContainerHeight=160:ContainerHeight=0.0;
+                                ContainerWidth==0.0?ContainerWidth=350:ContainerWidth=0.0;
+                                _changeOpacity();
+                              });
+                            }
+
+                        ),
+                        width: MediaQuery.of(context).size.height * .10,
+                        height: MediaQuery.of(context).size.height * .10,
+                         decoration: new BoxDecoration(
+                    color: Colors.black,
+                      shape: BoxShape.circle,
+                      boxShadow: <BoxShadow>[
+                        new BoxShadow(
+                          color: appcolor,
+                          blurRadius: 10.0,
+                         // offset: new Offset(0.0, 10.0),
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                      *//*image: new DecorationImage(
+                        fit: BoxFit.fill,
+                           // image: NetworkImage(profile),
+                            image: NetworkImage(profile),
+                          ),*//*
+                        ),
+                      ),
+                    )
+                ),
+
+                selected!=true? Container(
+                    margin: new EdgeInsets.symmetric(vertical: 35.0,horizontal: 5),
+                    alignment: FractionalOffset.topRight,
+                    child:Container(
+                      child:  new GestureDetector(
+                          child: Container(
+                              decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue[100],
+                                boxShadow: <BoxShadow>[
+                                  new BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 20.0,
+                                    //offset: new Offset(0.0, 10.0),
+                                  ),
+                                ],
+
+
+                              ),
+                              // color: Colors.blue[100],
+                              child: Icon(Icons.search)),
+                          onTap: (){
+
+                            _changeOpacity1();
+                            /// });
+                          }
+                      ),
+                      width: MediaQuery.of(context).size.height * .07,
+                      height: MediaQuery.of(context).size.height * .07,
+                      *//* decoration: new BoxDecoration(
+                   color: Colors.black,
+                     shape: BoxShape.circle,
+                     boxShadow: <BoxShadow>[
+                       new BoxShadow(
+                         color: appcolor,
+                         blurRadius: 10.0,
+                        // offset: new Offset(0.0, 10.0),
+                         spreadRadius: 2.0,
+                       ),
+                     ],
+                     image: new DecorationImage(
+                       fit: BoxFit.fill,
+                       image: NetworkImage(profile),
+                     ))*//*
+                      )
+                ):Container(),
+
+                Positioned(
+                  //top: 570,
+                    top:  MediaQuery.of(context).size.height *.68,
+                    // bottom: 310,
+                    child:Align(
+                      //alignment: FractionalOffset.bottomRight,
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.height * .80 ,
+                          width:MediaQuery.of(context).size.width * .80 ,
+                          child: getProfileWidget()
+                      ),
+                    )
+                ),
+
+                setLoader != true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
+              ],
+            ),
+          ),
+        ],
+      ),*/;
+    }
+  }
+
+  poorNetworkWidget() {
+    return Container(
+      child: Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.error,
+                      color: appcolor,
+                    ),
+                    Text(
+                      " Poor network connection.",
+                      style: new TextStyle(fontSize: 20.0, color: appcolor),
+                    ),
+                  ]),
+              SizedBox(height: 5.0),
+              FlatButton(
+                child: new Text(
+                  "Refresh Page",
+                  style: new TextStyle(
+                      color: appcolor, decoration: TextDecoration.underline),
+                ),
+                onPressed: () {
+                  // sl.startStreaming(5);
+                  // startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+              ),
+            ]),
+      ),
+    );
+  }
+
+
+  refreshPageWidgit() {
+    if (globals.globalstreamlocationaddr.isNotEmpty) {
+      return new Container(
+        child: Center(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 20.0,
+                    ),
+                    /*
+                    Icon(
+                      Icons.all_inclusive,
+                      color: Colors.teal,
+                    ),
+                    Text(
+                      "Sorry! can't fetch location. \nPlease check if GPS is enabled on your device",
+                      style: new TextStyle(fontSize: 20.0, color: Colors.red),
+                    )*/
+                    Container(
+                      decoration: new ShapeDecoration(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(13.0)),
+                        color: Colors.red,
+                      ),
+                      child: Text(
+                        '\nProblem Getting Location! Please turn on GPS and try again.',
+                        textAlign: TextAlign.center,
+                        style:
+                        new TextStyle(color: Colors.white, fontSize: 15.0),
+                      ),
+                      width: 220.0,
+                      height: 90.0,
+                    ),
+                  ]),
+              SizedBox(height: 15.0),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      width: 20.0,
+                    ),
+                    /*
+                    Text(
+                      "Note: ",
+                      style: new TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.right,
+                    ),
+                    Text(
+                      " If Location not being fetched automatically?",
+                      style: new TextStyle(fontSize: 12.0, color: Colors.black),
+                      textAlign: TextAlign.left,
+                    ),*/
+                    /* new InkWell(
+                      child: new Text(
+                        "Fetch Location now",
+                        style: new TextStyle(
+                            color: Colors.teal,
+                            decoration: TextDecoration.underline),
+                      ),
+                      onTap: () {
+                        sl.startStreaming(5);
+                        startTimer();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      },
+                    )*/
+                  ]),
+              FlatButton(
+                child: new Text(
+                  "Try now",
+                  style: new TextStyle(
+                      color: appcolor, decoration: TextDecoration.underline),
+                ),
+                onPressed: () {
+                  //  sl.startStreaming(5);
+                  // startTimer();
+                  cameraChannel.invokeMethod("startAssistant");
+                  /* Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );*/
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Kindly allow location permission from settings',
+            textAlign: TextAlign.center,
+            style: new TextStyle(fontSize: 14.0, color: Colors.red)),
+        RaisedButton(
+          child: Text('Open Settings'),
+          onPressed: () {
+            PermissionHandler().openAppSettings();
+          },
+        ),
+      ]);
+    }
+  }
+
+  underdevelopment() {
+    return new Container(
+      child: Center(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Icon(
+                Icons.android,
+                color: appcolor,
+              ),
+              Text(
+                "Under development",
+                style: new TextStyle(fontSize: 30.0, color: appcolor),
+              )
+            ]),
+      ),
+    );
+  }
+
+
+  getLocation(lat, long) async{
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        bearing: 0,
+        target: LatLng(lat	,long),
+        zoom: 15.0,
+      ),
+    ));
+
+  }
+
+  getSearchLocation(empname, res) {
+    print(StoreLocation);
+    print("Nhkhkhkh");
+    print(empname);
+    StoreLocation.forEach((k, v) {
+      print(v[3]);
+      print("v[4]");
+      if(v[3].toUpperCase().toString().contains(empname.toUpperCase().toString())){
+        print("YES!!! FOUND IT");
+      }
+      else{
+        print("NOT FOUND!!!");
+      }
+    });
+  }
+
+  formatTime(String time) {
+
+    if(time.contains(":")) {
+      var a=time.split(":");
+      return a[0]+":"+a[1];
+    }
+    else return time;
+  }
+
+  getProfileWidget()  {
+
+    return new ListView.builder(
+
+        scrollDirection: Axis.horizontal,
+        itemCount: StoreLocation.length,
+        itemBuilder: (BuildContext context, int index) {
+
+          // var image =  StoreLocation.values.elementAt(index)[4];
+          _checkLoaded = false;
+
+          var count=0;
+
+
+          var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
+          image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+            _checkLoaded = true;
+          }));
+
+
+          var Name = StoreLocation.values.elementAt(index)[3];
+          print(Name);
+          print("name is the client");
+          print(_checkLoaded);
+
+          //  getAcronym(var name) {
+
+          if((Name.trim()).contains(" ")) {
+            var name=Name.split(" ");
+            print('print(name);');
+            print(name);
+            First=name[0][0].trim();
+            print(First);
+            Last=name[1][0].trim().toString().toUpperCase();
+            print(Last);
+            initials =  First+Last;
+            print(initials);
+            print("initials ");
+          }else{
+            First=Name;
+            print('print(First)else');
+            print(First);
+            initials =  First;
+            print(initials);
+
+          }
+          // }
+
+          return  new Column(
+              children: <Widget>[
+                new FlatButton(
+                    child : new Row(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            InkWell(
+                              child:  new Container(
+                                width: MediaQuery.of(context).size.height * .075,
+                                height: MediaQuery.of(context).size.height * .075,
+                                decoration: new BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.blue//                   <--- border width here
+                                  ),
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                  /*  boxShadow: <BoxShadow>[
+                                new BoxShadow(
+                                  color: appcolor,
+                                  blurRadius: 10.0,
+                                  // offset: new Offset(0.0, 10.0),
+                                  spreadRadius: 2.0,
+                                ),
+                              ],*/
+                                  /*image: new DecorationImage(
+                            fit: BoxFit.fill,
+                               // image: NetworkImage(profile),
+                                image: NetworkImage(profile),
+                              ),*/
+                                ),
+                                // width: MediaQuery.of(context).size.width*0.30,
+                                child: _checkLoaded? ClipRRect(
+                                  borderRadius: BorderRadius.circular(300.0),
+
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: 'l',
+                                    fit: BoxFit.fill,
+                                    image: StoreLocation.values.elementAt(index)[4],
+                                  ),
+                                ): CircleAvatar(
+                                  child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                                ),
+                              ),
+
+                              onTap: () async {
+
+                                _markers.clear();
+                                setLoader = false;
+                                _checkLoaded = false;
+                                var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
+                                print(image);
+                                print("image is");
+                                print("name is the client123");
+                                print(_checkLoaded);
+
+                                image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+                                  _checkLoaded = true;
+                                }));
+
+                                var Name = StoreLocation.values.elementAt(index)[3];
+                                print(Name);
+                                print(_checkLoaded);
+
+
+                                //  getAcronym(var name) {
+
+                                if((Name.trim()).contains(" ")) {
+                                  var name=Name.split(" ");
+                                  print('print(name);');
+                                  print(name);
+                                  First=name[0][0].trim();
+                                  print(First);
+                                  Last=name[1][0].trim().toString().toUpperCase();
+                                  print(Last);
+                                  initials =  First+Last;
+                                  print(initials);
+                                  print("initials ");
+                                }else{
+                                  First=Name;
+                                  print('print(First)else');
+                                  print(First);
+                                  initials =  First;
+                                  print(initials);
+
+                                }
+                                StoreLocation.forEach((k, v) {
+
+
+                                  double LAT1 = double.parse(StoreLocation.values.elementAt(index)[0]);
+                                  double LONG1 = double.parse(StoreLocation.values.elementAt(index)[1]);
+                                  double LAT2 = double.parse(v[0]);
+                                  double LONG2 = double.parse(v[1]);
+
+
+                                  double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+                                  print(distance);
+                                  print("distance is");
+                                  if(distance<10) {
+                                    //if they are less then at a distance of 10 meters
+                                    count++;
+                                    print(count);
+                                    print("count is");
+                                  }
+
+                                  // }
+                                });
+
+                                print(initials);
+                                print("checkloaded");
+                                print(_checkLoaded);
+
+                                var dataBytes;
+                                var request = await http.get(StoreLocation.values.elementAt(index)[4]);
+                                var bytes = await request.bodyBytes;
+
+                                setState(() {
+                                  dataBytes = bytes;
+                                });
+
+                                LatLng _lastMapPositionPoints = LatLng(
+                                    double.parse(StoreLocation.values.elementAt(index)[0]),
+                                    double.parse(StoreLocation.values.elementAt(index)[1]));
+
+                                // var loader = await getMarkerIconForClients(StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), count);
+
+                                _checkLoaded?
+                                getMarkerProfile(StoreLocation.values.elementAt(index)[4], count ,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]))
+                                    : getMarker(initials,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]),count);
+
+                                /*_markers.add(
+                                Marker(
+                              icon: loader,
+                              markerId: MarkerId(_lastMapPositionPoints.toString()),
+                              position: _lastMapPositionPoints,
+                              onTap: (){
+                                getPopup(double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]));
+                                },
+                              infoWindow: InfoWindow(
+                                title: "Delivery Point",
+                                snippet:"My Position",
+                              ),
+                            ))*/
+
+
+                                getLocation(double.parse(StoreLocation.values.elementAt(index)[0]),double.parse(StoreLocation.values.elementAt(index)[1]));
+
+                              },
+                            ),
+                            Name.toString().length>8? Text(
+                              Name.toString().substring(0,8)+"..",
+                              style: TextStyle(fontSize: 12.0),
+                            ):Text(
+                              Name,
+                              style: TextStyle(fontSize: 12.0),
+                            )
+                          ],
+                        ),
+
+                      ],
+                    ),
+
+                    onPressed: ()  {
+
+                      // currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: StoreLocation.values.elementAt(index)[4], location: LatLng(0, 0), client: StoreLocation.values.elementAt(index)[3],description: 'At: '+StoreLocation.values.elementAt(index)[4],in_time: "19:20",out_time: '-', labelColor: Colors.grey);
+                      //   pinPillPosition = 50;
+
+                    }
+                ),
+              ]
+          );
+        }
+    );
+
+  }
+
+  Future<Uint8List> getMarkerIconForClients(String imagePath, Size size,int number) async {
+
+    print(number);
+    print("number issss");
+
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    final Radius radius = Radius.circular(size.width / 2);
+
+    final Paint tagPaint = Paint()..color = Colors.blue;
+    final double tagWidth = 40.0;
+
+    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
+    final double shadowWidth = 15.0;
+
+    final Paint borderPaint = Paint()..color = Colors.white;
+    final double borderWidth = 3.0;
+
+    final double imageOffset = shadowWidth + borderWidth;
+
+    // Add shadow circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              0.0,
+              0.0,
+              size.width,
+              size.height
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        shadowPaint);
+
+    // Add border circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              shadowWidth,
+              shadowWidth,
+              size.width - (shadowWidth * 2),
+              size.height - (shadowWidth * 2)
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        borderPaint);
+
+    // Add tag circle
+
+    if(number!=1) {
+      canvas.drawRRect(
+          RRect.fromRectAndCorners(
+            Rect.fromLTWH(
+                size.width - tagWidth,
+                0.0,
+                tagWidth,
+                tagWidth
+            ),
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius,
+          ),
+          tagPaint);
+
+      // Add tag text
+      TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+      textPainter.text = TextSpan(
+        text: "+" + number.toString(),
+        style: TextStyle(fontSize: 25.0, color: Colors.white),
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+          canvas,
+          Offset(
+              size.width - tagWidth / 2 - textPainter.width / 2,
+              tagWidth / 2 - textPainter.height / 2
+          )
+      );
+    }
+
+    // Oval for the image
+    Rect oval = Rect.fromLTWH(
+        imageOffset,
+        imageOffset,
+        size.width - (imageOffset * 2),
+        size.height - (imageOffset * 2)
+    );
+    // Add path for oval image
+    canvas.clipPath(Path()
+      ..addOval(oval));
+
+    // Add image
+    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
+    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+
+    // Convert canvas to image
+    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
+        size.width.toInt(),
+        size.height.toInt()
+    );
+
+    // Convert image to bytes
+    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+    return uint8List;
+  }
+
+
+  getMarkerProfile( profile,count ,latitude, longitude) async {
+
+    //var address= await getAddressFromLati(latitude.toString(),longitude.toString());
+    print(profile);
+    print("PlatformException123456");
+
+    final Uint8List markerIcon  = await getMarkerIconForClients(profile,  Size(140.0, 140.0), count) ;
+
+    //  if(showPolylines == true || showMarker == true) {
+    var m = Marker(
+      markerId: MarkerId(initials.toString()),
+      position: LatLng(latitude,longitude),
+      onTap:(){
+        getPopup(latitude, longitude);
+      },
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+      /*infoWindow: InfoWindow(
+        title: "Current known location at:",
+        snippet:  address.toString()
+      ),*/
+    );
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        print(setLoader);
+        print("setloader21");
+        _markers.add(m);
+        setLoader= true;
+        print(setLoader);
+        //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+      });
+    });
+    //  }
+  }
+
+
+
+  getMarker(String initials, latitude,longitude, count ) async {
+
+    print("inside getmarker");
+    // var address= await getAddressFromLati(latitude.toString(),longitude.toString());
+
+    final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(150, 150, initials,count);
+
+    //  if(showPolylines == true || showMarker == true) {
+    var m = Marker(
+      markerId: MarkerId(initials.toString()),
+      position: LatLng(latitude,longitude),
+      onTap:(){
+        getPopup(latitude, longitude);
+      },
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+      /*  infoWindow: InfoWindow(
+          title: "Current known location at:",
+          snippet: address.toString()
+        ),*/
+    );
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _markers.add(m);
+        setLoader= true;
+        //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+      });
+    });
+    //  }
+  }
+
+  Future<Uint8List> getBytesFromCanvasForCircleMarker(int width, int height, String markerPoint,count) async  {    //IMP
+
+    print(markerPoint);
+    print("countOfPositionMarker");
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    final Radius radius = Radius.circular(width/2);
+    final Paint tagPaint = Paint()..color = Colors.blue;
+
+
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(0.0, 0.0, width.toDouble(),  height.toDouble()),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        paint);
+    TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = TextSpan(
+      text: markerPoint,
+      style: TextStyle(fontSize: 50.0, color: Colors.white,fontWeight: FontWeight.bold),
+    );
+
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              100,
+              0.0,
+              50,
+              50
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        tagPaint);
+
+    // Add tag text
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    textPainter.text = TextSpan(
+      text: "+"+count.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white),
+    );
+
+    textPainter.layout();       //
+    textPainter.paint(
+        canvas,
+        Offset(
+            250 / 2 - textPainter.width / 2,
+            50 / 2 - textPainter.height / 2
+        )
+    );
+
+    painter.layout();
+    painter.paint(
+        canvas,
+        Offset((width * 0.5) - painter.width * 0.5,
+            (height * .5) - painter.height * 0.5));
+    final img = await pictureRecorder.endRecording().toImage(width, height);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data.buffer.asUint8List();
+  }
+
+
+  getPopup(LAT1 , LONG1) {
+
+    popupLocations.clear();
+
+    print(LAT1);
+    print(LONG1);
+
+    StoreLocation.forEach((k, v) {
+
+      double LAT2 = double.parse(v[0]);
+      double LONG2 = double.parse(v[1]);
+
+      double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+
+      if(distance<10) {            //if they are less then at a distance of 10 meters
+        closeEmp = true;
+        print("coming lati longi");
+
+        print(StoreLocation);
+        popupLocations.add([k,v[0],v[1],v[3],v[4],v[5],v[2]]);
+        print(popupLocations);
+        print("poplocation list");
+
+      }
+
+      // }
+    });
+
+    if(closeEmp)
+      showBottomNavigation(popupLocations);
+  }
+
+  void showBottomNavigation(List popupLocations){
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor:const Color(0xFF0E3311).withOpacity(0.0) ,
+        builder: (builder) {
+          return new Container(
+              height: MediaQuery.of(context).size.height*0.35,
+              color: appcolor.withOpacity(0.0),
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  //   SizedBox(height: 20.0,),
+                  /*Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Update profile photo", style: TextStyle(fontWeight: FontWeight.bold),)
+                ],),*/
+                  // SizedBox(height: 20.0,),
+                  Expanded(
+                    child:ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.all(20.0),
+                      itemCount: popupLocations.length,
+                      itemBuilder: (context, index) {
+
+                        var Loaded1 = false;
+
+                        var image = NetworkImage(popupLocations[index][4]);
+
+
+                        image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+                          // if (mounted) {
+                          //   setState(() {
+                          Loaded1 = true;
+                          //   });
+                          //  }
+                        }));
+                        var Name = popupLocations[index][3];
+
+                        if((Name.trim()).contains(" ")) {
+                          var name=Name.split(" ");
+                          print('print(name);');
+                          print(name);
+                          First=name[0][0].trim();
+                          print(First);
+                          Last=name[1][0].trim().toString().toUpperCase();
+                          print(Last);
+                          initials =  First+Last;
+                          print(initials);
+                          print("initials ");
+                        }else{
+                          First=Name;
+                          print('print(First)else');
+                          print(First);
+                          initials =  First;
+                          print(initials);
+
+                        }
+
+                        return InkWell(
+                          child: Container(
+
+                            //color:const Color(0xFF0E3311).withOpacity(0.5),
+                            height:100,
+                            padding: new EdgeInsets.fromLTRB(10.0, 5.0, 5.0, 16.0),
+
+                            child: new Stack(
+                              children: <Widget>[
+                                new Container(
+                                  child: Container(
+                                    padding: new EdgeInsets.fromLTRB(70.0, 5.0, 16.0, 10.0),
+                                    //constraints: new BoxConstraints.expand(),
+                                    child: new Column(
+                                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        new Container(height:  MediaQuery.of(context).size.height*0.001,),
+                                        new Text(popupLocations[index][3].toString(), style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                        new Container(height:  MediaQuery.of(context).size.height*0.005,),
+                                        Container(
+                                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                          child: true ? new Text("Latitude: "+popupLocations[index][1].toString(),style: TextStyle(fontSize: 12,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                        ),Container(
+                                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                                          child: true ? new Text("Longitude: "+popupLocations[index][2].toString(),style: TextStyle(fontSize: 12,color: Colors.white),):new Text("jkhgk",style: TextStyle(fontSize: 14,color: Colors.white),),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  height: 75.0,
+                                  width: 350,
+                                  margin: new EdgeInsets.only(left: 46.0),
+                                  decoration: new BoxDecoration(
+                                    //color: Color.fromRGBO(0, 0, 0, 0.5),
+                                    //color: Color.fromRGBO(199, 130, 10, 0.6),
+                                    //  color: Color.fromRGBO(2, 112, 85, 0.6),
+                                    // color: Colors.orangeAccent[200],
+                                    //color: Colors.teal[500],
+                                    color: Colors.cyanAccent.withOpacity(0.7),
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: new BorderRadius.circular(8.0),
+                                    /*boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 5.0,
+                      offset: new Offset(0.0, 10.0),
+                    ),
+                  ],*/
+                                  ),
+                                ),
+                                Container(
+                                  margin: new EdgeInsets.symmetric(vertical: 13.0),
+                                  alignment: FractionalOffset.centerLeft,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.height * .09,
+                                    height: MediaQuery.of(context).size.height * .09,
+                                    decoration: new BoxDecoration(
+                                      /*border: Border.all(
+                                          width: 2, color: Colors.blue//                   <--- border width here
+                                      ),*/
+                                      color: Colors.black,
+                                      shape: BoxShape.circle,
+                                      /*  boxShadow: <BoxShadow>[
+                            new BoxShadow(
+                              color: appcolor,
+                              blurRadius: 10.0,
+                              // offset: new Offset(0.0, 10.0),
+                              spreadRadius: 2.0,
+                            ),
+                          ],*/
+                                      /*image: new DecorationImage(
+                        fit: BoxFit.fill,
+                           // image: NetworkImage(profile),
+                            image: NetworkImage(profile),
+                          ),*/
+                                    ),
+                                    // width: MediaQuery.of(context).size.width*0.30,
+                                    child: Loaded1? ClipRRect(
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: FadeInImage.assetNetwork(
+                                        placeholder: 'l',
+                                        fit: BoxFit.fill,
+                                        image: popupLocations[index][4],
+                                      ),
+                                    ): CircleAvatar(
+                                      child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: (){
+                            print(popupLocations[index][0]);
+                            print(popupLocations[index][1]);
+                            print(popupLocations[index][2]);
+                            print(popupLocations[index][3]);
+                            print(popupLocations[index][4]);
+                            print(popupLocations[index][5]);
+                            print("popupLocations[index][3]");
+                            _onAlertForAbsent(popupLocations[index][3],popupLocations[index][1],popupLocations[index][2],popupLocations[index][4],popupLocations[index][5],popupLocations[index][6].toString());
+                          },      //ontapstart
+                        );
+                      },
+
+
+                    ),
+                  ),
+                  SizedBox(height: 20.0,),
+                  Divider(color: Colors.black,height: 3.0,),
+                  /* Container(
+                      color: appcolor.withOpacity(0.15),
+                      child:Column(
+                        children: <Widget>[
+                          Center(
+                              child:FlatButton(child:Text("Cancel"),onPressed: (){
+                                controller.close();
+                              },)
+                          )
+                        ],
+                      )
+                  )*/
+
+                ],
+              ));
+        });
+
+  }
+
+/*
+  Future<BitmapDescriptor> getMarkerIconForClients(String imagePath, Size size,int number) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    final Radius radius = Radius.circular(size.width / 2);
+
+    final Paint tagPaint = Paint()..color = Colors.blue;
+    final double tagWidth = 40.0;
+
+    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
+    final double shadowWidth = 15.0;
+
+    final Paint borderPaint = Paint()..color = Colors.white;
+    final double borderWidth = 3.0;
+
+    final double imageOffset = shadowWidth + borderWidth;
+
+    // Add shadow circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              0.0,
+              0.0,
+              size.width,
+              size.height
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        shadowPaint);
+
+    // Add border circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              shadowWidth,
+              shadowWidth,
+              size.width - (shadowWidth * 2),
+              size.height - (shadowWidth * 2)
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        borderPaint);
+
+    // Add tag circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              size.width - tagWidth,
+              0.0,
+              tagWidth,
+              tagWidth
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        tagPaint);
+
+    // Add tag text
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    textPainter.text = TextSpan(
+      text: "+"+number.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white),
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+        canvas,
+        Offset(
+            size.width - tagWidth / 2 - textPainter.width / 2,
+            tagWidth / 2 - textPainter.height / 2
+        )
+    );
+
+    // Oval for the image
+    Rect oval = Rect.fromLTWH(
+        imageOffset,
+        imageOffset,
+        size.width - (imageOffset * 2),
+        size.height - (imageOffset * 2)
+    );
+
+    // Add path for oval image
+    canvas.clipPath(Path()
+      ..addOval(oval));
+
+    // Add image
+    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
+    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+
+    // Convert canvas to image
+    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
+        size.width.toInt(),
+        size.height.toInt()
+    );
+
+    // Convert image to bytes
+    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(uint8List);
+  }
+*/
+
+  loader() {
+    return new Container(
+      child: Center(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Image.asset(
+                  'assets/spinner.gif', height: 50.0, width: 50.0),
+            ]),
+      ),
+    );
+  }
+
+  _onAlertForAbsent(Name , lat, long, profile,location,time) {
+
+    print(Name);
+    print(profile);
+    print(time);
+    print(location);
+    print("otyherggiug");
+    var Loaded = false;
+    var image = NetworkImage(profile);
+    image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+      if (mounted) {
+        setState(() {
+          Loaded = true;
+        });
+      }
+    }));
+
+    if((Name.trim()).contains(" ")) {
+      var name=Name.split(" ");
+      print('print(name);');
+      print(name);
+      First=name[0][0].trim();
+      print(First);
+      Last=name[1][0].trim().toString().toUpperCase();
+      print(Last);
+      initials =  First+Last;
+      print(initials);
+      print("initials ");
+    }else{
+      First=Name;
+      print('print(First)else');
+      print(First);
+      initials =  First;
+      print(initials);
+
+    }
+
+    return showDialog<String>(
+      context: context,
+      // ignore: deprecated_member_use
+      child: AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.all(15.0),
+        content: Wrap(
+          children: <Widget>[
+            Container(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.28,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.70,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .end,
+                    children: <Widget>[
+                      InkWell(
+                        highlightColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        child:
+                        Row(
+                          children: <Widget>[
+
+                          ],
+                        ),
+                        onTap: () {
+//                                         Navigator.pop(context);
+                          Navigator.of(
+                              context, rootNavigator: true)
+                              .pop('dialog');
+
+                        },
+                      ),
+                    ],
+                  ),
+                  InkWell(
+                    child: new Container(
+                      width: MediaQuery.of(context).size.height * .075,
+                      height: MediaQuery.of(context).size.height * .075,
+                      decoration: new BoxDecoration(
+                        border: Border.all(
+                            width: 2, color: Colors.blue//                   <--- border width here
+                        ),
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                        /*  boxShadow: <BoxShadow>[
+                            new BoxShadow(
+                              color: appcolor,
+                              blurRadius: 10.0,
+                              // offset: new Offset(0.0, 10.0),
+                              spreadRadius: 2.0,
+                            ),
+                          ],*/
+                        /*image: new DecorationImage(
+                        fit: BoxFit.fill,
+                           // image: NetworkImage(profile),
+                            image: NetworkImage(profile),
+                          ),*/
+                      ),
+                      // width: MediaQuery.of(context).size.width*0.30,
+                      child: Loaded? ClipRRect(
+                        borderRadius: BorderRadius.circular(50.0),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'l',
+                          fit: BoxFit.fill,
+                          image: profile,
+                        ),
+                      ): CircleAvatar(
+                        child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                      ),
+                    ),
+
+
+                    /*Container(
+                        width: 70.0,
+                        height: 70.0,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(profile)
+                            )
+                        )
+                    ),*/
+                    /*onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => ImageView(
+                                                      myimage: snapshot
+                                                          .data[index].Profile,
+                                                      org_name: _orgName)),
+                                            );
+                                          },*/
+                  ),
+                  SizedBox(height: 10.0),
+                  new Text(
+                    Name,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  SizedBox(height:8,),
+                  new Text(
+                    time,
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  SizedBox(height: 8,),
+                  new Text(
+                    "At: "+location,
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w600
+                    ),
+                  ),
+
+
+                ],),
+
+            ),
+          ],
+        ),
+      ),
+    );
+
+    /* var alertStyle = AlertStyle(
+      animationType: AnimationType.grow,
+      isCloseButton: false,
+      isOverlayTapDismiss: true,
+      descStyle: TextStyle(fontWeight: FontWeight.bold),
+      animationDuration: Duration(milliseconds: 400),
+    );
+    Alert(
+        style: alertStyle,
+        context: context,
+        title: "",
+        image: Image.network(popupLocations[0][4],
+          width: 100, height: 100,),
+
+         content: Wrap(
+           children: <Widget>[
+              Container(
+               // color: Colors.red,
+                height: MediaQuery.of(context).size.height * 0.30,
+                width: MediaQuery.of(context).size.width * 0.70,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(popupLocations[0][3])
+                      ],
+                    ),
+
+                  //  SizedBox(height: 10.0),
+                  *//*
+                   new Text(
+                   // snapshot.data[index].Name.toString(),
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600
+                    ),
+                  ),*//*
+                    //SizedBox(height: 20,),
+                    Table(
+                      defaultVerticalAlignment: TableCellVerticalAlignment
+                          .top,
+                      columnWidths: {
+
+                        0: FlexColumnWidth(5),
+                        // 0: FlexColumnWidth(4.501), // - is ok
+                        // 0: FlexColumnWidth(4.499), //- ok as well
+                        1: FlexColumnWidth(5),
+                        //2: FlexColumnWidth(5),
+                      },
+                      children: [
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      "Time In",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      "Time Out",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ) ,
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                     "hhhh",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                     "gkjgkj",
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .w400
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),
+                      *//*  TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: 70.0,
+                                          height: 70.0,
+//                               child: FadeInImage.assetNetwork(
+//                                  placeholder: 'assets/user_profile.png',
+//                                  ),
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  width: 2, color: Colors.teal//                   <--- border width here
+                                              ),
+                                              shape: BoxShape.circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image:
+//                                          AssetImage('assets/user_profile.png'),
+//                                            _checkLoaded
+//                                                ? AssetImage('assets/imgloader.gif')
+//                                                :
+                                                  userlist.isNotEmpty?NetworkImage(
+                                                      userlist[0].EntryImage):AssetImage('assets/avatar.png')
+
+                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                              )
+                                          )
+                                      ),
+                                      onTap: () {
+
+                                        if( userlist.isNotEmpty) {
+                                          Navigator.of(
+                                              context, rootNavigator: true)
+                                              .pop();
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ImageView(
+                                                        myimage: userlist[0]
+                                                            .EntryImage,
+                                                        org_name: _orgName)),
+                                          );
+                                        }
+
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    InkWell(
+                                      child: Container(
+                                          width: 70.0,
+                                          height: 70.0,
+//                               child: FadeInImage.assetNetwork(
+//                                  placeholder: 'assets/user_profile.png',
+//                                  ),
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  width: 2, color: Colors.teal//                   <--- border width here
+                                              ),
+                                              shape: BoxShape.circle,
+                                              image: new DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image:
+//                                          AssetImage('assets/user_profile.png'),
+//                                            _checkLoaded
+//                                                ? AssetImage('assets/imgloader.gif')
+//                                                :
+                                                  userlist.isNotEmpty?NetworkImage(
+                                                      userlist[0].ExitImage):AssetImage('assets/avatar.png')
+
+                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
+                                              )
+                                          )
+                                      ),
+                                      onTap: () {
+                                        if( userlist.isNotEmpty) {
+                                          Navigator.of(
+                                              context, rootNavigator: true)
+                                              .pop();
+
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ImageView(
+                                                        myimage: userlist[0]
+                                                            .ExitImage,
+                                                        org_name: _orgName)),
+                                          );
+                                        }
+
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),*//*
+                        //TableRow(),
+
+                       *//* TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 40,
+                                      child:  new Container(
+                                        //color: Colors.red,
+                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            InkWell(
+                                              child:Center(
+                                                child: Text(
+                                                  userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
+                                              ),
+                                              onTap: () {
+                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_in,userlist.isEmpty?"-": userlist[0].longi_in);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 40,
+                                      child:  new Container(
+                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+
+                                            InkWell(
+                                              child:Center(
+                                                child: Text(
+                                                  userlist.isEmpty?"-": userlist[0].CheckOutLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
+                                              ),
+                                              onTap: () {
+                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_out,userlist.isEmpty?"-": userlist[0].longi_out);
+                                              },
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(2.0),
+                                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                                              child: Text(snapshot.data[index].instatus,
+                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),*//*
+                        TableRow(
+                            children: [
+                              TableCell(
+                                child: Row(
+                                  // crossAxisAlignment: CrossAxisAlignment.end,
+                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 37,
+                                      child:  new Container(
+                                        //width: MediaQuery.of(context).size.width * 0.37,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                             new Text(
+                                    "uytkuguk",style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
+                                  ),
+                                            InkWell(
+                                              child:Text(
+                                                "jliujklj",style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                                              onTap: () {
+                                               // goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
+                                              },
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.all(2.0),
+                                           //   color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                                              child: Text("hjlkhlk",
+                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TableCell(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    new Text(
+                                      '',
+                                      style: TextStyle(
+                                          color: Colors
+                                              .black87,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight
+                                              .bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]
+                        ),
+                      ],
+                    ),
+                     Expanded(
+                      flex: 37,
+                      child:  new Container(
+                        //width: MediaQuery.of(context).size.width * 0.37,
+                       *//* child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                             new Text(
+                                    snapshot.data[index].client.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
+                                  ),
+                            InkWell(
+                              child:Text(
+                                userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),),
+                              onTap: () {
+                                goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
+                              },
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
+
+                              child: Text(snapshot.data[index].instatus,
+                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
+                              ),
+                            )
+                          ],
+                        ),*//*
+                      ),
+                    ),
+                    //SizedBox(height: 10.0),
+                    Divider(color: Colors.black54,height: 1.5,),
+                    SizedBox(height: 19,),
+                    Container(
+                      padding: new EdgeInsets.only(left: 15.0, right: 10.0),
+                      decoration: new ShapeDecoration(
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                          color: Colors.white.withOpacity(0.1)
+                      ) ,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.timelapse, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift Timings: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                            *//*  new Text(
+                                  userlist.isEmpty ? "-"
+                                      : userlist[0].ShiftTimeIn+" - "+userlist[0].ShiftTimeOut,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),*//*
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.access_time, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Logged Hours: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                           *//*   new Text(
+                                  userlist.isEmpty ? "-" : userlist[0].thours,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),*//*
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift TimeIn: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                             *//* new Text(userlist.isEmpty ? "-"
+                                  : userlist[0].ShiftTimeIn,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),*//*
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+                              new Text("Shift TimeOut: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold)),
+                          *//*    new Text(userlist.isEmpty ? "-"
+                                  : userlist[0].ShiftTimeOut,
+                                  style: new TextStyle(fontSize: 15.0,
+                                      fontWeight: FontWeight.w400)),*//*
+                            ],
+                          ),
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                    Row(
+                            children: <Widget>[
+                              Icon(Icons.timer, size: 20.0,
+                                color: Colors.black54,), SizedBox(width: 5.0),
+
+                    new Text("Undertime: ", style: new TextStyle(
+                                  fontSize: 15.0,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold))
+
+                            ],
+                          ),
+
+                          SizedBox(height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * .01),
+                        ],
+
+                      ),
+                    )
+                  ],),
+
+              ),
+            ],
+          ),
+
+        buttons: [
+          DialogButton(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.22,
+            color: Colors.orangeAccent,
+            onPressed: () {
+            //  Navigator.of(context, rootNavigator: true).pop();
+               //   (Route<dynamic> route) => false;
+            },
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          )
+        ]).show();*/
+    ///});
+  }
+
+
+  void _changeOpacity() {
+
+    setState(() => opacityLevel = opacityLevel == 0 ? 1.0 : 0.0);
+
+  }
+
+  void _changeOpacity1() {
+    setState(() => opacityLevel1 = opacityLevel1 == 0 ? 1.0 : 0.0);
+  }
+
+
+
+  _myLeave(){
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyLeave()),
+    );
+  }
+  _settings(){
+
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Settings()),
+    );
+  }
+  _addEmployee(){
+
+    if (((globals.registeruser) >=
+        (globals.userlimit + 5)) &&
+        buysts != '0')
+      showDialogWidget(
+          "You have registered 5 users more than your User limit. Kindly pay for the Additional Users or delete the Inactive users");
+    else
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddEmployee()),
+      );
+  }
+
+
+  _reports(){
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Reports()),
+    );
+  }
+
+  _profile(){
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()),
+    );
+  }
+
+  _shiftsCalendar(){
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => userViewShiftPlanner()),
+    );
+  }
+  _visitPunch(){
+    print("xyz123");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PunchLocationSummary()),
+    );
+  }
+
+  void _showSnackBar (BuildContext context, String message) {
+    Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(milliseconds: 1000),
+        )
+    );
+  }
+
+
+  void onMapCreated(GoogleMapController controller) {
+    controller.setMapStyle(Utils.mapStyles);
+    _controller.complete(controller);
+    setMapPins();
+    setPolylines();
+    controller2.complete(controller);
+  }
+
+  showDialogWidget(String loginstr) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            title: new Text(
+              loginstr,
+              style: TextStyle(fontSize: 15.0),
+            ),
+            content: ButtonBar(
+              children: <Widget>[
+                FlatButton(
+                  child: Text('Later', style: TextStyle(fontSize: 13.0)),
+                  shape: Border.all(),
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                ),
+                RaisedButton(
+                  child: Text(
+                    'Pay Now',
+                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                  ),
+                  color: Colors.orangeAccent,
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PaymentPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  void setMapPins() {
+    setState(() {
+      // source pin
+      _markers.add(Marker(
+        markerId: MarkerId('sourcePin'),
+        position: SOURCE_LOCATION,
+        icon: sourceIcon,
+        /*  infoWindow: InfoWindow(
+        title: 'I am a marker',
+          snippet:'hbhs hsvgvs cshgfhgsf gschgfs sfhsfh gsfhfshfsh hgsfhfsfs '
+      ),*/
+      ));
+      // destination pin
+      _markers.add(Marker(
+          markerId: MarkerId('destPin'),
+          position: DEST_LOCATION,
+          icon: destinationIcon));
+    });
+  }
+
+  setPolylines() async {
+
+    // latlng.add(_new);
+    // latlng.add(_news);
+    setState(() {
+      // create a Polyline instance
+      // with an id, an RGB color and the list of LatLng pairs
+      _polylines.add(Polyline(
+        polylineId: PolylineId("1"),
+        visible: true,
+        //latlng is List<LatLng>
+        points: latlng,
+        color: Colors.blue,
+      ));
+    });
+
+  }
+
+
+
+  //<-----------------------------------------------------------while merging------------------------------------------------> //
+
+  getMarkAttendanceWidgit() {
+    if (act1 == "Imposed") {
+      return getAlreadyMarkedWidgit();
+    } else {
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            /* Text('Mark Attendance',
+                style: new TextStyle(fontSize: 30.0, color: Colors.teal)),
+            SizedBox(height: 10.0),*/
+            getwidget(globals.globalstreamlocationaddr),
+            //    SizedBox(height: MediaQuery.of(context).size.height*.1),
+            /*      Container(
+            //foregroundDecoration: BoxDecoration(color:Colors.green ),
+            margin: EdgeInsets.only(bottom:MediaQuery.of(context).size.height*0),
+            //padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.02,bottom:MediaQuery.of(context).size.height*0.02),
+              height: MediaQuery.of(context).size.height*.10,
+              color: Colors.teal.withOpacity(0.8),
+              child: Column(
+                  children:[
+                    SizedBox(height: 10.0,),
+                    getQuickLinksWidget()
+                  ]),
+            ),
+         */
+          ]);
+    }
+  }
+
+  getwidget(String addrloc) {
+    if (addrloc != "Location could not be fetched.") {
+
+      return  AnimatedOpacity(
+        opacity: opacityLevel,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.linear,
+        child: new Container(
+          //margin: new EdgeInsets.symmetric(vertical: 55.0),
+          height: selected!=false?MediaQuery.of(context).size.height * .30:1,
+          // height: 160,
+          //  width: 350,
+          width: selected!=false?350:1,
+          child: Container(
+            padding: new EdgeInsets.fromLTRB(60.0, 10.0, 16.0, 5.0),
+            //constraints: new BoxConstraints.expand(),
+            child: new Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Container(height: 3.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Text(fname, style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                    new InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            const IconData(0xe81a,
+                                fontFamily: "CustomIcon"),
+                            size: 15.0,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+
+                        cameraChannel
+                            .invokeMethod("startAssistant");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage()),
+                        );
+                      },
+                    )
+                  ],
+                ),
+                new Container(height: 6.0),
+                InkWell(
+                  child: Container(
+                    child: globals.globalstreamlocationaddr.length > 97? new Text( globals.globalstreamlocationaddr != null
+                        ? 'You are at: '+globals.globalstreamlocationaddr.substring(0,97)+".."
+                        : "Location could not be fetched",
+                      style: TextStyle(fontSize: 14,color: Colors.white),)
+
+                        :new Text( globals.globalstreamlocationaddr != null
+                        ? 'You are at: '+globals.globalstreamlocationaddr
+                        : "Location could not be fetched",
+                      style: TextStyle(fontSize: 14,color: Colors.white),),
+                  ),
+                  onTap: () {
+                    launchMap(globals.assign_lat.toString(),
+                        globals.assign_long.toString());
+                    /* Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );*/
+                  },
+                ),
+                if (fakeLocationDetected)
+                  Container(
+                    padding: EdgeInsets.only(top: 5.0, right: 28.0),
+                    decoration: BoxDecoration(
+                      color: Color(0xfffc6203),
+                      //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
+                    ),
+                    child: Text(
+                      'Fake Location',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.amber,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0),
+                    ),
+                  )
+                else
+                  (areaId != 0 && geoFence == 1)
+                      ? areaSts == '0'
+                      ? Container(
+                    padding: EdgeInsets.only(top: 5.0, right: 28.0),
+                    child: Text(
+                      ' Outside Geofence ',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          backgroundColor: Colors.red[300],
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0),
+                    ),
+                  )
+                      : Container(
+                    padding: EdgeInsets.only(top: 5.0, right: 28),
+                    //  margin: EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Text(
+                      ' Within Geofence ',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          backgroundColor: Colors.green[300],
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0),
+                    ),
+                  )
+                      : Center(),
+
+                Container(
+
+                  padding: EdgeInsets.only(right: 28,top: 5),
+                  child:  getTimeInOutButton(),
+
+                  /*new Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      RaisedButton(
+                        color: buttoncolor,
+                        elevation: 0.0,
+                        disabledElevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Text('TIME IN',
+                            style: new TextStyle(
+                                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+                        onPressed: () {
+
+                          getTimeInOutButton();
+
+                        },
+                      )
+
+                    ],
+                  ),*/
+                )
+              ],
+            ),
+          ),
+
+
+          margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
+          decoration: new BoxDecoration(
+            color: Colors.blue[300],
+            shape: BoxShape.rectangle,
+            boxShadow: <BoxShadow>[
+              new BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10.0,
+                offset: new Offset(0.0, 10.0),
+              ),
+            ],
+            borderRadius: new BorderRadius.circular(8.0),
+          ),
+        ),
+      );
+    } else {
+      return Column(children: [
+        Text('Kindly refresh the page to fetch the location',
+            textAlign: TextAlign.center,
+            style: new TextStyle(fontSize: 14.0, color: Colors.red)),
+        RaisedButton(
+          child: Text('Refresh'),
+          color: globals.buttoncolor,
+          onPressed: () {
+            cameraChannel.invokeMethod("startAssistant");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
+      ]);
+    }
+  }
+
+  getTimeInOutButton() {
+
+    if (act1 == 'TimeIn') {
+      return  Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          RaisedButton(
+            color: buttoncolor,
+            elevation: 0.0,
+            disabledElevation: 0.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Text('TIME IN',
+                style: new TextStyle(
+                    fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+            //  onPressed: () {
+
+            onPressed: () async {
+              globals.globalCameraOpenedStatus = true;
+              // if(changepasswordStatus == '0' || changepasswordStatus == '')
+              //saveImage();
+              print('covidfirst'+covid_first);
+              print('covidfirst'+covid_second);
+              print('covidfirst'+covidsurvey.toString());
+
+              if(covid_first=='1' && globals.covidsurvey==1)
+              {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Every7dayscovidsurvey()), (Route<dynamic> route) => true,
+                );
+              }
+              else if(covid_second=='1'  && globals.covidsurvey==1)
+              {
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Covid19serve()), (Route<dynamic> route) => true,
+                );
+
+              }
+              else{
+                saveImage();
+              }
+              //Navigator.pushNamed(context, '/home');
+            },
+            // },
+          )
+
+        ],
+      );
+    } else if (act1 == 'TimeOut') {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          RaisedButton(
+            color: buttoncolor,
+            elevation: 0.0,
+            disabledElevation: 0.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Text('TIME OUT',
+                style: new TextStyle(
+                    fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+            //  onPressed: () {
+
+            onPressed: () async {
+              globals.globalCameraOpenedStatus = true;
+              // //print("Time out button pressed");
+              saveImage();
+            },
+            // },
+          )
+        ],
+      );
+      /*RaisedButton(
+        clipBehavior: Clip.antiAlias,
+        elevation: 0.0,
+        highlightElevation: 0.0,
+        highlightColor: Colors.transparent,
+        disabledElevation: 50.0,
+        focusColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+//          side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
+        ),
+        child: Text('TIME OUT',
+            style: new TextStyle(
+                fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+        color: globals.buttoncolor,
+        onPressed: () async {
+          globals.globalCameraOpenedStatus = true;
+          // //print("Time out button pressed");
+          saveImage();
+        },
+      );*/
+    }
+  }
+
+  launchMap(String lat, String long) async {
+    String url = "https://maps.google.com/?q=" + lat + "," + long;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      //print('Could not launch $url');
+    }
+  }
+
+  void startLiveLocationTracking()async {
+
+    HomeViewState tracker=HomeViewState();
+    tracker.initState();
+    await tracker.onClickMenu();
+    tracker.onClickEnable(true);
+    tracker.onClickChangePace();
+    //tracker.onEnabledChange(true);
+
+  }
+
+  void stopLiveLocationTracking() {
+
+    HomeViewState tracker=HomeViewState();
+    tracker.initState();
+    tracker.onClickEnable(false);
+    //tracker.onClickChangePace();
+    //tracker.onEnabledChange(true);
+  }
+
+
+
+  saveImage() async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    var firstTimeIn = prefs.getInt("firstTimein" )??0;
+    firstTimeIn++;
+    prefs.setInt("firstTimein", firstTimeIn);
+    timeWhenButtonPressed = DateTime.now();
+    //  sl.startStreaming(5);
+    print('aidId' + aid);
+    var FakeLocationStatus = 0;
+
+    //startLiveLocationTracking();
+    /*  if(areaStatus == '0'){
+      geofence="Outside Fenced Area";
+    }else{
+      geofence="Within Fenced Area";
+    }*/
+
+    if(globals.geoFence==1) {
+      if (areaSts == '0') {
+        if(areaId==0 || areaId.toString()==""){
+          geofence = "";
+        }else{
+          geofence = "Outside Geofence";
+        }
+
+        print('thisisgeofencefortesting123---->>>>'+geofence);
+        print('thisisabletomarkatt---->>>>'+ableToMarkAttendance.toString());
+
+        if(ableToMarkAttendance==1 || fencearea==1) {
+          print('thisisgeofencefortesting456---->>>>'+geofence);
+          await showDialog(
+              context: context,
+              // ignore: deprecated_member_use
+              child: new AlertDialog(
+                //title: new Text("Warning!"),
+                content: new Text(
+                    "You Can't punch Attendance Outside Geofence."),
+              ));
+          return null;
+        }
+
+      } else {
+        geofence = "Within Geofence";
+        print('thisisgeofencefortesting789---->>>>'+geofence);
+      }
+    }
+
+    if(globals.departmentid==1||globals.departmentid==0){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Department has not been assigned"),
+          ));
+      return null;
+    }
+    if(globals.designationid==0){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Designation has not been assigned"),
+          ));
+      return null;
+    }
+    print("ssssssssssssssssshift"+shiftId.toString());
+    if(globals.shiftId==''||globals.shiftId==null||globals.shiftId=='0'){
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("Shift has not been assigned"),
+          ));
+      return null;
+    }
+
+
+    if (AbleTomarkAttendance != '1' &&
+        globals.ableToMarkAttendance == 1 &&
+        geoFence == 1) {
+      await showDialog(
+          context: context,
+          // ignore: deprecated_member_use
+          child: new AlertDialog(
+            //title: new Text("Warning!"),
+            content: new Text("You Can't punch Attendance from Outside Geofence"),
+          ));
+      return null;
+    }
+
+    if (fakeLocationDetected) {
+      FakeLocationStatus = 1;
+    }
+    MarkTime mk = new MarkTime(
+        empid,
+        globals.globalstreamlocationaddr,
+        aid,
+        act1,
+        shiftId,
+        orgdir,
+        globals.assign_lat.toString(),
+        assign_long.toString(),
+        FakeLocationStatus,
+        globalcity);
+
+    var connectivityResult = await (new Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      /* Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CameraExampleHome()),
+      );*/
+      SaveImage saveImage = new SaveImage();
+      Map issave;
+      var prefs = await SharedPreferences.getInstance();
+      globals.showAppInbuiltCamera =
+          prefs.getBool("showAppInbuiltCamera") ?? true;
+      issave = globals.showAppInbuiltCamera
+          ? await saveImage.saveTimeInOutImagePickerAppCamera(mk, context)
+          : await saveImage.saveTimeInOutImagePicker(mk, context);
+      print(issave);
+      if (issave['status'] == 3) {
+        globals.timeWhenButtonPressed = null;
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              title: new Text(""),
+              content: new Text(
+                  "Sorry you have taken more time than expected to mark attendance. Please mark again!"),
+            ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+
+      if (issave['status'] == 1 || issave['status']==2) {
+        // Sync image
+        saveImage.SendTempimage(context , true);
+        if(act1=='TimeIn'){
+          if(locationTrackingAddon=='1'){
+            startLiveLocationTracking();
+          }
+
+          print("This is time in block " + act1);
+          var prefs = await SharedPreferences.getInstance();
+
+          String InPushNotificationStatus =
+              await prefs.getString("InPushNotificationStatus") ?? '0';
+          var empId = prefs.getString('empid') ?? '';
+          var orgId = prefs.getString("orgid") ?? '';
+          var eName = prefs.getString('fname') ?? 'User';
+          var formatter = new intl.DateFormat('HH:mm');
+          var date= formatter.format(DateTime.now());
+          String topic = empId + 'TI' + orgId;
+          if (InPushNotificationStatus == '1') {
+            /*sendPushNotification(eName + ' has marked Time In', '',
+                '\'' + topic + '\' in topics');*/
+            sendPushNotification(eName + ' has marked Time In at '+ date, '',
+                '\'' + topic + '\' in topics');
+          }
+          if (FakeLocationStatus==1) {
+            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
+              String subject="Fake Location";
+              String content= eName + ' has punched Time In from a spoofed location';
+              sendMailByAppToAdmin(subject, content);
+            }
+            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
+              sendPushNotification(
+                  eName + ' has punched Time In from a spoofed location', '',
+                  '(\'' + globals.globalOrgTopic +
+                      '\' in topics) && (\'admin\' in topics)');
+            }
+          }
+        }
+        else{
+
+
+          stopLiveLocationTracking();
+          print("This is time timeout block"+ act1);
+          var prefs = await SharedPreferences.getInstance();
+
+          String OutPushNotificationStatus =
+              await prefs.getString("OutPushNotificationStatus") ?? '0';
+          var empId = prefs.getString('empid') ?? '';
+          var orgId = prefs.getString("orgid") ?? '';
+          var eName = prefs.getString('fname') ?? 'User';
+          var formatter = new intl.DateFormat('HH:mm');
+          var date= formatter.format(DateTime.now());
+          String topic = empId + 'TO' + orgId;
+          if (OutPushNotificationStatus == '1') {
+            sendPushNotification(eName + ' has marked Time Out at '+ date, '',
+                '\'' + topic + '\' in topics');
+            /*sendPushNotification(eName + ' has marked Time Out', '',
+                '\'' + topic + '\' in topics');*/
+
+            print('\'' + topic + '\' in topics');
+          }
+
+          if (FakeLocationStatus==1) {
+            if(FakeLocation==5|| FakeLocation==13 || FakeLocation==7|| FakeLocation==15){
+              String subject="Fake Location";
+              String content= eName + ' has punched Time Out from a spoofed location';
+              sendMailByAppToAdmin(subject, content);
+            }
+            if(FakeLocation==9|| FakeLocation==13 || FakeLocation==11|| FakeLocation==15) {
+              sendPushNotification(
+                  eName + ' has punched Time Out from a spoofed location', '',
+                  '(\'' + globals.globalOrgTopic +
+                      '\' in topics) && (\'admin\' in topics)');
+            }
+          }
+
+        }
+
+        if (mounted) {
+          setState(() {
+            act1 = "";
+          });
+        }
+        //var prefs = await SharedPreferences.getInstance();
+        prefs.setBool("firstAttendanceMarked", true);
+        prefs.setBool("FirstAttendance", true);
+        //prefs.setBool("companyFreshlyRegistered",false );
+
+        showInSnackBarforTimeInOut(issave['TimeInOut'],issave['EntryExitImage'],issave['checkInOutLoc'],);
+
+
+        /*  showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              content: new Text("Attendance marked successfully!"),
+            ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );*/
+        if (mounted) {
+          setState(() {
+            act1 = act;
+          });
+        }
+      } else if(issave['status']==4) {
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
+            ));
+        if (mounted) {
+          setState(() {
+            act1 = act;
+          });
+        }
+      }
+      else{      //
+
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              content: new Text("Selfie was not captured. Please change your Camera from Settings."),
+            ));
+
+
+      }
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int offlinemode = prefs.getInt("OfflineModePermission");
+      if (offlinemode == 1) {
+        print("Routing");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => OfflineHomePage()),
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        showDialog(
+            context: context,
+            // ignore: deprecated_member_use
+            child: new AlertDialog(
+              content: new Text("Internet connection not found!."),
+            ));
+      }
+    }
+
+    /*SaveImage saveImage = new SaveImage();
+    bool issave = false;
+    setState(() {
+      act1 = "";
+    });
+    issave = await saveImage.saveTimeInOut(mk);
+    ////print(issave);
+    if (issave) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyApp()),
+      );
+      setState(() {
+        act1 = act;
+      });
+    } else {
+      setState(() {
+        act1 = act;
+      });
+    }*/
+  }
+
+  showInSnackBarforTimeInOut(var val1,var val2,var val3) {
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor:const Color(0xFF0E3311).withOpacity(0.0) ,
+        builder: (builder) {
+          return Container(
+            //color:const Color(0xFF0E3311).withOpacity(0.5),
+            height:200,
+            padding: new EdgeInsets.fromLTRB(10.0, 20.0, 5.0, 16.0),
+            child: new Stack(
+              children: <Widget>[
+                new Container(
+                  child: Container(
+                    padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
+                    //constraints: new BoxConstraints.expand(),
+                    child: new Column(
+                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Container(height: 3.0),
+                        new Text("Time: "+val1, style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                        new Container(height: 6.0),
+                        Container(
+                          //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
+                          child: val3.toString().length >=170 ? new Text(val3.toString().substring(0,170),style: TextStyle(fontSize: 14,color: Colors.white),):new Text(val3.toString(),style: TextStyle(fontSize: 14,color: Colors.white),),
+
+
+                        ),
+
+
+                        /* new Container(
+                          margin: new EdgeInsets.symmetric(vertical: 8.0),
+                          height: 2.0,
+                          width: 18.0,
+                          color: new Color(0xff00c6ff)
+                      ),*/
+                        /* new Row(
+                        children: <Widget>[
+                          new Image.asset("'assets/avatar.png'", height: 12.0),
+                          new Container(width: 8.0),
+                          new Text("planet.distance",
+                            style: regularTextStyle,
+                          ),
+                          new Container(width: 24.0),
+                          new Image.asset("'assets/avatar.png'", height: 12.0),
+                          new Container(width: 8.0),
+                          new Text("planet.gravity",
+                            style: regularTextStyle,
+                          ),
+                        ],
+                      ),*/
+                      ],
+                    ),
+                  ),
+                  height: 150.0,
+                  width: 350,
+                  margin: new EdgeInsets.only(left: 46.0),
+                  decoration: new BoxDecoration(
+                    //color: Color.fromRGBO(0, 0, 0, 0.5),
+                    //color: Color.fromRGBO(199, 130, 10, 0.6),
+                    //  color: Color.fromRGBO(2, 112, 85, 0.6),
+                    // color: Colors.orangeAccent[200],
+                    //color: Colors.teal[500],
+                    color: Color.fromRGBO(255, 177, 33, 0.8),
+                    //  color: Colors.cyanAccent[100],
+                    shape: BoxShape.rectangle,
+                    borderRadius: new BorderRadius.circular(8.0),
+                    /*boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 5.0,
+                      offset: new Offset(0.0, 10.0),
+                    ),
+                  ],*/
+                  ),
+                ),
+                Container(
+                  margin: new EdgeInsets.symmetric(vertical: 13.0),
+                  alignment: FractionalOffset.centerLeft,
+                  child: Container(
+                    //   foregroundDecoration: BoxDecoration(color:Colors.yellow ),
+                      width: MediaQuery.of(context).size.height * .13,
+                      height: MediaQuery.of(context).size.height * .13,
+                      decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: new DecorationImage(
+                            fit: BoxFit.cover,
+
+                            image: facerecognition.toString()=='1'?(val2!=null?new NetworkImage(val2):AssetImage('assets/avatar.png')):MemoryImage(base64Decode(globals.PictureBase64Att)),
+                            //image: AssetImage('assets/avatar.png')
+                          ))),
+                ),
+              ],
+            ),
+          );
+        });
+
+    Future.delayed(const Duration(seconds: 3), () {
+
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false,
+      );
+    });
+
+  }
+
+
+
+  getAlreadyMarkedWidgit() {
+
+    return  AnimatedOpacity(
+      opacity: opacityLevel,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.linear,
+      child: new Container(
+        height: selected!=false?160:1,
+        width: selected!=false?350:1,
+        child: Container(
+          padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
+          //constraints: new BoxConstraints.expand(),
+          child: new Column(
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Container(height: 3.0),
+              new Text(fname, style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+              new Container(height: 8.0),
+              Row(
+                children: <Widget>[
+                  new Container(height: MediaQuery.of(context).size.height*0.14,color: Colors.white,width: 3,),
+                  Container(width: 5.0),
+                  Container(
+                    //   color: Colors.red,
+                      height:  MediaQuery.of(context).size.height*0.12,
+                      width: MediaQuery.of(context).size.height*0.30,
+                      child: Text("Attendance has been marked. Thank You!",textAlign: TextAlign.center,style: TextStyle(fontSize: 22,color: Colors.white),))
+
+                ],
+              ),
+              /* Container(
+                padding: EdgeInsets.only(right: 28,top: 5),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    RaisedButton(
+                      color: buttoncolor,
+                      elevation: 0.0,
+                      disabledElevation: 0.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Text('TIME IN',
+                          style: new TextStyle(
+                              fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
+                      onPressed: () {
+
+                      },
+                    )
+
+                  ],
+                ),
+              )*/
+            ],
+          ),
+        ),
+
+
+        margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
+        decoration: new BoxDecoration(
+          color: Colors.blue[300],
+          shape: BoxShape.rectangle,
+          boxShadow: <BoxShadow>[
+            new BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10.0,
+              offset: new Offset(0.0, 10.0),
+            ),
+          ],
+          borderRadius: new BorderRadius.circular(8.0),
         ),
       ),
     );
   }
+
+
+
+}
+
+
+class Utils {
+  static String mapStyles = '''[
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+]''';
 }

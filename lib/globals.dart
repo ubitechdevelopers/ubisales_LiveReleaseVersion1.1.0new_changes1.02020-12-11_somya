@@ -130,7 +130,7 @@ var timeoffRunning=false;
 var ShiftPlanner=0;
 String defaultShiftTimings='';
 int advancevisit=0;
-String appVersion='1.0.7';
+String appVersion='1.0.9';
 
 
 
