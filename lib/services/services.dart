@@ -2066,8 +2066,8 @@ Future<List<Attn>> getCDateAttn(listType, date) async {
   trialstatus = prefs.getString('trialstatus') ?? '';
   String orgdir = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid') ?? '';
-  print(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
-  final response = await http.get(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid');
+  print(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid&app=ubiSales');
+  final response = await http.get(globals.path + 'getCDateAttendances_new?trialstatus=$trialstatus&refno=$orgdir&date=$date&datafor=$listType&empid=$empid&app=ubiSales');
   final res = json.decode(response.body);
 // print(res);
   List responseJson;
@@ -3159,6 +3159,7 @@ Future<int> checkNet() async {
 ////////////check net/
 
 getAddressFromLati( String Latitude,String Longitude) async{
+
   try {
     ///print(_currentLocation);
     //print("${_currentLocation["latitude"]},${_currentLocation["longitude"]}");
@@ -4740,6 +4741,62 @@ List<Client> createClientList(List data) {
     list.add(cl);
   }
   return list;
+}
+
+
+//////////////////////////////////////////////////////* add client services start*////////////////////////////////////////////////////////
+
+
+class Attendance {
+  String name;
+  String profile;
+  int EmployeeId;
+
+  Attendance({this.name, this.profile, this.EmployeeId, });
+}
+
+Future<List<Attendance>> getAttendance(String date) async {
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+ // String empid = prefs.getString('empid')??"";
+
+  print(globals.path + 'getAttendance?orgid=$orgid&date=$date&app=ubiSales');
+  final response = await http.get(globals.path + 'getAttendance?orgid=$orgid&date=$date&app=ubiSales');
+  List responseJson = json.decode(response.body.toString());
+  print(response.body);
+  List<Attendance> attendanceList = createAttendance(responseJson);
+  return attendanceList;
+}
+
+List<Attendance> createAttendance(List data) {
+  List<Attendance> list = new List();
+  for (int i = 0; i < data.length; i++) {
+    String name = data[i]["name"];
+    String profile = data[i]["profile"];
+    int EmployeeId = data[i]["EmployeeId"];
+
+    Attendance cl = new Attendance(name:name, profile:profile, EmployeeId:EmployeeId, );
+    list.add(cl);
+  }
+  return list;
+}
+
+
+getGPSinformation(GpsOffTime) async{
+
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid')??"";
+
+  try{
+    Dio dio = new Dio();
+    print(globals.path+"getGPSinformation?GpsOffTime=$GpsOffTime&orgid=$orgid&empid=$empid");
+    await dio.post(globals.path+"getGPSinformation?GpsOffTime=$GpsOffTime&orgid=$orgid&empid=$empid");
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
 }
 
 

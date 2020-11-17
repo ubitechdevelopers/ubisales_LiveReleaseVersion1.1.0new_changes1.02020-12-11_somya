@@ -333,8 +333,9 @@ class _MyAppState extends State<MyApp> {
     print(await Geospatial.getBearing(LatLng(lastLati, lastLongi), LatLng(double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString()))));
 
     print('[location] - $location');
+   print(location.mock);
+   print("mock location status");
     firebaseDb.FirebaseDatabase database;
-
     var currDate=DateTime.now();
     SharedPreferences prefs = await _prefs;
     String orgname = "";
@@ -347,9 +348,6 @@ class _MyAppState extends State<MyApp> {
 
     database = new firebaseDb.FirebaseDatabase();
     database.setPersistenceEnabled(true);
-
-
-
 
     //if(location.coords.accuracy<10)
     //database.setPersistenceCacheSizeBytes(10000);
@@ -370,6 +368,7 @@ class _MyAppState extends State<MyApp> {
         "speed": location.coords.speed.toString(),
         "longitude": location.coords.longitude.toString(),
         "accuracy": location.coords.accuracy.toString(),
+        "mock": location.mock==true?"true":"false",
 
 
       }).then((_) {
@@ -452,16 +451,51 @@ class _MyAppState extends State<MyApp> {
     ));
   }
 
-  void _onProviderChange(bg.ProviderChangeEvent event) {
-    print('$event');
+  void _onProviderChange(bg.ProviderChangeEvent event) async {   //when gps is on/off
+    var prefs = await SharedPreferences.getInstance();
+    var date = DateTime.now().toString();
+    var GpsOffTime;
+
+    if(event.gps == false){
+      prefs.setString("GpsOffTime", date);
+      serverConnected= await checkConnectionToServer();
+      GpsOffTime = prefs.getString('GpsOffTime') ?? '';
+      //if(isAlreadyLoggedIn==1)
+      if(serverConnected==1){
+
+        getGPSinformation(GpsOffTime);
+
+        //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
+
+      }
+    }
+   /* serverConnected= await checkConnectionToServer();
+    //if(isAlreadyLoggedIn==1)
+    if(serverConnected==1){
+
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
+
+    }*/
+
     if(mounted)
       setState(() {
         _content = encoder.convert(event.toMap());
       });
   }
 
-  void _onConnectivityChange(bg.ConnectivityChangeEvent event) {
+
+
+  void _onConnectivityChange(bg.ConnectivityChangeEvent event) async {  //when internet is on/off
     print('$event');
+    var prefs = await SharedPreferences.getInstance();
+    var date = DateTime.now().toString();
+    print(event.connected);
+    if(event.connected == false){
+      prefs.setString("InternetOffTime", date);
+    }
+    print("connectivity change");
   }
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();

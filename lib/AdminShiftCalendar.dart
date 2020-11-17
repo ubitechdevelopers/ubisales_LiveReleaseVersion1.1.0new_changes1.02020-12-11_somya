@@ -1545,7 +1545,7 @@ class _MyHomePageState extends State<MyHomePage1> {
             SizedBox(height: 5.0,),
 
             Container(
-              height: 75,
+              height: MediaQuery.of(context).size.height * .13,           //height isssue resolved
               child: Row(
                 children: <Widget>[
                   /* SizedBox(
@@ -2802,8 +2802,7 @@ class _MyHomePageState extends State<MyHomePage1> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               new Container(
-                                height:  MediaQuery.of(context).size.height*0.09,
-
+                                height:  MediaQuery.of(context).size.height*0.1,           //height issue resolved
                                 decoration: BoxDecoration(
                                     border:  _selectedIndex != null && _selectedIndex == index? Border.all(
                                       width: 2, //                   <--- border width here

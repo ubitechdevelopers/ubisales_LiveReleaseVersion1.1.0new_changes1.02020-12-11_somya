@@ -493,7 +493,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     initPlatformState();
     //setLocationAddress();
     // startTimer();
-    platform.setMethodCallHandler(_handleMethod);
+    platform.setMethodCallHandler(_handleMethod);  //add
   }
 
   _getPositions() async {

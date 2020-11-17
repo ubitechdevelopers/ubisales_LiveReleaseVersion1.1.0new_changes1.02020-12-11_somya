@@ -269,7 +269,6 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                   itemBuilder: (BuildContext context, int index) {
                                     return Stack(
                                       children: <Widget>[
-
                                         new Column(
                                             children: <Widget>[
                                               Row(

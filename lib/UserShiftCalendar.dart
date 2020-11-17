@@ -17,7 +17,6 @@ import 'drawer.dart';
 import 'globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:math' as math;
-
 import 'globals.dart';
 
 

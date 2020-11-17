@@ -62,6 +62,8 @@ class Locations {
   String speed;
   String uuid;
   String time;
+  String mock;
+
 
 
 
@@ -80,6 +82,7 @@ class Locations {
       this.odometer = snapshot.value["odometer"] ?? 'Unknown user';
       this.speed = snapshot.value["speed"] ?? 'Unknown user';
       this.uuid = snapshot.value["uuid"] ?? 'Unknown user';
+      this.mock = snapshot.value["mock"] ?? 'false';
       this.time = snapshot.key ?? '00:00:00';
 
     }catch(e){
@@ -108,7 +111,7 @@ class Locations {
     this.odometer = snapshot["odometer"] ?? 'Unknown user';
     this.speed = snapshot["speed"] ?? 'Unknown user';
     this.uuid = snapshot["uuid"] ?? 'Unknown user';
-
+    this.mock = snapshot.value["mock"] ?? 'false';
   }
 
 }
@@ -1191,6 +1194,7 @@ print("marker added............");
     List TimeInOutLocations = new List();
     final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
     final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
 
     updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empId).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data)  {
       // locationList.insert(0, Locations.fromFireBase(data.snapshot));
@@ -1199,10 +1203,34 @@ print("marker added............");
       var currentLoc=  Locations.fromFireBase(data.snapshot);
 
 
+//      var mockLocation = currentLoc.mock;
+//      print(mockLocation);
+
+      if(currentLoc.mock == "true"){  //if user uses mock locations
+        int ID = 1;
+        ID++;
+        var m1=Marker(
+          markerId: MarkerId('fakeLocation$ID'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+          icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+          infoWindow: InfoWindow(
+            title: "Fake location found: ",
+              snippet: "         "+data.snapshot.key
+           // anchor: Offset(0.1, 0.1)
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m1);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+      }
+
       TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
-      print(TimeInOutLocations);
-      print("TimeInOutLocations");
-      print(TimeInOutLocations.length);
+
       var firstLocation = TimeInOutLocations[0];                //timeIn location
       if(TimeInOutLocations.length>1){
         lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
@@ -1542,6 +1570,8 @@ print("marker added............");
     List TimeInOutLocations = new List();
     final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 100);
     final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 100);
+    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+
 
 
     updates =  FirebaseDatabase.instance
@@ -1944,6 +1974,8 @@ print("marker added............");
     List TimeInOutLocations = new List();
     final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
     final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+
     List latitude = new List();
     List longitude = new List();
 
@@ -1971,6 +2003,32 @@ print("marker added............");
       var firstLocation = TimeInOutLocations[0];                //timeIn location
       if(TimeInOutLocations.length>1) {
         lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+        if(currentLoc.mock == "true"){  //if user uses mock locations
+          int ID = 1;
+          ID++;
+
+          print("inside mock location");
+
+          var m1=Marker(
+            markerId: MarkerId('fakeLocation$ID'),
+            position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+            // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+            icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+            infoWindow: InfoWindow(
+              title: "Fake location found: ",
+              snippet: "         "+data.snapshot.key
+            ),
+          );
+          Future.delayed(Duration(seconds: 1),(){
+            setState(() {
+              _markers.add(m1);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+            });
+          });
+
+        }
 
         if (showTracks == true && showPolylines == true) {
 

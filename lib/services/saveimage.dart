@@ -749,6 +749,7 @@ class SaveImage {
           var map = response[i];
 
           map.forEach((localDbId, status) {
+
             TempImage imagedata = new TempImage.empty();
             if(!status && alertstatus )
             {
@@ -2776,3 +2777,6 @@ class SaveImage {
   }
   /////End SAve flexi time in out//////
 }
+
+
+

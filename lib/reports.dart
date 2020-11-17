@@ -1,3 +1,4 @@
+import 'package:Shrine/UserShiftCalendar.dart';
 import 'package:Shrine/myleave.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/suspicious_selfies.dart';
@@ -256,6 +257,48 @@ class _Reports extends State<Reports> {
               },
             ):Center(),
             */
+
+            admin_sts =='1' ? SizedBox(height: 0.0):Center(),
+            (admin_sts =='1' || admin_sts =='2') ? new RaisedButton(
+              child: Container(
+                padding: EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(const IconData(0xe81c, fontFamily: "CustomIcon"),size: 30.0,),
+                    SizedBox(width: 20.0,),
+                    Expanded(
+//                            widthFactor: MediaQuery.of(context).size.width*0.10,
+                      child:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              child: Text('My Attendance Log',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 18.0,letterSpacing: 1),)
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Container(
+                                child: Text('Get Attendance Log ',style: TextStyle(fontSize: 12.0,letterSpacing: 1),)
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_right,size: 30.0,),
+                  ],
+                ),
+              ),
+              color: Colors.white,
+              elevation: 0.0,
+              splashColor: splashcolor,
+              textColor: textcolor,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => userShiftCalendar()),
+                  );
+              },
+            ):Center(),
 
             admin_sts =='1' ? SizedBox(height: 0.0):Center(),
             admin_sts =='1' ? new RaisedButton(

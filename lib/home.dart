@@ -104,6 +104,7 @@ class Locations {
   String speed;
   String uuid;
   String time;
+  String mock;
   Locations.fromFireBase1(Map<String,dynamic> map) {
     var snapshot;
     var key;
@@ -124,7 +125,7 @@ class Locations {
     this.odometer = snapshot["odometer"] ?? 'Unknown user';
     this.speed = snapshot["speed"] ?? 'Unknown user';
     this.uuid = snapshot["uuid"] ?? 'Unknown user';
-
+    this.mock = snapshot["mock"] ?? 'false';
   }
 
   Locations.fromFireBase(DataSnapshot snapshot) {
@@ -140,6 +141,7 @@ class Locations {
     this.odometer = snapshot.value["odometer"] ?? 'Unknown user';
     this.speed = snapshot.value["speed"] ?? 'Unknown user';
     this.uuid = snapshot.value["uuid"] ?? 'Unknown user';
+    this.mock = snapshot.value["mock"] ?? 'false';
     this.time = snapshot.key ?? '00:00:00';
 
   }
@@ -148,6 +150,8 @@ class Locations {
 
 class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   Completer<GoogleMapController> _controller = Completer();
+  static const platform = const MethodChannel('location.spoofing.check');
+
   // this set will hold my markers
   Set<Marker> _markers = {};
   Set<Marker> _markers1 = {};
@@ -216,6 +220,9 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   bool Tap = false;
   var profileImage;
   var count1=0;
+  String kms="0.0";
+  var recentEmployeeId;
+  List<Attendance> attList = [];
 
 
 
@@ -302,37 +309,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   var occurences=0;
   bool fabOpen = false;
   var childExist = false;
-
-
-  /* bool companyFreshlyRegistered = false;
-  bool FiveStarRating=false;
-  bool RateusDialogShown=false;
-  bool FirstAttendance=false;
-  bool FeedbackDialogShown=false;
-  var Rating;
-  var currDate = DateTime.now();
-  String datetoShowFeedbackDialog='';
-  String dateShowedFeedbackDialog='';
-  String datetoShowRatingDialog='';
-  String dateShowedRatingDialog='';
-  bool glow = true;
-  bool attendanceNotMarkedButEmpAdded = false;
-  String empid = "",
-      email = "",
-      status = "",
-      orgid = "",
-      orgdir = "",
-      sstatus = "",
-      org_name = "",
-      desination = "",
-      desinationId = "";
-  String createdDate = "";
-  String dateShowed = "";
-  String dateShowedCovidSurvey='';
-  String datetoShowCovidSurvey='';
-  int response;
-  String buysts = '0';*/
-  // var _scaffoldKey;
+  TextEditingController today;
+  int _selectedIndex = null;
 
   @override
   void initState() {
@@ -343,6 +321,10 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     initPlatformState();
     getOrgName();
     _getLocation();
+    today = new TextEditingController();
+    today.text = formatter.format(DateTime.now());
+    platform.setMethodCallHandler(_handleMethod);  //add
+
 
     //opacityLevel=2.0;
   }
@@ -554,6 +536,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   }
 
   syncOfflineData() async {
+
     int serverAvailable = await checkConnectionToServer();
     if (serverAvailable == 1) {
 
@@ -1066,7 +1049,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
     ///////////////////////////////////////////////////merging work /////////////////////////////////////////////////////////
 
-  //  print("adsadadadsadadadadsadsadadsadad");
+    //  print("adsadadadsadadadadsadsadadsadad");
     //_controller1 = new TabController(length: 2, vsync: this);
 
     var orgId=prefs.get("orgid");
@@ -1090,7 +1073,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print(initials);
       print("initials ");
     }else{
-      First=fullName;
+      First=fullName.substring(0,1);
       print('print(First)else');
       print(First);
       initials =  First;
@@ -1113,228 +1096,242 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     print(profileLoaded);
     print(initials);
     print("initials platformstate");
+    String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
 
 
 
     final GoogleMapController controller = await _controller.future;
 
-    if(admin_sts == '1' || admin_sts == '2') {
-      updates = await FirebaseDatabase.instance
-          .reference()
-          .child("Locations")
-          .child(orgId)
-          .onChildAdded
-          .listen((data) async {
-        // locationList.insert(0, Locations.fromFireBase(data.snapshot));
-        var date = DateTime.now().toString().split(".")[0].split(" ")[0];
-        var empId = data.snapshot.key.toString();
+   /* if(admin_sts == '1' || admin_sts == '2') {
 
-        setLoader = true;
-        if (data.snapshot.value[date] != null) {
-          var timesMap = new Map<String, dynamic>.from(data.snapshot.value[date]);
-          List<Map<String, dynamic>> locationList = List();
-          timesMap.forEach((k, v) => locationList.add({k: v}));
+      var p=97;
+      var ii=0;
+      var lastCurrentLocation;
+      int markerPoint = 0;
+      List TimeInOutLocations = new List();
+      final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+      final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+      final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+      int ID = 1;
+      setLoader = false;
 
-          locationList.sort((a, b) {
-            return DateTime.parse(date + " " + a.keys.first).compareTo(
-                DateTime.parse(date + " " + b.keys.first));
-          });
+      getAttendance(todayDate).then((res) async {
+        attList = res;
 
+        for(int i = 0; i<attList.length;i++ ) {
 
-          print("adsadadadsadadadadsadsadadsadad>>>>>>>>>>>>>" +
-              locationList.length.toString()
-              +
-              locationList.toString() + ">>>" +
-              locationList[locationList.length - 1].toString());
-//var lastLocation=timesList[timesList.length - 1];
-          var currentLoc = Locations.fromFireBase1(
-              locationList[locationList.length - 1]);
-
-          setState(() {
-
-            childExist = true;
-            // create a Polyline instance
-            // with an id, an RGB color and the list of LatLng pairs
-            controller.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                bearing: 0,
-                target: LatLng(double.parse(currentLoc.latitude),
-                    double.parse(currentLoc.longitude)),
-                zoom: 17.0,
-              ),
-            ));
-            /*
-        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
-        _polylines.add(Polyline(
-          polylineId: PolylineId("1"),
-          visible: true,
-          //latlng is List<LatLng>
-
-          points: latlng,
-          color: Colors.blue,
-        ));*/
-          });
-
-          var res = await Dio().post(globals.path + "getProfile?uid=" + empId);
-          Map employeeMap = await json.decode(res.data);
-
-          //print("https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName'].toString());
-
-          print(globals.path + "getProfile?uid=" + empId);
-
-          /* List values = locationList[locationList.length - 1].values.toList();
-        StoreLocation.addAll({empId:[values[0]['latitude'],values[0]['longitude'],locationList[locationList.length - 1].keys, employeeMap["info"][0]['FirstName']+" "+employeeMap["info"][0]['LastName'], "https://ubitech.ubihrm.com/public/uploads/"+orgId+"/"+employeeMap["info"][0]['ImageName']]});
-         print(StoreLocation);
-           print("storelocation123");
-
-        for(int i = 0; i<StoreLocation.length; i++) {
-
-          for(int j = i+1 ; j<StoreLocation.length;j++) {
-
-            var initialLati = StoreLocation.values.elementAt(i)[0];   //comparing latitiude
-            var initialLongi = StoreLocation.values.elementAt(i)[1];   //comparing longitude
-
-            var lati = StoreLocation.values.elementAt(j)[0];
-            var longi = StoreLocation.values.elementAt(j)[1];
-
-            getradius(double.parse(initialLati),double.parse(initialLongi),double.parse(lati),double.parse(longi));
-          }
-        }*/
-          var j = 0;
-
-          var address = await getAddressFromLati_offline(
-              double.parse(currentLoc.latitude),
-              double.parse(currentLoc.longitude));
-
-          List values = locationList[locationList.length - 1].values.toList();
-          print(values);
-
-          //  Name.add(employeeMap["info"][0]['FirstName'].toString()+" "+employeeMap["info"][0]['LastName'].toString());
-
-          Name.add([
-            "(" + empId + ") " +
-                employeeMap["info"][0]['FirstName'].toString() + " " +
-                employeeMap["info"][0]['LastName'].toString(),
-            "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
-                employeeMap["info"][0]['ImageName'],
-            empId
-          ]);
-          NameList.add(("(" + empId + ") " +
-              employeeMap["info"][0]['FirstName'].toString() + " " +
-              employeeMap["info"][0]['LastName'].toString()));
+          Name.add([attList[i].EmployeeId.toString()]);
+          print("names are");
           print(Name);
+          NameList.add(("(" + attList[i].EmployeeId.toString() + ") "+attList[i].name.toString()));
           print(NameList);
-          print("--------------------------------------------123");
-          StoreLocation.addAll({
-            empId: [
-              values[0]['latitude'],
-              values[0]['longitude'],
-              locationList[locationList.length - 1].keys,
-              employeeMap["info"][0]['FirstName'] + " " +
-                  employeeMap["info"][0]['LastName'],
-              "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
-                  employeeMap["info"][0]['ImageName'],
-              address
-            ]
-          });
-          print(StoreLocation.length);
-          print(StoreLocation);
-          print(StoreLocation.values.elementAt(StoreLocation.length - 1));
-          var LastValue = StoreLocation.values.elementAt(
-              StoreLocation.length - 1);
-          var LastLatitude = LastValue[0];
-          var LastLongitude = LastValue[1];
-          print(currentLoc.latitude);
-          print(currentLoc.longitude);
-          print("hklhlhlkhlkhkl");
-          var latestLati = currentLoc.latitude;
-          var latestLongi = currentLoc.longitude;
-          print(LastValue[3]);
-          print(LastLatitude + LastLongitude);
-          print("storelocation123");
-          count1 = 0;
+          print("gvjkgkghkj");
 
-          StoreLocation.forEach((k, v) {
-            double LAT1 = double.parse(LastLatitude);
-            print(LAT1);
-            double LONG1 = double.parse(LastLongitude);
-            print(LONG1);
-            double LAT2 = double.parse(v[0]);
-            double LONG2 = double.parse(v[1]);
-            print(LAT2);
-            print(LONG2);
-            print("latiiiii");
+        }
 
 
-            double distance = 2 * 6371000 *
-                Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) -
-                    LAT1 * (3.14159 / 180)) / 2)), 2) +
-                    Math.cos(LAT2 * (3.14159 / 180)) *
-                        Math.cos(LAT1 * (3.14159 / 180)) *
-                        Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 *
-                            (3.14159 / 180)) / 2), 2))));
-            print(distance);
-            print("distance is");
+        updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(attList[0].EmployeeId.toString()).child(todayDate).onChildAdded
+            .listen((data) async {
 
-            if (distance <
-                10) { //if they are less then at a distance of 10 meters
-              count1++;
-              print(count1);
-              print("count is");
-            }
-          });
+              var currentLoc=  Locations.fromFireBase(data.snapshot);
 
+              if(currentLoc.mock == "true") {  //if user uses mock locations
 
-          var m = Marker(
-            markerId: MarkerId('sourcePin$j'),
-            position: LatLng(double.parse(currentLoc.latitude),
-                double.parse(currentLoc.longitude)),
-            icon: await getMarkerIcon(
-                "https://ubitech.ubihrm.com/public/uploads/" + orgId + "/" +
-                    employeeMap["info"][0]['ImageName'], Size(150.0, 150.0),
-                j + 1, count1),
+            ID++;
+            var m1=Marker(
+              markerId: MarkerId('fakeLocation$ID'),
+              position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(fakeLocation),
 
-            onTap: () {
-              getPopup(double.parse(LastLatitude), double.parse(LastLongitude));
-
-              var moving = currentLoc.is_moving == "false" ? "Still" : "Moving";
+              infoWindow: InfoWindow(
+                  title: "Fake location found: ",
+                  snippet: "         "+data.snapshot.key
+                // anchor: Offset(0.1, 0.1)
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),() {
               setState(() {
-                currentlySelectedPin = PinInformation(
-                    pinPath: 'assets/friend1.jpg',
-                    avatarPath: "https://ubitech.ubihrm.com/public/uploads/" +
-                        orgId + "/" + employeeMap["info"][0]['ImageName'],
-                    location: LatLng(0, 0),
-                    client: employeeMap["info"][0]['FirstName'] + " " +
-                        employeeMap["info"][0]['LastName'],
-                    description: 'At: ' + address,
-                    in_time: currentLoc.time.toString() + " (" + moving + ")",
-                    out_time: '-',
-                    labelColor: Colors.grey);
-                pinPillPosition = 50;
+                _markers.add(m1);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
               });
-            },
+            });
+          }
 
-            /* infoWindow: InfoWindow(
-              title: "Current known location at:",
-              snippet:address.toString()
-          ),*/
+          TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
 
+          var firstLocation = TimeInOutLocations[0];
+          //timeIn location
+          if(TimeInOutLocations.length>1){
+            lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+            var m1=Marker(
+              markerId: MarkerId('sourcePinCurrentLocationIcon'),
+              position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Last known location: "+data.snapshot.key,
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers.add(m1);
+                setLoader = true;
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+          var m=Marker(
+            markerId: MarkerId('sourcePinTimeInIcon'),
+            position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+            icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+            // icon:pinLocationIcon,
+            infoWindow: InfoWindow(
+              title: "Start Time: "+firstLocation[2],
+            ),
           );
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(Duration(seconds: 1),(){
             setState(() {
               _markers.add(m);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
             });
           });
-          j++;
-        }
+
+
+
+
+          //  setState(() {
+          // create a Polyline instance
+          // with an id, an RGB color and the list of LatLng pairs
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              zoom: 13.0,
+            ),
+          ));
+
+          end= double.parse(currentLoc.odometer);
+          print(latlng.toString());
+
+          // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+          if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+            start=end;
+            p++;
+            //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+            //add position number marker
+            // Future.delayed(Duration(seconds: 2),(){
+            markerPoint++;
+
+            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+            setState(() {
+
+              if(ii==0) {
+                startM=double.parse(currentLoc.odometer);
+                print("current loc odo"+startM.toString());
+              }
+
+              endM=double.parse(currentLoc.odometer);
+              print("end loc odo"+startM.toString());
+
+              kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+              print("sgksshhskhs   "+kms);
+              // if(endM-startM<0)
+              //  kms='0.0';
+            });
+            //});
+
+            ii++;
+            *//* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*//*
+          }
+
+          print(currentLoc.accuracy);
+          print("currentLoc.accuracy");
+
+
+
+          setState(() {
+            // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+            //   {
+            latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+            //  print(latlng);
+            // print("latlong iss");
+            _polylines.add(Polyline(
+              polylineId: PolylineId('1'),
+              visible: true,
+              width: 3,
+              patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+              //latlng is List<LatLng>
+              points: latlng,
+              color: Colors.blue,
+            ));
+            // }
+          });
+
+        });
+
+        var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+        var visits =  await  getVisitsDataList(date.toString(),attList[0].EmployeeId.toString());
+        print("aaa");
+        var generatedIcon;
+        List<BitmapDescriptor> generatedIcons=new List<BitmapDescriptor>();
+        var j=visits.length;
+        print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"+j.toString());
+        if(j>0)
+          await Future.forEach(visits, (Punch visit) async {
+
+            print("marker added............");
+            var m=Marker(
+              markerId: MarkerId('sourcePin$j'),
+              position: LatLng(double.parse(visit.pi_latit),double.parse(visit.pi_longi)),
+              icon: await getMarkerIconNew("https://i.dlpng.com/static/png/6865249_preview.png", Size(140.0, 140.0),j),
+              onTap: () {
+                setState(() {
+                  currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: visit.pi_img, location: LatLng(0, 0), client: visit.client,description: visit.desc,in_time: visit.pi_time,out_time: visit.po_time, labelColor: Colors.grey);
+                  pinPillPosition = 100;
+                });
+                print(visit.po_time);
+
+              },
+
+              infoWindow: InfoWindow(
+                  title: visit.client,
+                  snippet:visit.desc
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers.add(m);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+
+            j--;
+          });
       });
     }
 
-    print(childExist);
-    print("childexit before");
-
-
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 3), () async {
 
       if(childExist == false){
         _markers1.clear();
@@ -1343,13 +1340,188 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
 
         print("inside childExist");
-        print(childExist);
+        setLoader = false;
 
-        controller.animateCamera(CameraUpdate.newCameraPosition(
+        _markers.clear();
+        latlng.clear();
+        _polylines.clear();
+        print(childExist);
+        var p=97;
+        var ii=0;
+        var lastCurrentLocation;
+        int markerPoint = 0;
+        List TimeInOutLocations = new List();
+        final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+        final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+        final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+        int ID = 1;
+        setLoader = false;
+        updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgId).child(empid).child(todayDate).onChildAdded
+            .listen((data) async {
+
+          var currentLoc=  Locations.fromFireBase(data.snapshot);
+
+          if(currentLoc.mock == "true") {  //if user uses mock locations
+
+            ID++;
+            var m1=Marker(
+              markerId: MarkerId('userLocation$ID'),
+              position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+              infoWindow: InfoWindow(
+                  title: "Fake location found: ",
+                  snippet: "         "+data.snapshot.key
+                // anchor: Offset(0.1, 0.1)
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),() {
+              setState(() {
+                _markers1.add(m1);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+
+          TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
+
+          var firstLocation = TimeInOutLocations[0];
+          //timeIn location
+          if(TimeInOutLocations.length>1){
+            lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+            var m1=Marker(
+              markerId: MarkerId('sourcePinCurrentLocationIconUserLocation'),
+              position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Your last known location: "+data.snapshot.key,
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers1.add(m1);
+                setLoader = true;
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+          var m=Marker(
+            markerId: MarkerId('sourcePinTimeInIconUserLocation'),
+            position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+            icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+            // icon:pinLocationIcon,
+            infoWindow: InfoWindow(
+              title: "Your start Time: "+firstLocation[2],
+            ),
+          );
+          Future.delayed(Duration(seconds: 1),(){
+            setState(() {
+              _markers1.add(m);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+            });
+          });
+
+
+
+
+          //  setState(() {
+          // create a Polyline instance
+          // with an id, an RGB color and the list of LatLng pairs
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              zoom: 13.0,
+            ),
+          ));
+
+          end= double.parse(currentLoc.odometer);
+          print(latlng.toString());
+
+          // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+          if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+            start=end;
+            p++;
+            //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+            //add position number marker
+            // Future.delayed(Duration(seconds: 2),(){
+            markerPoint++;
+
+            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+            setState(() {
+
+              if(ii==0) {
+                startM=double.parse(currentLoc.odometer);
+                print("current loc odo"+startM.toString());
+              }
+
+              endM=double.parse(currentLoc.odometer);
+              print("end loc odo"+startM.toString());
+
+              kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+              print("sgksshhskhs   "+kms);
+              // if(endM-startM<0)
+              //  kms='0.0';
+            });
+            //});
+
+            ii++;
+            *//* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*//*
+          }
+
+          print(currentLoc.accuracy);
+          print("currentLoc.accuracy");
+
+
+
+          setState(() {
+            // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+            //   {
+            latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+            //  print(latlng);
+            // print("latlong iss");
+            _polylines.add(Polyline(
+              polylineId: PolylineId(currentLoc.latitude),
+              visible: true,
+              width: 3,
+              patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+              //latlng is List<LatLng>
+              points: latlng,
+              color: Colors.blue,
+            ));
+            // }
+          });
+
+        });
+
+
+      *//*  controller.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
             bearing: 0,
             target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
-            zoom: 19.0,
+            zoom: 13.0,
           ),
         ));
 
@@ -1358,22 +1530,22 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             position: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
             icon: BitmapDescriptor.defaultMarker,
             infoWindow: InfoWindow(
-            title: "You are here",
-          //  snippet:globals.assign_lat.toString()+","+globals.assign_long.toString()
-        )
+              title: "You are here",
+              //  snippet:globals.assign_lat.toString()+","+globals.assign_long.toString()
+            )
 
         );
 
-      Future.delayed(Duration(seconds: 1),(){
-      setState(() {
-      _markers1.add(m1);
-      });
-      });
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers1.add(m1);
+          });
+        });*//*
 
       }
 
 
-    });
+    });*/
     setSourceAndDestinationIcons();
 
   }
@@ -1816,36 +1988,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         child: new AlertDialog(
           content: new Text('Your Time Out was not punched Yesterday. Kindly contact Admin to regularize Attendance'),
           actions: <Widget>[
-            /*
-            RaisedButton(
-              child: Text(
-                ' Yes ',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.amber,
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).pop();
-              },
-            ),
-            FlatButton(
-              child: Text(' No '),
-              shape: Border.all(),
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                Home ho = new Home();
-                print("Test");
-                await ho.updateTimeOut(empid, orgdir);
-                act = await ho.checkTimeIn(empid, orgdir,context);
-                print("Action from check time in1");
-                if (timeoutdate == 'nextdate' && act == 'TimeOut')
-                  dialogwidget(context);
-                ho.managePermission(empid, orgdir, desinationId);
 
-                setState(() {
-                  act1 = act;
-                });
-              },
-            ), */
           ],
 
         ));
@@ -2365,96 +2508,13 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         globals.assign_lat == null ||
         !locationThreadUpdatedLocation) {
       cameraChannel.invokeMethod("openLocationDialog");
-      /*
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return WillPopScope(
-                onWillPop: () {},
-                child: new AlertDialog(
-            title: new Text(""),
-            content: new Text("Sorry we can't continue without GPS"),
-            actions: <Widget>[
-              RaisedButton(
-                child: new Text(
-                  "Turn On",
-                  style: new TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                color: Colors.orangeAccent,
-                onPressed: () async{
-                  cameraChannel.invokeMethod("openLocationDialog");
-                  //openLocationSetting();
-                },
-              ),
-              RaisedButton(
-                child: new Text(
-                  "Done",
-                  style: new TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                color: Colors.orangeAccent,
-                onPressed: () {
-                  cameraChannel.invokeMethod("startAssistant");
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                 /*
-                  Navigator.of(context, rootNavigator: true)
-                      .pop();
-*/
-                },
-              ),
-            ],
-          ));});
 
-       */
     }
     print("addon enabled"+(persistedface=='0'&& facerecognition.toString()=='1').toString());
     if(persistedface.toString()=='0'&& facerecognition.toString()=='1'){
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FaceIdScreen()), (Route<dynamic> route) => false,);
     }
   }
-
-  /* getCurrentMarker( Map StoreLocation){
-    print(StoreLocation);
-    print( StoreLocation.length);
-    print( "lgjkgjkgkjgik");
-  var index = StoreLocation.length;
-
-     var lastValue = StoreLocation.values.elementAt(StoreLocation.length);
-     print(lastValue);
-     print("last valur issss");
-
-
-
-
-  *//*  StoreLocation.forEach((k, v) {
-     // double LAT1 = lat;
-    //  double LONG1 = long;
-      double LAT2 = double.parse(v[0]);
-      double LONG2 = double.parse(v[1]);
-
-
-  //    double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
-      print(distance);
-      print("distance is");
-      if(distance<10) {
-        //if they are less then at a distance of 10 meters
-     //   count++;
-      //  print(count);
-        print("count is");
-      }
-
-      // }
-    });*//*
-
-  }*/
-
 
 
   void _add(lat, long, image1, name) async {
@@ -2533,7 +2593,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       CameraPosition(
         bearing: 0,
         target: LatLng(lat	,long),
-        zoom: 15.0,
+        zoom: 13.0,
       ),
     ));
 
@@ -2757,52 +2817,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     });
   }
 
-
-  //newDataList = List.from(Name);
-
-  /* onItemChanged(String value) {
-
- // newDataList = List.from(Name);      //search bar
-  print(newDataList);
-  print(Name);
-  print("ghjgcnewDataList");
-  setState(() {
-      newDataList = NameList.where((string) => string.toLowerCase().contains(value.toLowerCase())).toList();
-      print(newDataList);
-      print("newDataListghgfhf");
-  });
-  for(int i = 0; i<Name.length; i++) {
-    if(newDataList.contains(Name[i][0])) {
-      newDataList1 = Name[i];
-    }
-  }
-  print(newDataList1);
-  print("newDguoiuyoiyoataList1");
-  }*/
-
-
-
-  static List<String> mainDataList = [
-    "Apple",
-    "Apricot",
-    "Banana",
-    "Blackberry",
-    "Coconut",
-    "Date",
-    "Fig",
-    "Gooseberry",
-    "Grapes",
-    "Lemon",
-    "Litchi",
-    "Mango",
-    "Orange",
-    "Papaya",
-    "Peach",
-    "Pineapple",
-    "Pomegranate",
-    "Starfruit"
-  ];
-
   // Copy Main List into New List.
   List<dynamic> newDataList = List.from(Name);
 
@@ -2818,22 +2832,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print("matched names list");
 
     });
-
-/*    for(int i = 0; i<Name.length; i++) {
-      print(Name[i][0]);
-      print("name in main list");
-
-      if(newDataList.contains(Name[i][0])) {
-        print("inside if");
-        newDataList1.add(Name[i]);
-        searchedName.add(Name[i][0]);
-        print(searchedName);
-        print(newDataList1);
-        print("list is is");
-      }
-    }*/
-    /*newDataList1.clear();
-    searchedName.clear();*/
 
   }
 
@@ -2870,12 +2868,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                       'assets/logo.png', height: 40.0, width: 40.0),*/
             ],
           ),
-          /*
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              }),*/
+
           backgroundColor: appcolor,
           automaticallyImplyLeading: false,
 
@@ -2884,334 +2877,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         endDrawer: new AppDrawer(),
         body: (act1 == '') ? Center(child: loader()) : checkalreadylogin(),
 
-        /*new ListView(
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            new Container(
-              height: MediaQuery.of(context).size.height*0.90,
-              child:Stack(
-                children: <Widget>[
-
-                  GoogleMap(
-                    myLocationEnabled: false,
-                    compassEnabled: true,
-                    tiltGesturesEnabled: false,
-                    markers: _markers,
-                    polylines: _polylines,
-                    mapType: MapType.normal,
-                    initialCameraPosition: initialLocation,
-                    onMapCreated: onMapCreated,
-                    mapToolbarEnabled:true,
-                    zoomControlsEnabled: false,  // hide zoom button
-                    onTap: (LatLng location) {
-                      setState(() {
-                        pinPillPosition = -470;
-                      });
-                    },
-                  ),
-                 *//* MapPinPillComponent(
-                      pinPillPosition: pinPillPosition,
-                      currentlySelectedPin: currentlySelectedPin
-                  ),*//*
-
-                  AnimatedOpacity(
-                    opacity: opacityLevel1,
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.linear,
-                    child: Container(
-                      child: Padding(
-                        padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Card(
-                                elevation: 2.0,
-                                child:TextField(
-                                  controller: _textController,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    prefixIcon: Icon(Icons.search),
-                                    hintText: 'Search',
-                                    focusColor: Colors.white,
-                                  ),
-                                  onChanged: onItemChanged,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: _textController.text!=""?ListView(
-                                padding: EdgeInsets.only(top: 5),
-                                children: newDataList.map((data) {
-                                  return ListTile(
-                                      title: Text(data),
-                                      onTap: () {
-
-                                        String result = data.substring(1, data.indexOf(')'));
-
-                                        for (var keys in StoreLocation.keys) {
-                                          if(result==keys.toString()){
-                                            List searchedLocation = StoreLocation[result];
-                                            print(searchedLocation);
-                                            print("searchedLocation");
-                                            _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
-                                            //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
-                                            // newDataList.clear();
-                                          }
-                                        }
-                                        print(data);
-                                        newDataList.clear();
-                                        print(newDataList);
-                                        print("sadsadnewDataList");
-                                      //  _changeOpacity1();
-                                        _textController.clear();
-                                        opacityLevel1=0.0;
-
-                                      });
-                                }).toList(),
-                              ):Container(),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),*//* Container(
-                      padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
-                      child: SearchMapPlaceWidget(
-                        apiKey: googleAPIKey,
-                        placeholder: "Search",
-                        location: LatLng(currlat , currlong),
-                        icon:null,
-                        radius: 30000,
-                        onSelected: (place) async {
-                          final geolocation = await place.geolocation;
-                          final GoogleMapController controller = await controller2.future;
-                          controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-                          controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-                        },
-                      ),
-                    ),*//*
-                  ),
-
-                  (act1 == '') ? loader() : getMarkAttendanceWidgit(),
-
-
-                  *//*AnimatedOpacity(
-                    opacity: opacityLevel,
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.linear,
-                    child: new Container(
-                      //margin: new EdgeInsets.symmetric(vertical: 55.0),
-                      height: selected!=false?160:1,
-                     // height: 160,
-                    //  width: 350,
-                      width: selected!=false?350:1,
-                      child: Container(
-                        padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
-                        //constraints: new BoxConstraints.expand(),
-                        child: new Column(
-                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Container(height: 3.0),
-                            new Text("Somya Goyal", style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                            new Container(height: 6.0),
-                            Container(
-                              child: new Text("City Center, Gwalior, Madhya Pradesh, India",
-                                style: TextStyle(fontSize: 16,color: Colors.white),),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(right: 28,top: 5),
-                              child: new Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  RaisedButton(
-                                    color: buttoncolor,
-                                    elevation: 0.0,
-                                    disabledElevation: 0.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Text('TIME IN',
-                                        style: new TextStyle(
-                                            fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
-                                    onPressed: () {
-
-                                      },
-                                  )
-
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-
-
-                      margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
-                      decoration: new BoxDecoration(
-                        color: Colors.blue[300],
-                        shape: BoxShape.rectangle,
-                        boxShadow: <BoxShadow>[
-                          new BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10.0,
-                            offset: new Offset(0.0, 10.0),
-                          ),
-                        ],
-                        borderRadius: new BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),*//*
-
-                  Container(
-                      margin: new EdgeInsets.symmetric(vertical: 10.0),
-                      alignment: FractionalOffset.topLeft,
-                      child:AvatarGlow(
-                        endRadius: 63.0,
-                        glowColor: appcolor,
-                        duration: Duration(milliseconds: 1500),
-                        animate:true,
-                        showTwoGlows: true,
-
-                        child: *//* Container(
-                          height:  MediaQuery.of(context).size.height*0.09,
-                          width:  MediaQuery.of(context).size.width*0.15,
-                          decoration: new BoxDecoration(
-                            color: Colors.black,
-                            border: Border.all(
-                                width: 4, color: Colors.blue//                   <--- border width here
-                            ),
-                            shape: BoxShape.circle,
-                            *//**//*image: new DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
-                                )*//**//*),
-                          // width: MediaQuery.of(context).size.width*0.30,
-                          child: profileLoaded? ClipOval(
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'l',
-                              fit: BoxFit.fill,
-                              image: profile,
-                            ),
-                          ): CircleAvatar(
-                            child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
-                          ),
-                        ),*//*
-
-
-
-                        Container(
-                        //  color: Colors.red,
-                          child:  new GestureDetector(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50.0),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/avatar.png',
-                                  image: profile,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              onTap: (){
-                                setState(() {
-                                  selected= !selected;
-                                  ContainerHeight==0.0?ContainerHeight=160:ContainerHeight=0.0;
-                                  ContainerWidth==0.0?ContainerWidth=350:ContainerWidth=0.0;
-                                  _changeOpacity();
-                                });
-                              }
-
-                          ),
-                          width: MediaQuery.of(context).size.height * .10,
-                          height: MediaQuery.of(context).size.height * .10,
-                           decoration: new BoxDecoration(
-                      color: Colors.black,
-                        shape: BoxShape.circle,
-                        boxShadow: <BoxShadow>[
-                          new BoxShadow(
-                            color: appcolor,
-                            blurRadius: 10.0,
-                           // offset: new Offset(0.0, 10.0),
-                            spreadRadius: 2.0,
-                          ),
-                        ],
-                        *//*image: new DecorationImage(
-                          fit: BoxFit.fill,
-                             // image: NetworkImage(profile),
-                              image: NetworkImage(profile),
-                            ),*//*
-                          ),
-                        ),
-                      )
-                  ),
-
-                  selected!=true? Container(
-                      margin: new EdgeInsets.symmetric(vertical: 35.0,horizontal: 5),
-                      alignment: FractionalOffset.topRight,
-                      child:Container(
-                        child:  new GestureDetector(
-                            child: Container(
-                                decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blue[100],
-                                  boxShadow: <BoxShadow>[
-                                    new BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 20.0,
-                                      //offset: new Offset(0.0, 10.0),
-                                    ),
-                                  ],
-
-
-                                ),
-                                // color: Colors.blue[100],
-                                child: Icon(Icons.search)),
-                            onTap: (){
-
-                              _changeOpacity1();
-                              /// });
-                            }
-                        ),
-                        width: MediaQuery.of(context).size.height * .07,
-                        height: MediaQuery.of(context).size.height * .07,
-                        *//* decoration: new BoxDecoration(
-                     color: Colors.black,
-                       shape: BoxShape.circle,
-                       boxShadow: <BoxShadow>[
-                         new BoxShadow(
-                           color: appcolor,
-                           blurRadius: 10.0,
-                          // offset: new Offset(0.0, 10.0),
-                           spreadRadius: 2.0,
-                         ),
-                       ],
-                       image: new DecorationImage(
-                         fit: BoxFit.fill,
-                         image: NetworkImage(profile),
-                       ))*//*
-                        )
-                  ):Container(),
-
-                  Positioned(
-                    //top: 570,
-                      top:  MediaQuery.of(context).size.height *.68,
-                      // bottom: 310,
-                      child:Align(
-                        //alignment: FractionalOffset.bottomRight,
-                        child: SizedBox(
-                            height: MediaQuery.of(context).size.height * .80 ,
-                            width:MediaQuery.of(context).size.width * .80 ,
-                            child: getProfileWidget()
-                        ),
-                      )
-                  ),
-
-                  setLoader != true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
-                ],
-              ),
-            ),
-          ],
-        ),*/
 
         floatingActionButton:  FabCircularMenu(
           key: fabKey1,
@@ -3413,31 +3078,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
           ],
         ),
-/*
-        floatingActionButton: Stack(
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(left:31,bottom: 40),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  onPressed: null,
-                  child: Icon(Icons.camera_alt),
-                ),
-              ),
-             ),
-            Padding(
-              padding: const EdgeInsets.only(left:31,bottom: 100),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  onPressed: null,
-                  child: Icon(Icons.backup),
-                ),
-              ),
-            ),
-          ],
-        ),*/
+
       ),
     );
 
@@ -3468,13 +3109,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       );
     }
 
-    /* if(userpwd!=newpwd){
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => AskRegisterationPage()),
-            (Route<dynamic> route) => false,
-      );
-    }*/
+
   }
 
 
@@ -3567,12 +3202,196 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                               padding: EdgeInsets.only(top: 5),
                               //  scrollDirection:Axis.horizontal,
                               children: newDataList.map((data) {
+
                                 return ListTile(
                                     title: Text(data),
-                                    onTap: () {
-                                      String result = data.substring(1, data.indexOf(')'));
 
-                                      for (var keys in StoreLocation.keys) {
+                                    onTap: () async{
+                                      setLoader = false;
+
+                                      _markers.clear();
+                                      latlng.clear();
+                                      _polylines.clear();
+
+                                      String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
+                                      String result = data.substring(1, data.indexOf(')'));
+                                      print(result);
+                                      print("resulats are");
+                                      var p=97;
+                                      var ii=0;
+                                      int ID = 1;
+                                      var lastCurrentLocation;
+                                      int markerPoint = 0;
+                                      List TimeInOutLocations = new List();
+                                      final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+                                      final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+                                      final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+
+                    updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(result).child(todayDate).onChildAdded
+                     .listen((data) async {
+
+
+                      var currentLoc=  Locations.fromFireBase(data.snapshot);
+
+                      if(currentLoc.mock == "true"){  //if user uses mock locations
+
+                        ID++;
+                        var m1=Marker(
+                          markerId: MarkerId('fakeLocation$ID'),
+                          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+                          // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+                          icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+                          infoWindow: InfoWindow(
+                              title: "Fake location found: ",
+                              snippet: "         "+data.snapshot.key
+                            // anchor: Offset(0.1, 0.1)
+                          ),
+                        );
+                        Future.delayed(Duration(seconds: 1),(){
+                          setState(() {
+                            _markers.add(m1);
+                            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                          });
+                        });
+                      }
+
+                      TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
+
+                      var firstLocation = TimeInOutLocations[0];                //timeIn location
+                      if(TimeInOutLocations.length>1){
+                        lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+                        var m1=Marker(
+                          markerId: MarkerId('sourcePinCurrentLocationIcon'),
+                          position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+                          // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+                          icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+                          infoWindow: InfoWindow(
+                            title: "Last known location: "+data.snapshot.key,
+                          ),
+                        );
+                        Future.delayed(Duration(seconds: 1),(){
+                          setState(() {
+                            _markers.add(m1);
+                            setLoader = true;
+                            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                          });
+                        });
+
+                      }
+                      var m=Marker(
+                        markerId: MarkerId('sourcePinTimeInIcon'),
+                        position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+                        // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+                        icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+                        // icon:pinLocationIcon,
+
+                        infoWindow: InfoWindow(
+                          title: "Start Time: "+firstLocation[2],
+                        ),
+                      );
+                      Future.delayed(Duration(seconds: 1),(){
+                        setState(() {
+                          _markers.add(m);
+                          //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                        });
+                      });
+
+
+
+
+                      //  setState(() {
+                      // create a Polyline instance
+                      // with an id, an RGB color and the list of LatLng pairs
+                      final GoogleMapController controller = await _controller.future;
+                      controller.animateCamera(CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          bearing: 0,
+                          target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+                          zoom: 13.0,
+                        ),
+                      ));
+
+                      end= double.parse(currentLoc.odometer);
+                      print(latlng.toString());
+
+                      // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+                      if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+                        start=end;
+                        p++;
+                        //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+                        //add position number marker
+                        // Future.delayed(Duration(seconds: 2),(){
+                        markerPoint++;
+
+                        getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+                        setState(() {
+
+                          if(ii==0) {
+                            startM=double.parse(currentLoc.odometer);
+                            print("current loc odo"+startM.toString());
+                          }
+
+                          endM=double.parse(currentLoc.odometer);
+                          print("end loc odo"+startM.toString());
+
+                          kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+                          print("sgksshhskhs   "+kms);
+                          // if(endM-startM<0)
+                          //  kms='0.0';
+                        });
+                        //});
+
+                        ii++;
+                        /* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*/
+                      }
+
+                      print(currentLoc.accuracy);
+                      print("currentLoc.accuracy");
+
+
+
+                      setState(() {
+                        // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+                        //   {
+                        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+                        //  print(latlng);
+                        // print("latlong iss");
+                        _polylines.add(Polyline(
+                          polylineId: PolylineId('1'),
+                          visible: true,
+                          width: 3,
+                          patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+                          //latlng is List<LatLng>
+                          points: latlng,
+                          color: Colors.blue,
+                        ));
+                        // }
+                      });
+
+
+                    });
+
+                                    /*  for (var keys in StoreLocation.keys) {
                                         if(result==keys.toString()){
                                           List searchedLocation = StoreLocation[result];
                                           print(searchedLocation);
@@ -3581,7 +3400,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                                           //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
                                           // newDataList.clear();
                                         }
-                                      }
+                                      }*/
                                       print(data);
                                       newDataList.clear();
                                       print(newDataList);
@@ -3597,22 +3416,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                         ],
                       ),
                     ),
-                  ),/* Container(
-                    padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
-                    child: SearchMapPlaceWidget(
-                      apiKey: googleAPIKey,
-                      placeholder: "Search",
-                      location: LatLng(currlat , currlong),
-                      icon:null,
-                      radius: 30000,
-                      onSelected: (place) async {
-                        final geolocation = await place.geolocation;
-                        final GoogleMapController controller = await controller2.future;
-                        controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-                        controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-                      },
-                    ),
-                  ),*/
+                  ),
                 ),
 
                 (act1 == '') ? loader() : getMarkAttendanceWidgit(),
@@ -3627,34 +3431,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                       animate:true,
                       showTwoGlows: true,
 
-                      child: /* Container(
-                        height:  MediaQuery.of(context).size.height*0.09,
-                        width:  MediaQuery.of(context).size.width*0.15,
-                        decoration: new BoxDecoration(
-                          color: Colors.black,
-                          border: Border.all(
-                              width: 4, color: Colors.blue//                   <--- border width here
-                          ),
-                          shape: BoxShape.circle,
-                          *//*image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
-                              )*//*),
-                        // width: MediaQuery.of(context).size.width*0.30,
-                        child: profileLoaded? ClipOval(
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'l',
-                            fit: BoxFit.fill,
-                            image: profile,
-                          ),
-                        ): CircleAvatar(
-                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
-                        ),
-                      ),*/
-
-
-
-                      Container(
+                      child: Container(
                         //  color: Colors.red,
                         child:  new GestureDetector(
                             child: ClipRRect(
@@ -3743,7 +3520,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                     )
                 ):Container(),
 
-                (admin_sts =='1' || admin_sts == '2') && fabOpen == false? Positioned(
+                (admin_sts =='1' || admin_sts == '2') ? Positioned(
                   //top: 570,
                     top:  MediaQuery.of(context).size.height *.75,
                     // bottom: 310,
@@ -3763,335 +3540,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
           ),
         ],
       );
-
-      /*new ListView(
-        physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          new Container(
-            height: MediaQuery.of(context).size.height*0.90,
-            child:Stack(
-              children: <Widget>[
-
-                GoogleMap(
-                  myLocationEnabled: false,
-                  compassEnabled: true,
-                  tiltGesturesEnabled: false,
-                  markers: _markers,
-                  polylines: _polylines,
-                  mapType: MapType.normal,
-                  initialCameraPosition: initialLocation,
-                  onMapCreated: onMapCreated,
-                  mapToolbarEnabled:true,
-                  zoomControlsEnabled: false,  // hide zoom button
-                  onTap: (LatLng location) {
-                    setState(() {
-                      pinPillPosition = -470;
-                    });
-                  },
-                ),
-               *//* MapPinPillComponent(
-                    pinPillPosition: pinPillPosition,
-                    currentlySelectedPin: currentlySelectedPin
-                ),*//*
-
-                AnimatedOpacity(
-                  opacity: opacityLevel1,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.linear,
-                  child: Container(
-                    child: Padding(
-                      padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Card(
-                              elevation: 2.0,
-                              child:TextField(
-                                controller: _textController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(Icons.search),
-                                  hintText: 'Search',
-                                  focusColor: Colors.white,
-                                ),
-                                onChanged: onItemChanged,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: _textController.text!=""?ListView(
-                              padding: EdgeInsets.only(top: 5),
-                              children: newDataList.map((data) {
-                                return ListTile(
-                                    title: Text(data),
-                                    onTap: () {
-
-                                      String result = data.substring(1, data.indexOf(')'));
-
-                                      for (var keys in StoreLocation.keys) {
-                                        if(result==keys.toString()){
-                                          List searchedLocation = StoreLocation[result];
-                                          print(searchedLocation);
-                                          print("searchedLocation");
-                                          _add(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)),searchedLocation.elementAt(4),searchedLocation.elementAt(3));
-                                          //   getLocation(double.parse(searchedLocation.elementAt(0)),double.parse(searchedLocation.elementAt(1)));
-                                          // newDataList.clear();
-                                        }
-                                      }
-                                      print(data);
-                                      newDataList.clear();
-                                      print(newDataList);
-                                      print("sadsadnewDataList");
-                                    //  _changeOpacity1();
-                                      _textController.clear();
-                                      opacityLevel1=0.0;
-
-                                    });
-                              }).toList(),
-                            ):Container(),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),*//* Container(
-                    padding: new EdgeInsets.fromLTRB(120.0, 20.0, 50.0, 10.0),
-                    child: SearchMapPlaceWidget(
-                      apiKey: googleAPIKey,
-                      placeholder: "Search",
-                      location: LatLng(currlat , currlong),
-                      icon:null,
-                      radius: 30000,
-                      onSelected: (place) async {
-                        final geolocation = await place.geolocation;
-                        final GoogleMapController controller = await controller2.future;
-                        controller.animateCamera(CameraUpdate.newLatLng(geolocation.coordinates));
-                        controller.animateCamera(CameraUpdate.newLatLngBounds(geolocation.bounds, 0));
-                      },
-                    ),
-                  ),*//*
-                ),
-
-                (act1 == '') ? loader() : getMarkAttendanceWidgit(),
-
-
-                *//*AnimatedOpacity(
-                  opacity: opacityLevel,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.linear,
-                  child: new Container(
-                    //margin: new EdgeInsets.symmetric(vertical: 55.0),
-                    height: selected!=false?160:1,
-                   // height: 160,
-                  //  width: 350,
-                    width: selected!=false?350:1,
-                    child: Container(
-                      padding: new EdgeInsets.fromLTRB(70.0, 20.0, 16.0, 10.0),
-                      //constraints: new BoxConstraints.expand(),
-                      child: new Column(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,   //to align from start
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Container(height: 3.0),
-                          new Text("Somya Goyal", style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                          new Container(height: 6.0),
-                          Container(
-                            child: new Text("City Center, Gwalior, Madhya Pradesh, India",
-                              style: TextStyle(fontSize: 16,color: Colors.white),),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(right: 28,top: 5),
-                            child: new Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                RaisedButton(
-                                  color: buttoncolor,
-                                  elevation: 0.0,
-                                  disabledElevation: 0.0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Text('TIME IN',
-                                      style: new TextStyle(
-                                          fontSize: 18.0, color: Colors.white, letterSpacing: 2)),
-                                  onPressed: () {
-
-                                    },
-                                )
-
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-
-                    margin: new EdgeInsets.only(left: 46.0,top: 10,right: 25),
-                    decoration: new BoxDecoration(
-                      color: Colors.blue[300],
-                      shape: BoxShape.rectangle,
-                      boxShadow: <BoxShadow>[
-                        new BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10.0,
-                          offset: new Offset(0.0, 10.0),
-                        ),
-                      ],
-                      borderRadius: new BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),*//*
-
-                Container(
-                    margin: new EdgeInsets.symmetric(vertical: 10.0),
-                    alignment: FractionalOffset.topLeft,
-                    child:AvatarGlow(
-                      endRadius: 63.0,
-                      glowColor: appcolor,
-                      duration: Duration(milliseconds: 1500),
-                      animate:true,
-                      showTwoGlows: true,
-
-                      child: *//* Container(
-                        height:  MediaQuery.of(context).size.height*0.09,
-                        width:  MediaQuery.of(context).size.width*0.15,
-                        decoration: new BoxDecoration(
-                          color: Colors.black,
-                          border: Border.all(
-                              width: 4, color: Colors.blue//                   <--- border width here
-                          ),
-                          shape: BoxShape.circle,
-                          *//**//*image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(StoreLocation.values.elementAt(index)[4]),
-                              )*//**//*),
-                        // width: MediaQuery.of(context).size.width*0.30,
-                        child: profileLoaded? ClipOval(
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'l',
-                            fit: BoxFit.fill,
-                            image: profile,
-                          ),
-                        ): CircleAvatar(
-                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
-                        ),
-                      ),*//*
-
-
-
-                      Container(
-                      //  color: Colors.red,
-                        child:  new GestureDetector(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50.0),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/avatar.png',
-                                image: profile,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            onTap: (){
-                              setState(() {
-                                selected= !selected;
-                                ContainerHeight==0.0?ContainerHeight=160:ContainerHeight=0.0;
-                                ContainerWidth==0.0?ContainerWidth=350:ContainerWidth=0.0;
-                                _changeOpacity();
-                              });
-                            }
-
-                        ),
-                        width: MediaQuery.of(context).size.height * .10,
-                        height: MediaQuery.of(context).size.height * .10,
-                         decoration: new BoxDecoration(
-                    color: Colors.black,
-                      shape: BoxShape.circle,
-                      boxShadow: <BoxShadow>[
-                        new BoxShadow(
-                          color: appcolor,
-                          blurRadius: 10.0,
-                         // offset: new Offset(0.0, 10.0),
-                          spreadRadius: 2.0,
-                        ),
-                      ],
-                      *//*image: new DecorationImage(
-                        fit: BoxFit.fill,
-                           // image: NetworkImage(profile),
-                            image: NetworkImage(profile),
-                          ),*//*
-                        ),
-                      ),
-                    )
-                ),
-
-                selected!=true? Container(
-                    margin: new EdgeInsets.symmetric(vertical: 35.0,horizontal: 5),
-                    alignment: FractionalOffset.topRight,
-                    child:Container(
-                      child:  new GestureDetector(
-                          child: Container(
-                              decoration: new BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.blue[100],
-                                boxShadow: <BoxShadow>[
-                                  new BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 20.0,
-                                    //offset: new Offset(0.0, 10.0),
-                                  ),
-                                ],
-
-
-                              ),
-                              // color: Colors.blue[100],
-                              child: Icon(Icons.search)),
-                          onTap: (){
-
-                            _changeOpacity1();
-                            /// });
-                          }
-                      ),
-                      width: MediaQuery.of(context).size.height * .07,
-                      height: MediaQuery.of(context).size.height * .07,
-                      *//* decoration: new BoxDecoration(
-                   color: Colors.black,
-                     shape: BoxShape.circle,
-                     boxShadow: <BoxShadow>[
-                       new BoxShadow(
-                         color: appcolor,
-                         blurRadius: 10.0,
-                        // offset: new Offset(0.0, 10.0),
-                         spreadRadius: 2.0,
-                       ),
-                     ],
-                     image: new DecorationImage(
-                       fit: BoxFit.fill,
-                       image: NetworkImage(profile),
-                     ))*//*
-                      )
-                ):Container(),
-
-                Positioned(
-                  //top: 570,
-                    top:  MediaQuery.of(context).size.height *.68,
-                    // bottom: 310,
-                    child:Align(
-                      //alignment: FractionalOffset.bottomRight,
-                      child: SizedBox(
-                          height: MediaQuery.of(context).size.height * .80 ,
-                          width:MediaQuery.of(context).size.width * .80 ,
-                          child: getProfileWidget()
-                      ),
-                    )
-                ),
-
-                setLoader != true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
-              ],
-            ),
-          ),
-        ],
-      ),*/;
     }
   }
 
@@ -4149,15 +3597,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                     SizedBox(
                       width: 20.0,
                     ),
-                    /*
-                    Icon(
-                      Icons.all_inclusive,
-                      color: Colors.teal,
-                    ),
-                    Text(
-                      "Sorry! can't fetch location. \nPlease check if GPS is enabled on your device",
-                      style: new TextStyle(fontSize: 20.0, color: Colors.red),
-                    )*/
+
                     Container(
                       decoration: new ShapeDecoration(
                         shape: new RoundedRectangleBorder(
@@ -4181,36 +3621,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                     SizedBox(
                       width: 20.0,
                     ),
-                    /*
-                    Text(
-                      "Note: ",
-                      style: new TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.right,
-                    ),
-                    Text(
-                      " If Location not being fetched automatically?",
-                      style: new TextStyle(fontSize: 12.0, color: Colors.black),
-                      textAlign: TextAlign.left,
-                    ),*/
-                    /* new InkWell(
-                      child: new Text(
-                        "Fetch Location now",
-                        style: new TextStyle(
-                            color: Colors.teal,
-                            decoration: TextDecoration.underline),
-                      ),
-                      onTap: () {
-                        sl.startStreaming(5);
-                        startTimer();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      },
-                    )*/
+
                   ]),
               FlatButton(
                 child: new Text(
@@ -4274,13 +3685,13 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       CameraPosition(
         bearing: 0,
         target: LatLng(lat	,long),
-        zoom: 15.0,
+        zoom: 13.0,
       ),
     ));
 
   }
 
-  getSearchLocation(empname, res) {
+ /* getSearchLocation(empname, res) {
     print(StoreLocation);
     print("Nhkhkhkh");
     print(empname);
@@ -4294,7 +3705,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         print("NOT FOUND!!!");
       }
     });
-  }
+  }*/
 
   formatTime(String time) {
 
@@ -4305,230 +3716,603 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     else return time;
   }
 
-  getProfileWidget()  {
+  getProfileWidget() {
 
-    return new ListView.builder(
+    return FutureBuilder<List<Attendance>>(
+      future: getAttendance(today.text),
+      builder: (context, snapshot) {
+        print("snapshot data os");
+        if (snapshot.hasData) {
+          if (snapshot.data.length > 0) {
+            // ignore: missing_return
+            return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
 
-        scrollDirection: Axis.horizontal,
-        itemCount: StoreLocation.length,
-        itemBuilder: (BuildContext context, int index) {
+                 /* setState(() {
+                    recentEmployeeId = snapshot.data[index].e.toString();
+                  });*/
 
-          // var image =  StoreLocation.values.elementAt(index)[4];
-          _checkLoaded = false;
+                  _checkLoaded = false;
+                  var count=0;
 
-          var count=0;
-
-
-          var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
-          image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
-            _checkLoaded = true;
-          }));
+                  var image = NetworkImage(snapshot.data[index].profile.toString());
+                  image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+                    _checkLoaded = true;
+                  }));
 
 
-          var Name = StoreLocation.values.elementAt(index)[3];
-          print(Name);
-          print("name is the client");
-          print(_checkLoaded);
+                  var Name = snapshot.data[index].name.toString();
+                  print(Name);
+                  print("name is the client");
+                  print(_checkLoaded);
 
-          //  getAcronym(var name) {
+                  //  getAcronym(var name) {
 
-          if((Name.trim()).contains(" ")) {
-            var name=Name.split(" ");
-            print('print(name);');
-            print(name);
-            First=name[0][0].trim();
-            print(First);
-            Last=name[1][0].trim().toString().toUpperCase();
-            print(Last);
-            initials =  First+Last;
-            print(initials);
-            print("initials ");
-          }else{
-            First=Name;
-            print('print(First)else');
-            print(First);
-            initials =  First;
-            print(initials);
+                  if((Name.trim()).contains(" ")) {
+                    var name=Name.split(" ");
+                    print('print(name);');
+                    print(name);
+                    First=name[0][0].trim();
+                    print(First);
+                    Last=name[1][0].trim().toString().toUpperCase();
+                    print(Last);
+                    initials =  First+Last;
+                    print(initials);
+                    print("initials ");
+                  }else{
+                    First=Name.substring(0,1);
+                    print('print(First)else');
+                    print(First);
+                    initials =  First;
+                    print(initials);
+                  }
+                  // }
 
-          }
-          // }
+                  print(index);
+                  print("index are");
+                  print(_selectedIndex);
 
-          return  new Column(
-              children: <Widget>[
-                new FlatButton(
-                    child : new Row(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  return new Column(
                       children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            InkWell(
-                              child:  new Container(
-                                width: MediaQuery.of(context).size.height * .075,
-                                height: MediaQuery.of(context).size.height * .075,
-                                decoration: new BoxDecoration(
-                                  border: Border.all(
-                                      width: 2, color: Colors.blue//                   <--- border width here
+                        new FlatButton(
+                            child : new Row(
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    InkWell(
+                                      child:  new Container(
+                                        width: MediaQuery.of(context).size.height * .075,
+                                        height: MediaQuery.of(context).size.height * .075,
+                                        decoration: new BoxDecoration(
+                                          border: (_selectedIndex == null  && index == 0) ||_selectedIndex==index
+                                              ? Border.all(
+                                              width: 4, color: Colors.green//                   <--- border width here
+                                          ):Border.all(
+                                              width: 2, color: Colors.blue//                   <--- border width here
+                                          ),
+                                          color: Colors.black,
+                                          shape: BoxShape.circle,
+                                          /*  boxShadow: <BoxShadow>[
+                                  new BoxShadow(
+                                    color: appcolor,
+                                    blurRadius: 10.0,
+                                    // offset: new Offset(0.0, 10.0),
+                                    spreadRadius: 2.0,
                                   ),
-                                  color: Colors.black,
-                                  shape: BoxShape.circle,
-                                  /*  boxShadow: <BoxShadow>[
-                                new BoxShadow(
-                                  color: appcolor,
-                                  blurRadius: 10.0,
-                                  // offset: new Offset(0.0, 10.0),
-                                  spreadRadius: 2.0,
+                                ],*/
+                                          /*image: new DecorationImage(
+                              fit: BoxFit.fill,
+                                 // image: NetworkImage(profile),
+                                  image: NetworkImage(profile),
+                                ),*/
+                                        ),
+
+                                        child: _checkLoaded? ClipRRect(
+                                          borderRadius: BorderRadius.circular(300.0),
+                                          child: FadeInImage.assetNetwork(
+                                            placeholder: 'l',
+                                            fit: BoxFit.fill,
+                                            image: snapshot.data[index].profile,
+                                          ),
+                                        ): CircleAvatar(
+                                          child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                                        ),
+                                      ),
+
+                                      onTap: ()  {
+
+                                        onMapCreatedNew(snapshot.data[index].EmployeeId);
+                                        _onSelected(index);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        ////////////////////after changes///////////
+
+                                 /*       print(DateTime.now().toString().split(".")[0].split(" ")[0]);
+                                        print(orgid);
+                                        print(snapshot.data[index].EmployeeId);
+                                        print("jghkhkukhjk");
+                                        var value;
+                                        var key;
+                                    //    FirebaseDatabase.instance.reference().child("Locations").child(orgid).
+                                        ///child(snapshot.data[index].EmployeeId.toString()).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.once().then((data)  {
+
+
+
+                                       *//*   var currentLoc=  Locations.fromFireBase(data.snapshot);
+                                          print(currentLoc);
+                                          print(currentLoc.latitude);
+*//*
+
+                                       FirebaseDatabase.instance.reference().child("Locations").
+                                 child(orgid).child(snapshot.data[index].EmployeeId.toString()).child
+                              (DateTime.now().toString().split(".")[0].split(" ")[0]).orderByKey().once().then((snapshot){
+                                          var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+
+                                          var locations
+
+                                          for(int i=0; i<snaps)
+
+                                          var timesMap = new Map<String, dynamic>.from(snapshot.value.keys.toList());
+                                          List<Map<String, dynamic>> locationList = List();
+                                          timesMap.forEach((k, v) => locationList.add({k:v}));
+
+                                          locationList.sort((a,b) {
+                                            return DateTime.parse(date+" "+a.keys.first).compareTo(DateTime.parse(date+" "+b.keys.first));
+                                          });
+                                          print(locationList);
+                                          print("locationList");
+
+
+                            print(snapshot.value.keys.toList()[0]);
+                            print("after asserion");
+                                        print(snapshot.value.toString());
+                                        print(snapshot.value);
+                                        print(snapshot.key);
+                                        var keys = snapshot.key;
+                                        print("keys are");
+                                        print(keys);
+                                         print("snapshot from firebase");
+                                      //   value = snapshot.value[snapshot.value.keys.toList()[0]];
+                                       //  var v2 =snapshot.value;
+                                         print("v24135141654");
+                                       //  print(v2);
+                                     //   var v1 = snapshot.value[snapshot.key][0]['is_moving'];
+                                      //   print(value.toString());
+                                      //   print(value['is_moving']);
+                                         print("hklhlkll");
+                                         print(key.toString());
+                                      //  print(v1);
+                                        print("-----------------");
+                                        // key = snapshot.key;
+
+                                 });
+
+
+                              
+
+
+
+
+
+
+
+
+
+
+                                        _markers.clear();
+                                        setLoader = false;
+                                        _checkLoaded = false;
+                                        var image = NetworkImage(snapshot.data[index].profile);
+                                        print(image);
+                                        print("image is");
+                                        print("name is the client123");
+                                        print(_checkLoaded);
+
+                                        image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
+                                          _checkLoaded = true;
+                                        }));
+
+                                        var Name = snapshot.data[index].name.toString();
+                                        print(Name);
+                                        print(_checkLoaded);
+
+
+                                        //  getAcronym(var name) {
+
+                                        if((Name.trim()).contains(" ")) {
+                                          var name=Name.split(" ");
+                                          print('print(name);');
+                                          print(name);
+                                          First=name[0][0].trim();
+                                          print(First);
+                                          Last=name[1][0].trim().toString().toUpperCase();
+                                          print(Last);
+                                          initials =  First+Last;
+                                          print(initials);
+                                          print("initials ");
+                                        }else{
+                                          First=Name;
+                                          print('print(First)else');
+                                          print(First);
+                                          initials =  First;
+                                          print(initials);
+                                        }
+                                        
+                                        
+                                        StoreLocation.forEach((k, v) {
+
+
+                                          double LAT1 = double.parse(StoreLocation.values.elementAt(index)[0]);
+                                          double LONG1 = double.parse(StoreLocation.values.elementAt(index)[1]);
+                                          double LAT2 = double.parse(v[0]);
+                                          double LONG2 = double.parse(v[1]);
+
+
+                                          double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
+                                          print(distance);
+                                          print("distance is");
+                                          if(distance<10) {
+                                            //if they are less then at a distance of 10 meters
+                                            count++;
+                                            print(count);
+                                            print("count is");
+                                          }
+
+                                          // }
+                                        });
+
+                                        print(initials);
+                                        print("checkloaded");
+                                        print(_checkLoaded);
+
+                                        var dataBytes;
+                                    *//*    var request = await http.get(StoreLocation.values.elementAt(index)[4]);
+                                        var bytes = await request.bodyBytes;
+
+                                        setState(() {
+                                          dataBytes = bytes;
+                                        });*//*
+
+                                        LatLng _lastMapPositionPoints = LatLng(
+                                            double.parse(StoreLocation.values.elementAt(index)[0]),
+                                            double.parse(StoreLocation.values.elementAt(index)[1]));
+
+                                        // var loader = await getMarkerIconForClients(StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), count);
+
+                                        _checkLoaded?
+                                        getMarkerProfile(StoreLocation.values.elementAt(index)[4], count ,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]))
+                                            : getMarker(initials,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]),count);
+
+                                        *//*_markers.add(
+                                  Marker(
+                                icon: loader,
+                                markerId: MarkerId(_lastMapPositionPoints.toString()),
+                                position: _lastMapPositionPoints,
+                                onTap: (){
+                                  getPopup(double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]));
+                                  },
+                                infoWindow: InfoWindow(
+                                  title: "Delivery Point",
+                                  snippet:"My Position",
                                 ),
-                              ],*/
-                                  /*image: new DecorationImage(
-                            fit: BoxFit.fill,
-                               // image: NetworkImage(profile),
-                                image: NetworkImage(profile),
-                              ),*/
+                              ))*//*
+
+
+                                        getLocation(double.parse(StoreLocation.values.elementAt(index)[0]),double.parse(StoreLocation.values.elementAt(index)[1]));
+
+
+                                        */
+                                      },
+                                    ),
+                                    Name.toString().length>8? Text(
+                                      Name.toString().substring(0,8)+"..",
+                                      style: TextStyle(fontSize: 12.0),
+                                    ):Text(
+                                      Name,
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ],
                                 ),
-                                // width: MediaQuery.of(context).size.width*0.30,
-                                child: _checkLoaded? ClipRRect(
-                                  borderRadius: BorderRadius.circular(300.0),
 
-                                  child: FadeInImage.assetNetwork(
-                                    placeholder: 'l',
-                                    fit: BoxFit.fill,
-                                    image: StoreLocation.values.elementAt(index)[4],
-                                  ),
-                                ): CircleAvatar(
-                                  child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
-                                ),
-                              ),
-
-                              onTap: () async {
-
-                                _markers.clear();
-                                setLoader = false;
-                                _checkLoaded = false;
-                                var image = NetworkImage(StoreLocation.values.elementAt(index)[4]);
-                                print(image);
-                                print("image is");
-                                print("name is the client123");
-                                print(_checkLoaded);
-
-                                image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
-                                  _checkLoaded = true;
-                                }));
-
-                                var Name = StoreLocation.values.elementAt(index)[3];
-                                print(Name);
-                                print(_checkLoaded);
-
-
-                                //  getAcronym(var name) {
-
-                                if((Name.trim()).contains(" ")) {
-                                  var name=Name.split(" ");
-                                  print('print(name);');
-                                  print(name);
-                                  First=name[0][0].trim();
-                                  print(First);
-                                  Last=name[1][0].trim().toString().toUpperCase();
-                                  print(Last);
-                                  initials =  First+Last;
-                                  print(initials);
-                                  print("initials ");
-                                }else{
-                                  First=Name;
-                                  print('print(First)else');
-                                  print(First);
-                                  initials =  First;
-                                  print(initials);
-
-                                }
-                                StoreLocation.forEach((k, v) {
-
-
-                                  double LAT1 = double.parse(StoreLocation.values.elementAt(index)[0]);
-                                  double LONG1 = double.parse(StoreLocation.values.elementAt(index)[1]);
-                                  double LAT2 = double.parse(v[0]);
-                                  double LONG2 = double.parse(v[1]);
-
-
-                                  double distance = 2 * 6371000 * Math.asin(Math.sqrt(Math.pow((Math.sin((LAT2 * (3.14159 / 180) - LAT1 * (3.14159 / 180)) / 2)), 2) + Math.cos(LAT2 * (3.14159 / 180)) * Math.cos(LAT1 * (3.14159 / 180)) * Math.sin(Math.pow(((LONG2 * (3.14159 / 180) - LONG1 * (3.14159 / 180)) / 2), 2))));
-                                  print(distance);
-                                  print("distance is");
-                                  if(distance<10) {
-                                    //if they are less then at a distance of 10 meters
-                                    count++;
-                                    print(count);
-                                    print("count is");
-                                  }
-
-                                  // }
-                                });
-
-                                print(initials);
-                                print("checkloaded");
-                                print(_checkLoaded);
-
-                                var dataBytes;
-                                var request = await http.get(StoreLocation.values.elementAt(index)[4]);
-                                var bytes = await request.bodyBytes;
-
-                                setState(() {
-                                  dataBytes = bytes;
-                                });
-
-                                LatLng _lastMapPositionPoints = LatLng(
-                                    double.parse(StoreLocation.values.elementAt(index)[0]),
-                                    double.parse(StoreLocation.values.elementAt(index)[1]));
-
-                                // var loader = await getMarkerIconForClients(StoreLocation.values.elementAt(index)[4],  Size(140.0, 140.0), count);
-
-                                _checkLoaded?
-                                getMarkerProfile(StoreLocation.values.elementAt(index)[4], count ,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]))
-                                    : getMarker(initials,double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]),count);
-
-                                /*_markers.add(
-                                Marker(
-                              icon: loader,
-                              markerId: MarkerId(_lastMapPositionPoints.toString()),
-                              position: _lastMapPositionPoints,
-                              onTap: (){
-                                getPopup(double.parse(StoreLocation.values.elementAt(index)[0]), double.parse(StoreLocation.values.elementAt(index)[1]));
-                                },
-                              infoWindow: InfoWindow(
-                                title: "Delivery Point",
-                                snippet:"My Position",
-                              ),
-                            ))*/
-
-
-                                getLocation(double.parse(StoreLocation.values.elementAt(index)[0]),double.parse(StoreLocation.values.elementAt(index)[1]));
-
-                              },
+                              ],
                             ),
-                            Name.toString().length>8? Text(
-                              Name.toString().substring(0,8)+"..",
-                              style: TextStyle(fontSize: 12.0),
-                            ):Text(
-                              Name,
-                              style: TextStyle(fontSize: 12.0),
-                            )
-                          ],
+
+                            onPressed: ()  {
+
+                              // currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: StoreLocation.values.elementAt(index)[4], location: LatLng(0, 0), client: StoreLocation.values.elementAt(index)[3],description: 'At: '+StoreLocation.values.elementAt(index)[4],in_time: "19:20",out_time: '-', labelColor: Colors.grey);
+                              //   pinPillPosition = 50;
+                            }
                         ),
-
-                      ],
-                    ),
-
-                    onPressed: ()  {
-
-                      // currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: StoreLocation.values.elementAt(index)[4], location: LatLng(0, 0), client: StoreLocation.values.elementAt(index)[3],description: 'At: '+StoreLocation.values.elementAt(index)[4],in_time: "19:20",out_time: '-', labelColor: Colors.grey);
-                      //   pinPillPosition = 50;
-
-                    }
-                ),
-              ]
-          );
+                      ]
+                  );
+                }
+            );};
         }
+        else if (snapshot.hasError) {
+          return new Text("Unable to connect server");
+        }
+        // return loader();
+        return new Center(child: CircularProgressIndicator());
+
+        },
     );
 
+  }
+
+  var startM=0.0,endM=0.0;
+  var start=0.0,end=0.0;
+
+
+  void onMapCreatedNew(int EmployeeId)async {
+
+    print(EmployeeId);
+
+    _markers.clear();
+    _polylines.clear();
+    latlng.clear();
+
+    // controller.setMapStyle(Utils.mapStyles);
+   // _controller.complete(controller);
+    final GoogleMapController controller = await _controller.future;
+
+    var prefs= await SharedPreferences.getInstance();
+   // today1 = new TextEditingController();
+ //   today1.text = formatter.format(DateTime.now());
+
+    var orgId=prefs.get("orgid");
+    //final GoogleMapController controller = await _controller.future;
+    //onDateChanged(today1.text);
+    //setMapPins();
+
+
+    var p=97;
+    var q=97;
+    var ii=0;
+    var lastCurrentLocation;
+    int markerPoint = 0;
+    List TimeInOutLocations = new List();
+    final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+    final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 200);
+    int ID = 1;
+    setLoader = false;
+
+    updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(EmployeeId.toString()).child(DateTime.now().toString().split(".")[0].split(" ")[0]).onChildAdded.listen((data)  {
+
+      var currentLoc =  Locations.fromFireBase(data.snapshot);
+      print("onMapCreatedNew");
+      print(EmployeeId);
+      childExist=true;
+
+
+//      var mockLocation = currentLoc.mock;
+//      print(mockLocation);
+
+      if(currentLoc.mock == "true"){
+        print("mock location true");//if user uses mock locations
+
+        ID++;
+        print(ID);
+        print("ID is");
+        var m1=Marker(
+          markerId: MarkerId('fakeLocation$ID'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+          icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+          infoWindow: InfoWindow(
+              title: "Fake location found: ",
+              snippet: "         "+data.snapshot.key
+            // anchor: Offset(0.1, 0.1)
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m1);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+      }
+
+      TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
+
+      var firstLocation = TimeInOutLocations[0];                //timeIn location
+      if(TimeInOutLocations.length>1){
+        print("TimeInOutLocations123");
+       // q++;
+        lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+        var m1=Marker(
+          markerId: MarkerId('sourcePinCurrentLocationIcon'),
+          position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+          // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+          icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+          infoWindow: InfoWindow(
+            title: "Last known location: "+data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m1);
+            setLoader = true;
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+      }
+      var m=Marker(
+        markerId: MarkerId('sourcePinTimeInIcon$p'),
+        position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+        // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+        icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+        // icon:pinLocationIcon,
+
+        infoWindow: InfoWindow(
+          title: "Start Time: "+firstLocation[2],
+        ),
+      );
+      Future.delayed(Duration(seconds: 1),(){
+        setState(() {
+          _markers.add(m);
+          //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+        });
+      });
+
+
+
+
+      //  setState(() {
+      // create a Polyline instance
+      // with an id, an RGB color and the list of LatLng pairs
+      controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 0,
+          target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          zoom: 13.0,
+        ),
+      ));
+
+      end= double.parse(currentLoc.odometer);
+      print(latlng.toString());
+
+      // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+      if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+        start=end;
+        p++;
+        //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+        //add position number marker
+        // Future.delayed(Duration(seconds: 2),(){
+        markerPoint++;
+
+        getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+        setState(() {
+
+          if(ii==0) {
+            startM=double.parse(currentLoc.odometer);
+            print("current loc odo"+startM.toString());
+          }
+
+          endM=double.parse(currentLoc.odometer);
+          print("end loc odo"+startM.toString());
+
+          kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+          print("sgksshhskhs   "+kms);
+          // if(endM-startM<0)
+          //  kms='0.0';
+        });
+        //});
+
+        ii++;
+        /* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*/
+      }
+
+      print(currentLoc.accuracy);
+      print("currentLoc.accuracy");
+
+
+
+      setState(() {
+        // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+        //   {
+        latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+        //  print(latlng);
+        // print("latlong iss");
+        _polylines.add(Polyline(
+          polylineId: PolylineId(p.toString()),
+          visible: true,
+          width: 3,
+          patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+          //latlng is List<LatLng>
+          points: latlng,
+          color: Colors.blue,
+        ));
+        // }
+      });
+    });
+    // } );
+
+    //setSourceAndDestinationIcons();
+    var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+    var visits =  await  getVisitsDataList(date.toString(),EmployeeId);
+    print("aaa");
+    var generatedIcon;
+    List<BitmapDescriptor> generatedIcons=new List<BitmapDescriptor>();
+    var j=visits.length;
+    print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"+j.toString());
+    if(j>0)
+      await Future.forEach(visits, (Punch visit) async {
+
+        print("marker added............");
+        var m=Marker(
+          markerId: MarkerId('sourcePin$j'),
+          position: LatLng(double.parse(visit.pi_latit),double.parse(visit.pi_longi)),
+          icon: await getMarkerIconNew("https://i.dlpng.com/static/png/6865249_preview.png", Size(140.0, 140.0),j),
+          onTap: () {
+            setState(() {
+              currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: visit.pi_img, location: LatLng(0, 0), client: visit.client,description: visit.desc,in_time: visit.pi_time,out_time: visit.po_time, labelColor: Colors.grey);
+              pinPillPosition = 100;
+            });
+            print(visit.po_time);
+
+          },
+
+          infoWindow: InfoWindow(
+              title: visit.client,
+              snippet:visit.desc
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+        j--;
+      });
+
+    // setPolylines();
   }
 
   Future<Uint8List> getMarkerIconForClients(String imagePath, Size size,int number) async {
@@ -5003,117 +4787,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
   }
 
-/*
-  Future<BitmapDescriptor> getMarkerIconForClients(String imagePath, Size size,int number) async {
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
 
-    final Radius radius = Radius.circular(size.width / 2);
-
-    final Paint tagPaint = Paint()..color = Colors.blue;
-    final double tagWidth = 40.0;
-
-    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
-    final double shadowWidth = 15.0;
-
-    final Paint borderPaint = Paint()..color = Colors.white;
-    final double borderWidth = 3.0;
-
-    final double imageOffset = shadowWidth + borderWidth;
-
-    // Add shadow circle
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(
-              0.0,
-              0.0,
-              size.width,
-              size.height
-          ),
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius,
-        ),
-        shadowPaint);
-
-    // Add border circle
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(
-              shadowWidth,
-              shadowWidth,
-              size.width - (shadowWidth * 2),
-              size.height - (shadowWidth * 2)
-          ),
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius,
-        ),
-        borderPaint);
-
-    // Add tag circle
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(
-              size.width - tagWidth,
-              0.0,
-              tagWidth,
-              tagWidth
-          ),
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius,
-        ),
-        tagPaint);
-
-    // Add tag text
-    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
-    textPainter.text = TextSpan(
-      text: "+"+number.toString(),
-      style: TextStyle(fontSize: 25.0, color: Colors.white),
-    );
-
-    textPainter.layout();
-    textPainter.paint(
-        canvas,
-        Offset(
-            size.width - tagWidth / 2 - textPainter.width / 2,
-            tagWidth / 2 - textPainter.height / 2
-        )
-    );
-
-    // Oval for the image
-    Rect oval = Rect.fromLTWH(
-        imageOffset,
-        imageOffset,
-        size.width - (imageOffset * 2),
-        size.height - (imageOffset * 2)
-    );
-
-    // Add path for oval image
-    canvas.clipPath(Path()
-      ..addOval(oval));
-
-    // Add image
-    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
-    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
-
-    // Convert canvas to image
-    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
-        size.width.toInt(),
-        size.height.toInt()
-    );
-
-    // Convert image to bytes
-    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List uint8List = byteData.buffer.asUint8List();
-
-    return BitmapDescriptor.fromBytes(uint8List);
-  }
-*/
 
   loader() {
     return new Container(
@@ -5129,7 +4803,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   }
 
   _onAlertForAbsent(Name , lat, long, profile,location,time) {
-
     print(Name);
     print(profile);
     print(time);
@@ -5137,32 +4810,32 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     print("otyherggiug");
     var Loaded = false;
     var image = NetworkImage(profile);
-    image.resolve(new ImageConfiguration()).addListener(new ImageStreamListener((_, __) {
-      if (mounted) {
-        setState(() {
-          Loaded = true;
-        });
-      }
-    }));
+    image.resolve(new ImageConfiguration()).addListener(
+        new ImageStreamListener((_, __) {
+          if (mounted) {
+            setState(() {
+              Loaded = true;
+            });
+          }
+        }));
 
-    if((Name.trim()).contains(" ")) {
-      var name=Name.split(" ");
+    if ((Name.trim()).contains(" ")) {
+      var name = Name.split(" ");
       print('print(name);');
       print(name);
-      First=name[0][0].trim();
+      First = name[0][0].trim();
       print(First);
-      Last=name[1][0].trim().toString().toUpperCase();
+      Last = name[1][0].trim().toString().toUpperCase();
       print(Last);
-      initials =  First+Last;
+      initials = First + Last;
       print(initials);
       print("initials ");
-    }else{
-      First=Name;
+    } else {
+      First = Name;
       print('print(First)else');
       print(First);
-      initials =  First;
+      initials = First;
       print(initials);
-
     }
 
     return showDialog<String>(
@@ -5196,7 +4869,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                         child:
                         Row(
                           children: <Widget>[
-
                           ],
                         ),
                         onTap: () {
@@ -5204,18 +4876,25 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                           Navigator.of(
                               context, rootNavigator: true)
                               .pop('dialog');
-
                         },
                       ),
                     ],
                   ),
                   InkWell(
                     child: new Container(
-                      width: MediaQuery.of(context).size.height * .075,
-                      height: MediaQuery.of(context).size.height * .075,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .height * .075,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * .075,
                       decoration: new BoxDecoration(
                         border: Border.all(
-                            width: 2, color: Colors.blue//                   <--- border width here
+                            width: 2,
+                            color: Colors
+                                .blue //                   <--- border width here
                         ),
                         color: Colors.black,
                         shape: BoxShape.circle,
@@ -5234,40 +4913,20 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                           ),*/
                       ),
                       // width: MediaQuery.of(context).size.width*0.30,
-                      child: Loaded? ClipRRect(
+                      child: Loaded ? ClipRRect(
                         borderRadius: BorderRadius.circular(50.0),
                         child: FadeInImage.assetNetwork(
                           placeholder: 'l',
                           fit: BoxFit.fill,
                           image: profile,
                         ),
-                      ): CircleAvatar(
-                        child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                      ) : CircleAvatar(
+                        child: Text(initials, style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400)),
                       ),
                     ),
-
-
-                    /*Container(
-                        width: 70.0,
-                        height: 70.0,
-                        decoration: new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage(profile)
-                            )
-                        )
-                    ),*/
-                    /*onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => ImageView(
-                                                      myimage: snapshot
-                                                          .data[index].Profile,
-                                                      org_name: _orgName)),
-                                            );
-                                          },*/
                   ),
                   SizedBox(height: 10.0),
                   new Text(
@@ -5278,7 +4937,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                         fontWeight: FontWeight.w600
                     ),
                   ),
-                  SizedBox(height:8,),
+                  SizedBox(height: 8,),
                   new Text(
                     time,
                     style: TextStyle(
@@ -5289,7 +4948,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                   ),
                   SizedBox(height: 8,),
                   new Text(
-                    "At: "+location,
+                    "At: " + location,
                     style: TextStyle(
                         color: Colors.black54,
                         fontSize: 15.0,
@@ -5305,548 +4964,14 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         ),
       ),
     );
+  }
 
-    /* var alertStyle = AlertStyle(
-      animationType: AnimationType.grow,
-      isCloseButton: false,
-      isOverlayTapDismiss: true,
-      descStyle: TextStyle(fontWeight: FontWeight.bold),
-      animationDuration: Duration(milliseconds: 400),
-    );
-    Alert(
-        style: alertStyle,
-        context: context,
-        title: "",
-        image: Image.network(popupLocations[0][4],
-          width: 100, height: 100,),
+  _onSelected(int index) {
 
-         content: Wrap(
-           children: <Widget>[
-              Container(
-               // color: Colors.red,
-                height: MediaQuery.of(context).size.height * 0.30,
-                width: MediaQuery.of(context).size.width * 0.70,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(popupLocations[0][3])
-                      ],
-                    ),
-
-                  //  SizedBox(height: 10.0),
-                  *//*
-                   new Text(
-                   // snapshot.data[index].Name.toString(),
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600
-                    ),
-                  ),*//*
-                    //SizedBox(height: 20,),
-                    Table(
-                      defaultVerticalAlignment: TableCellVerticalAlignment
-                          .top,
-                      columnWidths: {
-
-                        0: FlexColumnWidth(5),
-                        // 0: FlexColumnWidth(4.501), // - is ok
-                        // 0: FlexColumnWidth(4.499), //- ok as well
-                        1: FlexColumnWidth(5),
-                        //2: FlexColumnWidth(5),
-                      },
-                      children: [
-                        TableRow(
-                            children: [
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new Text(
-                                      "Time In",
-                                      style: TextStyle(
-                                          color: Colors
-                                              .black87,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight
-                                              .bold
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new Text(
-                                      "Time Out",
-                                      style: TextStyle(
-                                          color: Colors
-                                              .black87,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight
-                                              .bold
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]
-                        ) ,
-                        TableRow(
-                            children: [
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new Text(
-                                     "hhhh",
-                                      style: TextStyle(
-                                          color: Colors
-                                              .black87,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight
-                                              .w400
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new Text(
-                                     "gkjgkj",
-                                      style: TextStyle(
-                                          color: Colors
-                                              .black87,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight
-                                              .w400
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]
-                        ),
-                      *//*  TableRow(
-                            children: [
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    InkWell(
-                                      child: Container(
-                                          width: 70.0,
-                                          height: 70.0,
-//                               child: FadeInImage.assetNetwork(
-//                                  placeholder: 'assets/user_profile.png',
-//                                  ),
-                                          decoration: new BoxDecoration(
-                                              border: Border.all(
-                                                  width: 2, color: Colors.teal//                   <--- border width here
-                                              ),
-                                              shape: BoxShape.circle,
-                                              image: new DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image:
-//                                          AssetImage('assets/user_profile.png'),
-//                                            _checkLoaded
-//                                                ? AssetImage('assets/imgloader.gif')
-//                                                :
-                                                  userlist.isNotEmpty?NetworkImage(
-                                                      userlist[0].EntryImage):AssetImage('assets/avatar.png')
-
-                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
-                                              )
-                                          )
-                                      ),
-                                      onTap: () {
-
-                                        if( userlist.isNotEmpty) {
-                                          Navigator.of(
-                                              context, rootNavigator: true)
-                                              .pop();
-
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ImageView(
-                                                        myimage: userlist[0]
-                                                            .EntryImage,
-                                                        org_name: _orgName)),
-                                          );
-                                        }
-
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    InkWell(
-                                      child: Container(
-                                          width: 70.0,
-                                          height: 70.0,
-//                               child: FadeInImage.assetNetwork(
-//                                  placeholder: 'assets/user_profile.png',
-//                                  ),
-                                          decoration: new BoxDecoration(
-                                              border: Border.all(
-                                                  width: 2, color: Colors.teal//                   <--- border width here
-                                              ),
-                                              shape: BoxShape.circle,
-                                              image: new DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image:
-//                                          AssetImage('assets/user_profile.png'),
-//                                            _checkLoaded
-//                                                ? AssetImage('assets/imgloader.gif')
-//                                                :
-                                                  userlist.isNotEmpty?NetworkImage(
-                                                      userlist[0].ExitImage):AssetImage('assets/avatar.png')
-
-                                                //_checkLoaded ? AssetImage('assets/avatar.png') : profileimage,
-                                              )
-                                          )
-                                      ),
-                                      onTap: () {
-                                        if( userlist.isNotEmpty) {
-                                          Navigator.of(
-                                              context, rootNavigator: true)
-                                              .pop();
-
-
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ImageView(
-                                                        myimage: userlist[0]
-                                                            .ExitImage,
-                                                        org_name: _orgName)),
-                                          );
-                                        }
-
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]
-                        ),*//*
-                        //TableRow(),
-
-                       *//* TableRow(
-                            children: [
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 40,
-                                      child:  new Container(
-                                        //color: Colors.red,
-                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            InkWell(
-                                              child:Center(
-                                                child: Text(
-                                                  userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
-                                              ),
-                                              onTap: () {
-                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_in,userlist.isEmpty?"-": userlist[0].longi_in);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 40,
-                                      child:  new Container(
-                                        padding: new EdgeInsets.only(left: 10.0, right: 10.0,top: 10,bottom: 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-
-                                            InkWell(
-                                              child:Center(
-                                                child: Text(
-                                                  userlist.isEmpty?"-": userlist[0].CheckOutLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),textAlign: TextAlign.center,),
-                                              ),
-                                              onTap: () {
-                                                goToMap(userlist.isEmpty?"-": userlist[0].latit_out,userlist.isEmpty?"-": userlist[0].longi_out);
-                                              },
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(2.0),
-                                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
-
-                                              child: Text(snapshot.data[index].instatus,
-                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]
-                        ),*//*
-                        TableRow(
-                            children: [
-                              TableCell(
-                                child: Row(
-                                  // crossAxisAlignment: CrossAxisAlignment.end,
-                                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 37,
-                                      child:  new Container(
-                                        //width: MediaQuery.of(context).size.width * 0.37,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                             new Text(
-                                    "uytkuguk",style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
-                                  ),
-                                            InkWell(
-                                              child:Text(
-                                                "jliujklj",style: TextStyle(color: Colors.black54,fontSize: 12.0),),
-                                              onTap: () {
-                                               // goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
-                                              },
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.all(2.0),
-                                           //   color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
-
-                                              child: Text("hjlkhlk",
-                                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TableCell(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new Text(
-                                      '',
-                                      style: TextStyle(
-                                          color: Colors
-                                              .black87,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight
-                                              .bold
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ]
-                        ),
-                      ],
-                    ),
-                     Expanded(
-                      flex: 37,
-                      child:  new Container(
-                        //width: MediaQuery.of(context).size.width * 0.37,
-                       *//* child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                             new Text(
-                                    snapshot.data[index].client.toString(),style: TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.left,
-                                  ),
-                            InkWell(
-                              child:Text(
-                                userlist.isEmpty?"-": userlist[0].checkInLoc,style: TextStyle(color: Colors.black54,fontSize: 12.0),),
-                              onTap: () {
-                                goToMap(snapshot.data[index].latin,snapshot.data[index].lonin.toString());
-                              },
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(2.0),
-                              color: snapshot.data[index].incolor.toString()=='0'?Colors.red:Colors.green,
-
-                              child: Text(snapshot.data[index].instatus,
-                                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 12.0,color: Colors.white),
-                              ),
-                            )
-                          ],
-                        ),*//*
-                      ),
-                    ),
-                    //SizedBox(height: 10.0),
-                    Divider(color: Colors.black54,height: 1.5,),
-                    SizedBox(height: 19,),
-                    Container(
-                      padding: new EdgeInsets.only(left: 15.0, right: 10.0),
-                      decoration: new ShapeDecoration(
-                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
-                          color: Colors.white.withOpacity(0.1)
-                      ) ,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-
-                          Row(
-                            children: <Widget>[
-                              Icon(Icons.timelapse, size: 20.0,
-                                color: Colors.black54,), SizedBox(width: 5.0),
-                              new Text("Shift Timings: ", style: new TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold)),
-                            *//*  new Text(
-                                  userlist.isEmpty ? "-"
-                                      : userlist[0].ShiftTimeIn+" - "+userlist[0].ShiftTimeOut,
-                                  style: new TextStyle(fontSize: 15.0,
-                                      fontWeight: FontWeight.w400)),*//*
-                            ],
-                          ),
-                          SizedBox(height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * .01),
-                          Row(
-                            children: <Widget>[
-                              Icon(Icons.access_time, size: 20.0,
-                                color: Colors.black54,), SizedBox(width: 5.0),
-                              new Text("Logged Hours: ", style: new TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold)),
-                           *//*   new Text(
-                                  userlist.isEmpty ? "-" : userlist[0].thours,
-                                  style: new TextStyle(fontSize: 15.0,
-                                      fontWeight: FontWeight.w400)),*//*
-                            ],
-                          ),
-                          SizedBox(height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * .01),
-                          Row(
-                            children: <Widget>[
-                              Icon(Icons.timer, size: 20.0,
-                                color: Colors.black54,), SizedBox(width: 5.0),
-                              new Text("Shift TimeIn: ", style: new TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold)),
-                             *//* new Text(userlist.isEmpty ? "-"
-                                  : userlist[0].ShiftTimeIn,
-                                  style: new TextStyle(fontSize: 15.0,
-                                      fontWeight: FontWeight.w400)),*//*
-                            ],
-                          ),
-                          SizedBox(height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * .01),
-                          Row(
-                            children: <Widget>[
-                              Icon(Icons.timer, size: 20.0,
-                                color: Colors.black54,), SizedBox(width: 5.0),
-                              new Text("Shift TimeOut: ", style: new TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold)),
-                          *//*    new Text(userlist.isEmpty ? "-"
-                                  : userlist[0].ShiftTimeOut,
-                                  style: new TextStyle(fontSize: 15.0,
-                                      fontWeight: FontWeight.w400)),*//*
-                            ],
-                          ),
-                          SizedBox(height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * .01),
-                    Row(
-                            children: <Widget>[
-                              Icon(Icons.timer, size: 20.0,
-                                color: Colors.black54,), SizedBox(width: 5.0),
-
-                    new Text("Undertime: ", style: new TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.bold))
-
-                            ],
-                          ),
-
-                          SizedBox(height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * .01),
-                        ],
-
-                      ),
-                    )
-                  ],),
-
-              ),
-            ],
-          ),
-
-        buttons: [
-          DialogButton(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.22,
-            color: Colors.orangeAccent,
-            onPressed: () {
-            //  Navigator.of(context, rootNavigator: true).pop();
-               //   (Route<dynamic> route) => false;
-            },
-            child: Text(
-              "OK",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          )
-        ]).show();*/
-    ///});
+    setState(() {
+      _selectedIndex = index;
+    });
+    // setState(() => _selectedIndex = index);
   }
 
 
@@ -5934,12 +5059,466 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   }
 
 
-  void onMapCreated(GoogleMapController controller) {
+  void onMapCreated(GoogleMapController controller) async{
+
+    var prefs = await SharedPreferences.getInstance();
+    orgid = prefs.getString('orgid') ?? '';
+    print(admin_sts);
+    print("admin_sts isssssss");
     controller.setMapStyle(Utils.mapStyles);
     _controller.complete(controller);
     setMapPins();
     setPolylines();
     controller2.complete(controller);
+    String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
+
+    if(admin_sts == '1' || admin_sts == '2') {
+
+      var p=97;
+      var ii=0;
+      var lastCurrentLocation;
+      int markerPoint = 0;
+      List TimeInOutLocations = new List();
+      final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+      final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+      final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+      int ID = 1;
+      setLoader = false;
+
+      getAttendance(todayDate).then((res) async {
+        attList = res;
+
+        for(int i = 0; i<attList.length;i++ ) {
+
+          Name.add([attList[i].EmployeeId.toString()]);
+          print("names are");
+          print(Name);
+          NameList.add(("(" + attList[i].EmployeeId.toString() + ") "+attList[i].name.toString()));
+          print(NameList);
+          print("gvjkgkghkj");
+
+        }
+
+
+        updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(attList[0].EmployeeId.toString()).child(todayDate).onChildAdded
+            .listen((data) async {
+
+          var currentLoc=  Locations.fromFireBase(data.snapshot);
+          childExist=true;
+          setLoader = true;
+
+          if(currentLoc.mock == "true") {  //if user uses mock locations
+
+            ID++;
+            var m1=Marker(
+              markerId: MarkerId('fakeLocation$ID'),
+              position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+              infoWindow: InfoWindow(
+                  title: "Fake location found: ",
+                  snippet: "         "+data.snapshot.key
+                // anchor: Offset(0.1, 0.1)
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),() {
+              setState(() {
+                _markers.add(m1);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+
+          TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
+
+          var firstLocation = TimeInOutLocations[0];
+          //timeIn location
+          if(TimeInOutLocations.length>1){
+            lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+            var m1=Marker(
+              markerId: MarkerId('sourcePinCurrentLocationIcon'),
+              position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Last known location: "+data.snapshot.key,
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers.add(m1);
+                setLoader = true;
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+          var m=Marker(
+            markerId: MarkerId('sourcePinTimeInIcon'),
+            position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+            icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+            // icon:pinLocationIcon,
+            infoWindow: InfoWindow(
+              title: "Start Time: "+firstLocation[2],
+            ),
+          );
+          Future.delayed(Duration(seconds: 1),(){
+            setState(() {
+              _markers.add(m);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+            });
+          });
+
+
+
+
+          //  setState(() {
+          // create a Polyline instance
+          // with an id, an RGB color and the list of LatLng pairs
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              zoom: 13.0,
+            ),
+          ));
+
+          end= double.parse(currentLoc.odometer);
+          print(latlng.toString());
+
+          // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+          if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+            start=end;
+            p++;
+            //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+            //add position number marker
+            // Future.delayed(Duration(seconds: 2),(){
+            markerPoint++;
+
+            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+            setState(() {
+
+              if(ii==0) {
+                startM=double.parse(currentLoc.odometer);
+                print("current loc odo"+startM.toString());
+              }
+
+              endM=double.parse(currentLoc.odometer);
+              print("end loc odo"+startM.toString());
+
+              kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+              print("sgksshhskhs   "+kms);
+              // if(endM-startM<0)
+              //  kms='0.0';
+            });
+            //});
+
+            ii++;
+            /* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*/
+          }
+
+          print(currentLoc.accuracy);
+          print("currentLoc.accuracy");
+
+
+
+          setState(() {
+            // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+            //   {
+            latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+            //  print(latlng);
+            // print("latlong iss");
+            _polylines.add(Polyline(
+              polylineId: PolylineId('1'),
+              visible: true,
+              width: 3,
+              patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+              //latlng is List<LatLng>
+              points: latlng,
+              color: Colors.blue,
+            ));
+            // }
+          });
+
+        });
+
+        var date=DateTime.now().toString().split(".")[0].split(" ")[0];
+        var visits =  await  getVisitsDataList(date.toString(),attList[0].EmployeeId.toString());
+        print("aaa");
+        var generatedIcon;
+        List<BitmapDescriptor> generatedIcons=new List<BitmapDescriptor>();
+        var j=visits.length;
+        print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"+j.toString());
+        if(j>0)
+          await Future.forEach(visits, (Punch visit) async {
+
+            print("marker added............");
+            var m=Marker(
+              markerId: MarkerId('sourcePin$j'),
+              position: LatLng(double.parse(visit.pi_latit),double.parse(visit.pi_longi)),
+              icon: await getMarkerIconNew("https://i.dlpng.com/static/png/6865249_preview.png", Size(140.0, 140.0),j),
+              onTap: () {
+                setState(() {
+                  currentlySelectedPin = PinInformation(pinPath: 'assets/friend1.jpg', avatarPath: visit.pi_img, location: LatLng(0, 0), client: visit.client,description: visit.desc,in_time: visit.pi_time,out_time: visit.po_time, labelColor: Colors.grey);
+                  pinPillPosition = 100;
+                });
+                print(visit.po_time);
+
+              },
+
+              infoWindow: InfoWindow(
+                  title: visit.client,
+                  snippet:visit.desc
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers.add(m);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+
+            j--;
+          });
+      });
+    }
+
+    Future.delayed(Duration(seconds: 3), () async {
+
+      if(childExist == false){
+        _markers1.clear();
+        var j=0;
+        j++;
+
+
+        print("inside childExist");
+        print(empid);
+        setLoader = false;
+
+        _markers.clear();
+        latlng.clear();
+        _polylines.clear();
+        print(childExist);
+        var p=97;
+        var ii=0;
+        var lastCurrentLocation;
+        int markerPoint = 0;
+        List TimeInOutLocations = new List();
+        final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+        final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+        final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+        int ID = 1;
+        setLoader = false;
+        updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empid).child(todayDate).onChildAdded
+            .listen((data) async {
+
+          var currentLoc=  Locations.fromFireBase(data.snapshot);
+
+          if(currentLoc.mock == "true") {  //if user uses mock locations
+
+            ID++;
+            var m1=Marker(
+              markerId: MarkerId('userLocation$ID'),
+              position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(fakeLocation),
+
+              infoWindow: InfoWindow(
+                  title: "Fake location found: ",
+                  snippet: "         "+data.snapshot.key
+                // anchor: Offset(0.1, 0.1)
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),() {
+              setState(() {
+                _markers1.add(m1);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+
+          TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
+
+          var firstLocation = TimeInOutLocations[0];
+          //timeIn location
+          if(TimeInOutLocations.length>1){
+            lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+
+            var m1=Marker(
+              markerId: MarkerId('sourcePinCurrentLocationIconUserLocation'),
+              position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Your last known location: "+data.snapshot.key,
+              ),
+            );
+            Future.delayed(Duration(seconds: 1),(){
+              setState(() {
+                _markers1.add(m1);
+                setLoader = true;
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
+          var m=Marker(
+            markerId: MarkerId('sourcePinTimeInIconUserLocation'),
+            position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
+            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+            icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+            // icon:pinLocationIcon,
+            infoWindow: InfoWindow(
+              title: "Your start Time: "+firstLocation[2],
+            ),
+          );
+          Future.delayed(Duration(seconds: 1),(){
+            setState(() {
+              _markers1.add(m);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+            });
+          });
+
+
+
+
+          //  setState(() {
+          // create a Polyline instance
+          // with an id, an RGB color and the list of LatLng pairs
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+              zoom: 13.0,
+            ),
+          ));
+
+          end= double.parse(currentLoc.odometer);
+          print(latlng.toString());
+
+          // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
+          if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy) < 20.0)) {
+
+            start=end;
+            p++;
+            //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
+            //add position number marker
+            // Future.delayed(Duration(seconds: 2),(){
+            markerPoint++;
+
+            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+
+            setState(() {
+
+              if(ii==0) {
+                startM=double.parse(currentLoc.odometer);
+                print("current loc odo"+startM.toString());
+              }
+
+              endM=double.parse(currentLoc.odometer);
+              print("end loc odo"+startM.toString());
+
+              kms=((endM-startM)/1000).toStringAsFixed(2)+" kms";
+              print("sgksshhskhs   "+kms);
+              // if(endM-startM<0)
+              //  kms='0.0';
+            });
+            //});
+
+            ii++;
+            /* var m=Marker(
+          markerId: MarkerId('sourcePin$p'),
+          position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
+          //icon: await getMarkerIcon("https://i.dlpng.com/static/png/6865249_preview.png", Size(150.0, 150.0),0),
+          icon:BitmapDescriptor.fromBytes(markerIcon),
+
+          infoWindow: InfoWindow(
+            title: data.snapshot.key,
+          ),
+        );
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });*/
+          }
+
+          print(currentLoc.accuracy);
+          print("currentLoc.accuracy");
+
+
+
+          setState(() {
+            // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+            //   {
+            latlng.add(LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)));
+            //  print(latlng);
+            // print("latlong iss");
+            _polylines.add(Polyline(
+              polylineId: PolylineId(currentLoc.latitude),
+              visible: true,
+              width: 3,
+              patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
+              //latlng is List<LatLng>
+              points: latlng,
+              color: Colors.blue,
+            ));
+            // }
+          });
+
+        });
+
+
+        /*  controller.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            bearing: 0,
+            target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+            zoom: 13.0,
+          ),
+        ));
+
+        var m1 = Marker(
+            markerId: MarkerId('noChildExist$j'),
+            position: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+            icon: BitmapDescriptor.defaultMarker,
+            infoWindow: InfoWindow(
+              title: "You are here",
+              //  snippet:globals.assign_lat.toString()+","+globals.assign_long.toString()
+            )
+
+        );
+
+        Future.delayed(Duration(seconds: 1),(){
+          setState(() {
+            _markers1.add(m1);
+          });
+        });*/
+
+      }
+
+
+    });
   }
 
   showDialogWidget(String loginstr) {
@@ -5947,7 +5526,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         context: context,
         builder: (context) {
           return new AlertDialog(
-            title: new Text(
+              title: new Text(
               loginstr,
               style: TextStyle(fontSize: 15.0),
             ),
@@ -6083,7 +5662,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                           Icon(
                             const IconData(0xe81a,
                                 fontFamily: "CustomIcon"),
-                            size: 15.0,
+                            size: 18.0,
                             color: Colors.white,
                           ),
                         ],
@@ -6125,18 +5704,16 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                 ),
                 if (fakeLocationDetected)
                   Container(
-                    padding: EdgeInsets.only(top: 5.0, right: 28.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xfffc6203),
-                      //  border: Border(left: 1.0,right: 1.0,top: 1.0,bottom: 1.0),
-                    ),
+                    padding: EdgeInsets.only(top: 5.0, right: 28),
+                    //  margin: EdgeInsets.only(left: 10.0, right: 10.0),
                     child: Text(
-                      'Fake Location',
+                      ' Fake Location ',
                       style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.amber,
+                          color: Colors.white,
+                          backgroundColor: Colors.red[300],
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 1.0),
+                          letterSpacing: 2.0),
                     ),
                   )
                 else
@@ -6665,28 +6242,69 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       }
     }
 
-    /*SaveImage saveImage = new SaveImage();
-    bool issave = false;
-    setState(() {
-      act1 = "";
-    });
-    issave = await saveImage.saveTimeInOut(mk);
-    ////print(issave);
-    if (issave) {
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyApp()),
-      );
-      setState(() {
-        act1 = act;
-      });
-    } else {
-      setState(() {
-        act1 = act;
-      });
-    }*/
   }
+
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch (call.method) {
+      case "navigateToPage":
+        navigateToPageAfterNotificationClicked(
+            call.arguments["page"].toString(), context);
+        break;
+      case "locationAndInternet":
+        locationThreadUpdatedLocation = true;
+        // print(call.arguments["internet"].toString()+"akhakahkahkhakha");
+        // Map<String,String> responseMap=call.arguments;
+        if (call.arguments["internet"].toString() == "Internet Not Available") {
+          internetAvailable = false;
+          print("internet nooooot aaaaaaaaaaaaaaaaaaaaaaaavailable");
+          //Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => OfflineHomePage(),maintainState: false));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => OfflineHomePage()),
+                (Route<dynamic> route) => false,
+          );
+        }
+        var long = call.arguments["longitude"].toString();
+        var lat = call.arguments["latitude"].toString();
+        //lat=assign_lat.toString();
+        //long=assign_long.toString();
+        assign_lat = double.parse(lat);
+        assign_long = double.parse(long);
+        address = await getAddressFromLati(lat, long);
+        print(address +
+            "xnjjjjjjlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        globalstreamlocationaddr = address;
+        print(call.arguments["mocked"].toString());
+        getAreaStatus().then((res) {
+          // print('called again');
+          if (mounted) {
+            setState(() {
+              areaSts = res.toString();
+              if (areaId != 0 && geoFence == 1)
+                AbleTomarkAttendance = areaSts;
+            });
+          }
+        }).catchError((onError) {
+          print('Exception occured in clling function.......');
+          print(onError);
+        });
+        setState(() {
+          if (call.arguments["mocked"].toString() == "Yes") {
+            fakeLocationDetected = true;
+          } else {
+            fakeLocationDetected = false;
+          }
+          if (call.arguments["TimeSpoofed"].toString() == "Yes") {
+            timeSpoofed = true;
+          }
+        });
+        break;
+
+        return new Future.value("");
+    }
+  }
+
 
   showInSnackBarforTimeInOut(var val1,var val2,var val3) {
 
@@ -6714,32 +6332,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                         Container(
                           //margin: new EdgeInsets.fromLTRB(32.0, 1.0, 16.0, 16.0),
                           child: val3.toString().length >=170 ? new Text(val3.toString().substring(0,170),style: TextStyle(fontSize: 14,color: Colors.white),):new Text(val3.toString(),style: TextStyle(fontSize: 14,color: Colors.white),),
-
-
                         ),
-
-
-                        /* new Container(
-                          margin: new EdgeInsets.symmetric(vertical: 8.0),
-                          height: 2.0,
-                          width: 18.0,
-                          color: new Color(0xff00c6ff)
-                      ),*/
-                        /* new Row(
-                        children: <Widget>[
-                          new Image.asset("'assets/avatar.png'", height: 12.0),
-                          new Container(width: 8.0),
-                          new Text("planet.distance",
-                            style: regularTextStyle,
-                          ),
-                          new Container(width: 24.0),
-                          new Image.asset("'assets/avatar.png'", height: 12.0),
-                          new Container(width: 8.0),
-                          new Text("planet.gravity",
-                            style: regularTextStyle,
-                          ),
-                        ],
-                      ),*/
                       ],
                     ),
                   ),
@@ -6876,6 +6469,182 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       ),
     );
   }
+
+  ///////////////////////////////////////////////////////after changes/////////////////////////////////////////////////////
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
+  }
+
+  getMarkerNew(markerPoint,latitude,longitude,infoWindow) async {
+
+    final Uint8List markerIcon = await getBytesFromCanvasForCircleMarkerNew(50, 50, markerPoint);
+
+   // if(showPolylines == true || showMarker == true) {
+      var m = Marker(
+        markerId: MarkerId(markerPoint.toString()),
+        position: LatLng(latitude,longitude),
+        icon: BitmapDescriptor.fromBytes(markerIcon),
+        infoWindow: InfoWindow(
+          title: infoWindow.toString(),
+        ),
+      );
+      Future.delayed(Duration(seconds: 1), () {
+        setState(() {
+          _markers.add(m);
+          //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+        });
+      });
+   // }
+  }
+
+  Future<Uint8List> getBytesFromCanvasForCircleMarkerNew(int width, int height, int markerPoint) async  {    //IMP
+
+    print(markerPoint);
+    print("countOfPositionMarker");
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final Paint paint = Paint()..color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    final Radius radius = Radius.circular(width/2);
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(0.0, 0.0, width.toDouble(),  height.toDouble()),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        paint);
+    //countOfPositionMarker++;
+    TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = TextSpan(
+      text: markerPoint.toString(),
+      style: TextStyle(fontSize: 25.0, color: Colors.white,fontWeight: FontWeight.bold),
+    );
+
+    painter.layout();
+    painter.paint(
+        canvas,
+        Offset((width * 0.5) - painter.width * 0.5,
+            (height * .5) - painter.height * 0.5));
+    final img = await pictureRecorder.endRecording().toImage(width, height);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data.buffer.asUint8List();
+  }
+  Future<BitmapDescriptor> getMarkerIconNew(String imagePath, Size size,int number) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+
+    final Radius radius = Radius.circular(size.width / 2);
+
+    final Paint tagPaint = Paint()..color = Colors.blue;
+    final double tagWidth = 40.0;
+
+    final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
+    final double shadowWidth = 15.0;
+
+    final Paint borderPaint = Paint()..color = Colors.white;
+    final double borderWidth = 3.0;
+
+    final double imageOffset = shadowWidth + borderWidth;
+
+    // Add shadow circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              0.0,
+              0.0,
+              size.width,
+              size.height
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        shadowPaint);
+
+    // Add border circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              shadowWidth,
+              shadowWidth,
+              size.width - (shadowWidth * 2),
+              size.height - (shadowWidth * 2)
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        borderPaint);
+
+    // Add tag circle
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(
+              size.width - tagWidth,
+              0.0,
+              tagWidth,
+              tagWidth
+          ),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        tagPaint);
+
+    // Add tag text
+    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    textPainter.text = TextSpan(
+      text: number.toString(),
+      style: TextStyle(fontSize: 20.0, color: Colors.white),
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+        canvas,
+        Offset(
+            size.width - tagWidth / 2 - textPainter.width / 2,
+            tagWidth / 2 - textPainter.height / 2
+        )
+    );
+
+    // Oval for the image
+    Rect oval = Rect.fromLTWH(
+        imageOffset,
+        imageOffset,
+        size.width - (imageOffset * 2),
+        size.height - (imageOffset * 2)
+    );
+
+    // Add path for oval image
+    canvas.clipPath(Path()
+      ..addOval(oval));
+
+    // Add image
+    ui.Image image = await getImageFromNetwork(imagePath); // Alternatively use your own method to get the image
+    paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+
+    // Convert canvas to image
+    final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
+        size.width.toInt(),
+        size.height.toInt()
+    );
+
+    // Convert image to bytes
+    final ByteData byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+    final Uint8List uint8List = byteData.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(uint8List);
+  }
+
+
 
 
 

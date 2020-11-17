@@ -90,11 +90,12 @@ class _OfflineHomePageState extends State<OfflineHomePage>{
     // setLocationAddress();
     // startTimer();
     platform.setMethodCallHandler(_handleMethod);
-
   }
+
+
   static const platform = const MethodChannel('location.spoofing.check');
 
-  String address="";
+  String address ="";
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch(call.method) {
       case "navigateToPage":
