@@ -327,6 +327,8 @@ class _MyAppState extends State<MyApp> {
 
   void _onLocation(bg.Location location) async{
 
+
+
     if (location.sample) { return; }
     print("onlocation..........................");
     print(await bearingBetween(lastLati, lastLongi, double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString())));
@@ -414,6 +416,28 @@ class _MyAppState extends State<MyApp> {
 */
 
 
+    serverConnected= await checkConnectionToServer();
+    if(serverConnected==1) {
+      print("inside server connected");
+      var date = DateTime.now().toString();
+      var currentTime = date.toString().split(" ")[1].split(".")[0];
+      prefs.setString("InternetOnTime", currentTime);
+      var InternetOffTime1;
+      InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
+      if(InternetOffTime1!='')
+        getGPSinformation("InternetOnOffTime");
+
+    }
+    else{
+      var date = DateTime.now().toString();
+      var currentTime = date.toString().split(" ")[1].split(".")[0];
+      var InternetOffTime = prefs.setString("InternetOffTime", currentTime);
+      var InternetOffTime1;
+      InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
+      print(InternetOffTime1);
+      print("InternetOffTime123");
+    }
+
 
     String odometerKM = (location.odometer / 1000.0).toStringAsFixed(1);
     // if(mounted)
@@ -451,33 +475,46 @@ class _MyAppState extends State<MyApp> {
     ));
   }
 
-  void _onProviderChange(bg.ProviderChangeEvent event) async {   //when gps is on/off
+
+
+  void _onProviderChange(bg.ProviderChangeEvent event) async {
+
+    print("ProviderChangeEvent");
+    print(event.gps);
     var prefs = await SharedPreferences.getInstance();
     var date = DateTime.now().toString();
+    var currentTime = date.toString().split(" ")[1].split(".")[0];
+    print("inside main iss");
+    print(DateTime.now());
     var GpsOffTime;
 
-    if(event.gps == false){
-      prefs.setString("GpsOffTime", date);
-      serverConnected= await checkConnectionToServer();
-      GpsOffTime = prefs.getString('GpsOffTime') ?? '';
-      //if(isAlreadyLoggedIn==1)
-      if(serverConnected==1){
+    if(event.gps == false){                            //gps is off
+      prefs.setString("gpsOffTime", currentTime);
+     var get2= prefs.setString("gpsOffTimeOffline", currentTime);
+     var gpsOffTimeOffline = prefs.getString('gpsOffTimeOffline') ?? '';
+     print(gpsOffTimeOffline);
+     print("gpsOffTimeOffline");
 
-        getGPSinformation(GpsOffTime);
+      //serverConnected= await checkConnectionToServer();
+     GpsOffTime = prefs.getString('gpsOffTime') ?? '';
 
-        //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
+     /* if(serverConnected==1) {
+        getGPSinformation("gpsOffTime");
+      }*/
+    }
 
+    else{
+     // prefs.setString("gpsOnTime", "gpsOnTime");
+     var get1 = prefs.setString("gpsOnTimeOffline", currentTime);
+     print(get1);
+     print("gpsOnTimeOffline");
+     // serverConnected= await checkConnectionToServer();
+     // GpsOffTime = prefs.getString('gpsOnTime') ?? '';
+     GpsOffTime = prefs.getString('gpsOffTime') ?? '';
+      if(GpsOffTime!=''){
+        getGPSinformation("gpsOnOffTime");
       }
     }
-   /* serverConnected= await checkConnectionToServer();
-    //if(isAlreadyLoggedIn==1)
-    if(serverConnected==1){
-
-      //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
-
-    }*/
 
     if(mounted)
       setState(() {
@@ -489,11 +526,31 @@ class _MyAppState extends State<MyApp> {
 
   void _onConnectivityChange(bg.ConnectivityChangeEvent event) async {  //when internet is on/off
     print('$event');
+    print("hgvjhgbkjhbk");
     var prefs = await SharedPreferences.getInstance();
     var date = DateTime.now().toString();
     print(event.connected);
+
     if(event.connected == false){
-      prefs.setString("InternetOffTime", date);
+      var date = DateTime.now().toString();
+      var currentTime = date.toString().split(" ")[1].split(".")[0];
+     var InternetOffTime = prefs.setString("InternetOffTime", currentTime);
+      var InternetOffTime1;
+      InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
+     print(InternetOffTime1);
+     print("InternetOffTime123");
+
+    }
+    else{
+
+      var date = DateTime.now().toString();
+      var currentTime = date.toString().split(" ")[1].split(".")[0];
+      prefs.setString("InternetOnTime", currentTime);
+      var InternetOffTime1;
+      InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
+      if(InternetOffTime1!='')
+      getGPSinformation("InternetOnOffTime");
+
     }
     print("connectivity change");
   }

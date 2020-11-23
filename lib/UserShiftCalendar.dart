@@ -1213,6 +1213,7 @@ class _MyHomePageState extends State<userShiftCalendar> {
 
         if((daysGoneList.containsKey(date) || date.isBefore(now)) && (PresentAttendanceDate.contains(date)))
           _onAlertWithCustomContentPressed(date);
+
         else if(holidayDateList.contains(date)){
           _onAlertForHolidays(date);
         }

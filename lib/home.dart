@@ -831,6 +831,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   initPlatformState() async {
 
     checknetonpage(context);
+
     //checkLocationEnabled(context);
     appResumedPausedLogic(context);
     timerResumePause();
@@ -841,6 +842,28 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
     //showAddingShiftReminder();
     var prefs = await SharedPreferences.getInstance();
+    var gpsOnTimeOffline;
+    var gpsOffTimeOffline;
+    gpsOnTimeOffline = prefs.getString('gpsOnTimeOffline') ?? '';
+    gpsOffTimeOffline = prefs.getString('gpsOffTimeOffline') ?? '';//unset prefs imp
+
+    if(gpsOnTimeOffline!='' && gpsOffTimeOffline!='') {
+      getGPSinformationOffline(gpsOnTimeOffline, gpsOffTimeOffline);
+      prefs.remove('gpsOnTimeOffline');
+      prefs.remove('gpsOffTimeOffline');
+    }
+
+    var InternetOffTime;
+    InternetOffTime = prefs.getString('InternetOffTime') ?? '';
+    if(InternetOffTime!='') {
+      getGPSinformation("InternetOnOffTime");
+
+    }
+
+    print(InternetOffTime);
+    print("InternetOffTime");
+
+
     firstTimeinPopup=prefs.getInt("firstTimein")??0;
     // occurences++;
 
@@ -3347,6 +3370,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                         //});
 
                         ii++;
+
                         /* var m=Marker(
           markerId: MarkerId('sourcePin$p'),
           position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),

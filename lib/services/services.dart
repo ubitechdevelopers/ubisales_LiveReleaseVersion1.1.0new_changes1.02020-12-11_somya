@@ -4787,11 +4787,38 @@ getGPSinformation(GpsOffTime) async{
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
   String empid = prefs.getString('empid')??"";
+  var InternetOffTime = prefs.getString('InternetOffTime') ?? '';
+  var GpsOffTiming = prefs.getString('gpsOffTime') ?? '';
+
 
   try{
     Dio dio = new Dio();
-    print(globals.path+"getGPSinformation?GpsOffTime=$GpsOffTime&orgid=$orgid&empid=$empid");
-    await dio.post(globals.path+"getGPSinformation?GpsOffTime=$GpsOffTime&orgid=$orgid&empid=$empid");
+    print(globals.path+"getGPSinformation?status=$GpsOffTime&orgid=$orgid&empid=$empid&internetOfflineTime=$InternetOffTime&GpsOffTiming=$GpsOffTiming");
+    await dio.post(globals.path+"getGPSinformation?status=$GpsOffTime&orgid=$orgid&empid=$empid&internetOfflineTime=$InternetOffTime&GpsOffTiming=$GpsOffTiming");
+    prefs.remove('InternetOffTime');
+    prefs.remove('gpsOffTime');
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+
+getGPSinformationOffline(gpsOnTimeOffline,gpsOffTimeOffline) async{
+
+  print(gpsOnTimeOffline);
+  print(gpsOffTimeOffline);
+  print("gbkjbkjnbkj");
+
+  final prefs = await SharedPreferences.getInstance();
+  String orgid = prefs.getString('orgdir') ?? '';
+  String empid = prefs.getString('empid')??"";
+
+
+  try{
+    Dio dio = new Dio();
+    print(globals.path+"getGPSinformation?gpsOnTimeOffline=$gpsOnTimeOffline&gpsOffTimeOffline=$gpsOffTimeOffline&orgid=$orgid&empid=$empid");
+    await dio.post(globals.path+"getGPSinformation?gpsOnTimeOffline=$gpsOnTimeOffline&gpsOffTimeOffline=$gpsOffTimeOffline&orgid=$orgid&empid=$empid");
 
   }catch(e)
   {
