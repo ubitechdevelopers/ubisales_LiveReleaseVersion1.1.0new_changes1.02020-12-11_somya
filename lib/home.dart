@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:math' as Math;
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:Shrine/UserShiftCalendar.dart';
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/askregister.dart';
 import 'package:Shrine/avatar_glow.dart';
@@ -155,6 +156,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   // this set will hold my markers
   Set<Marker> _markers = {};
   Set<Marker> _markers1 = {};
+  Set<Marker> _markers2 = {};
   bool selected = true;
   String _colorName = 'No';
   String profile ="";
@@ -325,9 +327,33 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     today.text = formatter.format(DateTime.now());
     platform.setMethodCallHandler(_handleMethod);  //add
 
+  //  example();
+
 
     //opacityLevel=2.0;
   }
+
+  /*example(){
+    String a ="abcdefghijklmnopqrstuvwxyz";
+    String s ="abczgdprstubg";
+    List l1 = new List();
+
+    for(int i=0;i<s.length;i++){
+
+     String a  = s[i];
+     String b = a.in;
+
+     if(a==b){
+       l1.add(a);
+       continue;
+     }
+     else{
+
+     }
+
+    }
+
+  }*/
 
   void _getLocation() async {
 
@@ -844,7 +870,9 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     var prefs = await SharedPreferences.getInstance();
     var gpsOnTimeOffline;
     var gpsOffTimeOffline;
-    gpsOnTimeOffline = prefs.getString('gpsOnTimeOffline') ?? '';
+
+
+  /*  gpsOnTimeOffline = prefs.getString('gpsOnTimeOffline') ?? '';
     gpsOffTimeOffline = prefs.getString('gpsOffTimeOffline') ?? '';//unset prefs imp
 
     if(gpsOnTimeOffline!='' && gpsOffTimeOffline!='') {
@@ -857,11 +885,10 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     InternetOffTime = prefs.getString('InternetOffTime') ?? '';
     if(InternetOffTime!='') {
       getGPSinformation("InternetOnOffTime");
-
     }
 
     print(InternetOffTime);
-    print("InternetOffTime");
+    print("InternetOffTime");*/
 
 
     firstTimeinPopup=prefs.getInt("firstTimein")??0;
@@ -2570,7 +2597,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print(initials);
       print("initials ");
     }else{
-      First=Name;
+      First=Name.toString().substring(0,1);
       print('print(First)else');
       print(First);
       initials =  First;
@@ -3028,7 +3055,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             if(admin_sts == '0')
               RaisedButton(
                 color: Colors.blue.withAlpha(150),
-                onPressed:_profile,
+                onPressed:_logs,
                 shape: CircleBorder(),
                 //   padding: const EdgeInsets.all(10.0),
                 child: Container(
@@ -3558,7 +3585,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                     )
                 ):Container(),
 
-                (admin_sts == '1' || admin_sts=='2') &&  setLoader != true && childExist == true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
+                //(admin_sts == '1' || admin_sts=='2') &&  setLoader != true && childExist == true? new Align(child: CircularProgressIndicator(),alignment: FractionalOffset.center,):Container(),
               ],
             ),
           ),
@@ -4673,7 +4700,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                           print(initials);
                           print("initials ");
                         }else{
-                          First=Name;
+                          First=Name.toString().substring(0,1);
                           print('print(First)else');
                           print(First);
                           initials =  First;
@@ -4855,7 +4882,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print(initials);
       print("initials ");
     } else {
-      First = Name;
+      First = Name.toString().substring(0,1);
       print('print(First)else');
       print(First);
       initials = First;
@@ -5050,11 +5077,11 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     );
   }
 
-  _profile(){
+  _logs(){
     print("xyz123");
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProfilePage()),
+      MaterialPageRoute(builder: (context) => userShiftCalendar()),
     );
   }
 
@@ -5094,6 +5121,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     setMapPins();
     setPolylines();
     controller2.complete(controller);
+    var userFlag=false;
     String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
 
     if(admin_sts == '1' || admin_sts == '2') {
@@ -5356,6 +5384,9 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empid).child(todayDate).onChildAdded
             .listen((data) async {
 
+          userFlag=true;
+
+
           var currentLoc=  Locations.fromFireBase(data.snapshot);
 
           if(currentLoc.mock == "true") {  //if user uses mock locations
@@ -5513,7 +5544,32 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
         });
 
+        if(userFlag==false){
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+              zoom: 13.0,
+            ),
+          ));
 
+          var m=Marker(
+            markerId: MarkerId('sourcePinTimeInIconUserLocation1'+globals.assign_lat.toString()),
+            position: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
+            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+            icon: BitmapDescriptor.defaultMarker,
+            // icon:pinLocationIcon,
+            infoWindow: InfoWindow(
+              title: "You are here",
+            ),
+          );
+          Future.delayed(Duration(seconds: 1),(){
+            setState(() {
+              _markers1.add(m);
+              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+            });
+          });
+        }
         /*  controller.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
             bearing: 0,

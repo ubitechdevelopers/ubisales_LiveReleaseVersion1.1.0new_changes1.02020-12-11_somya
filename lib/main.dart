@@ -18,6 +18,7 @@ import 'dart:math';
 import 'package:Shrine/location_tracking/util/geospatial.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -214,7 +215,7 @@ class _MyAppState extends State<MyApp> {
     // 2.  Configure the plugin
     bg.BackgroundGeolocation.ready(bg.Config(
         reset: true,
-        debug: true,
+        debug: false,                 //to off
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
         distanceFilter: 10.0,
@@ -330,7 +331,7 @@ class _MyAppState extends State<MyApp> {
 
 
     if (location.sample) { return; }
-    print("onlocation..........................");
+    print("onlocation.........................." + location.toString());
     print(await bearingBetween(lastLati, lastLongi, double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString())));
     print(await Geospatial.getBearing(LatLng(lastLati, lastLongi), LatLng(double.parse(location.coords.latitude.toString()), double.parse(location.coords.longitude.toString()))));
 
@@ -416,7 +417,10 @@ class _MyAppState extends State<MyApp> {
 */
 
 
-    serverConnected= await checkConnectionToServer();
+    print(_content);
+    print("string of location");
+
+   /* serverConnected= await checkConnectionToServer();
     if(serverConnected==1) {
       print("inside server connected");
       var date = DateTime.now().toString();
@@ -427,6 +431,14 @@ class _MyAppState extends State<MyApp> {
       if(InternetOffTime1!='')
         getGPSinformation("InternetOnOffTime");
 
+
+
+      var geoLocator = Geolocator();
+      var status = await geoLocator.checkGeolocationPermissionStatus();
+
+      print(status);
+      print("status of gps inside serverconnected");
+
     }
     else{
       var date = DateTime.now().toString();
@@ -436,7 +448,17 @@ class _MyAppState extends State<MyApp> {
       InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
       print(InternetOffTime1);
       print("InternetOffTime123");
-    }
+
+
+      var geoLocator = Geolocator();
+      var status = await geoLocator.checkGeolocationPermissionStatus();
+
+      print(status);
+      print("status of gps inside notserverconnected");
+
+
+
+    }*/
 
 
     String odometerKM = (location.odometer / 1000.0).toStringAsFixed(1);
@@ -479,6 +501,9 @@ class _MyAppState extends State<MyApp> {
 
   void _onProviderChange(bg.ProviderChangeEvent event) async {
 
+    print("....");
+    print(event);
+
     print("ProviderChangeEvent");
     print(event.gps);
     var prefs = await SharedPreferences.getInstance();
@@ -512,13 +537,14 @@ class _MyAppState extends State<MyApp> {
      // GpsOffTime = prefs.getString('gpsOnTime') ?? '';
      GpsOffTime = prefs.getString('gpsOffTime') ?? '';
       if(GpsOffTime!=''){
-        getGPSinformation("gpsOnOffTime");
+       // getGPSinformation("gpsOnOffTime");
       }
     }
 
     if(mounted)
       setState(() {
         _content = encoder.convert(event.toMap());
+        print(_content);
       });
   }
 
@@ -548,8 +574,8 @@ class _MyAppState extends State<MyApp> {
       prefs.setString("InternetOnTime", currentTime);
       var InternetOffTime1;
       InternetOffTime1 = prefs.getString('InternetOffTime') ?? '';
-      if(InternetOffTime1!='')
-      getGPSinformation("InternetOnOffTime");
+     // if(InternetOffTime1!='')
+    //  getGPSinformation("InternetOnOffTime");
 
     }
     print("connectivity change");

@@ -4782,7 +4782,7 @@ List<Attendance> createAttendance(List data) {
 }
 
 
-getGPSinformation(GpsOffTime) async{
+/*getGPSinformation(GpsOffTime) async{
 
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
@@ -4802,13 +4802,10 @@ getGPSinformation(GpsOffTime) async{
   {
     print(e.toString());
   }
-}
+}*/
 
-getGPSinformationOffline(gpsOnTimeOffline,gpsOffTimeOffline) async{
+/*getGPSinformationOffline(gpsOnTimeOffline,gpsOffTimeOffline) async{
 
-  print(gpsOnTimeOffline);
-  print(gpsOffTimeOffline);
-  print("gbkjbkjnbkj");
 
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
@@ -4824,7 +4821,7 @@ getGPSinformationOffline(gpsOnTimeOffline,gpsOffTimeOffline) async{
   {
     print(e.toString());
   }
-}
+}*/
 
 
 

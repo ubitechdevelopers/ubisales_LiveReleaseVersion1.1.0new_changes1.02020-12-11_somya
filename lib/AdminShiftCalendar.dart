@@ -304,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage1> {
 
     defaultShiftTimings = globals.defaultShiftTimings;                     //21 sept
 
-    shiftplanner(Id,defaultShiftTimings).then((EmpList) {
+    shiftplanner(Id,ShiftId).then((EmpList) {
       setState(() {
         print("emplis;lk;k;lt");
         items = EmpList;

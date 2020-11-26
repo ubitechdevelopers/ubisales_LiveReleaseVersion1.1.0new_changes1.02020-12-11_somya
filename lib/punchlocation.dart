@@ -813,6 +813,12 @@ class _PunchLocation extends State<PunchLocation> {
     // sl.startStreaming(5);
     //client = _clientname.text;
 
+    if(prefix0.fakeLocationDetected){
+      FakeLocationStatus =1;
+    }else{
+      FakeLocationStatus=0;
+    }
+
     advancevisit==1?clientname = _searchQueryController.text:clientname = _clientname.text;
     print("clientname");
     print(clientname);

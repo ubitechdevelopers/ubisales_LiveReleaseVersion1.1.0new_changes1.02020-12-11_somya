@@ -1050,6 +1050,7 @@ print("marker added............");
 
     print(countOfPositionMarker);
     print("countOfPositionMarker");
+    print("compsition");
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     final Paint paint = Paint()..color = Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
@@ -1191,6 +1192,7 @@ print("marker added............");
     var ii=0;
     var lastCurrentLocation;
     int markerPoint = 0;
+    int ID = 1;
     List TimeInOutLocations = new List();
     final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
     final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
@@ -1207,7 +1209,7 @@ print("marker added............");
 //      print(mockLocation);
 
       if(currentLoc.mock == "true"){  //if user uses mock locations
-        int ID = 1;
+      //  int ID = 1;
         ID++;
         var m1=Marker(
           markerId: MarkerId('fakeLocation$ID'),
@@ -1975,6 +1977,7 @@ print("marker added............");
     final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
     final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
     final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+    int ID = 1;
 
     List latitude = new List();
     List longitude = new List();
@@ -2005,7 +2008,7 @@ print("marker added............");
         lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
 
         if(currentLoc.mock == "true"){  //if user uses mock locations
-          int ID = 1;
+
           ID++;
 
           print("inside mock location");
@@ -2100,6 +2103,7 @@ print("marker added............");
 
           endM = double.parse(currentLoc.odometer);
           print("end loc odo" + startM.toString());
+          print("error handling");
 
           kms = ((endM - startM) / 1000).toStringAsFixed(2) + " kms";
           print("sgksshhskhs   " + kms);
@@ -2194,6 +2198,7 @@ print("marker added............");
         });
       });
     }*/
+
 
     Future.delayed(Duration(seconds: 3), () {
 

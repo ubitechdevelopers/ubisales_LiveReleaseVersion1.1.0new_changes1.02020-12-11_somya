@@ -291,6 +291,12 @@ String address="";
               ),
               color: buttoncolor,
               onPressed: () async{
+
+                if(prefix0.fakeLocationDetected){
+                  FakeLocationStatus =1;
+                }else{
+                  FakeLocationStatus=0;
+                }
                 globalCameraOpenedStatus=true;
               //  sl.startStreaming(5);
                 SaveImage saveImage = new SaveImage();

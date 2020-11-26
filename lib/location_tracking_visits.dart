@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Bottomnavigationbar.dart';
@@ -16,28 +17,40 @@ import 'Image_view.dart';
 import 'drawer.dart';
 import 'globals.dart' as globals;
 import 'home.dart';
+import 'dart:math' as math;
 //import 'package:intl/intl.dart';
 
 
-void main() => runApp(new LocationTrackingVisits());
+//void main() => runApp(new LocationTrackingVisits());
 
 class LocationTrackingVisits extends StatefulWidget {
   @override
   _LocationTrackingVisits createState() => _LocationTrackingVisits();
 }
 String org_name="";
+TextEditingController today;
+var formatter = new DateFormat('yyyy-MM-dd');
+
+
 class _LocationTrackingVisits extends State<LocationTrackingVisits> {
   String fname="";
   String lname="";
   String desination="";
   String profile="";
+ /* TextEditingController today;
+  var formatter = new DateFormat('yyyy-MM-dd');*/
+
 
   int _currentIndex = 1;
   String admin_sts='0';
   @override
   void initState() {
     super.initState();
+
     initPlatformState();
+ /*   today = new TextEditingController();
+    today.text = formatter.format(DateTime.now());*/
+
   }
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
@@ -152,14 +165,26 @@ String dateFormatter(String date_) {
   var date = date_.split("-");
   return(date[2]+""+dy[int.parse(date[2])-1]+" "+months[int.parse(date[1])-1]);
 }
+
+
 getWidgets(context){
+/*  TextEditingController today;
+  var formatter = new DateFormat('yyyy-MM-dd');
+  today = new TextEditingController();
+  today.text = formatter.format(DateTime.now());*/
+  var First;
+  var Last;
+  var initials;
+  var now = DateTime.now();
+
+
   return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget> [
         Container(
           padding: EdgeInsets.only(top:12.0,bottom: 2.0),
           child:Center(
-            child:Text('Today\'s Visits',
+            child:Text('Live Locations',
                 style: new TextStyle(fontSize: 22.0, color: globals.appcolor,)),
           ),
         ),
@@ -178,7 +203,7 @@ getWidgets(context){
 
         ),
 
-        new Row(
+        /*new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //            crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -202,15 +227,17 @@ getWidgets(context){
               child:Text('Distance Travelled',style: TextStyle(color: globals.appcolor,fontWeight:FontWeight.bold,fontSize: 16.0),),
             ),
           ],
-        ),
+        ),*/
         Divider(height: 1.5,),
         SizedBox(height: 5.0,),
         Container(
             height: MediaQuery.of(context).size.height*0.55,
             child:
-            FutureBuilder<List<VisitsLT>>(
-              future: getSummary(),
+            FutureBuilder<List<Attendance>>(
+              future: getAttendance(now.toString().substring(0,10)),
               builder: (context, snapshot) {
+
+                print(now.toString().substring(0,10));
                 if (snapshot.hasData) {
 
                   return new ListView.builder(
@@ -218,165 +245,109 @@ getWidgets(context){
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
+
+                        print("khklkhkhkjhkhkhj");
+                        print(snapshot.data[index].name.toString());
+
+
+                          var Name = snapshot.data[index].name.toString();
+                          if((Name.trim()).contains(" ")) {
+                            var name=Name.split(" ");
+                            print('print(name);');
+                            print(name);
+                            First=name[0][0].trim();
+                            print(First);
+                            Last=name[1][0].trim().toString().toUpperCase();
+                            print(Last);
+                            initials =  First+Last;
+                            print(initials);
+                            print("initials ");
+                          }else{
+                            First=Name.substring(0,1);
+                            print('print(First)else');
+                            print(First);
+                            initials =  First;
+                            print(initials);
+                          }
+
                         //   double h_width = MediaQuery.of(context).size.width*0.5; // screen's 50%
                         //   double f_width = MediaQuery.of(context).size.width*1; // screen's 100%
-                        var locationData=getCurrentLocation(snapshot.data[index].empId);
+
                         return new Column(
                             children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              SizedBox(height: 10.0,),
+                              Wrap(
                                 children: <Widget>[
-                                  SizedBox(height: 40.0,),
                                   Container(
-                                    width: MediaQuery.of(context).size.width * 0.23,
-                                    child: Column(
+                                    child: Row(
+                                  //  mainAxisAlignment:MainAxisAlignment
+
                                       crossAxisAlignment: CrossAxisAlignment
-                                          .start,
+                                          .center,
                                       children: <Widget>[
                                         InkWell(
-                                          child: Text(snapshot.data[index].fName
-                                              .toString()+" "+snapshot.data[index].lName.toString(), style: TextStyle(
-                                              color: Colors.blue,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.0,
-                                              decoration: TextDecoration.underline
-                                          ),),
-                                          onTap: (){
-                                            Navigator.push(
-
-                                              context,
-                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId,snapshot.data[index].fName)),
-                                            );
-                                          },
-                                        ),
-/*
-                                        InkWell(
-                                          child: Text('Time In: ' +
-                                              snapshot.data[index]
-                                                  .checkInLoc.toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.0)),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index]
-                                                    .latit_in ,
-                                                snapshot.data[index]
-                                                    .longi_in);
-                                          },
-                                        ),
-                                        SizedBox(height:2.0),
-                                        InkWell(
-                                          child: Text('Time Out: ' +
-                                              snapshot.data[index].CheckOutLoc.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12.0),),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index].latit_out,
-                                                snapshot.data[index].longi_out);
-                                          },
-                                        ),
-                                        snapshot.data[index].bhour.toString()!=''?Container(
-                                          color:globals.buttoncolor,
-                                          child:Text(""+snapshot.data[index]
-                                              .bhour.toString()+" Hr(s)",style: TextStyle(),),
-                                        ):SizedBox(height: 10.0,),
-*/
-
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 40.0,),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width * 0.46,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: <Widget>[
-                                        InkWell(
-                                          child: Text(snapshot.data[index].location
-                                              .toString(), style: TextStyle(
-                                            color: Colors.black87,
-
-                                            fontSize: 16.0,
-
-                                          ),),
-                                          onTap: (){
-                                            Navigator.push(
-
-                                              context,
-                                              MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].empId,snapshot.data[index].fName)),
-                                            );
-                                          },
-                                        ),
-/*
-                                        InkWell(
-                                          child: Text('Time In: ' +
-                                              snapshot.data[index]
-                                                  .checkInLoc.toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12.0)),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index]
-                                                    .latit_in ,
-                                                snapshot.data[index]
-                                                    .longi_in);
-                                          },
-                                        ),
-                                        SizedBox(height:2.0),
-                                        InkWell(
-                                          child: Text('Time Out: ' +
-                                              snapshot.data[index].CheckOutLoc.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black54,
-                                                fontSize: 12.0),),
-                                          onTap: () {
-                                            goToMap(
-                                                snapshot.data[index].latit_out,
-                                                snapshot.data[index].longi_out);
-                                          },
-                                        ),
-                                        snapshot.data[index].bhour.toString()!=''?Container(
-                                          color:globals.buttoncolor,
-                                          child:Text(""+snapshot.data[index]
-                                              .bhour.toString()+" Hr(s)",style: TextStyle(),),
-                                        ):SizedBox(height: 10.0,),
-*/
-
-                                      ],
-                                    ),
-                                  ),
-
-                                  Container(
-                                      width: MediaQuery.of(context).size.width * 0.23,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          //  Text(snapshot.data[index].TimeIn.toString(),style: TextStyle(fontWeight: FontWeight.bold , fontSize: 16.0),),
-
-                                          Container(
-                                            width: 62.0,
-                                            height: 62.0,
-                                            child:InkWell(
-                                                child: Container(
-                                                  child: Text(snapshot.data[index].distance+ " km"),
-                                                )),
-
+                                          child:
+                                          new Container(
+                                            margin: EdgeInsets.only(left: 10.0),
+                                            width: 40.0,
+                                            height: 40.0,
+                                            child: CircleAvatar(
+                                              child: Text(initials,style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400)),
+                                              backgroundColor: Color((math.Random().nextDouble() * 0xFFFFFF).toInt() << 0).withOpacity(1.0),
+                                            ),
                                           ),
+                                        ),
+                                        SizedBox(width: 15.0,),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                Container(
+                                                  width: MediaQuery
+                                                      .of(context)
+                                                      .size
+                                                      .width * 0.63,
+                                                  child: new Text(
+                                                    snapshot.data[index].name.toString(),
+                                                    style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontSize: 18.0,
+                                                    ),
+                                                  ),
+                                                ),
 
-                                        ],
-                                      )
+
+                                                new InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) => TrackEmp(snapshot.data[index].EmployeeId.toString(),snapshot.data[index].name)),
+                                                    );
+                                                  },
+                                                  child:   Image.asset(
+                                                    'assets/pin.png', height: 40.0, width: 30.0,color: globals.appcolor,),
+                                                ),
+
+                                                SizedBox(width: 10.0,),
+
+
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+
+
+                                      ],
+                                    ),
                                   ),
-
                                 ],
-
                               ),
-                              Divider(color: Colors.black26,),
-                            ]);
+                              SizedBox(height: 15.0,)
+                            ]
+                        );
                       }
                   );
                 } else if (snapshot.hasError) {
