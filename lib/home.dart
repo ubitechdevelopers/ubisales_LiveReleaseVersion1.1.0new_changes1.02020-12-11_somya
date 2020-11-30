@@ -1611,7 +1611,9 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     devicenamebrand = devicebrand+' '+devicename;
 
 
-
+   print("DEVICENAME->"+devicename);
+   print("DEVICEBRAND->"+devicebrand);
+   print("ANDROIDID->"+androidInfo.androidId);
 
     var prefs = await SharedPreferences.getInstance();
     //deviceid= prefs.getString("deviceid") ?? '';
@@ -1633,7 +1635,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
 
       print("RandomString:"+RandomString(60));
-      deviceidmobile= RandomString(60);
+      //deviceidmobile= RandomString(60);
+      deviceidmobile= androidInfo.androidId;
       prefs.setString("deviceid",deviceidmobile);
 
 
@@ -1655,7 +1658,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
 
       print("RandomString:"+RandomString(60));
-      deviceidmobile= RandomString(60);
+      //deviceidmobile= RandomString(60);
+      deviceidmobile= androidInfo.androidId;
       if(deviceVerifyPopupShown==false && deviceid=='') {
         // if(deviceid=='') {
         //

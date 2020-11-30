@@ -409,7 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.black38,
                           ),
                           //hintText: AppTranslations.of(context).text("key_company_name"),
-                          hintText: 'First name          Last name',
+                          hintText: 'Full Name',
 //                          labelText: 'Company',
                           hintStyle: TextStyle(
                             color: Colors.black45,
@@ -1145,8 +1145,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }).catchError((e) {
       print(e);
     });
-
   }
+
+
 
   _getAddressFromLatLng() async {
     try {

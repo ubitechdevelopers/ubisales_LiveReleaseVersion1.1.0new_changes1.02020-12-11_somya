@@ -74,6 +74,7 @@ print(globals.path+"checkLogin?userName="+user.userName+"&password="+user.userPa
           prefs.setString('usrpwd', usrpwd);
           prefs.setString('lid', '0');
           globals.mailverifiedstatus=employeeMap["mail_varified"];
+          globals.deviceandroidid=employeeMap['deviceandroidid'];
           //print(user.orgid+" "+user.org_name +" "+user.fname+" "+user.email);
           // default 0, check punch location id
          // prefs.setString('profile', "http://ubiattendance.ubihrm.com/assets/img/avatar.png");

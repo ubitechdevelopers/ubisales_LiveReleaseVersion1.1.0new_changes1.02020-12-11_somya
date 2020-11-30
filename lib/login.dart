@@ -739,19 +739,39 @@ class _LoginPageState extends State<LoginPage> {
         loader = true;
       });
 
+
+
       var islogin = await dologin.checkLogin(user);
-      print(islogin);
+      print("ISLOGIN STATUS IS HERE"+islogin);
       print(mailstatus);   //when new organization registered
       print(mailverifiedstatus);  //when existing organiztion's employee login
       print("mailll");
+      print("test");
+      var prefdeviceid = prefs.getString('deviceid') ?? '0';
+      print("PREFRENCE DEVICE ID"+prefdeviceid);
+      print("DATABASE REGISTERED DEVICE ID"+prefix0.deviceandroidid);
 
-      if(islogin=="success"  ) {
-        prefs.setString('username', username);
-        /*Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );*/
-        Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false,);
+      if(islogin=="success") {
+
+
+        if(prefix0.deviceandroidid==prefdeviceid || prefix0.deviceandroidid=='') {
+          prefs.setString('username', username);
+          /*Navigator.push(
+             context,
+             MaterialPageRoute(builder: (context) => HomePage()),
+           );*/
+          Navigator.pushAndRemoveUntil(
+            context, MaterialPageRoute(builder: (context) => HomePage()), (
+              Route<dynamic> route) => false,);
+        }
+        else {
+          setState(() {
+            loader = false;
+          });
+          Scaffold.of(context)
+              .showSnackBar(
+              SnackBar(content: Text("DeviceId not matched!!!")));
+        }
       }
       else if(islogin == 'MailNotVerified') {
         Navigator.push(
