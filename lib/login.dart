@@ -748,13 +748,15 @@ class _LoginPageState extends State<LoginPage> {
       print("mailll");
       print("test");
       var prefdeviceid = prefs.getString('deviceid') ?? '0';
+      bool deviceVerifyPopupShown=prefs.getBool("deviceVerifyPopupShown")??false;
       print("PREFRENCE DEVICE ID"+prefdeviceid);
       print("DATABASE REGISTERED DEVICE ID"+prefix0.deviceandroidid);
+      print("DEVICE VERIFY POPUP SHOWN"+deviceVerifyPopupShown.toString());
 
       if(islogin=="success") {
 
 
-        if(prefix0.deviceandroidid==prefdeviceid || prefix0.deviceandroidid=='') {
+        if((prefix0.deviceandroidid==prefdeviceid) || (prefix0.deviceandroidid=='' && deviceVerifyPopupShown==false)) {
           prefs.setString('username', username);
           /*Navigator.push(
              context,
@@ -768,9 +770,13 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             loader = false;
           });
-          Scaffold.of(context)
-              .showSnackBar(
-              SnackBar(content: Text("DeviceId not matched!!!")));
+          Scaffold.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      "DeviceId not matched."
+                  )
+              )
+          );
         }
       }
       else if(islogin == 'MailNotVerified') {

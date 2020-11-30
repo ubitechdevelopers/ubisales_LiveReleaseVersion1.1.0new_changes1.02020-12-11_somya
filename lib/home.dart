@@ -66,6 +66,7 @@ import 'database_models/attendance_offline.dart';
 import 'globals.dart';
 import 'location_tracking/map_pin_pill.dart';
 import 'location_tracking/pin_pill_info.dart';
+import 'login.dart';
 import 'services/services.dart';
 import 'dart:ui' as ui;
 import 'package:Shrine/globals.dart' as globals;
@@ -1600,6 +1601,91 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
   }
 
+  logout() async{
+    final prefs = await SharedPreferences.getInstance();
+    String countryTopic=prefs.get('CountryName')??'admin';
+    String orgTopic=prefs.get('OrgTopic')??'admin';
+    String currentOrgStatus=prefs.get('CurrentOrgStatus')??'admin';
+    String employeeTopic = prefs.getString("EmployeeTopic") ?? '';
+    prefs.remove('response');
+    prefs.remove('fname');
+    prefs.remove('lname');
+    prefs.remove('empid');
+    prefs.remove('email');
+    prefs.remove('status');
+    prefs.remove('sstatus');
+    prefs.remove('orgid');
+    prefs.remove('orgdir');
+    prefs.remove('sstatus');
+    prefs.remove('org_name');
+    prefs.remove('destination');
+    prefs.remove('profile');
+    prefs.remove('latit');
+    prefs.remove('longi');
+    prefs.remove('aid');
+    prefs.remove('shiftId');
+    prefs.remove('OfflineModePermission');
+    prefs.remove('ImageRequired');
+    prefs.remove('glow');
+    prefs.remove('OrgTopic');
+    prefs.remove('CountryName');
+    prefs.remove('CurrentOrgStatus');
+    prefs.remove('date');
+    prefs.remove('firstAttendanceMarked');
+    prefs.remove('EmailVerifacitaionReminderShown');
+    prefs.remove('companyFreshlyRegistered');
+    prefs.remove('fname');
+    prefs.remove('empid');
+    prefs.remove('orgid');
+    prefs.remove('ReferralValidFrom');
+    prefs.remove('glow');
+    prefs.remove('ReferralValidTo');
+    prefs.remove('referrerAmt');
+    prefs.remove('referrenceAmt');
+    prefs.remove('referrerId');
+    prefs.remove('TimeInTime');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('ShiftAdded');
+    prefs.remove('EmployeeAdded');
+    prefs.remove('attendanceNotMarkedButEmpAdded');
+    prefs.remove('tool');
+    prefs.remove('companyFreshlyRegistered');
+    prefs.remove('showAppInbuiltCamera');
+    prefs.remove('showPhoneCamera');
+
+    _firebaseMessaging.unsubscribeFromTopic(employeeTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic("admin");
+    _firebaseMessaging.unsubscribeFromTopic("employee");
+    _firebaseMessaging.unsubscribeFromTopic(countryTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(orgTopic.replaceAll(' ', ''));
+    _firebaseMessaging.unsubscribeFromTopic(currentOrgStatus.replaceAll(' ', ''));
+
+
+
+
+    //prefs.remove("TimeInToolTipShown");
+    department_permission = 0;
+    designation_permission = 0;
+    leave_permission = 0;
+    shift_permission = 0;
+    timeoff_permission = 0;
+    punchlocation_permission = 0;
+    employee_permission = 0;
+    permission_module_permission = 0;
+    report_permission = 0;
+    /* Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );*/
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,
+    );
+    //Navigator.pushNamed(context, '/home');
+    // Navigator.pushNamed(context, '/home');
+  }
+
+
   void deviceverification() async{
 
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -1639,11 +1725,13 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       deviceidmobile= androidInfo.androidId;
       prefs.setString("deviceid",deviceidmobile);
 
-
-
     }
 
-    if(deviceid=='' && globals.deviceverification==1){
+    print("DEVICE VERIFY POPUP SHOWN"+deviceVerifyPopupShown.toString());
+    print("DEVICE ID FROM DATABASE"+deviceid);
+    print("EMPLOYEE DEVICE VERIFICATION STATUS"+globals.deviceverification.toString());
+
+    if((deviceid=='' && deviceVerifyPopupShown==false) && globals.deviceverification==1){
 
       const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -1700,6 +1788,34 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         prefs.setString("deviceid",deviceidmobile);
         storeDeviceInfo(empid, deviceidmobile, devicebrand+' '+devicename);
       }
+    }
+    else if(deviceid=='' && deviceVerifyPopupShown==true)
+    {
+      prefs.setBool("deviceVerifyPopupShown",false);
+      showDialog(
+          context: context,
+          child: new AlertDialog(
+            content: new Text("msg"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Later'),
+                shape: Border.all(),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+              ),
+              RaisedButton(
+                child: Text(
+                  'Share File',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: buttoncolor,
+                onPressed: () {
+
+                },
+              ),
+            ],
+          ));
     }
   }
 
