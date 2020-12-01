@@ -740,7 +740,7 @@ class _AddClientState extends State<AddClient> {
                                     .text}&countrycode=${_contcode
                                     .text}&phone=${_phone.text}&email=${_email
                                     .text}&description=${_desc
-                                    .text}&status=1&platform=ios");
+                                    .text}&status=1&platform=android");
                             var url = globals.path + "addClient";
                             http.post(url, body: {
                               "empid": empid,
@@ -755,7 +755,7 @@ class _AddClientState extends State<AddClient> {
                               "email": _email.text,
                               "description": _desc.text,
                               "status": "1",
-                              "platform": 'ios'
+                              "platform": 'android'
                             }).then((response) async {
                               if (response.statusCode == 200) {
                                 print(
@@ -946,7 +946,7 @@ class _AddClientState extends State<AddClient> {
                                     .text}&countrycode=${_contcode
                                     .text}&phone=${_phone.text}&email=${_email
                                     .text}&description=${_desc
-                                    .text}&status=1&platform=ios");
+                                    .text}&status=1&platform=android");
                             var url = globals.path + "editClient";
                             http.post(url, body: {
                               "clientid": clientId,
@@ -962,7 +962,7 @@ class _AddClientState extends State<AddClient> {
                               "email": _email.text,
                               "description": _desc.text,
                               "status": "1",
-                              "platform": 'ios'
+                              "platform": 'android'
                             }).then((response) async {
                               if (response.statusCode == 200) {
                                 print(
@@ -1167,7 +1167,7 @@ class _AddClientState extends State<AddClient> {
                               "email": _email.text,
                               "description": _desc.text,
                               "status": "2",
-                              "platform": 'ios'
+                              "platform": 'android'
                             }).then((response) async {
                               if (response.statusCode == 200) {
                                 print("-----------------> After adding client for approval---------------->");

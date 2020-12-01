@@ -755,29 +755,37 @@ class _LoginPageState extends State<LoginPage> {
 
       if(islogin=="success") {
 
+        if(prefix0.deviceverificationaddon=='1') {
 
-        if((prefix0.deviceandroidid==prefdeviceid) || (prefix0.deviceandroidid=='' && deviceVerifyPopupShown==false)) {
-          prefs.setString('username', username);
-          /*Navigator.push(
+          if ((prefix0.deviceandroidid == prefdeviceid) || (prefix0.deviceandroidid == '' && deviceVerifyPopupShown == false)) {
+            prefs.setString('username', username);
+            /*Navigator.push(
              context,
              MaterialPageRoute(builder: (context) => HomePage()),
            );*/
-          Navigator.pushAndRemoveUntil(
-            context, MaterialPageRoute(builder: (context) => HomePage()), (
-              Route<dynamic> route) => false,);
+            Navigator.pushAndRemoveUntil(
+              context, MaterialPageRoute(builder: (context) => HomePage()), (
+                Route<dynamic> route) => false,);
+          }
+          else {
+            setState(() {
+              loader = false;
+            });
+            Scaffold.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(
+                        "DeviceId not registered. Request your admin to de-register old device and login again."
+                    )
+                )
+            );
+          }
         }
-        else {
-          setState(() {
-            loader = false;
-          });
-          Scaffold.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      "DeviceId not matched."
-                  )
-              )
-          );
-        }
+        else
+          {
+            Navigator.pushAndRemoveUntil(
+              context, MaterialPageRoute(builder: (context) => HomePage()), (
+                Route<dynamic> route) => false,);
+          }
       }
       else if(islogin == 'MailNotVerified') {
         Navigator.push(

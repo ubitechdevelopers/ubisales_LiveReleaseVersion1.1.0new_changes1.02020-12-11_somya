@@ -1730,7 +1730,11 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     print("DEVICE VERIFY POPUP SHOWN"+deviceVerifyPopupShown.toString());
     print("DEVICE ID FROM DATABASE"+deviceid);
     print("EMPLOYEE DEVICE VERIFICATION STATUS"+globals.deviceverification.toString());
-
+    print((globals.deviceandroidid!=deviceidmobile) || (deviceid=='' && deviceVerifyPopupShown==true));
+    print((globals.deviceandroidid!=deviceidmobile));
+    print((deviceid=='' && deviceVerifyPopupShown==true));
+    print(globals.deviceid);
+    print(deviceidmobile);
     if((deviceid=='' && deviceVerifyPopupShown==false) && globals.deviceverification==1){
 
       const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -1748,6 +1752,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print("RandomString:"+RandomString(60));
       //deviceidmobile= RandomString(60);
       deviceidmobile= androidInfo.androidId;
+
       if(deviceVerifyPopupShown==false && deviceid=='') {
         // if(deviceid=='') {
         //
@@ -1789,33 +1794,56 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         storeDeviceInfo(empid, deviceidmobile, devicebrand+' '+devicename);
       }
     }
-    else if(deviceid=='' && deviceVerifyPopupShown==true)
+    else if(((globals.deviceid!=deviceidmobile) || (deviceid=='' && deviceVerifyPopupShown==true)) && globals.deviceverification==1)
     {
       prefs.setBool("deviceVerifyPopupShown",false);
-      showDialog(
-          context: context,
-          child: new AlertDialog(
-            content: new Text("msg"),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Later'),
-                shape: Border.all(),
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true).pop();
-                },
+      EasyDialog(
+          closeButton: false,
+          title: Text.rich(
+            TextSpan(
+              style: TextStyle(
+                fontSize: 17,
               ),
-              RaisedButton(
-                child: Text(
-                  'Share File',
-                  style: TextStyle(color: Colors.white),
+              children: [
+                WidgetSpan(
+                  child: Icon(Icons.info_outline),
                 ),
-                color: buttoncolor,
-                onPressed: () {
+                TextSpan(
+                  text: 'Alert',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          description: Text(
+            "Your registered device has been disapproved. Please login again to register new device.",
+            textScaleFactor: 1.1,
+            textAlign: TextAlign.center,
+          ),
 
-                },
-              ),
-            ],
-          ));
+          height: 180,
+          contentList: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                new FlatButton(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  textColor: Colors.lightBlue,
+                  onPressed: () {
+                    logout();
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: new Text(
+                    "OK",
+                    textScaleFactor: 1.2,
+                  ),
+                ),
+              ],
+            )
+          ]).show(context);
     }
   }
 
@@ -5260,6 +5288,11 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       getAttendance(todayDate).then((res) async {
         attList = res;
 
+        if(attList.isEmpty){
+          print("list response is empty");
+          return;
+        }
+
         for(int i = 0; i<attList.length;i++ ) {
 
           Name.add([attList[i].EmployeeId.toString()]);
@@ -6620,7 +6653,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                     //   color: Colors.red,
                       height:  MediaQuery.of(context).size.height*0.12,
                       width: MediaQuery.of(context).size.height*0.30,
-                      child: Text("Attendance has been marked. Thank You!",textAlign: TextAlign.center,style: TextStyle(fontSize: 22,color: Colors.white),))
+                      child: Text("Attendance has been marked. Thank You!",textScaleFactor: 1.0,textAlign: TextAlign.center,style: TextStyle(fontSize: 22,color: Colors.white),))
 
                 ],
               ),
