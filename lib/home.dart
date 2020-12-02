@@ -6655,6 +6655,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                       width: MediaQuery.of(context).size.height*0.30,
                       child: Text("Attendance has been marked. Thank You!",textScaleFactor: 1.0,textAlign: TextAlign.center,style: TextStyle(fontSize: 22,color: Colors.white),))
 
+
                 ],
               ),
               /* Container(

@@ -115,7 +115,7 @@ class _PunchLocation extends State<PunchLocation> {
   String aid = "";
   String clientname='';
   String shiftId = "";
-  int notFound;
+  int notFound=4;
 
   List<Widget> widgets;
 
@@ -682,7 +682,7 @@ class _PunchLocation extends State<PunchLocation> {
   }
 
   getVisitInButton() {
-    return notFound==1?RaisedButton(
+    return (notFound==1||notFound==4)?RaisedButton(
       clipBehavior: Clip.antiAlias,
       elevation: 0.0,
       highlightElevation: 0.0,
@@ -1042,6 +1042,9 @@ class _PunchLocation extends State<PunchLocation> {
             _searchQueryController.text = suggestedPhrase["company"];
           }
         });
+        setState(() {
+          notFound=0;
+        });
         _searchQueryController.text = suggestedPhrase["company"];
       },
     );
@@ -1085,11 +1088,12 @@ class _PunchLocation extends State<PunchLocation> {
     res=json.decode(response.body.toString());
     if (response.statusCode != HttpStatus.OK || decode.length == 0) {
       print("if data not found");
-      notFound=1;
+      setState(() {
+        notFound=1;
+      });
       return null;
     } else {
       print("if data found");
-      notFound=0;
       List<Map<String,String>> suggestedWords = new List();
       //if (decode.length == 0) return null;
       print('-------------------------1');
