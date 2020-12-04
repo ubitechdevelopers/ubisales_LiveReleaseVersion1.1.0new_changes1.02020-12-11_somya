@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.0"
+  background_geolocation_firebase:
+    dependency: "direct main"
+    description:
+      name: background_geolocation_firebase
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   barcode:
     dependency: transitive
     description:

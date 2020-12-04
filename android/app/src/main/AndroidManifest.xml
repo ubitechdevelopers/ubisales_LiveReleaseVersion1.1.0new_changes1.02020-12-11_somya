@@ -36,6 +36,7 @@
         <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
 
         <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="6d4846d2884c2f46ef898cbf95648cd7587ba37035a680e2a2373d0bc8bd3beb" />
+        <meta-data android:name="com.transistorsoft.firebaseproxy.license" android:value="6d4846d2884c2f46ef898cbf95648cd7587ba37035a680e2a2373d0bc8bd3beb" />
         <meta-data android:name="com.transistorsoft.locationmanager.ENCRYPTION_PASSWORD" android:value="transistorsoft" />
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDYh77SKpI6kAD1jiILwbiISZEwEOyJLtM"/>
         <meta-data

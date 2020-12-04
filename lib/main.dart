@@ -16,6 +16,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:Shrine/location_tracking/util/geospatial.dart';
+import 'package:background_geolocation_firebase/background_geolocation_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -198,6 +199,23 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await _prefs;
     String orgname = prefs.getString("orgname");
     String username = prefs.getString("username");
+    var orgid = prefs.getString("orgid");
+    var empid = prefs.getString("empid");
+
+    print("ORGANIZATION ID"+orgid);
+    print("EMPLOYEE ID"+empid);
+
+    var date = new DateTime.now().toString();
+
+    var dateParse = DateTime.parse(date);
+
+    var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
+
+    var finalDate = formattedDate.toString() ;
+
+    DateTime now = DateTime.now();
+
+    var curtime = now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString();
 
     // Sanity check orgname & username:  if invalid, go back to HomeApp to re-register device.
     // Fetch a Transistor demo server Authorization token for tracker.transistorsoft.com.
@@ -211,6 +229,12 @@ class _MyAppState extends State<MyApp> {
     bg.BackgroundGeolocation.onConnectivityChange(_onConnectivityChange);
     bg.BackgroundGeolocation.onHttp(_onHttp);
     bg.BackgroundGeolocation.onAuthorization(_onAuthorization);
+
+    BackgroundGeolocationFirebase.configure(BackgroundGeolocationFirebaseConfig(
+        locationsCollection: "locations/$orgid/$empid/$finalDate/$curtime",
+        geofencesCollection: "geofences",
+        updateSingleDocument: true
+    ));
 
     // 2.  Configure the plugin
     bg.BackgroundGeolocation.ready(bg.Config(

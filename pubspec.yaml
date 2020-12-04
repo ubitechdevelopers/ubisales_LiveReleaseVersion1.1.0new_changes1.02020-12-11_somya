@@ -94,6 +94,7 @@ dependencies:
   flutter_rating_bar: 3.0.1+1
   google_maps_place_picker: ^0.9.5
   flutter_speed_dial: ^1.2.5
+  background_geolocation_firebase: '^0.1.0'
 
   #path_provider_macos: 0.0.4+3
 
