@@ -230,11 +230,11 @@ class _MyAppState extends State<MyApp> {
     bg.BackgroundGeolocation.onHttp(_onHttp);
     bg.BackgroundGeolocation.onAuthorization(_onAuthorization);
 
-    BackgroundGeolocationFirebase.configure(BackgroundGeolocationFirebaseConfig(
+    /*BackgroundGeolocationFirebase.configure(BackgroundGeolocationFirebaseConfig(
         locationsCollection: "locations/$orgid/$empid/$finalDate/$curtime",
         geofencesCollection: "geofences",
         updateSingleDocument: true
-    ));
+    ));*/
 
     // 2.  Configure the plugin
     bg.BackgroundGeolocation.ready(bg.Config(

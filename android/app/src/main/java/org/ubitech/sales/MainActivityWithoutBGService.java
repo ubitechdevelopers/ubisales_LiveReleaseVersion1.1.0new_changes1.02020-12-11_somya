@@ -8,8 +8,11 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+//import android.os.Bundle;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
@@ -32,41 +35,48 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.flutter.Log;
-import io.flutter.app.FlutterActivity;
+//import io.flutter.app.FlutterActivity;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+//import io.flutter.plugins.GeneratedPluginRegistrant;
+///
+import io.flutter.embedding.android.FlutterActivity;
+import androidx.annotation.NonNull;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-
 public class MainActivityWithoutBGService extends FlutterActivity {
 
-  private LocationAssistant assistant;
-  private static final String CHANNEL = "location.spoofing.check";
-  private static final String CAMERA_CHANNEL = "update.camera.status";
-  private static final String FACEBOOK_CHANNEL = "log.facebook.data";
-  private boolean cameraOpened=false;
-  private BackgroundLocationService gpsService;
-  private Location mCurrentLocation;
+    // private LocationAssistant assistant;
+    private static final String CHANNEL = "location.spoofing.check";
+    private static final String CAMERA_CHANNEL = "update.camera.status";
+    private static final String FACEBOOK_CHANNEL = "log.facebook.data";
+    private boolean cameraOpened=false;
+    //private BackgroundLocationService gpsService;
+    private Location mCurrentLocation;
 
 
-  private SettingsClient mSettingsClient;
-  private LocationSettingsRequest mLocationSettingsRequest;
-  private static final int REQUEST_CHECK_SETTINGS = 214;
-  private static final int REQUEST_ENABLE_GPS = 516;
+    private SettingsClient mSettingsClient;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private static final int REQUEST_CHECK_SETTINGS = 214;
+    private static final int REQUEST_ENABLE_GPS = 516;
 
-  private FusedLocationProviderClient fusedLocationClient;
+    private FusedLocationProviderClient fusedLocationClient;
 
 
-  MethodChannel channel;
+    MethodChannel channel;
     private boolean mockLocationsEnabled=false;
     private Location lastMockLocation;
     private int numGoodReadings=0;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private String filePath="1";
 
     protected void createLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
@@ -173,52 +183,54 @@ public class MainActivityWithoutBGService extends FlutterActivity {
     }
 
 
-  //LocationListenerExecuter listenerExecuter;
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    GeneratedPluginRegistrant.registerWith(this);
+    //LocationListenerExecuter listenerExecuter;
+    @Override
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
 
-      Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
 
-      channel=new MethodChannel(getFlutterView(), CHANNEL);
-      fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
 
-      fusedLocationClient.getLastLocation()
-              .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                  @Override
-                  public void onSuccess(Location location) {
-                      // Got last known location. In some rare situations this can be null.
-                      if (location != null) {
+        channel=new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),  CHANNEL);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        for(int ij=0;ij<10;ij++){
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
 
-                          mCurrentLocation=location;
-                          if(mCurrentLocation.hasAccuracy())
-                          updateLocationToFlutter(channel,mCurrentLocation);
+                                mCurrentLocation=location;
+                                //if(mCurrentLocation.hasAccuracy())
+                                updateLocationToFlutter(channel,mCurrentLocation);
 
-                      }
-                  }
-              });
-      locationRequest = LocationRequest.create();
-      locationRequest.setInterval(10000);
-      locationRequest.setFastestInterval(5000);
-      locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-      locationCallback = new LocationCallback() {
-          @Override
-          public void onLocationResult(LocationResult locationResult) {
-              if (locationResult == null) {
-                  return;
-              }
-              for (Location location : locationResult.getLocations()) {
-                  mCurrentLocation=location;
-                  if(mCurrentLocation.hasAccuracy())
-                  updateLocationToFlutter(channel,mCurrentLocation);
-              }
-          };
-      };
+                            }
+                        }
+                    });
+        }
 
-      fusedLocationClient.requestLocationUpdates(locationRequest,
-              locationCallback,
-              Looper.getMainLooper());
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    mCurrentLocation=location;
+                    if(mCurrentLocation.hasAccuracy())
+                        updateLocationToFlutter(channel,mCurrentLocation);
+                }
+            };
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
 
 
 /*
@@ -234,8 +246,8 @@ public class MainActivityWithoutBGService extends FlutterActivity {
     //onNewIntent(i);
 */
 
-  //showLocationDialog();
-   // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
+        //showLocationDialog();
+        // FacebookEventLoggers facebookLogger=new FacebookEventLoggers(getApplicationContext());
 /*
       Intent intent1 = new Intent();
 
@@ -275,56 +287,95 @@ public class MainActivityWithoutBGService extends FlutterActivity {
 */
 
 
-    MethodChannel facebookChannel=new MethodChannel(getFlutterView(), FACEBOOK_CHANNEL);
+        MethodChannel facebookChannel=new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), FACEBOOK_CHANNEL);
 
-    //facebookLogger.logCompleteRegistrationEvent("");
-    //facebookLogger.logContactEvent();
-    //facebookLogger.logPurchaseEvent();
-    //facebookLogger.logRateEvent("","","0",5,4);
-    //facebookLogger.logStartTrialEvent("","",0.0);
-    facebookChannel.setMethodCallHandler(
-            new MethodCallHandler() {
-              @Override
-              public void onMethodCall(MethodCall call, Result result) {
-                if (call.method.equals("logCompleteRegistrationEvent")) {
-                  //if(facebookLogger!=null);
-                 // facebookLogger.logCompleteRegistrationEvent("");
-                }
-                else
-                if (call.method.equals("logContactEvent")) {
-                  //if(facebookLogger!=null);
-                 // facebookLogger.logContactEvent();
-                }
-                else
-                if (call.method.equals("logPurchaseEvent")) {
-                 // if(facebookLogger!=null);
-                // facebookLogger.logPurchaseEvent();
-                }
-                if (call.method.equals("logRateEvent")) {
-                  // Log.i("Assistant","Assistant Start Called");
-                 // if(facebookLogger!=null);
-                 // facebookLogger.logRateEvent("","","0",5,4);
-                }
-                if (call.method.equals("logStartTrialEvent")) {
-                //  if(facebookLogger!=null);
-                // facebookLogger.logStartTrialEvent("","",0.0);
+        //facebookLogger.logCompleteRegistrationEvent("");
+        //facebookLogger.logContactEvent();
+        //facebookLogger.logPurchaseEvent();
+        //facebookLogger.logRateEvent("","","0",5,4);
+        //facebookLogger.logStartTrialEvent("","",0.0);
+        facebookChannel.setMethodCallHandler(
+                new MethodCallHandler() {
+                    @Override
+                    public void onMethodCall(MethodCall call, Result result) {
+                        if (call.method.equals("logCompleteRegistrationEvent")) {
+                            //if(facebookLogger!=null);
+                            // facebookLogger.logCompleteRegistrationEvent("");
+                        }
+                        else
+                        if (call.method.equals("logContactEvent")) {
+                            //if(facebookLogger!=null);
+                            // facebookLogger.logContactEvent();
+                        }
+                        else
+                        if (call.method.equals("logPurchaseEvent")) {
+                            // if(facebookLogger!=null);
+                            // facebookLogger.logPurchaseEvent();
+                        }
+                        if (call.method.equals("logRateEvent")) {
+                            // Log.i("Assistant","Assistant Start Called");
+                            // if(facebookLogger!=null);
+                            // facebookLogger.logRateEvent("","","0",5,4);
+                        }
+                        if (call.method.equals("logStartTrialEvent")) {
+                            //  if(facebookLogger!=null);
+                            // facebookLogger.logStartTrialEvent("","",0.0);
 
-                }
+                        }
 
-              }
-            });
-
-
-
-      ActivityCompat.requestPermissions(this,
-             new String[]{/*Manifest.permission.CAMERA,*/Manifest.permission.ACCESS_FINE_LOCATION,/*Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_CONTACTS*/}, 1);
+                    }
+                });
 
 
 
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE/*,Manifest.permission.READ_CONTACTS*/}, 1);
+
+/*
+      Intent i23=new Intent(this, CameraKitActivity.class);
+      startActivity(i23);
+
+*/
+
+        EventChannel cameraXChannel1 = new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "cameraXBroadcast");
+        cameraXChannel1.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object listener, EventChannel.EventSink eventSink) {
+                startListening(listener, eventSink);
+            }
+
+            @Override
+            public void onCancel(Object listener) {
+                cancelListening(listener);
+            }
+        });
 
 
+      /*  new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "cameraX").setMethodCallHandler(
+                new MethodCallHandler() {
+                    @Override
+                    public void onMethodCall(MethodCall call, Result result) {
+                        if (call.method.equals("openCameraX")) {
+
+                            Log.i("camera","camera opened true");
+                            try{
+                                Intent takePictureIntent = new Intent(MainActivityWithoutBGService.this, Camera2Activity.class);
+
+                                //intent.putExtra("imageCaptured", file.getPath());
+                                startActivityForResult(takePictureIntent,1001);
+                            }
+
+                            catch(Exception e){
+
+                            }
+                        }
 
 
+                    }
+                });
+
+
+*/
 
 
 
@@ -351,46 +402,46 @@ public class MainActivityWithoutBGService extends FlutterActivity {
     }
       Timer timer = new Timer();
 */
-      new MethodChannel(getFlutterView(), CAMERA_CHANNEL).setMethodCallHandler(
-            new MethodCallHandler() {
-              @Override
-              public void onMethodCall(MethodCall call, Result result) {
-                if (call.method.equals("cameraOpened")) {
-                  cameraOpened=true;
-                  Log.i("camera","camera opened true");
-                  try{
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CAMERA_CHANNEL).setMethodCallHandler(
+                new MethodCallHandler() {
+                    @Override
+                    public void onMethodCall(MethodCall call, Result result) {
+                        if (call.method.equals("cameraOpened")) {
+                            cameraOpened=true;
+                            Log.i("camera","camera opened true");
+                            try{
                       /*
                   if(listenerExecuter!=null)
                  listenerExecuter.updateCameraStatus(true);
                   */
-                  }
+                            }
 
-                  catch(Exception e){
+                            catch(Exception e){
 
-                  }
-                }
-                else
-                if (call.method.equals("cameraClosed")) {
-                    Log.i("camera","camera opened false");
-                    cameraOpened=false;
-                    try{
+                            }
+                        }
+                        else
+                        if (call.method.equals("cameraClosed")) {
+                            Log.i("camera","camera opened false");
+                            cameraOpened=false;
+                            try{
                       /*
                   if(listenerExecuter!=null)
                   listenerExecuter.updateCameraStatus(false);
 
                        */
-                    }
-                    catch(Exception e){
+                            }
+                            catch(Exception e){
 
-                    }
-                }
-                else
-                if (call.method.equals("askAudioPermission")) {
-                    Log.i("audio","permission asked");
-                    try{
+                            }
+                        }
+                        else
+                        if (call.method.equals("askAudioPermission")) {
+                            Log.i("audio","permission asked");
+                            try{
 
-                        ActivityCompat.requestPermissions(MainActivityWithoutBGService.this,
-                                new String[]{Manifest.permission.RECORD_AUDIO}, 444);
+                                ActivityCompat.requestPermissions(MainActivityWithoutBGService.this,
+                                        new String[]{Manifest.permission.RECORD_AUDIO}, 444);
 
 
 
@@ -399,186 +450,241 @@ public class MainActivityWithoutBGService extends FlutterActivity {
                   listenerExecuter.updateCameraStatus(false);
 
                        */
-                    }
-                    catch(Exception e){
+                            }
+                            catch(Exception e){
+
+                            }
+                        }
+                        else
+                        if (call.method.equals("startAssistant")) {
+                            Log.i("Assistant","Assistant Start Called");
+
+                            manuallyStartAssistant();
+                        }else
+                        if (call.method.equals("startTimeOutNotificationWorker")) {
+                            // Log.i("Assistant","Assistant Start Called");
+                            // WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
+                            //String ShiftTimeOut = call.argument("ShiftTimeOut");
+                            //Log.i("ShiftTimeout",ShiftTimeOut);
+                            //startTimeOutNotificationWorker(ShiftTimeOut);
+                        }else
+                        if (call.method.equals("startTimeInNotificationWorker")) {
+                            // Log.i("Assistant","Assistant Start Called");
+                            //WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
+                            // String ShiftTimeIn = call.argument("ShiftTimeIn");
+                            // String nextWorkingDay = call.argument("nextWorkingDay");
+                            // Log.i("nextWorkingDay",nextWorkingDay);
+                            // startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
+                        }else
+                        if (call.method.equals("openLocationDialog")) {
+                            openLocationDialog();
+                        }
+                        else if (call.method.equals("showNotification")) {
+
+                            String notiTitle = call.argument("title");
+                            String notiDescription = call.argument("description");
+                            String pageToOpenOnClick = call.argument("pageToOpenOnClick");
+
+                            DisplayNotification displayNotification=new DisplayNotification(getApplicationContext());
+
+                            displayNotification.displayNotification(notiTitle,notiDescription,pageToOpenOnClick);
+                        }
 
                     }
-                }
-                else
-                if (call.method.equals("startAssistant")) {
-                  Log.i("Assistant","Assistant Start Called");
+                });
 
-                  manuallyStartAssistant();
-                }else
-                if (call.method.equals("startTimeOutNotificationWorker")) {
-                  // Log.i("Assistant","Assistant Start Called");
-                 // WorkManager.getInstance().cancelAllWorkByTag("TimeInWork");// Cancel time in work if scheduled previously
-                  //String ShiftTimeOut = call.argument("ShiftTimeOut");
-                  //Log.i("ShiftTimeout",ShiftTimeOut);
-                  //startTimeOutNotificationWorker(ShiftTimeOut);
-                }else
-                if (call.method.equals("startTimeInNotificationWorker")) {
-                  // Log.i("Assistant","Assistant Start Called");
-                  //WorkManager.getInstance().cancelAllWorkByTag("TimeOutWork");// Cancel time out work if scheduled previously
-                 // String ShiftTimeIn = call.argument("ShiftTimeIn");
-                   // String nextWorkingDay = call.argument("nextWorkingDay");
-                 // Log.i("nextWorkingDay",nextWorkingDay);
-                 // startTimeInNotificationWorker(ShiftTimeIn,nextWorkingDay);
-                }else
-                if (call.method.equals("openLocationDialog")) {
-                  openLocationDialog();
-                }
-                else if (call.method.equals("showNotification")) {
 
-                    String notiTitle = call.argument("title");
-                    String notiDescription = call.argument("description");
-                    String pageToOpenOnClick = call.argument("pageToOpenOnClick");
 
-                    DisplayNotification displayNotification=new DisplayNotification(getApplicationContext());
-
-                    displayNotification.displayNotification(notiTitle,notiDescription,pageToOpenOnClick);
-                }
+    }
+    /*
+      public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
+          ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+          for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+              if (serviceClass.getName().equals(service.service.getClassName())) {
+                  if (service.foreground) {
+                      return true;
+                  }
 
               }
-            });
+          }
+          return false;
+      }
+      private ServiceConnection serviceConnection = new ServiceConnection() {
+          public void onServiceConnected(ComponentName className, IBinder service) {
+              String name = className.getClassName();
+              Log.i("abc","serviceConnected "+name);
+              if (name.endsWith("BackgroundLocationService")) {
+                  gpsService = ((BackgroundLocationService.LocationServiceBinder) service).getService();
+
+                      gpsService.startTracking(channel);
 
 
-
-  }
-  /*
-    public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                if (service.foreground) {
-                    return true;
-                }
-
-            }
-        }
-        return false;
-    }
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            String name = className.getClassName();
-            Log.i("abc","serviceConnected "+name);
-            if (name.endsWith("BackgroundLocationService")) {
-                gpsService = ((BackgroundLocationService.LocationServiceBinder) service).getService();
-
-                    gpsService.startTracking(channel);
-
-
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("BackgroundLocationService")) {
-                gpsService = null;
-            }
-        }
-    };
-
-    public static void triggerRebirth(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
-        ComponentName componentName = intent.getComponent();
-        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
-        context.startActivity(mainIntent);
-        Runtime.getRuntime().exit(0);
-    }
-*/
-
-  public void openLocationDialog(){
-
-
-    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-    builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
-    builder.setAlwaysShow(true);
-    mLocationSettingsRequest = builder.build();
-
-    mSettingsClient = LocationServices.getSettingsClient(MainActivityWithoutBGService.this);
-
-    mSettingsClient
-            .checkLocationSettings(mLocationSettingsRequest)
-            .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
-              @Override
-              public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                //Success Perform Task Here
               }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-              @Override
-              public void onFailure(@NonNull Exception e) {
-                int statusCode = ((ApiException) e).getStatusCode();
-                switch (statusCode) {
-                  case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                    try {
-                      ResolvableApiException rae = (ResolvableApiException) e;
-                      rae.startResolutionForResult(MainActivityWithoutBGService.this, REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sie) {
-                      Log.e("GPS","Unable to execute request.");
+          }
+
+          public void onServiceDisconnected(ComponentName className) {
+              if (className.getClassName().equals("BackgroundLocationService")) {
+                  gpsService = null;
+              }
+          }
+      };
+
+      public static void triggerRebirth(Context context) {
+          PackageManager packageManager = context.getPackageManager();
+          Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+          ComponentName componentName = intent.getComponent();
+          Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+          context.startActivity(mainIntent);
+          Runtime.getRuntime().exit(0);
+      }
+  */
+    private Map<Object, Runnable> listeners = new HashMap<>();
+    void startListening(Object listener, EventChannel.EventSink emitter) {
+        // Prepare a timer like self calling task
+        // emitter.success("Hello listener! shashank " + (System.currentTimeMillis() / 1000));
+        final Handler handler = new Handler();
+        listeners.put(listener, new Runnable() {
+            @Override
+            public void run() {
+                if (listeners.containsKey(listener)) {
+                    // Send some value to callback
+                    emitter.success(filePath);
+                    filePath="1";
+                    Log.d("timer",""+(System.currentTimeMillis() / 1000));
+                    if(!filePath.equals("1")) {
+                        Log.d("shashank11","listener removed");
+                        handler.removeCallbacksAndMessages(null);
+
                     }
+                    else{
+                        Log.d("shashank11","listener delayed");
+                        handler.postDelayed(this, 1000);
+                    }
+                }
+            }
+        });
+
+        // Run task
+
+        handler.postDelayed(listeners.get(listener), 1000);
+
+    }
+
+    void cancelListening(Object listener) {
+        // Remove callback
+        listeners.remove(listener);
+        Log.d("Diego", "Count: " + listeners.size());
+    }
+
+    public void openLocationDialog(){
+
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY));
+        builder.setAlwaysShow(true);
+        mLocationSettingsRequest = builder.build();
+
+        mSettingsClient = LocationServices.getSettingsClient(MainActivityWithoutBGService.this);
+
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        //Success Perform Task Here
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                try {
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(MainActivityWithoutBGService.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+                                    Log.e("GPS","Unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                Log.e("GPS","Location settings are inadequate, and cannot be fixed here. Fix in Settings.");
+                        }
+                    }
+                })
+                .addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        Log.e("GPS","checkLocationSettings -> onCanceled");
+                    }
+                });
+
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    //Success Perform Task Here
+                    manuallyStartAssistant();
                     break;
-                  case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                    Log.e("GPS","Location settings are inadequate, and cannot be fixed here. Fix in Settings.");
-                }
-              }
-            })
-            .addOnCanceledListener(new OnCanceledListener() {
-              @Override
-              public void onCanceled() {
-                Log.e("GPS","checkLocationSettings -> onCanceled");
-              }
-            });
+                case Activity.RESULT_CANCELED:
+                    Log.e("GPS","User denied to access location");
+                    openLocationDialog();
+                    break;
+            }
+        } else if (requestCode == REQUEST_ENABLE_GPS) {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
+            if (!isGpsEnabled) {
+                openLocationDialog();
+            } else {
 
-
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == REQUEST_CHECK_SETTINGS) {
-      switch (resultCode) {
-        case Activity.RESULT_OK:
-          //Success Perform Task Here
-          manuallyStartAssistant();
-          break;
-        case Activity.RESULT_CANCELED:
-          Log.e("GPS","User denied to access location");
-          openLocationDialog();
-          break;
-      }
-    } else if (requestCode == REQUEST_ENABLE_GPS) {
-      LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-      boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-      if (!isGpsEnabled) {
-        openLocationDialog();
-      } else {
-
-        //navigateToUser();
-       // manuallyStartAssistant();
-      }
-    }
-    else if(requestCode==444){
+                //navigateToUser();
+                // manuallyStartAssistant();
+            }
+        }
+        else if(requestCode==444){
     /*    Log.i("request code",""+requestCode);
         triggerRebirth(MainActivity.this);
 */
+        }
+        else if(requestCode==1001){
+
+            if(data!=null){
+                String buttonPressed = data.getStringExtra("buttonPressed");
+
+                if(buttonPressed.equals("ok"))
+                    this.filePath = data.getStringExtra("filePath");
+                else
+                    this.filePath = "cancelled";
+                Log.i("shashank11",""+filePath);
+
+            }
+            else{
+                this.filePath = "cancelled";
+            }
+
+    /*    Log.i("request code",""+requestCode);
+        triggerRebirth(MainActivity.this);
+*/
+        }
     }
-  }
 
-  private void openGpsEnableSetting() {
-    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-    startActivityForResult(intent, REQUEST_ENABLE_GPS);
-  }
-
+    private void openGpsEnableSetting() {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivityForResult(intent, REQUEST_ENABLE_GPS);
+    }
 
 
 
-
-  public void startTimeOutNotificationWorker(String ShiftTimeOut) {
+    public void startTimeOutNotificationWorker(String ShiftTimeOut) {
       /*
     Calendar cal = Calendar.getInstance();
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -616,9 +722,9 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
 
        */
-  }
+    }
 
-  public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
+    public void startTimeInNotificationWorker(String ShiftTimeIn,String nextWorkingDay){
       /*
     Calendar cal = Calendar.getInstance();
     Log.i("nextWorkingday",nextWorkingDay);
@@ -681,98 +787,118 @@ Log.i("WorkerMinutesForTimeOut",minutes+"");
 
 
        */
-  }
-
-
-  public void manuallyStartAssistant(){
-    try{
-        onPause();
-        onResume();
     }
-    catch(Exception e){
 
+
+    public void manuallyStartAssistant(){
+        try{
+            onPause();
+            onResume();
+        }
+        catch(Exception e){
+
+        }
     }
-  }
 
-  @Override
-  public void onDestroy() {
-    try{
-    if(gpsService!=null)
-    gpsService.stopTracking();
-    }
-    catch(Exception e){
+    @Override
+    public void onDestroy() {
+        try{
 
-    }
-    super.onDestroy();
+            // if(gpsService!=null)
+            // gpsService.stopTracking();
+        }
+        catch(Exception e){
 
-  }
-  @Override
-  protected void onResume() {
-    super.onResume();
-    try{
-
-       fusedLocationClient.requestLocationUpdates(locationRequest,
-               locationCallback,
-               Looper.getMainLooper());
+        }
+        super.onDestroy();
 
     }
-    catch(Exception e){
-
-    }
-     // assistant.start();
-  }
-
-  @Override
-  protected void onPause() {
-   // assistant.stop();
-  //if(!cameraOpened)
-      super.onPause();
-    try {
-        fusedLocationClient.removeLocationUpdates(locationCallback);
-
-    }
-    catch(Exception e){
-
-    }
-    //super.onPause();
-  }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try{
 
 
 
+            for(int ij=0;ij<10;ij++){
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
 
+                                    mCurrentLocation=location;
+                                    //if(mCurrentLocation.hasAccuracy())
+                                    updateLocationToFlutter(channel,mCurrentLocation);
 
-  @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(permissions!=null&&permissions.length>0) {
-      for (int i = 0; i < permissions.length; i++) {
+                                }
+                            }
+                        });
+            }
 
-try{
-        if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)&&gpsService!=null) {
-          Log.i("Peeeerrrr", requestCode + "detected");
             fusedLocationClient.requestLocationUpdates(locationRequest,
                     locationCallback,
                     Looper.getMainLooper());
 
         }
-}
-catch(Exception e){
+        catch(Exception e){
 
-}
-
-      }
+        }
+        // assistant.start();
     }
 
-  // Log.i("Perrrrr",permissions[1]+grantResults);
+    @Override
+    protected void onPause() {
+        // assistant.stop();
+        //if(!cameraOpened)
+        super.onPause();
+        try {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
 
-  }
+        }
+        catch(Exception e){
+
+        }
+        //super.onPause();
+    }
+
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(permissions!=null&&permissions.length>0) {
+            for (int i = 0; i < permissions.length; i++) {
+
+                try{
+                    if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        Log.i("Peeeerrrr", requestCode + "detected");
+                        fusedLocationClient.requestLocationUpdates(locationRequest,
+                                locationCallback,
+                                Looper.getMainLooper());
+
+                    }
+                }
+                catch(Exception e){
+
+                }
+
+            }
+        }
+
+        // Log.i("Perrrrr",permissions[1]+grantResults);
+
+    }
 
 
     @Override
     public void onNewIntent(Intent intent){
         Bundle extras = intent.getExtras();
 
-  Log.e("INTENT","Notification Recieved");
+        Log.e("INTENT","Notification Recieved");
 
 
         if(extras != null){

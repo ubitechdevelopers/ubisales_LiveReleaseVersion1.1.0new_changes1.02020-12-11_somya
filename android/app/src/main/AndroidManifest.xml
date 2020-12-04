@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.ubitech.sales"
-    android:versionCode="10100"
+    android:versionCode="10101"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionName="1.1.0">
+    android:versionName="1.1.1">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
@@ -20,6 +20,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -36,12 +40,14 @@
         <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
 
         <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="6d4846d2884c2f46ef898cbf95648cd7587ba37035a680e2a2373d0bc8bd3beb" />
-        <meta-data android:name="com.transistorsoft.firebaseproxy.license" android:value="6d4846d2884c2f46ef898cbf95648cd7587ba37035a680e2a2373d0bc8bd3beb" />
         <meta-data android:name="com.transistorsoft.locationmanager.ENCRYPTION_PASSWORD" android:value="transistorsoft" />
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDYh77SKpI6kAD1jiILwbiISZEwEOyJLtM"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1527441601987735~5538680565"/>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
         <activity
             android:name=".MainActivityWithoutBGService"
             android:launchMode="singleTop"

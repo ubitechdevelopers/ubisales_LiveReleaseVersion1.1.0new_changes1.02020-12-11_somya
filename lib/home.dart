@@ -32,6 +32,7 @@ import 'package:Shrine/settings.dart';
 //import 'package:Shrine/punchlocation_summary.dart';
 import 'package:Shrine/timeoff_summary.dart';
 import 'package:Shrine/userviewShiftPlanner.dart';
+import 'package:background_geolocation_firebase/background_geolocation_firebase.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
 //import 'package:circular_menu/circular_menu.dart';
@@ -867,11 +868,36 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
     //showEmailVerificationReminder();
 
+
+
+
+
     //showAddingShiftReminder();
     var prefs = await SharedPreferences.getInstance();
+    var orgid11= prefs.getString("orgid")??"0";
+    var empid11 = prefs.getString("empid")??'0';
     var gpsOnTimeOffline;
     var gpsOffTimeOffline;
 
+
+
+    var date11 = new DateTime.now().toString();
+
+    var dateParse = DateTime.parse(date11);
+
+    var formattedDate = "${dateParse.day}-${dateParse.month}-${dateParse.year}";
+
+    var finalDate = formattedDate.toString() ;
+
+    DateTime now = DateTime.now();
+
+    var curtime = now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString();
+
+    BackgroundGeolocationFirebase.configure(BackgroundGeolocationFirebaseConfig(
+        locationsCollection: "locations/$orgid11/$empid11/$finalDate/$curtime",
+        geofencesCollection: "geofences",
+        updateSingleDocument: false
+    ));
 
   /*  gpsOnTimeOffline = prefs.getString('gpsOnTimeOffline') ?? '';
     gpsOffTimeOffline = prefs.getString('gpsOffTimeOffline') ?? '';//unset prefs imp
