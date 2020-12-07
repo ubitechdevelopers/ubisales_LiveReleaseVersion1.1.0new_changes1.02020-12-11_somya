@@ -17,19 +17,18 @@ import 'dart:convert';
 
 import 'package:Shrine/app.dart';
 import 'package:Shrine/globals.dart' as prefix0;
+import 'package:background_fetch/background_fetch.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
+
 import 'config/env.dart';
 import 'config/transistor_auth.dart';
 import 'globals.dart';
 import 'services/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'package:background_fetch/background_fetch.dart';
-import 'dart:convert';
 JsonEncoder encoder = new JsonEncoder.withIndent("     ");
 
 /// Receive events from BackgroundGeolocation in Headless state.

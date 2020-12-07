@@ -1,12 +1,12 @@
 import 'dart:io';
+
 import 'package:Shrine/page/bloc/bloc_camera.dart';
 import 'package:Shrine/shared/widgets/orientation_icon.dart';
 import 'package:Shrine/shared/widgets/rotate_icon.dart';
-import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:native_device_orientation/native_device_orientation.dart';
 
 enum CameraOrientation { landscape, portrait, all }

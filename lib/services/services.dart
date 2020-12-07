@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' show cos, sqrt, asin;
 import 'dart:math' show Random, asin, cos, sqrt;
+
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/globals.dart';
 import 'package:Shrine/model/model.dart';
@@ -23,6 +24,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../home.dart';
 import '../today_attendance_report.dart';
 

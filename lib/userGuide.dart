@@ -1,12 +1,10 @@
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/widgets.dart' as prefix0;
 //import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'drawer.dart';
 import 'globals.dart';
-import 'home.dart';
 void main() => runApp(new UserGuide());
 
 class UserGuide extends StatefulWidget {

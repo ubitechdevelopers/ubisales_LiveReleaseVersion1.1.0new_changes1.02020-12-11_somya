@@ -1,18 +1,19 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:convert';
+
 import 'package:Shrine/generatepdf.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_share/simple_share.dart';
 
 import 'Image_view.dart';
 import 'drawer.dart';
 import 'globals.dart';
-import 'dart:convert';
 import 'globals.dart' as globals;
-import 'package:http/http.dart' as http;
 // This app is a stateful, it tracks the user's current choice.
 class EmployeeWise_att extends StatefulWidget {
   @override

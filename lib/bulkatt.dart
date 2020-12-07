@@ -6,7 +6,6 @@ import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'drawer.dart';
-import 'face_detection_camera.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'model/timeinout.dart';

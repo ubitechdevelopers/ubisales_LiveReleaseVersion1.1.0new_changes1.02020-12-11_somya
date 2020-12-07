@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
-import 'util/dialog.dart' as util;
 import 'actions.dart' as actions;
+import 'util/dialog.dart' as util;
 import 'util/test.dart';
 
 

@@ -16,8 +16,6 @@ import 'drawer.dart';
 import 'globals.dart' as globals;
 import 'globals.dart';
 import 'home.dart';
-//import 'package:intl/intl.dart';
-import 'customListTile.dart' as custom;
 
 void main() => runApp(new MyAppFlexi());
 

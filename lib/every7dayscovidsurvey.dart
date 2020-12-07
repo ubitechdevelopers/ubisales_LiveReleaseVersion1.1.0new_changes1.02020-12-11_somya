@@ -1,18 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:convert';
+
+import 'package:Shrine/model/user.dart';
+import 'package:Shrine/services/checklogin.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'covid19servey.dart';
 import 'globals.dart' as globals;
-import 'askregister.dart';
-import 'package:Shrine/services/checklogin.dart';
-import 'home.dart';
-import 'package:Shrine/model/user.dart';
-import 'services/services.dart';
-import 'dart:convert';
 import 'globals.dart';
-import 'login.dart';
+import 'home.dart';
 
 
 class Every7dayscovidsurvey extends StatefulWidget {

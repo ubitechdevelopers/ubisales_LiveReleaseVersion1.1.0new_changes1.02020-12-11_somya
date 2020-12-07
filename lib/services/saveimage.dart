@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:Shrine/database_models/Save_Tempimage.dart';
 import 'package:Shrine/face_detection_camera.dart';
 import 'package:Shrine/genericCameraClass.dart';
@@ -12,13 +13,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image/image.dart';
+
 import 'newservices.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart' as path_provider;
-import 'package:path_provider/path_provider.dart';
 class SaveImage {
   String base64Image;
   String base64Image1;

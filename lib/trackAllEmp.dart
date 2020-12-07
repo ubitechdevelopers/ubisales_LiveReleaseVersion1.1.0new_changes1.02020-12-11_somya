@@ -5,23 +5,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:dio/dio.dart';
+import 'dart:ui' as ui;
+
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/visits_list_emp.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image/image.dart' as image;
 import 'package:intl/intl.dart' as intl;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
 import 'location_tracking/map_pin_pill.dart';
 import 'location_tracking/pin_pill_info.dart';
 import 'services/services.dart';
-import 'dart:ui' as ui;
-import 'package:Shrine/globals.dart' as globals;
-import 'package:image/image.dart' as image;
-import 'package:flutter/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 
 const double CAMERA_ZOOM = 13;

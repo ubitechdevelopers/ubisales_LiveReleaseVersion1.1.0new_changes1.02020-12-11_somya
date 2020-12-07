@@ -9,15 +9,12 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Bottomnavigationbar.dart';
-import 'Image_view.dart';
 import 'attendance_summary.dart';
 import 'drawer.dart';
 import 'globals.dart';
-import 'outside_label.dart';
 // This app is a stateful, it tracks the user's current choice.
 class ApplyLeave extends StatefulWidget {
   @override

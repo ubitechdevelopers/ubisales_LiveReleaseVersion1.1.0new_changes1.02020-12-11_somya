@@ -1,5 +1,4 @@
 import 'package:Shrine/UserShiftCalendar.dart';
-import 'package:Shrine/myleave.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/suspicious_selfies.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Bottomnavigationbar.dart';
 import 'Employeewise_att.dart';
 import 'Outsidegeofance.dart';
-import 'attendance_report_yes.dart';
 import 'cust_date_report.dart';
 import 'departmentwise_att.dart';
 import 'designation_att.dart';
@@ -21,9 +19,7 @@ import 'last_seven_days.dart';
 import 'late_comers.dart';
 import 'location_tracking_visits.dart';
 import 'payment.dart';
-import 'thismonth.dart';
 import 'timeoff_list.dart';
-import 'today_attendance_report.dart';
 import 'visits_list.dart';
 
 class Reports extends StatefulWidget {

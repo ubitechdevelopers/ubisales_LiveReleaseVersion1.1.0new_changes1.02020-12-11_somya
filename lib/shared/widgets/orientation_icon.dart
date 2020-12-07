@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/services/services.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../globals.dart';
 import '../login.dart';
 

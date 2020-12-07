@@ -10,12 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'about_app.dart';
-import 'contactUs.dart';
-import 'flexi_time.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'login.dart';
-import 'notifications.dart';
 import 'payment.dart';
 import 'profile.dart';
 import 'services/services.dart';

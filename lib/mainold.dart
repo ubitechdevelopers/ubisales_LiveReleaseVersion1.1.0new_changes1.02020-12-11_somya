@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:convert';
 
 import 'package:Shrine/app.dart';
 import 'package:Shrine/globals.dart' as prefix0;
@@ -24,7 +23,6 @@ import 'package:splashscreen/splashscreen.dart';
 
 import 'globals.dart';
 import 'services/services.dart';
-import 'package:http/http.dart' as http;
 
 void main(){
   runApp(

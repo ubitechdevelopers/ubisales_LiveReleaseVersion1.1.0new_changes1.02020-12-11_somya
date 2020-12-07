@@ -4,7 +4,6 @@ import 'package:Shrine/clients.dart';
 import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/offline_home.dart';
 import 'package:Shrine/punchlocation.dart';
-import 'package:Shrine/punchlocationOld.dart';
 import 'package:Shrine/punchlocation_summaryOld.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:connectivity/connectivity.dart';
@@ -15,7 +14,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:native_contact_picker/native_contact_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'globals.dart' as globals;

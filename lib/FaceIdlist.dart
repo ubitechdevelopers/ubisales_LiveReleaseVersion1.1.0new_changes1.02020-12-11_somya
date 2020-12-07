@@ -3,12 +3,9 @@
 // found in the LICENSE file.
 import 'dart:convert';
 
-import 'package:Shrine/page/camera.dart';
 import 'package:Shrine/page/camera_grpatt.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:Shrine/shared/widgets/focus_widget.dart';
-import 'package:connectivity/connectivity.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,11 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Image_view.dart';
 import 'drawer.dart';
-import 'faceIdScreen.dart';
 import 'globals.dart';
-import 'home.dart';
-import 'outside_label.dart';
-import 'FaceIdScreen.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class FaceIdList extends StatefulWidget {

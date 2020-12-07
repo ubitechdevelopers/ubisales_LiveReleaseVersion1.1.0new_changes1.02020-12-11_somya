@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/page/camera.dart';
 import 'package:Shrine/services/checklogin.dart';
-import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/shared/widgets/focus_widget.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:connectivity/connectivity.dart';
@@ -27,19 +26,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:flutter_localizations/flutter_localizations.dart';
-import 'drawer.dart';
+
 import 'globals.dart' as globals;
 import 'globals.dart';
 import 'home.dart';
-//import 'localization/app_translations.dart';
-//import 'localization/app_translations_delegate.dart';
-//import 'localization/application.dart';
-import 'home.dart';
 import 'login.dart';
-import 'model/timeinout.dart';
-import 'otpvarify.dart';
-import 'register_org.dart';
 
 class FaceIdScreen extends StatefulWidget {
   @override

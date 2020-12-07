@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'env.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../main.dart';
+import 'env.dart';
 
 void _onHttp(bg.HttpEvent event) async {
 

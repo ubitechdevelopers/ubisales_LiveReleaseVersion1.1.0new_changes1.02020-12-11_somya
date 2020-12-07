@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:rxdart/rxdart.dart';
-import 'dart:async';
 import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class BlocCamera {
   var cameras = BehaviorSubject<List<CameraDescription>>();

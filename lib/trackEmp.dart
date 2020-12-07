@@ -2,12 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
-import 'dart:collection';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:Shrine/visits_list_emp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,22 +14,18 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image/image.dart' as image;
 import 'package:intl/intl.dart' as intl;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unicorndial/unicorndial.dart';
+
 import 'globals.dart';
-import 'home.dart';
 import 'location_tracking/map_pin_pill.dart';
 import 'location_tracking/pin_pill_info.dart';
 import 'services/services.dart';
-import 'dart:ui' as ui;
-
-import 'package:image/image.dart' as image;
-import 'package:flutter/services.dart';
 // This app is a stateful, it tracks the user's current choice.
 
 const double CAMERA_ZOOM = 13;
@@ -110,10 +105,10 @@ class Locations {
       this.battery_level = data['location']["battery"]["level"].toString() ?? 'Unknown user';
       this.heading = data['location']["coords"]["heading"].toString() ?? 'Unknown user';
       this.is_charging = data['location']["battery"]["is_charging"].toString() ?? 'Unknown user';
-      this.is_moving = data['location']["extras"]["is_moving"].toString() ?? 'Unknown user';
-      this.odometer = data['location']["extras"]["odometer"].toString() ?? 'Unknown user';
+      this.is_moving = data['location']["is_moving"].toString() ?? 'Unknown user';
+      this.odometer = data['location']["odometer"].toString() ?? 'Unknown user';
       this.speed = data['location']["coords"]["speed"].toString() ?? 'Unknown user';
-      this.uuid = data['location']["extras"]["uuid"].toString() ?? 'Unknown user';
+      this.uuid = data['location']["uuid"].toString() ?? 'Unknown user';
       this.mock = 'false';
       this.time = data['location']["extras"]["timestamp"].toString().split("T")[1] ?? '00:00:00';
 
@@ -1020,6 +1015,7 @@ print("marker added............");
                   mapType: MapType.normal,
                   initialCameraPosition: initialLocation,
                   onMapCreated: onMapCreated,
+
                   onTap: (LatLng location) {
                     setState(() {
                       pinPillPosition = -470;
@@ -1206,7 +1202,7 @@ print("marker added............");
   var start=0.0,end=0.0;
 
 
-  void onMapCreated(GoogleMapController controller){
+  void onMapCreated(GoogleMapController controller)async{
 
     print("accuracyonmapcreated");
     print(accuracy);
@@ -1223,24 +1219,30 @@ print("marker added............");
     //onDateChanged(today1.text);
     //setMapPins();
 
-
+    var prefs=await SharedPreferences.getInstance();
+    var orgid222=prefs.get("orgid")??"0";
+    var empid222=prefs.get("empid")??"0";
     var p=97;
     var ii=0;
     var lastCurrentLocation;
     int markerPoint = 0;
     int ID = 1;
     List TimeInOutLocations = new List();
-//    final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
-//    final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
-//    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
+    final Uint8List TimeInMapIcon = await getBytesFromAsset('assets/TimeInMapIcon.png', 140);
+    final Uint8List currentLocationPinMapIcon = await getBytesFromAsset('assets/mapPinPointMarker.png', 140);
+    final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
 
-    CollectionReference _documentRef=Firestore.instance.collection('locations/10/11678/4-12-2020/10:38:55');
+    var date11 = new DateTime.now().toString();
+
+    var dateParse = DateTime.parse(date11);
+
+    var formattedDate = "${dateParse.day.toString().padLeft(2, '0')}-${dateParse.month.toString().padLeft(2, '0')}-${dateParse.year}";
+
+    var date222 = formattedDate.toString() ;
+
+    CollectionReference _documentRef=Firestore.instance.collection('locations/$orgid222/${this.empId}/$date222/latest');
 
    // _documentRef.getDocuments().then((ds){
-
-
-
-
 
     _documentRef.getDocuments().then((ds){
 
@@ -1267,9 +1269,9 @@ print("marker added............");
           var currentLoc = Locations.fromFireStore(change1);
 
 
-//      var mockLocation = currentLoc.mock;
-//      print(mockLocation);
-/*
+      var mockLocation = currentLoc.mock;
+      print(mockLocation);
+
             if(currentLoc.mock == "true"){  //if user uses mock locations
               //  int ID = 1;
               ID++;
@@ -1291,8 +1293,8 @@ print("marker added............");
                   //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
                 });
               });
-            }*/
-/*
+            }
+
             TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,currentLoc.time.toString()]);
 
             var firstLocation = TimeInOutLocations[0];                //timeIn location
@@ -1336,14 +1338,14 @@ print("marker added............");
               });
             });
 
-*/
+
 
 
           //  setState(() {
           // create a Polyline instance
           // with an id, an RGB color and the list of LatLng pairs
 
-          /*
+
             controller.animateCamera(CameraUpdate.newCameraPosition(
               CameraPosition(
                 bearing: 0,
@@ -1402,7 +1404,7 @@ print("marker added............");
           });
         });*/
             }
-*/
+
           print("akahkhahhakahahah");
           print(currentLoc.latitude.toString());
 
@@ -2395,9 +2397,11 @@ print("marker added............");
     //_controller1 = new TabController(length: 2, vsync: this);
     var prefs = await SharedPreferences.getInstance();
     date2 = date2.split(" ")[0];
+    var orgid123 = await prefs.get("orgid");
+    var empid123 = await prefs.get("empid");
     var orgId = await prefs.get("orgid");
     final GoogleMapController controller = await _controller.future;
-
+    print("kjljla"+date2.toString());
     setState(() {
       latlng.clear();
       _polylines.clear();
@@ -2423,139 +2427,174 @@ print("marker added............");
     List longitude = new List();
 
 
-    updates =  FirebaseDatabase.instance
-        .reference()
-        .child("Locations")
-        .child(orgId)
-        .child(empId)
-        .child(date2)
-        .onChildAdded
-        .listen((data)  {
+    var date11 = new DateTime.now().toString();
 
-      setState(() {
-        childExist= true;
-        print(childExist);
-        print("child is exist or not");
-      });
+    var dateParse = DateTime.parse(date2);
+
+    var formattedDate = "${dateParse.day.toString().padLeft(2, '0')}-${dateParse.month.toString().padLeft(2, '0')}-${dateParse.year}";
+
+    var date222 = formattedDate.toString() ;
+
+    CollectionReference _documentRef=Firestore.instance.collection('locations/$orgid123/${this.empId}/$date222/latest');
+
+    // _documentRef.getDocuments().then((ds){
 
 
-      var currentLoc = Locations.fromFireBase(data.snapshot);
 
-      TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
 
-      var firstLocation = TimeInOutLocations[0];                //timeIn location
-      if(TimeInOutLocations.length>1) {
-        lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
 
-        if(currentLoc.mock == "true"){  //if user uses mock locations
+    _documentRef.getDocuments().then((ds){
 
-          ID++;
 
-          print("inside mock location");
-
-          var m1=Marker(
-            markerId: MarkerId('fakeLocation$ID'),
-            position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
-            // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
-            icon:BitmapDescriptor.fromBytes(fakeLocation),
-
-            infoWindow: InfoWindow(
-              title: "Fake location found: ",
-              snippet: "         "+data.snapshot.key
-            ),
-          );
-          Future.delayed(Duration(seconds: 1),(){
-            setState(() {
-              _markers.add(m1);
-              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-            });
-          });
-
-        }
-
-        if (showTracks == true && showPolylines == true) {
-
-          var m1 = Marker(
-            markerId:  MarkerId(
-                'sourcePinCurrentLocationIcon'),
-            position: LatLng(double.parse(lastCurrentLocation[0]), double.parse(lastCurrentLocation[1])),
-            icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
-            infoWindow: InfoWindow(
-              title: "Last known location: " + data.snapshot.key,
-            ),
-          );
-
-          Future.delayed(Duration(seconds: 1), () {
-            setState(() {
-              _markers.add(m1);
-              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-            });
-          });
-        }
-      }
-
-      if(showTracks == true && showPolylines == true) {
-        var m = Marker(
-          markerId: MarkerId('sourcePinTimeInIcon'),
-          position: LatLng(double.parse(firstLocation[0]), double.parse(firstLocation[1])),
-          icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
-
-          infoWindow: InfoWindow(
-            title: "Start Time: " + firstLocation[2],
-          ),
-        );
-        Future.delayed(Duration(seconds: 1), () {
-          setState(() {
-            _markers.add(m);
-          });
+      if(ds!=null) {
+        print("hjsghsgsj" + ds.documents.toString());
+        var aaa = ds.documents;
+        aaa.sort((a, b) {
+          return a.data["location"]["timestamp"].toString()
+              .toLowerCase()
+              .compareTo(
+              b.data["location"]["timestamp"].toString().toLowerCase());
         });
-      }
 
-      end = double.parse(currentLoc.odometer);
 
-      if ( ((end - start) > 200.0) && (double.parse(currentLoc.accuracy) < accuracy) ) {
-        start = end;
-        markerPoint++;
-        getMarker(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+        for (var value in aaa) {
+          print("From firestore..........................................>>>>");
 
-     //   latLong.add([double.parse(currentLoc.latitude), double.parse(currentLoc.longitude)]);
+          print(value.data["location"]["timestamp"]);
+          print("From firestore..........................................>>>>");
 
-         //Uint8List markerIcon;
 
-      // Future.delayed(Duration(seconds: 2), () {
+          var change1 = new Map<String, dynamic>.from(value.data);
+          print('hjjghgjgjgjhgj' +
+              change1['location']["activity"]["confidence"].toString());
+          var currentLoc = Locations.fromFireStore(change1);
 
-         /* getBytesFromCanvasForCircleMarker(45, 45, markerPoint).then((a){
+          setState(() {
+            childExist = true;
+            print(childExist);
+            print("child is exist or not");
+          });
+
+
+          TimeInOutLocations.add(
+              [currentLoc.latitude, currentLoc.longitude, currentLoc.time]);
+
+          var firstLocation = TimeInOutLocations[0]; //timeIn location
+          if (TimeInOutLocations.length > 1) {
+            lastCurrentLocation =
+            TimeInOutLocations[TimeInOutLocations.length - 1];
+
+            if (currentLoc.mock == "true") { //if user uses mock locations
+
+              ID++;
+
+              print("inside mock location");
+
+              var m1 = Marker(
+                markerId: MarkerId('fakeLocation$ID'),
+                position: LatLng(double.parse(currentLoc.latitude),
+                    double.parse(currentLoc.longitude)),
+                // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+                icon: BitmapDescriptor.fromBytes(fakeLocation),
+
+                infoWindow: InfoWindow(
+                    title: "Fake location found: ",
+                    snippet: "         " + currentLoc.time
+                ),
+              );
+              Future.delayed(Duration(seconds: 1), () {
+                setState(() {
+                  _markers.add(m1);
+                  //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                });
+              });
+            }
+
+            if (showTracks == true && showPolylines == true) {
+              var m1 = Marker(
+                markerId: MarkerId(
+                    'sourcePinCurrentLocationIcon'),
+                position: LatLng(double.parse(lastCurrentLocation[0]),
+                    double.parse(lastCurrentLocation[1])),
+                icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+                infoWindow: InfoWindow(
+                  title: "Last known location: " + currentLoc.time,
+                ),
+              );
+
+              Future.delayed(Duration(seconds: 1), () {
+                setState(() {
+                  _markers.add(m1);
+                  //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                });
+              });
+            }
+          }
+
+          if (showTracks == true && showPolylines == true) {
+            var m = Marker(
+              markerId: MarkerId('sourcePinTimeInIcon'),
+              position: LatLng(double.parse(firstLocation[0]),
+                  double.parse(firstLocation[1])),
+              icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Start Time: " + firstLocation[2],
+              ),
+            );
+            Future.delayed(Duration(seconds: 1), () {
+              setState(() {
+                _markers.add(m);
+              });
+            });
+          }
+
+          end = double.parse(currentLoc.odometer);
+
+          if (((end - start) > 200.0) &&
+              (double.parse(currentLoc.accuracy) < accuracy)) {
+            start = end;
+            markerPoint++;
+            getMarker(markerPoint, double.parse(currentLoc.latitude),
+                double.parse(currentLoc.longitude), currentLoc.time);
+
+            //   latLong.add([double.parse(currentLoc.latitude), double.parse(currentLoc.longitude)]);
+
+            //Uint8List markerIcon;
+
+            // Future.delayed(Duration(seconds: 2), () {
+
+            /* getBytesFromCanvasForCircleMarker(45, 45, markerPoint).then((a){
             markerIcon = a;
             print(markerIcon);
             print("marker icon");
           });*/
-       // });
-        // final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(45, 45, markerPoint);
+            // });
+            // final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(45, 45, markerPoint);
 
-        p++;
+            p++;
 
-        setState(() {
+            setState(() {
+              if (ii == 0) {
+                startM = double.parse(currentLoc.odometer);
+                print("current loc odo" + startM.toString());
+              }
 
-          if (ii == 0) {
-            startM = double.parse(currentLoc.odometer);
-            print("current loc odo" + startM.toString());
-          }
+              endM = double.parse(currentLoc.odometer);
+              print("end loc odo" + startM.toString());
+              print("error handling");
 
-          endM = double.parse(currentLoc.odometer);
-          print("end loc odo" + startM.toString());
-          print("error handling");
+              kms = ((endM - startM) / 1000).toStringAsFixed(2) + " kms";
+              print("sgksshhskhs   " + kms);
 
-          kms = ((endM - startM) / 1000).toStringAsFixed(2) + " kms";
-          print("sgksshhskhs   " + kms);
+              // print(5.75.toStringAsFixed(0));
+              // if(endM-startM<0)
+              //  kms='0.0';
+            });
+            //});
+            ii++;
 
-          // print(5.75.toStringAsFixed(0));
-          // if(endM-startM<0)
-          //  kms='0.0';
-        });
-        //});
-        ii++;
-
-       /* if(showPolylines == true || showMarker == true) {
+            /* if(showPolylines == true || showMarker == true) {
           var m = Marker(
             markerId: MarkerId('sourcePin$p'),
             position: LatLng(double.parse(currentLoc.latitude), double.parse(currentLoc.longitude)),
@@ -2571,49 +2610,53 @@ print("marker added............");
             });
           });
         }*/
-      }
-
-      controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-          bearing: 0,
-          target: LatLng(double.parse(currentLoc.latitude),
-              double.parse(currentLoc.longitude)),
-          zoom: 19.0,
-        ),
-      ));
-
-      setState(() {
-        var pinPosition = LatLng(double.parse(currentLoc.latitude),
-            double.parse(currentLoc.longitude));
-
-      });
-
-      setState(() {
-
-        if (double.parse(currentLoc.accuracy) < accuracy) {
-          print(accuracy);
-          print(currentLoc.accuracy.toString());
-          print("accuracy is");
-
-          if (showPolylines == true || showTracks == true) {
-
-            latlng.add(LatLng(double.parse(currentLoc.latitude), double.parse(currentLoc.longitude)));
-            print(latlng);
-            print("latlong");
-
-            _polylines.add(Polyline(
-              polylineId: PolylineId("1"),
-              visible: true,
-              width: 3,
-              patterns:  <PatternItem>[PatternItem.dash(20), PatternItem.gap(10)] ,
-              //latlng is List<LatLng>
-              points: latlng,
-              color: Colors.blue,
-            ));
           }
+
+          controller.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+              bearing: 0,
+              target: LatLng(double.parse(currentLoc.latitude),
+                  double.parse(currentLoc.longitude)),
+              zoom: 19.0,
+            ),
+          ));
+
+          setState(() {
+            var pinPosition = LatLng(double.parse(currentLoc.latitude),
+                double.parse(currentLoc.longitude));
+          });
+
+          setState(() {
+            if (double.parse(currentLoc.accuracy) < accuracy) {
+              print(accuracy);
+              print(currentLoc.accuracy.toString());
+              print("accuracy is");
+
+              if (showPolylines == true || showTracks == true) {
+                latlng.add(LatLng(double.parse(currentLoc.latitude),
+                    double.parse(currentLoc.longitude)));
+                print(latlng);
+                print("latlong");
+
+                _polylines.add(Polyline(
+                  polylineId: PolylineId("1"),
+                  visible: true,
+                  width: 3,
+                  patterns: <PatternItem>[
+                    PatternItem.dash(20),
+                    PatternItem.gap(10)
+                  ],
+                  //latlng is List<LatLng>
+                  points: latlng,
+                  color: Colors.blue,
+                ));
+              }
+            }
+          });
         }
-      });
-    });
+      }
+       });
+
 
    // markerPoint++;
     print(markerCount);

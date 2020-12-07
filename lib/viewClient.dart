@@ -1,13 +1,13 @@
+import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:Shrine/addClient.dart';
 import 'package:Shrine/clients.dart';
-import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'drawer.dart';
 import 'globals.dart';
-import 'home.dart';
-import 'dart:math' as math;
 
 
 class ViewClient extends StatefulWidget {

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:latlong/latlong.dart';
-
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'util/dialog.dart' as util;
+import 'package:latlong/latlong.dart';
 
 class GeofenceView extends StatefulWidget {
   final LatLng center;

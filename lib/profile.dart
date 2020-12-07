@@ -13,11 +13,10 @@ import 'package:Shrine/services/services.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart' as globals;
+
 import 'Bottomnavigationbar.dart';
 import 'drawer.dart';
 import 'globals.dart';
-import 'home.dart';
 import 'login.dart';
 // This app is a stateful, it tracks the user's current choice.
 class ProfilePage extends StatefulWidget {

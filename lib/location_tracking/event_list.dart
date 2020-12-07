@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'shared_events.dart';
 
 /// Renders a simple list of [BackgroundGeolocation] events.  Fetches its data from [SharedEvents] (which is an [InheritedWidget].

@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_share/simple_share.dart';
@@ -14,7 +15,6 @@ import 'drawer.dart';
 import 'generatepdf.dart';
 import 'globals.dart';
 import 'globals.dart' as globals;
-import 'package:http/http.dart' as http;
 
 // This app is a stateful, it tracks the user's current choice.
 class Department_att extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'pin_pill_info.dart';
 
 class MapPinPillComponent extends StatefulWidget {

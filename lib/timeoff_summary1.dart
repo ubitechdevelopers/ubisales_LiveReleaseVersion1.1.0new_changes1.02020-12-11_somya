@@ -13,10 +13,8 @@ import 'Bottomnavigationbar.dart';
 import 'addtimeoff.dart';
 import 'drawer.dart';
 import 'globals.dart';
-import 'globals.dart' as globals;
 import 'home.dart';
 import 'login.dart';
-import 'timeoff.dart';
 // This app is a stateful, it tracks the user's current choice.
 class TimeoffSummary extends StatefulWidget {
   @override

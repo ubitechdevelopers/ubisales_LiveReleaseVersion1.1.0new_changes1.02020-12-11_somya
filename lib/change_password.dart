@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:Shrine/drawer.dart';
-import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';

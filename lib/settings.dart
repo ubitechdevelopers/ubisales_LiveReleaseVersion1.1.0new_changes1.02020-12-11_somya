@@ -1,7 +1,5 @@
 import 'package:Shrine/FaceIdlist.dart';
 import 'package:Shrine/ShiftPlannerList.dart';
-import 'package:Shrine/applyLeave.dart';
-import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/push_notification_for_employee_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,8 +16,6 @@ import 'employee_list.dart';
 import 'globals.dart';
 import 'holidays.dart';
 import 'home.dart';
-import 'myleave.dart';
-import 'notification_settings.dart';
 import 'payment.dart';
 import 'permission.dart';
 import 'profile.dart';

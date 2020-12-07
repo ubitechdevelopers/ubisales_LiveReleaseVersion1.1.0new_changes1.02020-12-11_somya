@@ -1,22 +1,20 @@
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:Shrine/attendance_summary.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:date_util/date_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'Bottomnavigationbar.dart';
 import 'Image_view.dart';
 import 'drawer.dart';
 import 'globals.dart' as globals;
-import 'package:http/http.dart' as http;
-import 'dart:math' as math;
 import 'globals.dart';
 
 

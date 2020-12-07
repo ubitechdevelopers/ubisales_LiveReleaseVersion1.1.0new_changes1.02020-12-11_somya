@@ -1,30 +1,21 @@
 import 'dart:convert';
-import 'dart:ui' as ui show Image;
-import 'dart:math' as Math;
-import 'package:dio/dio.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
-import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:math' as Math;
+import 'dart:ui' as ui show Image;
 
 import 'package:Shrine/globals.dart';
-import 'package:Shrine/home.dart';
-import 'package:Shrine/photoviewController.dart';
-import 'package:Shrine/smile_painter.dart';
-import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:Shrine/globals.dart' as globals;
+import 'package:dio/dio.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:ui' as ui show Image;
+
 import 'face_detection_camera.dart';
 import 'grpAttPhotoViewController.dart';
 import 'model/timeinout.dart';
-import 'utils.dart';
-import 'package:screen/screen.dart';
-import 'package:Shrine/globals.dart' as globals;
 
 
 class FacePaint extends CustomPaint {

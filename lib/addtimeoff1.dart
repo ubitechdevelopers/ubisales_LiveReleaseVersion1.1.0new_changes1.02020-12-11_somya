@@ -5,12 +5,10 @@
 import 'dart:async';
 
 import 'package:Shrine/globals.dart' as prefix0;
-import 'package:Shrine/model/timeinout.dart';
 import 'package:Shrine/services/gethome.dart';
 import 'package:Shrine/services/newservices.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
-import 'package:Shrine/timeoff_list.dart';
 import 'package:Shrine/timeoff_summary.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +20,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Bottomnavigationbar.dart';
 import 'askregister.dart';
 import 'drawer.dart';
-import 'flexi_list.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';

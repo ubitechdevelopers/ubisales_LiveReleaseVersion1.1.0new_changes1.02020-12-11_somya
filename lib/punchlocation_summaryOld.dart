@@ -16,7 +16,6 @@ import 'drawer.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'offline_home.dart';
-import 'punchlocationOld.dart';
 
 
 void main() => runApp(new PunchLocationSummary());

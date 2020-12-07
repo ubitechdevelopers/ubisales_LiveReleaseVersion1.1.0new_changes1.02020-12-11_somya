@@ -2,28 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:Shrine/globals.dart';
+import 'package:Shrine/globals.dart' as globals;
 import 'package:Shrine/home.dart';
-import 'package:Shrine/photoviewController.dart';
 import 'package:Shrine/smile_painter.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:ui' as ui show Image;
+
 import 'grpAttPhotoViewController.dart';
 import 'model/timeinout.dart';
 import 'utils.dart';
-import 'package:screen/screen.dart';
-import 'package:Shrine/globals.dart' as globals;
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 class FaceDetectionFromLiveCamera extends StatefulWidget {
  // FaceDetectionFromLiveCamera({Key key}) : super(key: key);
 var mk;

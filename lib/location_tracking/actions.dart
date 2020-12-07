@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'util/dialog.dart' as util;
 

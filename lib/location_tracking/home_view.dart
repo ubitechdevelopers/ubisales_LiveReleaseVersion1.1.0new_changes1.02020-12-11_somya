@@ -1,27 +1,22 @@
-import 'package:Shrine/attendance_summary.dart';
-import 'package:Shrine/services/services.dart';
-import 'package:firebase_database/firebase_database.dart' as firebaseDb;
-import 'package:flutter/material.dart';
-import 'package:latlong/latlong.dart';
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'package:background_fetch/background_fetch.dart';
-import 'package:http/http.dart' as http;
 import 'dart:math';
-import '../app.dart';
-import '../config/env.dart';
-import '../globals.dart';
-import 'map_view.dart';
-import 'event_list.dart';
-import './util/dialog.dart' as util;
-import './util/test.dart';
+
+import 'package:background_fetch/background_fetch.dart';
+import 'package:firebase_database/firebase_database.dart' as firebaseDb;
+import 'package:flutter/material.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:http/http.dart' as http;
+import 'package:latlong/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vector_math/vector_math.dart' as vm;
-import 'util/geospatial.dart';
+
+import './util/test.dart';
+import '../config/env.dart';
+import 'event_list.dart';
+import 'map_view.dart';
 import 'shared_events.dart';
-import 'package:Shrine/globals.dart' as globals;
+import 'util/geospatial.dart';
 
 // For pretty-printing location JSON
 JsonEncoder encoder = new JsonEncoder.withIndent("     ");

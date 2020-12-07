@@ -202,8 +202,7 @@ class _MyAppState extends State<MyApp> {
     var orgid = prefs.getString("orgid");
     var empid = prefs.getString("empid");
 
-    print("ORGANIZATION ID"+orgid);
-    print("EMPLOYEE ID"+empid);
+
 
     var date = new DateTime.now().toString();
 
@@ -219,7 +218,7 @@ class _MyAppState extends State<MyApp> {
 
     // Sanity check orgname & username:  if invalid, go back to HomeApp to re-register device.
     // Fetch a Transistor demo server Authorization token for tracker.transistorsoft.com.
-    bg.TransistorAuthorizationToken token = await bg.TransistorAuthorizationToken.findOrCreate(orgname, username, ENV.TRACKER_HOST);
+    bg.TransistorAuthorizationToken token = await bg.TransistorAuthorizationToken.findOrCreate("ubitech", "ubitech", ENV.TRACKER_HOST);
 
     // 1.  Listen to events (See docs for all 12 available events).
     bg.BackgroundGeolocation.onLocation(_onLocation, _onLocationError);

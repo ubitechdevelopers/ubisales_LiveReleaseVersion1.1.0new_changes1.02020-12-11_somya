@@ -1,10 +1,8 @@
 import 'package:Shrine/generatepdf.dart';
-import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/widgets.dart' as prefix1;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_share/simple_share.dart';
 

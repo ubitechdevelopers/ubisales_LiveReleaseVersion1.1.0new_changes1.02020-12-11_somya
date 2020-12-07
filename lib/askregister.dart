@@ -19,6 +19,7 @@ import 'package:Shrine/services/checklogin.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 //import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'home.dart';
@@ -26,7 +27,6 @@ import 'home.dart';
 //import 'localization/app_translations_delegate.dart';
 //import 'localization/application.dart';
 import 'login.dart';
-import 'otpvarify.dart';
 import 'register_org.dart';
 
 class AskRegisterationPage extends StatefulWidget {

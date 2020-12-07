@@ -1,20 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:Shrine/services/services.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'AdminShiftCalendar.dart';
 import 'Bottomnavigationbar.dart';
-import 'UserShiftCalendar.dart';
 import 'drawer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-import 'edit_employee.dart';
-import 'home.dart';
-import 'settings.dart';
-import 'reports.dart';
-import 'profile.dart';
-import 'attendance_summary.dart';
 import 'globals.dart';
-import 'dart:math' as math;
-import 'package:url_launcher/url_launcher.dart';
+import 'settings.dart';
 
 
 class shiftPlannerList extends StatefulWidget {

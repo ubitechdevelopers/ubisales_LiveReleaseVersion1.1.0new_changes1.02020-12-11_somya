@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:Shrine/addEmployee.dart';
 import 'package:Shrine/database_models/attendance_offline.dart';
 import 'package:Shrine/database_models/visits_offline.dart';
@@ -34,7 +35,6 @@ import 'package:launch_review/launch_review.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,6 +42,7 @@ import 'Bottomnavigationbar.dart';
 import 'ShiftPlannerList.dart';
 import 'askregister.dart';
 import 'attendance_summary.dart';
+import 'avatar_glow.dart';
 import 'bulkatt.dart';
 import 'covid19servey.dart';
 import 'database_models/qr_offline.dart';
@@ -54,14 +55,11 @@ import 'location_tracking/home_view.dart';
 import 'myleave.dart';
 import "offline_home.dart";
 import 'payment.dart';
-import 'punchlocationOld.dart';
 import 'punchlocation_summaryOld.dart';
 import 'services/services.dart';
 import 'settings.dart';
-import 'timeoff_summary.dart';
-import 'avatar_glow.dart';
 import 'super_tooltip.dart';
-import 'services/services.dart';
+import 'timeoff_summary.dart';
 
 // This app is a stateful, it tracks the user's current choice.
 class HomePage extends StatefulWidget {

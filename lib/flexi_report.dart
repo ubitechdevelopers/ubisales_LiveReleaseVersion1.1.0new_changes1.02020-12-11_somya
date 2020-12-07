@@ -1,4 +1,3 @@
-import 'package:Shrine/globals.dart' as prefix0;
 import 'package:Shrine/services/services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';

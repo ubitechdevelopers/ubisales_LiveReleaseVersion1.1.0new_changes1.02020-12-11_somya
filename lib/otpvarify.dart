@@ -1,24 +1,17 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'globals.dart';
-
-
-
 import 'dart:convert';
 
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'otpvarify.dart';
-import 'askregister.dart';
-import 'globals.dart' as globals;
+
 import 'globals.dart';
+import 'globals.dart' as globals;
 import 'home.dart';
 import 'services/services.dart';
 class Otp extends StatefulWidget {

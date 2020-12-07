@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// Simple Map of iOS / Android sound ID compatible with [BackgroundGeolocation.playSound].
 ///

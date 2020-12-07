@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:Shrine/model/user.dart';
 import 'package:Shrine/services/checklogin.dart';
 import 'package:dio/dio.dart';
@@ -7,8 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';
-import 'otpvarify.dart';
+
 import 'askregister.dart';
 import 'globals.dart' as globals;
 import 'globals.dart';

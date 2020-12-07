@@ -64,7 +64,7 @@ class _PunchLocation extends State<PunchLocation> {
     _searchQueryController.addListener(() {
       if (_searchQueryController.text.isEmpty) {
         setState(() {
-         // _isSearching = false;
+          // _isSearching = false;
           _searchText = "";
           _searchList = List();
         });
@@ -115,7 +115,7 @@ class _PunchLocation extends State<PunchLocation> {
   String aid = "";
   String clientname='';
   String shiftId = "";
-  int notFound=4;
+  int notFound;
 
   List<Widget> widgets;
 
@@ -682,7 +682,7 @@ class _PunchLocation extends State<PunchLocation> {
   }
 
   getVisitInButton() {
-    return (notFound==1||notFound==4)?RaisedButton(
+    return ((advancevisit==1 && notFound==1) || advancevisit!=1)?RaisedButton(
       clipBehavior: Clip.antiAlias,
       elevation: 0.0,
       highlightElevation: 0.0,
@@ -691,19 +691,42 @@ class _PunchLocation extends State<PunchLocation> {
       focusColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
+        //side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
       ),
-      child: Text('ADD CLIENT',
+      child: Text('VISIT IN',
           style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AddClient(
-              company: _searchQueryController.text,
-              clientaddress: globalstreamlocationaddr,
-              sts:"2"
-          )),
-        );
+        globalCameraOpenedStatus=true;
+        if(advancevisit==1) {
+          if (_searchQueryController.text.trim().isEmpty) {
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+                  content: new Text(
+                      "Please select a client first"),
+                ));
+            return false;
+          }else{
+            saveVisitImage();
+            return true;
+          }
+        }else{
+          if(_clientname.text.trim().isEmpty) {
+            showDialog(
+                context: context,
+                // ignore: deprecated_member_use
+                child: new AlertDialog(
+                  content: new Text("Please enter client name first"),
+                ));
+            //showInSnackBar('Please enter client name first');
+            return false;
+          } else {
+            saveVisitImage();
+            return true;
+          }
+        }
       },
     ):notFound==3?RaisedButton(
       clipBehavior: Clip.antiAlias,
@@ -734,8 +757,8 @@ class _PunchLocation extends State<PunchLocation> {
             ));
             Navigator.pop(context);
             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PunchLocation(client: company,)));
+                context,
+                MaterialPageRoute(builder: (context) => PunchLocation(client: company,)));
           }
         }
         ).catchError((err){
@@ -756,42 +779,19 @@ class _PunchLocation extends State<PunchLocation> {
       focusColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        //side: BorderSide( color: Colors.red.withOpacity(0.5), width: 2,),
       ),
-      child: Text('VISIT IN',
+      child: Text('ADD CLIENT',
           style: new TextStyle(fontSize: 18.0, color: Colors.white)),
       color: buttoncolor,
       onPressed: () async {
-        globalCameraOpenedStatus=true;
-        if(advancevisit==1) {
-          if (_searchQueryController.text.trim().isEmpty) {
-            showDialog(
-                context: context,
-// ignore: deprecated_member_use
-                child: new AlertDialog(
-                  content: new Text(
-                      "Please select a client first"),
-                ));
-            return false;
-          }else{
-            saveVisitImage();
-            return true;
-          }
-        }else{
-          if(_clientname.text.trim().isEmpty) {
-            showDialog(
-                context: context,
-// ignore: deprecated_member_use
-                child: new AlertDialog(
-                  content: new Text("Please enter client name first"),
-                ));
-//showInSnackBar('Please enter client name first');
-            return false;
-          } else {
-            saveVisitImage();
-            return true;
-          }
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddClient(
+              company: _searchQueryController.text,
+              clientaddress: globalstreamlocationaddr,
+              sts:"2"
+          )),
+        );
       },
     );
   }
@@ -810,20 +810,10 @@ class _PunchLocation extends State<PunchLocation> {
   }
 
   saveVisitImage() async {
-    // sl.startStreaming(5);
-    //client = _clientname.text;
-
-    if(prefix0.fakeLocationDetected){
-      FakeLocationStatus =1;
-    }else{
-      FakeLocationStatus=0;
-    }
-
     advancevisit==1?clientname = _searchQueryController.text:clientname = _clientname.text;
     print("clientname");
     print(clientname);
     MarkVisit mk = new MarkVisit(empid, clientname, finalClientId, streamlocationaddr, orgdir, lat, long, FakeLocationStatus);
-    /* mk1 = mk;*/
 
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
@@ -831,7 +821,7 @@ class _PunchLocation extends State<PunchLocation> {
         context,
         MaterialPageRoute(builder: (context) => CameraExampleHome()),
       );*/
-      /*PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
+      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
       print("permission status");
       print(permission);
       print("permission status");
@@ -855,7 +845,7 @@ class _PunchLocation extends State<PunchLocation> {
                 },
               ),));
         return;
-      }*/
+      }
       SaveImage saveImage = new SaveImage();
       bool issave = false;
       setState(() {
@@ -967,7 +957,7 @@ class _PunchLocation extends State<PunchLocation> {
               ],
             ),
             //height: getChildren(childItems).length*15.0,
-            height:_searchList.length==1?MediaQuery.of(context).size.height*0.1:notFound!=1?MediaQuery.of(context).size.height*0.27:MediaQuery.of(context).size.height*0.0,
+            height:_searchList.length==1?MediaQuery.of(context).size.height*0.1:notFound!=0?MediaQuery.of(context).size.height*0.27:MediaQuery.of(context).size.height*0.0,
             width: MediaQuery.of(context).size.width,
             child: new Stack(
               children: <Widget>[
@@ -1000,13 +990,13 @@ class _PunchLocation extends State<PunchLocation> {
     return new ListTile(
       dense: true,
       trailing: InkWell(
-          child: Icon(Icons.info, size: 40,color: Colors.grey[400],),
-          onTap: (){
-            FocusScope.of(context).unfocus();
-            print("_searchList.length");
-            print(_searchList.length);
-            _showModalSheet(context, listIndex);
-            /*Navigator.push(
+        child: Icon(Icons.info, size: 40,color: Colors.grey[400],),
+        onTap: (){
+          FocusScope.of(context).unfocus();
+          print("_searchList.length");
+          print(_searchList.length);
+          _showModalSheet(context, listIndex);
+          /*Navigator.push(
                context,
                MaterialPageRoute(builder: (context) => AddClient(
                    company: _searchQueryController.text,
@@ -1014,8 +1004,8 @@ class _PunchLocation extends State<PunchLocation> {
                    sts:"2"
                )),
              );*/
-          },
-        ),
+        },
+      ),
       /*title: new Text(
         suggestedPhrase["company"]+" assigned to "+suggestedPhrase["employeename"],
         style: TextStyle(color: (suggestedPhrase["assignsts"].toString()=='1')?Colors.black:Colors.grey  )
@@ -1043,7 +1033,7 @@ class _PunchLocation extends State<PunchLocation> {
           }
         });
         setState(() {
-          notFound=0;
+          notFound=1;
         });
         _searchQueryController.text = suggestedPhrase["company"];
       },
@@ -1056,23 +1046,23 @@ class _PunchLocation extends State<PunchLocation> {
       _searchList = List();
       return List();
     } else {*/
-      _searchList = await _getSuggestion(_searchText, orgdir, empid) ?? List();
-      print("_searchList");
-      print(_searchList);
-      //..add(_searchText);
-      List<ListTile> childItems = new List();
-      int index = 0;
-      for (var value in _searchList) {
-        index = (index+1);
-        print("index");
-        print(index-1);
-        //  if (!(value.contains(" ") && value.split(" ").length > 2)) {
-        childItems.add(_getListTile(value, index-1));
-        print(childItems);
-        Divider();
-        // }
-      }
-      return childItems;
+    _searchList = await _getSuggestion(_searchText, orgdir, empid) ?? List();
+    print("_searchList");
+    print(_searchList);
+    //..add(_searchText);
+    List<ListTile> childItems = new List();
+    int index = 0;
+    for (var value in _searchList) {
+      index = (index+1);
+      print("index");
+      print(index-1);
+      //  if (!(value.contains(" ") && value.split(" ").length > 2)) {
+      childItems.add(_getListTile(value, index-1));
+      print(childItems);
+      Divider();
+      // }
+    }
+    return childItems;
     //}
   }
 
@@ -1089,7 +1079,7 @@ class _PunchLocation extends State<PunchLocation> {
     if (response.statusCode != HttpStatus.OK || decode.length == 0) {
       print("if data not found");
       setState(() {
-        notFound=1;
+        notFound=0;
       });
       return null;
     } else {
@@ -1149,18 +1139,18 @@ class _PunchLocation extends State<PunchLocation> {
                         },
                         onSaved: (String value) => print("$value saved"),
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
-                            ),
-                            labelText: 'Client Name',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.all(0.0),
-                              child: Icon(
-                                Icons.supervised_user_circle,
-                                color: Colors.grey,
-                              ), // icon is 48px widget.
-                            ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide( color: Colors.grey.withOpacity(0.0), width: 1,),
+                          ),
+                          labelText: 'Client Name',
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(0.0),
+                            child: Icon(
+                              Icons.supervised_user_circle,
+                              color: Colors.grey,
+                            ), // icon is 48px widget.
+                          ),
                         ),
                       ),
                     ),
@@ -1172,17 +1162,17 @@ class _PunchLocation extends State<PunchLocation> {
           Padding(
             padding: const EdgeInsets.only(top:100.0, left: 20.0, right:20.0, bottom:10.0),
             child: new Container(
-                //alignment: Alignment.topCenter,
-                //height: 150.0,
-               /* decoration: BoxDecoration(
+              //alignment: Alignment.topCenter,
+              //height: 150.0,
+              /* decoration: BoxDecoration(
                   border: Border.all()
                 ),*/
                 padding: new EdgeInsets.only(
-                   // top: MediaQuery.of(context).size.height * .15,
-                    //top: 60.0,
-                    //right: 20.0,
-                    //left: 38.0
-                   ),
+                  // top: MediaQuery.of(context).size.height * .15,
+                  //top: 60.0,
+                  //right: 20.0,
+                  //left: 38.0
+                ),
                 child: _isSearching && (!_onTap) ? getFutureWidget() : null),
           )
         ]

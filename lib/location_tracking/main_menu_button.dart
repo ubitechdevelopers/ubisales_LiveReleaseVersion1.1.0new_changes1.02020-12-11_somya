@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:unicorndial/unicorndial.dart';
 
 import 'actions.dart' as actions;
 import 'settings_view.dart';
-import 'util/dialog.dart' as util;
 
 class MainMenuButton extends StatelessWidget {
   BuildContext _context;

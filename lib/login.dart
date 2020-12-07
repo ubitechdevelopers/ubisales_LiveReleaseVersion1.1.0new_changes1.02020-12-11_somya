@@ -33,7 +33,6 @@ import 'package:rounded_modal/rounded_modal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'askregister.dart';
-import 'forgot_password.dart';
 import 'globals.dart';
 import 'home.dart';
 import 'otpvarify.dart';
