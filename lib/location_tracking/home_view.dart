@@ -331,6 +331,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
    // if(location.coords.accuracy<10)
       //database.setPersistenceCacheSizeBytes(10000);
      //{
+    /*
       firebaseDb.DatabaseReference _locRef = database.reference().child(
           'Locations');
       _locRef.child(orgId).child(employeeId).child(
@@ -354,7 +355,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
 
       }).then((_) {
         print('Transaction  committed.');
-      });
+      });*/
    // }
 
     SharedPreferences prefs = await _prefs;

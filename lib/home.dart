@@ -4358,6 +4358,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   var startM=0.0,endM=0.0;
   var start=0.0,end=0.0;
 
+  // function to get locations for the user icon clicked
+
 
   void onMapCreatedNew(int EmployeeId)async {
 
@@ -4469,21 +4471,44 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       TimeInOutLocations.add(
           [currentLoc.latitude, currentLoc.longitude, currentLoc.time]);
 
-      var firstLocation = TimeInOutLocations[0]; //timeIn location
-      if (TimeInOutLocations.length > 1) {
-        print("TimeInOutLocations123");
-        // q++;
-        lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
+       //timeIn location
+      if (aaa.length > 0) {
+        var lastLoc,firstLoc;
+        var change11 = new Map<String, dynamic>.from(aaa[0].data);
+        firstLoc = Locations.fromFireStore(change11);
+        print(firstLoc.latitude.toString()+"first loc lat");
+
+        var m = Marker(
+          markerId: MarkerId('sourcePinTimeInIcon'),
+          position: LatLng(double.parse(firstLoc.latitude),
+              double.parse(firstLoc.longitude)),
+          // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+          icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+          // icon:pinLocationIcon,
+          infoWindow: InfoWindow(
+            title: "Start Time: " + firstLoc.time.toString(),
+          ),
+        );
+        Future.delayed(Duration(seconds: 1), () {
+          setState(() {
+            _markers.add(m);
+            //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+          });
+        });
+
+        var change111 = new Map<String, dynamic>.from(aaa[aaa.length-1].data);
+        lastLoc = Locations.fromFireStore(change111);
+        print(lastLoc.latitude.toString()+"last loc lat");
 
         var m1 = Marker(
           markerId: MarkerId('sourcePinCurrentLocationIcon'),
-          position: LatLng(double.parse(lastCurrentLocation[0]),
-              double.parse(lastCurrentLocation[1])),
+          position: LatLng(double.parse(lastLoc.latitude),
+              double.parse(lastLoc.longitude)),
           // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
           icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
           infoWindow: InfoWindow(
-            title: "Last known location: " + currentLoc.time.toString(),
+            title: "Last known location: ",
           ),
         );
         Future.delayed(Duration(seconds: 1), () {
@@ -5392,7 +5417,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     );
   }
 
-
+  var iiio=0;
   void onMapCreated(GoogleMapController controller) async{
 
     var prefs = await SharedPreferences.getInstance();
@@ -5408,7 +5433,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
 
     if(admin_sts == '1' || admin_sts == '2') {
-
+print("inside admnnnnnn");
       var p=97;
       var ii=0;
       var lastCurrentLocation;
@@ -5615,8 +5640,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         var formattedDate = "${dateParse.day.toString().padLeft(2, '0')}-${dateParse.month.toString().padLeft(2, '0')}-${dateParse.year}";
 
         var date222 = formattedDate.toString() ;
-
-        CollectionReference _documentRef=Firestore.instance.collection('locations/${this.empId}/$date222/latest');
+        print("locations/$orgid222/${attList[0].EmployeeId.toString()}/$todayDate/latest");
+        CollectionReference _documentRef=Firestore.instance.collection('locations/$orgid222/${attList[0].EmployeeId.toString()}/$date222/latest');
 
         // _documentRef.getDocuments().then((ds){
 
@@ -5626,32 +5651,86 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
         _documentRef.getDocuments().then((ds){
 
-
           if(ds!=null){
 
             print("hjsghsgsj"+ds.documents.toString());
             var aaa=ds.documents;
+
+            //// Sorting the locations from firestore
             aaa.sort((a, b) {
+
+
               return a.data["location"]["timestamp"].toString().toLowerCase().compareTo(b.data["location"]["timestamp"].toString().toLowerCase());
             });
 
+            print("shhsjhskhsk"+aaa.toString());
 
-            for(var value in aaa) {
+
+
+            for(var value in aaa) {  //// Iterating Locations
               print(
                   "From firestore..........................................>>>>");
 
               print(value.data["location"]["timestamp"]);
               print(
-                  "From firestore..........................................>>>>");
+                  "From firestore..........................................>>>>"+(aaa.length-1).toString());
 
 
               var change1 = new Map<String, dynamic>.from(value.data);
-              print('hjjghgjgjgjhgj' +
-                  change1['location']["activity"]["confidence"].toString());
+
+              if (aaa.length > 0) {
+                var lastLoc,firstLoc;
+                var change11 = new Map<String, dynamic>.from(aaa[0].data);
+                firstLoc = Locations.fromFireStore(change11);
+                print(firstLoc.latitude.toString()+"first loc lat");
+
+                var m = Marker(
+                  markerId: MarkerId('sourcePinTimeInIcon'),
+                  position: LatLng(double.parse(firstLoc.latitude),
+                      double.parse(firstLoc.longitude)),
+                  // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+                  icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+                  // icon:pinLocationIcon,
+                  infoWindow: InfoWindow(
+                    title: "Start Time: " + firstLoc.time.toString(),
+                  ),
+                );
+                Future.delayed(Duration(seconds: 1), () {
+                  setState(() {
+                    _markers.add(m);
+                    //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                  });
+                });
+
+                var change111 = new Map<String, dynamic>.from(aaa[aaa.length-1].data);
+                lastLoc = Locations.fromFireStore(change111);
+                print(lastLoc.latitude.toString()+"last loc lat");
+
+                var m1 = Marker(
+                  markerId: MarkerId('sourcePinCurrentLocationIcon'),
+                  position: LatLng(double.parse(lastLoc.latitude),
+                      double.parse(lastLoc.longitude)),
+                  // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+                  icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+                  infoWindow: InfoWindow(
+                    title: "Last known location: ",
+                  ),
+                );
+                Future.delayed(Duration(seconds: 1), () {
+                  setState(() {
+                    _markers.add(m1);
+                    setLoader = true;
+                    //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                  });
+                });
+              }
+
+              print('hjjghgjgjgjhgj' +iiio.toString()+ change1['location']["coords"]["latitude"].toString());
               var currentLoc = Locations.fromFireStore(change1);
               childExist = true;
               setLoader = true;
-
+              ///// Creating marker for fake locations
               if (currentLoc.mock == "true") { //if user uses mock locations
 
                 ID++;
@@ -5676,71 +5755,38 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                 });
               }
 
-              TimeInOutLocations.add(
-                  [currentLoc.latitude, currentLoc.longitude, currentLoc.time]);
 
-              var firstLocation = TimeInOutLocations[0];
               //timeIn location
-              if (TimeInOutLocations.length > 1) {
-                lastCurrentLocation =
-                TimeInOutLocations[TimeInOutLocations.length - 1];
 
-                var m1 = Marker(
-                  markerId: MarkerId('sourcePinCurrentLocationIcon'),
-                  position: LatLng(double.parse(lastCurrentLocation[0]),
-                      double.parse(lastCurrentLocation[1])),
-                  // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
-                  icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+              //////// Marker for last known location  //////////////////
 
-                  infoWindow: InfoWindow(
-                    title: "Last known location: " + currentLoc.time,
-                  ),
-                );
-                Future.delayed(Duration(seconds: 1), () {
-                  setState(() {
-                    _markers.add(m1);
-                    setLoader = true;
-                    //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-                  });
-                });
-              }
-              var m = Marker(
-                markerId: MarkerId('sourcePinTimeInIcon'),
-                position: LatLng(double.parse(firstLocation[0]),
-                    double.parse(firstLocation[1])),
-                // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
-                icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
-                // icon:pinLocationIcon,
-                infoWindow: InfoWindow(
-                  title: "Start Time: " + firstLocation[2],
-                ),
-              );
-              Future.delayed(Duration(seconds: 1), () {
-                setState(() {
-                  _markers.add(m);
-                  //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-                });
-              });
+
+              ///////////////// Marker from where location tracking starts //////////////////////
+
+
 
 
               //  setState(() {
               // create a Polyline instance
               // with an id, an RGB color and the list of LatLng pairs
+
+
               controller.animateCamera(CameraUpdate.newCameraPosition(
                 CameraPosition(
                   bearing: 0,
                   target: LatLng(double.parse(currentLoc.latitude),
                       double.parse(currentLoc.longitude)),
-                  zoom: 13.0,
+                  zoom: 26.0,
                 ),
               ));
+
+              //// Markers after 200 mtrs
 
               end = double.parse(currentLoc.odometer);
               print(latlng.toString());
 
               // if(((end-start)>200.0)&&(double.parse(currentLoc.accuracy)<20.0) ) {
-              if (((end - start) > 200.0) &&
-                  (double.parse(currentLoc.accuracy) < 20.0)) {
+              if (((end - start) > 200.0) && (double.parse(currentLoc.accuracy) < 20.0)) {
                 start = end;
                 p++;
                 //print("shashankmmmmmmmmmm"+(end-start>200.0).toString());
@@ -5768,6 +5814,10 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                 //});
 
                 ii++;
+
+
+
+
                 /* var m=Marker(
           markerId: MarkerId('sourcePin$p'),
           position: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
@@ -5784,15 +5834,19 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
           });
         });*/
+
+
+
+
               }
 
               print(currentLoc.accuracy);
               print("currentLoc.accuracy");
 
-
+              //////     Code for polylines        ////////////////
               setState(() {
-                // if(double.parse(currentLoc.accuracy)<20.0)           //07oct
-                //   {
+                if(double.parse(currentLoc.accuracy)<20.0)           //07oct
+                 {
                 latlng.add(LatLng(double.parse(currentLoc.latitude),
                     double.parse(currentLoc.longitude)));
                 //  print(latlng);
@@ -5809,12 +5863,12 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                   points: latlng,
                   color: Colors.blue,
                 ));
-                // }
+                }
               });
              }
             }
         });
-
+        ////////////////// Visit Markers //////////////
         var date=DateTime.now().toString().split(".")[0].split(" ")[0];
         var visits =  await  getVisitsDataList(date.toString(),attList[0].EmployeeId.toString());
         print("aaa");
@@ -5882,13 +5936,55 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
         final Uint8List fakeLocation = await getBytesFromAsset('assets/fakeLocation.png', 140);
         int ID = 1;
         setLoader = false;
-        updates = await FirebaseDatabase.instance.reference().child("Locations").child(orgid).child(empid).child(todayDate).onChildAdded
-            .listen((data) async {
+        var date11 = new DateTime.now().toString();
 
-          userFlag=true;
+        var dateParse = DateTime.parse(date11);
+        var prefs1=await SharedPreferences.getInstance();
+        var orgid222=prefs1.get("orgid");
+        var empIds=prefs1.get("empid");
+
+        var formattedDate = "${dateParse.day.toString().padLeft(2, '0')}-${dateParse.month.toString().padLeft(2, '0')}-${dateParse.year}";
+
+        var date222 = formattedDate.toString() ;
 
 
-          var currentLoc=  Locations.fromFireBase(data.snapshot);
+
+
+
+        CollectionReference _documentRef=Firestore.instance.collection('locations/$orgid222/${empIds}/$date222/latest');
+
+        // _documentRef.getDocuments().then((ds){
+        _documentRef.getDocuments().then((ds){
+
+          if(ds!=null){
+
+            print("hjsghsgsj"+ds.documents.toString());
+            var aaa=ds.documents;
+
+            //// Sorting the locations from firestore
+            aaa.sort((a, b) {
+
+
+              return a.data["location"]["timestamp"].toString().toLowerCase().compareTo(b.data["location"]["timestamp"].toString().toLowerCase());
+            });
+
+
+            for(var value in aaa) {  //// Iterating Locations
+              print(
+                  "From firestore..........................................>>>>");
+
+              print(value.data["location"]["timestamp"]);
+              print(
+                  "From firestore..........................................>>>>");
+
+
+              var change1 = new Map<String, dynamic>.from(value.data);
+              print('hjjghgjgjgjhgj' +
+                  change1['location']["activity"]["confidence"].toString());
+              var currentLoc = Locations.fromFireStore(change1);
+
+              print(currentLoc.latitude.toString());
+              print('ddebug');
 
           if(currentLoc.mock == "true") {  //if user uses mock locations
 
@@ -5901,7 +5997,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
 
               infoWindow: InfoWindow(
                   title: "Fake location found: ",
-                  snippet: "         "+data.snapshot.key
+                  snippet: "         "+currentLoc.time
                 // anchor: Offset(0.1, 0.1)
               ),
             );
@@ -5913,47 +6009,58 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             });
           }
 
-          TimeInOutLocations.add([currentLoc.latitude,currentLoc.longitude,data.snapshot.key]);
 
-          var firstLocation = TimeInOutLocations[0];
-          //timeIn location
-          if(TimeInOutLocations.length>1){
-            lastCurrentLocation = TimeInOutLocations[TimeInOutLocations.length - 1];
 
-            var m1=Marker(
-              markerId: MarkerId('sourcePinCurrentLocationIconUserLocation'),
-              position: LatLng(double.parse(lastCurrentLocation[0]),double.parse(lastCurrentLocation[1])),
-              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
-              icon:BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
-              infoWindow: InfoWindow(
-                title: "Your last known location: "+data.snapshot.key,
-              ),
-            );
-            Future.delayed(Duration(seconds: 1),(){
-              setState(() {
-                _markers1.add(m1);
-                setLoader = true;
-                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-              });
-            });
-          }
-          var m=Marker(
-            markerId: MarkerId('sourcePinTimeInIconUserLocation'),
-            position: LatLng(double.parse(firstLocation[0]),double.parse(firstLocation[1])),
-            // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
-            icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
-            // icon:pinLocationIcon,
-            infoWindow: InfoWindow(
-              title: "Your start Time: "+firstLocation[2],
-            ),
-          );
-          Future.delayed(Duration(seconds: 1),(){
-            setState(() {
-              _markers1.add(m);
-              //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-            });
-          });
+              //var change1 = new Map<String, dynamic>.from(value.data);
+              var lastLoc,firstLoc;
+              if (aaa.length > 0) {
+                print("insiiiide");
+                var change11 = new Map<String, dynamic>.from(aaa[0].data);
+                firstLoc = Locations.fromFireStore(change11);
+                print(firstLoc.latitude.toString()+"first loc lat1");
+
+                var m = Marker(
+                  markerId: MarkerId('sourcePinTimeInIcon100'),
+                  position: LatLng(double.parse(firstLoc.latitude),
+                      double.parse(firstLoc.longitude)),
+                  // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+                  icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+                  // icon:pinLocationIcon,
+                  infoWindow: InfoWindow(
+                    title: "Start Time: " + firstLoc.time.toString(),
+                  ),
+                );
+                Future.delayed(Duration(seconds: 1), () {
+                  setState(() {
+                    _markers1.add(m);
+                    //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                  });
+                });
+
+                var change111 = new Map<String, dynamic>.from(aaa[aaa.length-1].data);
+                lastLoc = Locations.fromFireStore(change111);
+                print(lastLoc.latitude.toString()+"last loc lat1");
+
+                var m1 = Marker(
+                  markerId: MarkerId('sourcePinCurrentLocationIcon100'),
+                  position: LatLng(double.parse(lastLoc.latitude),
+                      double.parse(lastLoc.longitude)),
+                  // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+                  icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+                  infoWindow: InfoWindow(
+                    title: "Last known location: ",
+                  ),
+                );
+                Future.delayed(Duration(seconds: 1), () {
+                  setState(() {
+                    _markers1.add(m1);
+                    setLoader = true;
+                    //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+                  });
+                });
+              }
 
 
 
@@ -5965,7 +6072,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             CameraPosition(
               bearing: 0,
               target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
-              zoom: 13.0,
+              zoom: 26,
             ),
           ));
 
@@ -5982,7 +6089,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             // Future.delayed(Duration(seconds: 2),(){
             markerPoint++;
 
-            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),data.snapshot.key);
+            getMarkerNew(markerPoint,double.parse(currentLoc.latitude),double.parse(currentLoc.longitude),currentLoc.time);
 
             setState(() {
 
@@ -6043,6 +6150,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             // }
           });
 
+            };
+          }
         });
 
         if(userFlag==false){
@@ -6050,7 +6159,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             CameraPosition(
               bearing: 0,
               target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
-              zoom: 13.0,
+              zoom: 26,
             ),
           ));
 
@@ -6071,30 +6180,6 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             });
           });
         }
-        /*  controller.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(
-            bearing: 0,
-            target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
-            zoom: 13.0,
-          ),
-        ));
-
-        var m1 = Marker(
-            markerId: MarkerId('noChildExist$j'),
-            position: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
-            icon: BitmapDescriptor.defaultMarker,
-            infoWindow: InfoWindow(
-              title: "You are here",
-              //  snippet:globals.assign_lat.toString()+","+globals.assign_long.toString()
-            )
-
-        );
-
-        Future.delayed(Duration(seconds: 1),(){
-          setState(() {
-            _markers1.add(m1);
-          });
-        });*/
 
       }
 

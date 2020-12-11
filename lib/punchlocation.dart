@@ -1030,12 +1030,14 @@ class _PunchLocation extends State<PunchLocation> {
             id=suggestedPhrase["id"];
             company=suggestedPhrase["company"];
             _searchQueryController.text = suggestedPhrase["company"];
+          }else{
+            setState(() {
+              notFound=1;
+            });
+            _searchQueryController.text = suggestedPhrase["company"];
           }
         });
-        setState(() {
-          notFound=1;
-        });
-        _searchQueryController.text = suggestedPhrase["company"];
+
       },
     );
   }

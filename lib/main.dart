@@ -381,6 +381,7 @@ class _MyAppState extends State<MyApp> {
     //if(location.coords.accuracy<10)
     //database.setPersistenceCacheSizeBytes(10000);
      //{
+    /*
       firebaseDb.DatabaseReference _locRef=database.reference().child('Locations');
       _locRef.child(orgId).child(employeeId).child(
           currDate.toString().split(".")[0].split(" ")[0]).child(
@@ -404,7 +405,7 @@ class _MyAppState extends State<MyApp> {
         print('Transaction  committed.');
       });
     //}
-
+*/
     print('[${bg.Event.LOCATION}] - $location');
 
 

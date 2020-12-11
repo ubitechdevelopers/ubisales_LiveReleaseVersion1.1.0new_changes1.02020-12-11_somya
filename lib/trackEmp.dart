@@ -2439,12 +2439,7 @@ print("marker added............");
 
     // _documentRef.getDocuments().then((ds){
 
-
-
-
-
     _documentRef.getDocuments().then((ds){
-
 
       if(ds!=null) {
         print("hjsghsgsj" + ds.documents.toString());
@@ -2475,40 +2470,53 @@ print("marker added............");
             print("child is exist or not");
           });
 
+          if (aaa.length > 0) {
+            var lastLoc,firstLoc;
+            var change11 = new Map<String, dynamic>.from(aaa[0].data);
+            firstLoc = Locations.fromFireStore(change11);
+            print(firstLoc.latitude.toString()+"first loc lat");
 
-          TimeInOutLocations.add(
-              [currentLoc.latitude, currentLoc.longitude, currentLoc.time]);
-
-          var firstLocation = TimeInOutLocations[0]; //timeIn location
-          if (TimeInOutLocations.length > 1) {
-            lastCurrentLocation =
-            TimeInOutLocations[TimeInOutLocations.length - 1];
-
-            if (currentLoc.mock == "true") { //if user uses mock locations
-
-              ID++;
-
-              print("inside mock location");
-
-              var m1 = Marker(
-                markerId: MarkerId('fakeLocation$ID'),
-                position: LatLng(double.parse(currentLoc.latitude),
-                    double.parse(currentLoc.longitude)),
-                // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
-                icon: BitmapDescriptor.fromBytes(fakeLocation),
-
-                infoWindow: InfoWindow(
-                    title: "Fake location found: ",
-                    snippet: "         " + currentLoc.time
-                ),
-              );
-              Future.delayed(Duration(seconds: 1), () {
-                setState(() {
-                  _markers.add(m1);
-                  //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
-                });
+            var m = Marker(
+              markerId: MarkerId('sourcePinTimeInIcon'),
+              position: LatLng(double.parse(firstLoc.latitude),
+                  double.parse(firstLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://cdn0.iconfinder.com/data/icons/map-and-navigation-2-1/48/100-512.png", Size(150.0, 250.0),0),
+              icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
+              // icon:pinLocationIcon,
+              infoWindow: InfoWindow(
+                title: "Start Time: " + firstLoc.time.toString(),
+              ),
+            );
+            Future.delayed(Duration(seconds: 1), () {
+              setState(() {
+                _markers.add(m);
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
               });
-            }
+            });
+
+            var change111 = new Map<String, dynamic>.from(aaa[aaa.length-1].data);
+            lastLoc = Locations.fromFireStore(change111);
+            print(lastLoc.latitude.toString()+"last loc lat");
+
+            var m1 = Marker(
+              markerId: MarkerId('sourcePinCurrentLocationIcon'),
+              position: LatLng(double.parse(lastLoc.latitude),
+                  double.parse(lastLoc.longitude)),
+              // icon: await getMarkerIconForTimeIn("https://as2.ftcdn.net/jpg/02/22/69/89/500_F_222698911_EXuC0fIk12BLaL6BBRJUePXVPn7lOedT.jpg", Size(150.0, 250.0),0),
+              icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
+
+              infoWindow: InfoWindow(
+                title: "Last known location: ",
+              ),
+            );
+            Future.delayed(Duration(seconds: 1), () {
+              setState(() {
+                _markers.add(m1);
+
+                //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
+              });
+            });
+          }
 
             if (showTracks == true && showPolylines == true) {
               var m1 = Marker(
@@ -2529,25 +2537,9 @@ print("marker added............");
                 });
               });
             }
-          }
 
-          if (showTracks == true && showPolylines == true) {
-            var m = Marker(
-              markerId: MarkerId('sourcePinTimeInIcon'),
-              position: LatLng(double.parse(firstLocation[0]),
-                  double.parse(firstLocation[1])),
-              icon: BitmapDescriptor.fromBytes(TimeInMapIcon),
 
-              infoWindow: InfoWindow(
-                title: "Start Time: " + firstLocation[2],
-              ),
-            );
-            Future.delayed(Duration(seconds: 1), () {
-              setState(() {
-                _markers.add(m);
-              });
-            });
-          }
+
 
           end = double.parse(currentLoc.odometer);
 
@@ -2559,6 +2551,8 @@ print("marker added............");
                 double.parse(currentLoc.longitude), currentLoc.time);
 
             //   latLong.add([double.parse(currentLoc.latitude), double.parse(currentLoc.longitude)]);
+            print("testingjkhfdjkfhdsklf");
+            print(double.parse(currentLoc.longitude));
 
             //Uint8List markerIcon;
 
@@ -2655,7 +2649,7 @@ print("marker added............");
           });
         }
       }
-       });
+    });
 
 
    // markerPoint++;
@@ -2665,7 +2659,7 @@ print("marker added............");
 
    /* final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(45, 45, markerPoint);
 
-    if(showPolylines == true || showMarker == true) {
+   if(showPolylines == true || showMarker == true) {
       var m = Marker(
         markerId: MarkerId('sourcePin$p'),
         position: LatLng(lati,longi),
@@ -2680,7 +2674,9 @@ print("marker added............");
           //controller.showMarkerInfoWindow(MarkerId('sourcePin$j'));
         });
       });
-    }*/
+    }
+
+    */
 
 
     Future.delayed(Duration(seconds: 3), () {

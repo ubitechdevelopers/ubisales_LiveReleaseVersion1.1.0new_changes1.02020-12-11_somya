@@ -1737,8 +1737,7 @@ class SaveImage {
           try {
             print('------------**');
             print(globals.path + "saveVisitUbisales?uid=${mk.uid}&clientname=${mk.clientname}&location=${location}&cid=${mk.cid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}");
-            response1 =
-                await dio.post(globals.path + "saveVisit", data: formData);
+            response1 = await dio.post(globals.path + "saveVisitUbisales", data: formData);
             print("----->save visit image* --->" + response1.toString());
           } catch (e) {
             print('------------*');
@@ -1775,20 +1774,20 @@ class SaveImage {
         return false;*/
         FormData formData = new FormData.from({
           "uid": mk.uid,
+          "clientname": mk.clientname,
           "location": location,
           "cid": mk.cid,
           "refid": mk.refid,
           "latit": lat,
           "longi": long,
           "FakeLocationStatus":mk.FakeLocationStatus
-          //   "file": new UploadFileInfo(imagei, "image.png"),@@@@@@@@@@@@@
         });
         print("5");
         Response<String> response1;
         try {
           print('------------');
-          response1 =
-              await dio.post(globals.path + "saveVisit", data: formData);
+          print(globals.path + "saveVisitUbisales?uid=${mk.uid}&clientname=${mk.clientname}&location=${location}&cid=${mk.cid}&refid=${mk.refid}&latit=$lat&longi=$long&FakeLocationStatus=${mk.FakeLocationStatus}");
+          response1 = await dio.post(globals.path + "saveVisitUbisales", data: formData);
           print("----->save visit image --->" + response1.toString());
         } catch (e) {
           print('------------');
@@ -1858,7 +1857,7 @@ class SaveImage {
             print('------------**');
             print(globals.path + "saveVisitUbisales?uid=${mk.uid}&clientname=${mk.clientname}&location=${location}&cid=${mk.cid}&refid=${mk.refid}&latit=$lat&longi=$long&file=$imagei&FakeLocationStatus=${mk.FakeLocationStatus}");
             response1 =
-            await dio.post(globals.path + "saveVisit", data: formData);
+            await dio.post(globals.path + "saveVisitUbisales", data: formData);
             print("----->save visit image* --->" + response1.toString());
           } catch (e) {
             print('------------*');
@@ -1895,20 +1894,21 @@ class SaveImage {
         return false;*/
         FormData formData = new FormData.from({
           "uid": mk.uid,
+          "clientname": mk.clientname,
           "location": location,
           "cid": mk.cid,
           "refid": mk.refid,
           "latit": lat,
           "longi": long,
           "FakeLocationStatus":mk.FakeLocationStatus
-          //   "file": new UploadFileInfo(imagei, "image.png"),@@@@@@@@@@@@@
         });
         print("5");
         Response<String> response1;
         try {
           print('------------');
+          print(globals.path + "saveVisitUbisales?uid=${mk.uid}&clientname=${mk.clientname}&location=${location}&cid=${mk.cid}&refid=${mk.refid}&latit=$lat&longi=$long&FakeLocationStatus=${mk.FakeLocationStatus}");
           response1 =
-          await dio.post(globals.path + "saveVisit", data: formData);
+          await dio.post(globals.path + "saveVisitUbisales", data: formData);
           print("----->save visit image --->" + response1.toString());
         } catch (e) {
           print('------------');
