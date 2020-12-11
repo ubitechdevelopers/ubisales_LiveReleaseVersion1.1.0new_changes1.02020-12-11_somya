@@ -371,7 +371,7 @@ packages:
       name: flutter_background_geolocation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0+1"
+    version: "1.10.3"
   flutter_cache_manager:
     dependency: transitive
     description:

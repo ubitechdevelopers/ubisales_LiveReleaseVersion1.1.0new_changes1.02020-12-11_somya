@@ -183,8 +183,10 @@ class _MyAppState extends State<MyApp> {
     bg.BackgroundGeolocation.ready(bg.Config(
         reset: true,
         debug: false,
+        foregroundService:true,
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
+
         distanceFilter: 10.0,
         url: "${ENV.TRACKER_HOST}/api/locations",
         authorization: bg.Authorization(  // <-- demo server authenticates with JWT

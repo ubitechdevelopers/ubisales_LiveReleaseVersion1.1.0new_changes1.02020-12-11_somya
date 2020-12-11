@@ -135,16 +135,19 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
     bg.BackgroundGeolocation.ready(bg.Config(
         // Convenience option to automatically configure the SDK to post to Transistor Demo server.
         transistorAuthorizationToken: token,
+      foregroundService:true,
         // Logging & Debug
-        reset: false,
+        reset: true,
+
         debug: true,
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         // Geolocation options
-        desiredAccuracy: bg.Config.DESIRED_ACCURACY_NAVIGATION,
+        desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
         distanceFilter: 10.0,
         stopTimeout: 1,
         // HTTP & Persistence
         autoSync: true,
+        notification: bg.Notification(sticky:true),
         locationAuthorizationRequest: 'Always',
         // Application options
         stopOnTerminate: false,
@@ -183,6 +186,7 @@ class HomeViewState extends State<HomeView> with TickerProviderStateMixin<HomeVi
   void _configureBackgroundFetch() async {
     BackgroundFetch.configure(BackgroundFetchConfig(
         minimumFetchInterval: 15,
+
         startOnBoot: true,
         stopOnTerminate: false,
         enableHeadless: true,

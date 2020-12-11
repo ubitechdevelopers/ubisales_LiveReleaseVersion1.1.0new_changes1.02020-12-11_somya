@@ -191,7 +191,9 @@ getWidgets(context){
 
 
         Divider(color: Colors.black54,height: 1.5,),
-        RaisedButton(child: Text('Track Employees',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
+
+        /*RaisedButton(
+          child: Text('Track Employees',style: TextStyle(color: Colors.white),),color: globals.buttoncolor,
           onPressed: (){
             Navigator.push(
 
@@ -200,8 +202,7 @@ getWidgets(context){
                 )
             );
           },
-
-        ),
+        ),*/
 
         /*new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

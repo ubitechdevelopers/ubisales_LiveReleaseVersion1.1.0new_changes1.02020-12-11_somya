@@ -77,7 +77,7 @@ dependencies:
   firebase_ml_vision: ^0.6.0+2
   screen: 0.0.5
   audioplayers: 0.15.1
-  flutter_background_geolocation: 1.10.0+1
+  flutter_background_geolocation: 1.10.3
   latlong: 0.6.1
   unicorndial: ^1.1.5
   flutter_map: 0.8.2

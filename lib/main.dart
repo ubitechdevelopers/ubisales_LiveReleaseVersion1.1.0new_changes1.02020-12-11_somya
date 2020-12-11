@@ -63,14 +63,14 @@ void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
       }
       break;
     case bg.Event.HEARTBEAT:
-    /* DISABLED getCurrentPosition on heartbeat
+    /* DISABLED getCurrentPosition on heartbeat*/
       try {
         bg.Location location = await bg.BackgroundGeolocation.getCurrentPosition(samples: 1);
         print('[getCurrentPosition] Headless: $location');
       } catch (error) {
         print('[getCurrentPosition] Headless ERROR: $error');
       }
-      */
+
       break;
     case bg.Event.LOCATION:
       bg.Location location = headlessEvent.event;
@@ -125,7 +125,7 @@ void backgroundGeolocationHeadlessTask(bg.HeadlessEvent headlessEvent) async {
 /// Receive events from BackgroundFetch in Headless state.
 void backgroundFetchHeadlessTask(String taskId) async {
   // Get current-position from BackgroundGeolocation in headless mode.
-  //bg.Location location = await bg.BackgroundGeolocation.getCurrentPosition(samples: 1);
+  bg.Location location = await bg.BackgroundGeolocation.getCurrentPosition(samples: 1);
   print("[BackgroundFetch] HeadlessTask: $taskId");
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -238,10 +238,12 @@ class _MyAppState extends State<MyApp> {
     // 2.  Configure the plugin
     bg.BackgroundGeolocation.ready(bg.Config(
         reset: true,
-        debug: false,                 //to off
+        debug: true,                 //to off
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
         distanceFilter: 10.0,
+      foregroundService:true,
+        notification: bg.Notification(sticky:true),
         url: "${ENV.TRACKER_HOST}/api/locations",
         authorization: bg.Authorization(  // <-- demo server authenticates with JWT
             strategy: bg.Authorization.STRATEGY_JWT,
@@ -256,7 +258,8 @@ class _MyAppState extends State<MyApp> {
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
-        speedJumpFilter: 25     //25 metre/sec
+        speedJumpFilter: 25,
+
 
     )).then((bg.State state) {
       print("[ready] ${state.toMap()}");

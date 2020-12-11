@@ -138,11 +138,13 @@ class Test {
         logLevel: bg.Config.LOG_LEVEL_VERBOSE,
         desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
         distanceFilter: 50,
+        foregroundService:true,
         disableElasticity: false,
         locationUpdateInterval: 1000,
         fastestLocationUpdateInterval: -1,
         enableTimestampMeta: true,
         stopTimeout: 1,
+
         maxDaysToPersist: 14,
         schedule: [
           //'2-6 09:00-17:00'

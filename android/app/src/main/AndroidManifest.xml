@@ -42,6 +42,7 @@
         <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="6d4846d2884c2f46ef898cbf95648cd7587ba37035a680e2a2373d0bc8bd3beb" />
         <meta-data android:name="com.transistorsoft.locationmanager.ENCRYPTION_PASSWORD" android:value="transistorsoft" />
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDYh77SKpI6kAD1jiILwbiISZEwEOyJLtM"/>
+        <meta-data android:name="com.transistorsoft.firebaseproxy.license" android:value="2b778a4abcd83be5061b88b6ac9a2ca99badc48db94c7429339a63ddbc9bf66a" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1527441601987735~5538680565"/>

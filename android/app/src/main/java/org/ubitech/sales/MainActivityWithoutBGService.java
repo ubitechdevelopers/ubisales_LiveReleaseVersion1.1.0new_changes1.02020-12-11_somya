@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 //import android.os.Bundle;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
@@ -183,11 +185,28 @@ public class MainActivityWithoutBGService extends FlutterActivity {
     }
 
 
+
     //LocationListenerExecuter listenerExecuter;
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
 
+/*
+        PowerManager powerManager = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+        String packageName = "org.ubitech.sales";
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent i = new Intent();
+            Log.d("asdf","inside");
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                i.setData(Uri.parse("package:" + packageName));
+                Log.d("asdf","inside1");
+                startActivity(i);
+            }
+        }*/
+/*        Intent myIntent = new Intent();
+        myIntent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+        startActivity(myIntent);*/
 
         Log.i("Dialog","hdghdgjdgjdgdjgdjgdjggggggg");
 
@@ -329,7 +348,7 @@ public class MainActivityWithoutBGService extends FlutterActivity {
 
 
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE/*,Manifest.permission.READ_CONTACTS*/}, 1);
+                new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,/*,Manifest.permission.READ_CONTACTS*/}, 1);
 
 /*
       Intent i23=new Intent(this, CameraKitActivity.class);
