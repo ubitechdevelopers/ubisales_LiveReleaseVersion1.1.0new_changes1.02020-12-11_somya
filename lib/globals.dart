@@ -30,20 +30,16 @@ String path="https://sandbox.ubiattendance.com/index.php/Att_services/";
 String path_hrm_india="https://sandbox.ubiattendance.com/index.php/Att_services/";
 */
 
-String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
+/*String path="https://ubiattendance.ubihrm.com/index.php/Att_services/";
 String internetConnectivityURL="https://ubiattendance.ubihrm.com/index.php/Att_services/isInternetConnected";
-String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";
-
-/*
+String path_hrm_india="https://ubiattendance.ubihrm.com/index.php/Att_services/";*/
 
 String path="http://ubiattendance.zentylpro.com/index.php/Att_services1_ubisales/";
 String internetConnectivityURL="http://ubiattendance.zentylpro.com/index.php/Att_services1_ubisales/isInternetConnected";
 String path_hrm_india="http://ubiattendance.zentylpro.com/index.php/Att_services1_ubisales/";
-*/
 
 
 /*
-
 String path="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
 String internetConnectivityURL="http://zentylpro.com/SFUbiattendance/index.php/Att_services/isInternetConnected";
 String path_hrm_india="http://zentylpro.com/SFUbiattendance/index.php/Att_services/";
@@ -60,7 +56,7 @@ int globalalertcount = 0;
 int TimeOffStartStatus=0,TimeOffEndStatus=0,UnderTime=0,Visit = 0,OutsideGeofence=0,FakeLocation=0,FaceIdReg=0,FaceIdDisapproved=0,SuspiciousSelfie = 0, SuspiciousDevice = 0, DisapprovedAtt = 0 , AttEdited = 0, ChangedPassword = 0;
 var persistedface="0";
 String TimeOffStartStatusMessage='',TimeOffEndStatusMessage='',UnderTimeMessage='',VisitMessage = '',OutsideGeofenceMessage='',FakeLocationMessage='',FaceIdRegMessage='',FaceIdDisapprovedMessage='',SuspiciousSelfieMessage = '', SuspiciousDeviceMessage = '', DisapprovedAttMessage = '' , AttEditedMessage = '', ChangedPasswordMessage = '';
-
+int MultipletimeStatus=0;
 int firstface=0;
 String globalcity='City Not Fetched';
 var deviceid="0";
@@ -93,6 +89,8 @@ var timeInPressedTime;
 var timeOutPressedTime;
 int userlimit = 0;
 int registeruser = 0;
+String empbalanceleave='0';
+String emputilizedleave='0';
 var timeWhenButtonPressed;
 const cameraChannel = const MethodChannel('update.camera.status');
 const facebookChannel= const MethodChannel('log.facebook.data');

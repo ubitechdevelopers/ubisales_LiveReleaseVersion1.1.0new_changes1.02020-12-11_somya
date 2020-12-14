@@ -105,7 +105,7 @@ class Home{
         TimeOffStartStatusMessage = timeinoutMap['TimeOffStartStatusMessage'].toString();
         TimeOffEndStatusMessage = timeinoutMap['TimeOffEndStatusMessage'].toString();
         globals.MinimumWorkingHours=timeinoutMap['MinimumWorkingHours'].toString()??"00:00";
-
+        MultipletimeStatus=int.parse(timeinoutMap['MultipletimeStatus']);
         print(globals.MinimumWorkingHours);
 
 
@@ -131,7 +131,7 @@ class Home{
         globals.visitpunch=int.parse(timeinoutMap['Addon_VisitPunch']);
         globals.timeOff=int.parse(timeinoutMap['Addon_TimeOff']);
         globals.flexi_permission=int.parse(timeinoutMap['Addon_flexi_shif']);
-        if(shiftType.toString()=='3'){
+        if(shiftType.toString()=='3' || globals.MultipletimeStatus==1){
           globals.offline_permission=0;
         }
         else

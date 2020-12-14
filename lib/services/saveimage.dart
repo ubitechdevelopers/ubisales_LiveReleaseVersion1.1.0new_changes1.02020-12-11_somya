@@ -112,6 +112,8 @@ class SaveImage {
 
   Future<Map> saveTimeInOutImagePickerAppCamera(MarkTime mk,context) async {
 
+    print("Call saveTimeInOutImagePickerAppCamera");
+
     var MarkAttMap;
     try{
       File imagei = null;
@@ -497,6 +499,8 @@ class SaveImage {
 
 
   Future<bool> saveTimeInOutImagePickerGroupAttFaceCamera(MarkTime mk,context) async {
+
+    print("Call saveTimeInOutImagePicker");
 
     try{
       File imagei = null;

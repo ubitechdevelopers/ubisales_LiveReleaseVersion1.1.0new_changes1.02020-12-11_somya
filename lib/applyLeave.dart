@@ -1,6 +1,8 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'dart:convert';
+
 import 'package:Shrine/myleave.dart';
 import 'package:Shrine/services/saveimage.dart';
 import 'package:Shrine/services/services.dart';
@@ -15,6 +17,7 @@ import 'Bottomnavigationbar.dart';
 import 'attendance_summary.dart';
 import 'drawer.dart';
 import 'globals.dart';
+import 'package:http/http.dart' as http;
 // This app is a stateful, it tracks the user's current choice.
 class ApplyLeave extends StatefulWidget {
   @override
@@ -140,9 +143,18 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
 
       });
 
-
+      print("CHECK GET INFO IS HITTING OR NOT");
+      print(path+"getinfo?uid=$empid&refno=$orgid");
+      var res = await http.get(path+'getinfo?uid=$empid&refno=$orgid');
+      var responseJson = jsonDecode(res.body.toString());
+      setState(() {
+        empbalanceleave=responseJson['empbalanceleave'];
+        emputilizedleave=responseJson['emputilizedleave'];
+      });
 
   }
+
+
   @override
   Widget build(BuildContext context) {
     return  WillPopScope(
@@ -214,6 +226,33 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
                           children: <Widget>[
                             //SizedBox(height: 5.0),
                             //getLeaveType_DD(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                new Container(
+                                  margin: const EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey)
+                                  ),
+                                  child: Text("Balance: "+empbalanceleave.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                new Container(
+                                  margin: const EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey)
+                                  ),
+                                  child: Text("Utilized: "+emputilizedleave.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(height: 5.0),
                             //Enter date
                             Row(
@@ -266,60 +305,6 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
                                     ),
                                   ),
                                 ),
-                                new Expanded(
-                                  child: Container(
-                                    //margin: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
-                                    // height: 80.0,
-                                    height: MediaQuery.of(context).size.height*0.1,
-                                    child:DateTimeField(
-                                      //firstDate: new DateTime.now(),
-                                      //initialDate: new DateTime.now(),
-                                      //dateOnly: true,
-                                      format: formatter,
-                                      controller: _dateController1,
-                                      readOnly: true,
-                                      onShowPicker: (context, currentValue) {
-                                        print("current value");
-                                        print(currentValue);
-                                        return showDatePicker(
-                                            context: context,
-                                            initialDate: currentValue ?? DateTime.now(),
-                                            firstDate: DateTime.now().subtract(Duration(days: 1)),
-                                            lastDate: DateTime(2100));
-
-                                      },
-                                      decoration: InputDecoration(
-                                        prefixIcon: Padding(
-                                          padding: EdgeInsets.all(0.0),
-                                          child: Icon(
-                                            Icons.date_range,
-                                            color: Colors.grey,
-                                          ), // icon is 48px widget.
-                                        ), // icon is 48px widget.
-
-                                        labelText: 'To Date',
-                                      ),
-                                      onChanged: (dt) {
-                                        setState(() {
-                                          Date2 = dt;
-                                        });
-                                        print("----->Changed date------> "+Date2.toString());
-                                      },
-                                      validator: (dt) {
-                                        if (dt==null){
-                                          return 'Please enter Leave to date';
-                                        }
-                                        if(Date2.isBefore(Date1)){
-                                          print("Date1 ---->"+Date1.toString());
-                                          print("Date2---->"+Date2.toString());
-                                          return '\"To Date\" can\'t be smaller.';
-                                        }
-
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                /*
                                 (CompoffSts=='0')?SizedBox(width: 10.0):Center(),
                                 (CompoffSts=='0')?Expanded(
                                   child: Padding(
@@ -374,11 +359,10 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
                                     ),
                                   ),
                                 ):Center(),
-                                */
                               ],
                             ),
-                            /*
-                            (visibilityFromHalf)?Row(
+
+                            /*(visibilityFromHalf)?Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 new Radio(
@@ -396,12 +380,65 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
                                 Text("Second Half",style: TextStyle(fontSize: 16.0),)
                               ],
                             ):Container(),
+                            SizedBox(height: 5.0,), */
+
                             SizedBox(height: 5.0,),
-                            */
                             Row(
                               children: <Widget>[
+                                new Expanded(
+                                  child: Container(
+                                    //margin: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
+                                    // height: 80.0,
+                                    height: MediaQuery.of(context).size.height*0.1,
+                                    child:DateTimeField(
+                                      //firstDate: new DateTime.now(),
+                                      //initialDate: new DateTime.now(),
+                                      //dateOnly: true,
+                                      format: formatter,
+                                      controller: _dateController1,
+                                      readOnly: true,
+                                      onShowPicker: (context, currentValue) {
+                                        print("current value");
+                                        print(currentValue);
+                                        return showDatePicker(
+                                            context: context,
+                                            initialDate: currentValue ?? DateTime.now(),
+                                            firstDate: DateTime.now().subtract(Duration(days: 1)),
+                                            lastDate: DateTime(2100));
 
-                                /*
+                                      },
+                                      decoration: InputDecoration(
+                                        prefixIcon: Padding(
+                                          padding: EdgeInsets.all(0.0),
+                                          child: Icon(
+                                            Icons.date_range,
+                                            color: Colors.grey,
+                                          ), // icon is 48px widget.
+                                        ), // icon is 48px widget.
+
+                                        labelText: 'To Date',
+                                      ),
+                                      onChanged: (dt) {
+                                        setState(() {
+                                          Date2 = dt;
+                                        });
+                                        print("----->Changed date------> "+Date2.toString());
+                                      },
+                                      validator: (dt) {
+                                        if (dt==null){
+                                          return 'Please enter Leave to date';
+                                        }
+                                        if(Date2.isBefore(Date1)){
+                                          print("Date1 ---->"+Date1.toString());
+                                          print("Date2---->"+Date2.toString());
+                                          return '\"To Date\" can\'t be smaller.';
+                                        }
+
+                                      },
+                                    ),
+                                  ),
+                                ),
+
                                 (CompoffSts=='0')?SizedBox(width: 10.0):Center(),
                                 (CompoffSts=='0')?Expanded(
                                     child:Padding(
@@ -452,11 +489,11 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
                                       ),
                                     )
                                 ):Center(),
-                                */
+
                               ],
                             ),
-/*
-                            (visibilityToHalf)?Row(
+
+                            /*(visibilityToHalf)?Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 new Radio(
@@ -568,6 +605,8 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
       ],
     );
   }
+
+
   requestLeave() async {
 
     print('------------*11');
@@ -588,7 +627,7 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
       Map MarkAttMap;
       setState(() {
       });
-      MarkAttMap =  await saveImage.applyLeave( empid , _reasonController.text.trim(),  _dateController.text, _dateController1.text,_radioValue, _radioValue1, orgid);
+      MarkAttMap =  await saveImage.applyLeave(empid , _reasonController.text.trim(),  _dateController.text, _dateController1.text,leavetimevalue, leavetimevalue1, orgid);
 
       print("issave");
       print(MarkAttMap);
@@ -734,6 +773,7 @@ class _ApplyLeave extends State<ApplyLeave> with SingleTickerProviderStateMixin 
       );
     }
   }
+
   /*
   requestleave(var leavefrom, var leaveto, var leavetypefrom, var leavetypeto, var halfdayfromtype, var halfdaytotype, var reason, var substituteemp, var compoffsts) async{
     setState(() {
