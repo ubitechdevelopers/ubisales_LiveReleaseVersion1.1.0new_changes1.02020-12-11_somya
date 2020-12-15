@@ -1907,6 +1907,9 @@ List<Attn> createTodayEmpList(List data) {
     print('LeaveStatus------>>>>'+LeaveStatus);
     String ShiftType = data[i]["shiftType"].toString()??"0";
     String AttendanceMasterId = data[i]["Id"].toString()??"0";
+    String AttendanceStatus = data[i]["AttendanceStatus"].toString()??'0';
+    String MultipletimeStatus = data[i]["MultipletimeStatus"].toString()??"0";
+    String getInterimAttAvailableSts = data[i]["getInterimAttAvailableSts"].toString();
     String DayLoggedHours = !data[i]["TotalLoggedHours"].toString().contains(":")?"00:00":data[i]["TotalLoggedHours"].toString().split(":")[0]+":"+data[i]["TotalLoggedHours"].toString().split(":")[1];
 
     Attn tos = new Attn(
@@ -1925,10 +1928,13 @@ List<Attn> createTodayEmpList(List data) {
       Total: Total,
       Present: Present,
       Absent: Absent,
-        LeaveStatus: LeaveStatus,
-        AttendanceMasterId: AttendanceMasterId,
-        ShiftType: ShiftType,
-        DayLoggedHours: DayLoggedHours
+      LeaveStatus: LeaveStatus,
+      AttendanceMasterId: AttendanceMasterId,
+      ShiftType: ShiftType,
+      DayLoggedHours: DayLoggedHours,
+      AttendanceStatus:AttendanceStatus,
+      MultipletimeStatus: MultipletimeStatus,
+      getInterimAttAvailableSts: getInterimAttAvailableSts,
     );
 
     list.add(tos);
@@ -1956,6 +1962,9 @@ class Attn {
   String AttendanceMasterId;
   String ShiftType;
   String DayLoggedHours;
+  String MultipletimeStatus;
+  String getInterimAttAvailableSts;
+  String AttendanceStatus;
 
   Attn({
     this.Id,
@@ -1976,7 +1985,10 @@ class Attn {
     this.LeaveStatus,
     this.AttendanceMasterId,
     this.ShiftType,
-    this.DayLoggedHours
+    this.DayLoggedHours,
+    this.MultipletimeStatus,
+    this.getInterimAttAvailableSts,
+    this.AttendanceStatus
   });
 }
 List<FaceIdLists> createFaceEmpList(var data) {

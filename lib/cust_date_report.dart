@@ -418,6 +418,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                 ],
 
                                               ),
+                                              SizedBox(height: 15.0),
                                               Divider(color: Colors.black26,),
                                               (index == snapshot.data.length - 1 &&
                                                   trialstatus == '2')
@@ -483,9 +484,31 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
                                                 )
                                             ),
                                           ),
+
+                                        // code for multiple time in and time out in single date case "Start"
+
+                                        if(snapshot.data[index].ShiftType.toString() == '1' && snapshot.data[index].MultipletimeStatus.toString() == '1' && snapshot.data[index].getInterimAttAvailableSts.toString() == 'true')
+                                          new Positioned(
+                                            right:0.0,
+                                            top: 40,
+                                            child: Container(
+                                                padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
+                                                color: buttoncolor,
+                                                child: InkWell(
+                                                  child: Icon(Icons.more_horiz,color: Colors.white,),
+                                                  onTap: (){
+                                                    showInterimAttendanceDialog(snapshot.data[index].AttendanceMasterId);
+                                                  },
+                                                )
+                                            ),
+                                          ),
+
+                                        // code for multiple time in and time out in single date case "End"
+
                                       ],
                                     );}
                               );
+
                             }else{
                               return new Container(
                                   height: MediaQuery.of(context).size.height*0.30,
@@ -1217,6 +1240,7 @@ class _CustomDateAttendance extends State<CustomDateAttendance> with SingleTicke
               ),
             ),
           ),
+
         ],
       ),
     );

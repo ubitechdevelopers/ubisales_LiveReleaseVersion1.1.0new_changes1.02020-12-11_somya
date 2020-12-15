@@ -2221,6 +2221,10 @@ class _MyHomePageState extends State<userShiftCalendar> {
                               ),
                             ]
                         ),
+
+
+                        ////////////// Table row with flexi and multiple time in or out /////////////
+
                         TableRow(
                             children: [
                               TableCell(
@@ -2287,12 +2291,12 @@ class _MyHomePageState extends State<userShiftCalendar> {
                                       child: Stack(
                                           children: <Widget>[
                                             Container(
-                                             //color: Colors.red,
                                               width: 100,
-                                              height: MediaQuery.of(context).size.height*0.11,
-                                            ),
+                                              height: MediaQuery.of(context).size.height*0.11,                                         ),
                                             Positioned(
                                               left: 15,
+
+
                                               child :Container(
                                                   width: 70.0,
                                                   height: 70.0,
@@ -2319,6 +2323,7 @@ class _MyHomePageState extends State<userShiftCalendar> {
                                                   )
                                               ),
                                             ),
+
                                             if(userlist[0].shifttype.toString() == '3')
                                             //   {
                                               new Positioned(
@@ -2330,8 +2335,7 @@ class _MyHomePageState extends State<userShiftCalendar> {
                                                         top: 1,
                                                         right: 3,
                                                         bottom: 1,
-                                                        left: 3
-                                                    ),
+                                                        left: 3),
                                                     color: buttoncolor,
                                                     child: InkWell(
                                                       child: Icon(Icons.more_horiz,
@@ -2343,6 +2347,31 @@ class _MyHomePageState extends State<userShiftCalendar> {
                                                 ),
                                               ),
                                             // }
+
+                                            if(userlist[0].shifttype.toString() == '1' && userlist[0].MultipletimeStatus.toString() == '1' && userlist[0].getInterimAttAvailableSts.toString() == 'true')
+                                            //   {
+                                              new Positioned(
+                                                right: 0.0,
+                                                top: 18,
+                                                // left: 3,
+                                                child: Container(
+                                                    padding: EdgeInsets.only(
+                                                        top: 1,
+                                                        right: 3,
+                                                        bottom: 1,
+                                                        left: 3),
+                                                    color: buttoncolor,
+                                                    child: InkWell(
+                                                      child: Icon(Icons.more_horiz,
+                                                        color: Colors.white,),
+                                                      onTap: () {
+                                                        showInterimAttendanceDialog(userlist[0].AttendanceMasterId.toString());
+                                                      },
+                                                    )
+                                                ),
+                                              ),
+                                            // }
+
                                           ]
                                       ),
                                       onTap: () {
@@ -2372,6 +2401,8 @@ class _MyHomePageState extends State<userShiftCalendar> {
                             ]
                         ),
                         //TableRow(),
+
+                        ////////////// Table row with flexi and multiple time in or out /////////////
 
                         TableRow(
                             children: [
@@ -4767,6 +4798,9 @@ List<User> createUserList(List data){
     String Longi_out=data[i]["longi_out"].toString();
     String timeindate=data[i]["timeindate"];
     int AttendanceMasterId=data[i]["AttendanceMasterId"];
+    String MultipletimeStatus = data[i]["MultipletimeStatus"].toString()??"0";
+    String getInterimAttAvailableSts = data[i]["getInterimAttAvailableSts"].toString();
+    String AttendanceStatus = data[i]["AttendanceStatus"].toString();
     if(timeindate =='0000-00-00')
       timeindate = data[i]["AttendanceDate"];
 
@@ -4775,7 +4809,32 @@ List<User> createUserList(List data){
       timeoutdate=data[i]["AttendanceDate"];
     int id = 0;
     User user = new User(
-        AttendanceDate: title,ShiftTimeIn:ShiftTimeIn,AttendanceMasterId:AttendanceMasterId,HoursPerDay:HoursPerDay,ShiftTimeOut:ShiftTimeOut,shifttype:shifttype,thours: thours,id: id,overtime:overtime,TimeOut:TimeOut,TimeIn:TimeIn,bhour:bhour,EntryImage:EntryImage,checkInLoc:checkInLoc,ExitImage:ExitImage,CheckOutLoc:CheckOutLoc,latit_in: Latit_in,longi_in: Longi_in,latit_out: Latit_out,longi_out: Longi_out,timeindate: timeindate,timeoutdate: timeoutdate);
+        AttendanceDate: title,
+        ShiftTimeIn:ShiftTimeIn,
+        AttendanceMasterId:AttendanceMasterId,
+        HoursPerDay:HoursPerDay,
+        ShiftTimeOut:ShiftTimeOut,
+        shifttype:shifttype,
+        thours: thours,
+        id: id,
+        overtime:overtime,
+        TimeOut:TimeOut,
+        TimeIn:TimeIn,
+        bhour:bhour,
+        EntryImage:EntryImage,
+        checkInLoc:checkInLoc,
+        ExitImage:ExitImage,
+        CheckOutLoc:CheckOutLoc,
+        latit_in: Latit_in,
+        longi_in: Longi_in,
+        latit_out: Latit_out,
+        longi_out: Longi_out,
+        timeindate: timeindate,
+        timeoutdate: timeoutdate,
+        AttendanceStatus:AttendanceStatus,
+        MultipletimeStatus: MultipletimeStatus,
+        getInterimAttAvailableSts: getInterimAttAvailableSts
+    );
     list.add(user);
   }
   return list;
@@ -4801,11 +4860,42 @@ class User {
   String ShiftTimeIn;
   String ShiftTimeOut;
   String shifttype;
+  String MultipletimeStatus;
+  String getInterimAttAvailableSts;
+  String AttendanceStatus;
   String HoursPerDay;
   int AttendanceMasterId;
   String totalLoggedHours;
   int id=0;
-  User({this.AttendanceDate,this.totalLoggedHours,this.thours,this.AttendanceMasterId,this.overtime,this.ShiftTimeIn,this.HoursPerDay,this.ShiftTimeOut,this.shifttype,this.id,this.TimeOut,this.TimeIn,this.bhour,this.EntryImage,this.checkInLoc,this.ExitImage,this.CheckOutLoc,this.latit_in,this.longi_in,this.latit_out,this.longi_out,this.timeindate,this.timeoutdate});
+
+  User({
+    this.AttendanceDate,
+    this.totalLoggedHours,
+    this.thours,
+    this.AttendanceMasterId,
+    this.overtime,
+    this.ShiftTimeIn,
+    this.HoursPerDay,
+    this.ShiftTimeOut,
+    this.shifttype,
+    this.id,
+    this.TimeOut,
+    this.TimeIn,
+    this.bhour,
+    this.EntryImage,
+    this.checkInLoc,
+    this.ExitImage,
+    this.CheckOutLoc,
+    this.latit_in,
+    this.longi_in,
+    this.latit_out,
+    this.longi_out,
+    this.timeindate,
+    this.timeoutdate,
+    this.MultipletimeStatus,
+    this.getInterimAttAvailableSts,
+    this.AttendanceStatus
+  });
 }
 formatTime(String time){
   if(time.contains(":")){
