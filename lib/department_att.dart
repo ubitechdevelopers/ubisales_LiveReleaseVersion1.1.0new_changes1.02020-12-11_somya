@@ -600,13 +600,14 @@ class _Department_att extends State<Department_att>
                                                                   ),
                                                                 ],
                                                               )),
+
                                                           if(snapshot.data[index].ShiftType.toString()=='3')
                                                             new Positioned(
                                                               right:0.0,
                                                               top: 40,
                                                               child: Container(
                                                                   padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
-                                                                  color: headingcolor,
+                                                                  color: buttoncolor,
                                                                   child: InkWell(
                                                                     child: Icon(Icons.more_horiz,color: Colors.white,),
                                                                     onTap: (){
@@ -615,6 +616,27 @@ class _Department_att extends State<Department_att>
                                                                   )
                                                               ),
                                                             ),
+
+                                                          // code for multiple time in and time out in single date case "Start"
+                                                          if(snapshot.data[index].ShiftType.toString()=='1' && snapshot.data[index].MultipletimeStatus.toString()=='1' && snapshot.data[index].getInterimAttAvailableSts.toString()=='true')
+                                                            new Positioned(
+                                                              right:0.0,
+                                                              top: 40,
+                                                              child: Container(
+                                                                  padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
+                                                                  color: buttoncolor,
+                                                                  child: InkWell(
+                                                                    child: Icon(Icons.more_horiz,color: Colors.white,),
+                                                                    onTap: (){
+                                                                      showInterimAttendanceDialog(snapshot.data[index].AttendanceMasterId);
+                                                                    },
+                                                                  )
+                                                              ),
+                                                            ),
+                                                          // code for multiple time in and time out in single date case "End"
+
+
+
                                                         ],
                                                       ),
                                                     ],

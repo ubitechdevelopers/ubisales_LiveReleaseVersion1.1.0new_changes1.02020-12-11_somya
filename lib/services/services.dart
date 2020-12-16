@@ -1085,6 +1085,20 @@ List<Attn> createListEmpHistoryOf30(List data){
     String LatitOut = data[i]["latit_out"].toString();
     String LongiIn = data[i]["longi_in"].toString();
     String LongiOut = data[i]["longi_out"].toString();
+    String ShiftType = data[i]["shiftType"].toString();
+    String MultipletimeStatus = data[i]["MultipletimeStatus"].toString()??"0";
+    String AttendanceMasterId = data[i]["Id"].toString();
+    String getInterimAttAvailableSts = data[i]["getInterimAttAvailableSts"].toString();
+    String AttendanceStatus = data[i]["AttendanceStatus"].toString()??"0";
+
+
+    print("check ShiftType"+ShiftType);
+    print("check LongiOut"+LongiOut);
+    print("check MultipletimeStatus"+MultipletimeStatus);
+    print("check getInterimAttAvailableSts"+getInterimAttAvailableSts);
+    print("check AttendanceStatus"+AttendanceStatus);
+
+
     Attn tos = new Attn(
         Name: Name,
         TimeIn: TimeIn,
@@ -1096,7 +1110,13 @@ List<Attn> createListEmpHistoryOf30(List data){
         LatitIn: LatitIn,
         LatitOut: LatitOut,
         LongiIn: LongiIn,
-        LongiOut: LongiOut);
+        LongiOut: LongiOut,
+        ShiftType: ShiftType,
+        MultipletimeStatus: MultipletimeStatus,
+        AttendanceMasterId: AttendanceMasterId,
+        getInterimAttAvailableSts: getInterimAttAvailableSts,
+        AttendanceStatus:AttendanceStatus
+    );
     list.add(tos);
   }
   return list;

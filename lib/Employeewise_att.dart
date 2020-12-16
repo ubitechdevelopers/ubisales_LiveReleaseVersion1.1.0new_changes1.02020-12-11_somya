@@ -345,292 +345,325 @@ class _EmployeeWise_att extends State<EmployeeWise_att> with SingleTickerProvide
                             }));*/
                            countP=snapshot.data.length.toString();
                          //  print("hello to app ->${countP}");
-                            if(snapshot.data.length>0) {
-                              return  ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return new Column(
-                                        children: <Widget>[
-                                          (index == 0)?
-                                            Row(
-                                                  children: <Widget>[
-                                                    //SizedBox(height: 25.0,),
-                                                    Container(
-                                                      //padding: EdgeInsets.only(left: 11.0),
-                                                      child: Text("Total Present: ${countP}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
-                                                    ),SizedBox(
-                                                      height:  10.0,
-                                                    ),Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: <Widget>[
-                                                        SizedBox(
-                                                          height:  10.0,
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets.only(left: 10.0),
-                                                          child: InkWell(
-                                                            child: Text('CSV',
-                                                              style: TextStyle(
-                                                                decoration: TextDecoration.underline,
-                                                                color: Colors.blueAccent,
-                                                                fontSize: 16,
-                                                                //fontWeight: FontWeight.bold
-                                                              ),
-                                                            ),
-                                                            onTap: () {
-                                                              //openFile(filepath);
-                                                              if (mounted) {
-                                                                setState(() {
-                                                                  filests = true;
-                                                                });
-                                                              }
-                                                              getCsvAlldata(presentlist, absentlist, latecommerlist, earlyleaverlist,
-                                                                  'Employee_Wise_Report', 'emp')
-                                                                  .then((res) {
-                                                                print('snapshot.data');
+                           if(snapshot.data.length>0) {
+                             return  ListView.builder(
+                                 scrollDirection: Axis.vertical,
+                                 itemCount: snapshot.data.length,
+                                 itemBuilder: (BuildContext context, int index) {
+                                   return new Column(
+                                       children: <Widget>[
+                                         (index == 0)?
+                                         Row(
+                                             children: <Widget>[
+                                               //SizedBox(height: 25.0,),
+                                               Container(
+                                                 //padding: EdgeInsets.only(left: 11.0),
+                                                 child: Text("Total Present: ${countP}",style: TextStyle(color: headingcolor,fontWeight: FontWeight.bold,fontSize: 16.0,),),
+                                               ),SizedBox(
+                                                 height:  10.0,
+                                               ),Row(
+                                                 mainAxisAlignment: MainAxisAlignment.center,
+                                                 children: <Widget>[
+                                                   SizedBox(
+                                                     height:  10.0,
+                                                   ),
+                                                   Container(
+                                                     padding: EdgeInsets.only(left: 10.0),
+                                                     child: InkWell(
+                                                       child: Text('CSV',
+                                                         style: TextStyle(
+                                                           decoration: TextDecoration.underline,
+                                                           color: Colors.blueAccent,
+                                                           fontSize: 16,
+                                                           //fontWeight: FontWeight.bold
+                                                         ),
+                                                       ),
+                                                       onTap: () {
+                                                         //openFile(filepath);
+                                                         if (mounted) {
+                                                           setState(() {
+                                                             filests = true;
+                                                           });
+                                                         }
+                                                         getCsvAlldata(presentlist, absentlist, latecommerlist, earlyleaverlist,
+                                                             'Employee_Wise_Report', 'emp')
+                                                             .then((res) {
+                                                           print('snapshot.data');
 
-                                                                if (mounted) {
-                                                                  setState(() {
-                                                                    filests=false;
-                                                                  });
-                                                                }
-                                                                // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
-                                                                dialogwidget(
-                                                                    "CSV has been saved in internal storage in ubiattendance_files/Employee_Wise_Report" +
-                                                                        ".csv", res);
-                                                              }
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width:6,
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets.only(
-                                                              left: 5.0),
-                                                          child: InkWell(
-                                                            child: Text('PDF',
-                                                              style: TextStyle(
-                                                                decoration:
-                                                                TextDecoration
-                                                                    .underline,
-                                                                color: Colors
-                                                                    .blueAccent,
-                                                                fontSize: 16,),
-                                                            ),
-                                                            onTap: () {
-                                                              /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
+                                                           if (mounted) {
+                                                             setState(() {
+                                                               filests=false;
+                                                             });
+                                                           }
+                                                           // showInSnackBar('CSV has been saved in file storage in ubiattendance_files/Department_Report_'+today.text+'.csv');
+                                                           dialogwidget(
+                                                               "CSV has been saved in internal storage in ubiattendance_files/Employee_Wise_Report" +
+                                                                   ".csv", res);
+                                                         }
+                                                         );
+                                                       },
+                                                     ),
+                                                   ),
+                                                   SizedBox(
+                                                     width:6,
+                                                   ),
+                                                   Container(
+                                                     padding: EdgeInsets.only(
+                                                         left: 5.0),
+                                                     child: InkWell(
+                                                       child: Text('PDF',
+                                                         style: TextStyle(
+                                                           decoration:
+                                                           TextDecoration
+                                                               .underline,
+                                                           color: Colors
+                                                               .blueAccent,
+                                                           fontSize: 16,),
+                                                       ),
+                                                       onTap: () {
+                                                         /*final uri = Uri.file('/storage/emulated/0/ubiattendance_files/Employee_Wise_Report_14-Jun-2019.pdf');
                                     SimpleShare.share(
                                         uri: uri.toString(),
                                         title: "Share my file",
                                         msg: "My message");*/
-                                                              if (mounted) {
-                                                                setState(() {
-                                                                  filests = true;
-                                                                });
-                                                              }
-                                                              CreateEmployeeWisepdf(
-                                                                  presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
-                                                                  'Employee_Wise_Report', 'employeewise')
-                                                                  .then((res) {
-                                                                if(mounted) {
-                                                                  setState(() {
-                                                                    filests =
-                                                                    false;
-                                                                    // OpenFile.open("/sdcard/example.txt");
-                                                                  });
-                                                                }
-                                                                dialogwidget(
-                                                                    'PDF has been saved in internal storage in ubiattendance_files/Employee_Wise_Report'+
-                                                                        '.pdf',
-                                                                    res);
-                                                                // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                   ]
-                                               ):new Center(),
-                                          (index == 0)?
-                                            Divider(color: Colors.black26,):new Center(),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .spaceAround,
-                                            children: <Widget>[
-                                              SizedBox(height: 40.0,),
+                                                         if (mounted) {
+                                                           setState(() {
+                                                             filests = true;
+                                                           });
+                                                         }
+                                                         CreateEmployeeWisepdf(
+                                                             presentlist, absentlist, latecommerlist, earlyleaverlist, 'Employee Report ' + empname,
+                                                             'Employee_Wise_Report', 'employeewise')
+                                                             .then((res) {
+                                                           if(mounted) {
+                                                             setState(() {
+                                                               filests =
+                                                               false;
+                                                               // OpenFile.open("/sdcard/example.txt");
+                                                             });
+                                                           }
+                                                           dialogwidget(
+                                                               'PDF has been saved in internal storage in ubiattendance_files/Employee_Wise_Report'+
+                                                                   '.pdf',
+                                                               res);
+                                                           // showInSnackBar('PDF has been saved in file storage in ubiattendance_files/'+'Department_Report_'+today.text+'.pdf');
+                                                         });
+                                                       },
+                                                     ),
+                                                   ),
+                                                 ],
+                                               )
+                                             ]
+                                         ):new Center(),
+                                         (index == 0)?
+                                         Divider(color: Colors.black26,):new Center(),
+                                         Row(
+                                           mainAxisAlignment: MainAxisAlignment
+                                               .spaceAround,
+                                           children: <Widget>[
+                                             SizedBox(height: 40.0,),
 
-                                              Container(
-                                                width: MediaQuery
-                                                    .of(context)
-                                                    .size
-                                                    .width * 0.47,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
-                                                  children: <Widget>[
-                                                    Text(snapshot.data[index].Name
-                                                        .toString(), style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 16.0),),
+                                             Container(
+                                               width: MediaQuery
+                                                   .of(context)
+                                                   .size
+                                                   .width * 0.47,
+                                               child: Column(
+                                                 crossAxisAlignment: CrossAxisAlignment
+                                                     .start,
+                                                 children: <Widget>[
+                                                   Text(snapshot.data[index].Name
+                                                       .toString(), style: TextStyle(
+                                                       color: Colors.black87,
+                                                       fontWeight: FontWeight.bold,
+                                                       fontSize: 16.0),),
 
-                                                    InkWell(
-                                                      child: Text('Time In: ' +
-                                                          snapshot.data[index]
-                                                              .CheckInLoc.toString(),
-                                                          style: TextStyle(
-                                                              color: Colors.black54,
-                                                              fontSize: 12.0)),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitIn ,
-                                                            snapshot.data[index]
-                                                                .LongiIn);
-                                                      },
-                                                    ),
-                                                    SizedBox(height:2.0),
-                                                    InkWell(
-                                                      child: Text('Time Out: ' +
-                                                          snapshot.data[index]
-                                                              .CheckOutLoc.toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.black54,
-                                                            fontSize: 12.0),),
-                                                      onTap: () {
-                                                        goToMap(
-                                                            snapshot.data[index]
-                                                                .LatitOut,
-                                                            snapshot.data[index]
-                                                                .LongiOut);
-                                                      },
-                                                    ),
-                                                    SizedBox(height: 5.0,),
-                                                    if(snapshot.data[index].ShiftType.toString()=='3')
-                                                      Text("Logged Hours: "+snapshot.data[index].DayLoggedHours
-                                                          .toString(), style: TextStyle(
-                                                          color: Colors.black87,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 14.0),),
+                                                   InkWell(
+                                                     child: Text('Time In: ' +
+                                                         snapshot.data[index]
+                                                             .CheckInLoc.toString(),
+                                                         style: TextStyle(
+                                                             color: Colors.black54,
+                                                             fontSize: 12.0)),
+                                                     onTap: () {
+                                                       goToMap(
+                                                           snapshot.data[index]
+                                                               .LatitIn ,
+                                                           snapshot.data[index]
+                                                               .LongiIn);
+                                                     },
+                                                   ),
+                                                   SizedBox(height:2.0),
+                                                   InkWell(
+                                                     child: Text('Time Out: ' +
+                                                         snapshot.data[index]
+                                                             .CheckOutLoc.toString(),
+                                                       style: TextStyle(
+                                                           color: Colors.black54,
+                                                           fontSize: 12.0),),
+                                                     onTap: () {
+                                                       goToMap(
+                                                           snapshot.data[index]
+                                                               .LatitOut,
+                                                           snapshot.data[index]
+                                                               .LongiOut);
+                                                     },
+                                                   ),
+                                                   if(snapshot.data[index].ShiftType.toString()=='3')
+                                                     SizedBox(height: 5.0,),
+                                                   if(snapshot.data[index].ShiftType.toString()=='3')
+                                                     Text("Logged Hours: "+snapshot.data[index].DayLoggedHours
+                                                         .toString(), style: TextStyle(
+                                                         color: Colors.black87,
+                                                         fontWeight: FontWeight.bold,
+                                                         fontSize: 14.0),),
+                                                   if(snapshot.data[index].AttendanceStatus.toString()=='4')
+                                                     SizedBox(height: 5.0,),
+                                                   if(snapshot.data[index].AttendanceStatus.toString()=='4')
+                                                     Container(
+                                                       color: buttoncolor,
+                                                       // padding: new EdgeInsets.only(top:3.0,),
+                                                       child: Text("     Status: Half Day      ", style: TextStyle(
+                                                           color: Colors.black54,
+                                                           fontWeight: FontWeight.bold,
+                                                           backgroundColor: buttoncolor,
+                                                           fontSize: 14.0),),
+                                                     ),
 
 
-                                                  ],
-                                                ),
-                                              ),
+                                                 ],
+                                               ),
+                                             ),
 
-                                              Container(
-                                                  width: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width * 0.24,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .center,
-                                                    children: <Widget>[
-                                                      Text(snapshot.data[index].TimeIn
-                                                          .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                      Container(
-                                                        width: 62.0,
-                                                        height: 62.0,
-                                                        child:InkWell(
-                                                        child: Container(
-                                                            decoration: new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                image: new DecorationImage(
-                                                                    fit: BoxFit.fill,
-                                                                    image: new NetworkImage(
-                                                                        snapshot
-                                                                            .data[index]
-                                                                            .EntryImage)
-                                                                )
-                                                            )),
-                                                          onTap: (){
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
-                                                            );
-                                                          },
+                                             Container(
+                                                 width: MediaQuery
+                                                     .of(context)
+                                                     .size
+                                                     .width * 0.24,
+                                                 child: Column(
+                                                   crossAxisAlignment: CrossAxisAlignment
+                                                       .center,
+                                                   children: <Widget>[
+                                                     Text(snapshot.data[index].TimeIn
+                                                         .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                                     Container(
+                                                       width: 62.0,
+                                                       height: 62.0,
+                                                       child:InkWell(
+                                                         child: Container(
+                                                             decoration: new BoxDecoration(
+                                                                 shape: BoxShape
+                                                                     .circle,
+                                                                 image: new DecorationImage(
+                                                                     fit: BoxFit.fill,
+                                                                     image: new NetworkImage(
+                                                                         snapshot
+                                                                             .data[index]
+                                                                             .EntryImage)
+                                                                 )
+                                                             )),
+                                                         onTap: (){
+                                                           Navigator.push(
+                                                             context,
+                                                             MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].EntryImage,org_name: _orgName)),
+                                                           );
+                                                         },
                                                        ),
-                                                    ),
+                                                     ),
 
-                                                    ],
-                                                  )
+                                                   ],
+                                                 )
 
-                                              ),
+                                             ),
 
-                                              Stack(
-                                                children: <Widget>[
-                                                  Container(
-                                                      width: MediaQuery
-                                                          .of(context)
-                                                          .size
-                                                          .width * 0.20,
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment
-                                                            .center,
-                                                        children: <Widget>[
-                                                          Text(snapshot.data[index].TimeOut
-                                                              .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
-                                                          Container(
-                                                            width: 62.0,
-                                                            height: 62.0,
-                                                            child:InkWell(
-                                                            child: Container(
-                                                                decoration: new BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    image: new DecorationImage(
-                                                                        fit: BoxFit.fill,
-                                                                        image: new NetworkImage(
-                                                                            snapshot
-                                                                                .data[index]
-                                                                                .ExitImage)
-                                                                    )
-                                                                )),
-                                                              onTap: (){
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
-                                                                );
-                                                              },
+                                             Stack(
+                                               children: <Widget>[
+                                                 Container(
+                                                     width: MediaQuery
+                                                         .of(context)
+                                                         .size
+                                                         .width * 0.20,
+                                                     child: Column(
+                                                       crossAxisAlignment: CrossAxisAlignment
+                                                           .center,
+                                                       children: <Widget>[
+                                                         Text(snapshot.data[index].TimeOut
+                                                             .toString(),style: TextStyle(fontWeight: FontWeight.bold),),
+                                                         Container(
+                                                           width: 62.0,
+                                                           height: 62.0,
+                                                           child:InkWell(
+                                                             child: Container(
+                                                                 decoration: new BoxDecoration(
+                                                                     shape: BoxShape
+                                                                         .circle,
+                                                                     image: new DecorationImage(
+                                                                         fit: BoxFit.fill,
+                                                                         image: new NetworkImage(
+                                                                             snapshot
+                                                                                 .data[index]
+                                                                                 .ExitImage)
+                                                                     )
+                                                                 )),
+                                                             onTap: (){
+                                                               Navigator.push(
+                                                                 context,
+                                                                 MaterialPageRoute(builder: (context) => ImageView(myimage: snapshot.data[index].ExitImage,org_name: _orgName)),
+                                                               );
+                                                             },
+                                                           ),
                                                          ),
-                                                       ),
 
-                                                        ],
-                                                      )
+                                                       ],
+                                                     )
 
-                                                  ),
-                                                  if(snapshot.data[index].ShiftType.toString()=='3')
-                                                    new Positioned(
-                                                      right:0.0,
-                                                      top: 40,
-                                                      child: Container(
-                                                          padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
-                                                          color: buttoncolor,
-                                                          child: InkWell(
-                                                            child: Icon(Icons.more_horiz,color: Colors.white,),
-                                                            onTap: (){
-                                                              showInterimAttendanceDialog(snapshot.data[index].AttendanceMasterId);
-                                                            },
-                                                          )
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            ],
+                                                 ),
 
-                                          ),
-                                          Divider(color: Colors.black26,),
-                                        ]);}
+                                                 if(snapshot.data[index].ShiftType.toString()=='3')
+                                                   new Positioned(
+                                                     right:0.0,
+                                                     top: 40,
+                                                     child: Container(
+                                                         padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
+                                                         color: buttoncolor,
+                                                         child: InkWell(
+                                                           child: Icon(Icons.more_horiz,color: Colors.white,),
+                                                           onTap: (){
+                                                             showInterimAttendanceDialog(snapshot.data[index].AttendanceMasterId);
+                                                           },
+                                                         )
+                                                     ),
+                                                   ),
 
-                              );
+                                                 // code for multiple time in and time out in single date case "Start"
+                                                 if(snapshot.data[index].ShiftType.toString()=='1' && snapshot.data[index].MultipletimeStatus.toString()=='1' && snapshot.data[index].getInterimAttAvailableSts.toString()=='true')
+                                                   new Positioned(
+                                                     right:0.0,
+                                                     top: 40,
+                                                     child: Container(
+                                                         padding: EdgeInsets.only(top:1,right: 3,bottom: 1,left: 3),
+                                                         color: buttoncolor,
+                                                         child: InkWell(
+                                                           child: Icon(Icons.more_horiz,color: Colors.white,),
+                                                           onTap: (){
+                                                             showInterimAttendanceDialog(snapshot.data[index].AttendanceMasterId);
+                                                           },
+                                                         )
+                                                     ),
+                                                   ),
+                                                 // code for multiple time in and time out in single date case "End"
 
-                            }
+                                               ],
+                                             ),
+                                           ],
+
+                                         ),
+                                         Divider(color: Colors.black26,),
+                                       ]);}
+
+                             );
+
+                           }
 
                             else{
                               return new Container(
