@@ -94,8 +94,20 @@ class Locations {
   Locations.fromFireStore(data) {
     //var data=json.decode(data1.toString());
     print(data["location"].toString()+"shhshshgsgjg");
-    print("lastknownlocationtime");
-    print(data['location']["extras"]["timestamp"].toString());
+    print("CURRENT TIME");
+    print(data['location']["timestamp"]);
+    var abdc = data['location']["timestamp"];
+    var dateUtc = DateTime.parse(abdc);
+    print(dateUtc);
+    print(dateUtc.isUtc);
+    var strToDateTime = DateTime.parse(dateUtc.toString());
+    final convertLocal = strToDateTime.toLocal();
+    var newFormat = intl.DateFormat("yyyy-MM-dd hh:mm:ss aaa");
+    String updatedDt = newFormat.format(convertLocal);
+    print(dateUtc);
+    print(convertLocal);
+    print(updatedDt.substring(10));
+
     try{
 
 
@@ -112,7 +124,24 @@ class Locations {
       this.speed = data['location']["coords"]["speed"].toString() ?? 'Unknown user';
       this.uuid = data['location']["uuid"].toString() ?? 'Unknown user';
       this.mock = 'false';
-      this.time = data['location']["extras"]["timestamp"].toString().split("T")[1] ?? '00:00:00';
+
+
+      //this.time = data['location']["extras"]["timestamp"].toString().split("T")[1] ?? '00:00:00';
+
+      // this code is written for converting firestore timestamp to local time
+
+      var firestoretimestamp = data['location']["timestamp"];
+      var dateUtc = DateTime.parse(firestoretimestamp);
+      var strToDateTime = DateTime.parse(dateUtc.toString());
+      final convertLocal = strToDateTime.toLocal();
+      var newFormat = intl.DateFormat("yyyy-MM-dd hh:mm:ss aaa");
+      String updatedDt = newFormat.format(convertLocal);
+
+      // this code is written for converting firestore timestamp to local time
+
+      this.time = updatedDt.substring(10) ?? '00:00:00';
+
+
 
 
 

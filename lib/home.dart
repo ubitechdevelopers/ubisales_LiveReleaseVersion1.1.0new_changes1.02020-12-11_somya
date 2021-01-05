@@ -153,6 +153,19 @@ class Locations {
   Locations.fromFireStore(data) {
     //var data=json.decode(data1.toString());
     print(data["location"].toString()+"shhshshgsgjg");
+    print("CURRENT TIME");
+    print(data['location']["timestamp"]);
+    var abdc = data['location']["timestamp"];
+    var dateUtc = DateTime.parse(abdc);
+    print(dateUtc);
+    print(dateUtc.isUtc);
+    var strToDateTime = DateTime.parse(dateUtc.toString());
+    final convertLocal = strToDateTime.toLocal();
+    var newFormat = intl.DateFormat("yyyy-MM-dd hh:mm:ss aaa");
+    String updatedDt = newFormat.format(convertLocal);
+    print(dateUtc);
+    print(convertLocal);
+    print(updatedDt.substring(10));
     try{
 
 
@@ -169,9 +182,21 @@ class Locations {
       this.speed = data['location']["coords"]["speed"].toString() ?? 'Unknown user';
       this.uuid = data['location']["uuid"].toString() ?? 'Unknown user';
       this.mock = 'false';
-      this.time = data['location']["extras"]["timestamp"].toString().split("T")[1] ?? '00:00:00';
 
+      //this.time = data['location']["extras"]["timestamp"].toString().split("T")[1] ?? '00:00:00';
 
+      // this code is written for converting firestore timestamp to local time
+
+      var firestoretimestamp = data['location']["timestamp"];
+      var dateUtc = DateTime.parse(firestoretimestamp);
+      var strToDateTime = DateTime.parse(dateUtc.toString());
+      final convertLocal = strToDateTime.toLocal();
+      var newFormat = intl.DateFormat("yyyy-MM-dd hh:mm:ss aaa");
+      String updatedDt = newFormat.format(convertLocal);
+
+      // this code is written for converting firestore timestamp to local time
+
+      this.time = updatedDt.substring(10) ?? '00:00:00';
 
     }catch(e){
       print("jhkjhkkjhk"+e.toString());
@@ -4508,7 +4533,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
           icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
           infoWindow: InfoWindow(
-            title: "Last known location: ",
+            title: "Last known location: "+currentLoc.time.toString(),
           ),
         );
         Future.delayed(Duration(seconds: 1), () {
@@ -5433,7 +5458,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     String todayDate = DateTime.now().toString().split(".")[0].split(" ")[0];
 
     if(admin_sts == '1' || admin_sts == '2') {
-print("inside admnnnnnn");
+    print("inside admnnnnnn");
       var p=97;
       var ii=0;
       var lastCurrentLocation;
@@ -5714,7 +5739,7 @@ print("inside admnnnnnn");
                   icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
                   infoWindow: InfoWindow(
-                    title: "Last known location: ",
+                    title: "Last known location: " + lastLoc.time.toString(),
                   ),
                 );
                 Future.delayed(Duration(seconds: 1), () {
@@ -6050,7 +6075,7 @@ print("inside admnnnnnn");
                   icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
                   infoWindow: InfoWindow(
-                    title: "Last known location: ",
+                    title: "Last known location: "+currentLoc.time.toString(),
                   ),
                 );
                 Future.delayed(Duration(seconds: 1), () {
