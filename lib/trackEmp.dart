@@ -94,6 +94,8 @@ class Locations {
   Locations.fromFireStore(data) {
     //var data=json.decode(data1.toString());
     print(data["location"].toString()+"shhshshgsgjg");
+    print("lastknownlocationtime");
+    print(data['location']["extras"]["timestamp"].toString());
     try{
 
 
@@ -1264,8 +1266,7 @@ print("marker added............");
 
 
           var change1 = new Map<String, dynamic>.from(value.data);
-          print('hjjghgjgjgjhgj' +
-              change1['location']["activity"]["confidence"].toString());
+          print('hjjghgjgjgjhgj' + change1['location']["activity"]["confidence"].toString());
           var currentLoc = Locations.fromFireStore(change1);
 
 

@@ -187,6 +187,7 @@ class _TrackEmpState extends State<TrackEmp>  with SingleTickerProviderStateMixi
   }
   TabController _controller1;
   initPlatformState() async {
+    print("trackEmp1");
     print("adsadadadsadadadadsadsadadsadad");
     _controller1 = new TabController(length: 2, vsync: this);
 

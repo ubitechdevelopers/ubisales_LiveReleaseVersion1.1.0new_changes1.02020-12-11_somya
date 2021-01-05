@@ -283,8 +283,7 @@ getWidgets(context){
                                     child: Row(
                                   //  mainAxisAlignment:MainAxisAlignment
 
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: <Widget>[
                                         InkWell(
                                           child:
