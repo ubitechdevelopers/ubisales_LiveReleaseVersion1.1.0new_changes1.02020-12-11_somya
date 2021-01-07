@@ -245,8 +245,8 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   // List<dynamic> newDataList;
   List<dynamic> newDataList1=[];
   List<dynamic> searchedName=[];
-  var First;
-  var Last;
+  var First='';
+  var Last='';
   var initials;
   bool _checkLoaded = false;
   bool _checkLoaded1 = false;
@@ -1205,11 +1205,32 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
       print(initials);
       print("initials ");
     }else{
-      First=fullName.substring(0,1);
-      print('print(First)else');
-      print(First);
-      initials =  First;
-      print(initials);
+      try {
+        if(fullName.isEmpty)
+        {
+          print("pravesh");
+          First = "";
+        }
+        else
+        {
+          First = fullName.substring(0, 1);
+          print('print(First)else');
+          print(First);
+          initials = First;
+          print(initials);
+        }
+      }
+      on Exception catch (exception) {
+        print("exception of else");
+        print(exception);
+        return;
+        // only executed if error is of type Exception
+      } catch (error) {
+        print("error of else");
+        print(error);
+        return;
+        // executed for errors of all types other than Exception
+      }
     }
 
 

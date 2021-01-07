@@ -4792,10 +4792,13 @@ class Attendance {
 Future<List<Attendance>> getAttendance(String date) async {
   final prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgdir') ?? '';
- // String empid = prefs.getString('empid')??"";
+  String empid = prefs.getString('empid')??"";
 
-  print(globals.path + 'getAttendance?orgid=$orgid&date=$date&app=ubiSales');
-  final response = await http.get(globals.path + 'getAttendance?orgid=$orgid&date=$date&app=ubiSales');
+  print("getAttendance empid");
+  print(empid);
+
+  print(globals.path + 'getAttendance?orgid=$orgid&empid=$empid&date=$date&app=ubiSales');
+  final response = await http.get(globals.path + 'getAttendance?orgid=$orgid&empid=$empid&date=$date&app=ubiSales');
   List responseJson = json.decode(response.body.toString());
   print(response.body);
   List<Attendance> attendanceList = createAttendance(responseJson);
