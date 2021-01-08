@@ -56,6 +56,7 @@ MarkTime mk1;
 List<LocationData> list = new List();
 String globalstreamlocationaddr="Location not fetched.";
 bool stopstreamingstatus = false;
+bool gpspermission=true;
 int timeOff=0,bulkAttn = 0,geoFence=0,payroll=0,tracking=0,visitpunch=0,department_permission = 0, designation_permission = 0, leave_permission = 0, shift_permission = 0, timeoff_permission = 1,punchlocation_permission = 1, employee_permission = 0, permission_module_permission = 0, report_permission = 0,flexi_permission=0,offline_permission=0 , designationid=0,facerecognition=0, deviceverification=0,BasicLeave=0;
 int globalalertcount = 0;
 int TimeOffStartStatus=0,TimeOffEndStatus=0,UnderTime=0,Visit = 0,OutsideGeofence=0,FakeLocation=0,FaceIdReg=0,FaceIdDisapproved=0,SuspiciousSelfie = 0, SuspiciousDevice = 0, DisapprovedAtt = 0 , AttEdited = 0, ChangedPassword = 0;
@@ -139,7 +140,7 @@ var timeoffRunning=false;
 var ShiftPlanner=0;
 String defaultShiftTimings='';
 int advancevisit=0;
-String appVersion='1.1.7';
+String appVersion='1.1.8';
 
 
 

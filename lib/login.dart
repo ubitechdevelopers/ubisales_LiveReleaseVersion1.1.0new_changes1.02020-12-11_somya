@@ -24,6 +24,7 @@ import 'package:Shrine/services/checklogin.dart';
 import 'package:Shrine/services/services.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -71,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     initPlatformState();
+    //getGpsPermission();
     platform.setMethodCallHandler(_handleMethod);
   }
   String address="";
@@ -117,6 +119,74 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
+  getGpsPermission(_usernameController,_passwordController,BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool getpermission=prefs.getBool("gpspermission") ?? prefix0.gpspermission;
+    print("before permission: "+getpermission.toString());
+    print("_usernameController: " + _usernameController);
+    print("_passwordController: " + _passwordController);
+    if(getpermission==true)
+    {
+      print("condition is working");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text('Permit location tracking?\n'),
+            content: Text('UbiSales app collects location data of employees whose location information is required during work hours.\n'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Don\'t Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", true);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  //sendmailondenylocationpermission(_usernameController,_passwordController,context).then((response) {
+
+                    /*setState(() {
+                      result = response;
+                    });*/
+                  //});
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text('Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", false);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  login(_usernameController,_passwordController,context);
+                  //Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+            ],
+          );
+        },
+      );
+      print("after permission: "+getpermission.toString());
+    }
+  }
 
 
   initPlatformState() async {
@@ -297,9 +367,23 @@ class _LoginPageState extends State<LoginPage> {
                               child:RaisedButton(
                                 child: Text('LOGIN',style: TextStyle(color: Colors.white),),
                                 color: buttoncolor,
-                                onPressed: () {
-                                  if (_formKey.currentState.validate()) {
-                                    login(_usernameController.text,_passwordController.text,context);
+                                onPressed: () async {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  bool getpermissiongps=prefs.getBool("gpspermission") ?? prefix0.gpspermission;
+                                  print("getpermissiongps");
+                                  print(getpermissiongps);
+                                  if (_formKey.currentState.validate())
+                                  {
+                                    if(getpermissiongps==true)
+                                    {
+                                       print("getGpsPermission------------------>>>>>>>>>>>>>>>>>>>>");
+                                       getGpsPermission(_usernameController.text,_passwordController.text,context);
+                                    }
+                                    else
+                                    {
+                                      print("login------------------>>>>>>>>>>>>>>>>>>>>");
+                                      login(_usernameController.text,_passwordController.text,context);
+                                    }
                                   }
                                 },
                               ),
@@ -737,6 +821,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         loader = true;
       });
+
 
 
 

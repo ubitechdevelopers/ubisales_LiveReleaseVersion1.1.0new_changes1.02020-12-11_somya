@@ -14,7 +14,9 @@
 
 import 'dart:async';
 
+import 'package:Shrine/askregister.dart';
 import 'package:Shrine/services/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +39,7 @@ class _ShrineAppState extends State<ShrineApp> {
   int response;
   int responsestate;
   int mand_login=0; // mandatory update is false by default.
-  String cur_ver='1.1.7',new_ver='1.1.7';
+  String cur_ver='1.1.8',new_ver='1.1.8';
   String updatestatus = "0";
   Widget _defaultHome = new LoginPage();
   @override
@@ -45,6 +47,7 @@ class _ShrineAppState extends State<ShrineApp> {
     super.initState();
     appVersion=cur_ver;
     getShared();
+    getGpsPermission();
 
     checkNow().then((res){
       setState(() {
@@ -116,6 +119,68 @@ class _ShrineAppState extends State<ShrineApp> {
       response = prefs.getInt('response') ?? 0;
       //print("Response "+response.toString());
     });
+  }
+
+
+  getGpsPermission() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool getpermission=prefs.getBool("gpspermission") ?? gpspermission;
+    print("before permission: "+getpermission.toString());
+    if(getpermission==true)
+    {
+      print("condition is working");
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text('Permit location tracking?\n'),
+            content: Text('UbiSales app collects location data of employees whose location information is required during work hours.\n'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Don\'t Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", true);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => AskRegisterationPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text('Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", false);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => AskRegisterationPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+            ],
+          );
+        },
+      );
+      print("after permission: "+getpermission.toString());
+    }
   }
   // Set default home.
   // Get result of the login function.

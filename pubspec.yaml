@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  #flutter_localizations:
+    #flutter_localizations:
     #sdk: flutter
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -82,7 +82,7 @@ dependencies:
   unicorndial: ^1.1.5
   flutter_map: 0.8.2
   firebase_database: 3.1.3
-  google_maps_flutter: ^0.5.11+1
+  google_maps_flutter: 0.5.33
   flutter_polyline_points: ^0.1.0
   rflutter_alert: ^1.0.3
   fab_circular_menu: ^1.0.0
@@ -119,46 +119,46 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-      - assets/diamond.png
-      - assets/logo.png
-      - assets/spinner.gif
-      - assets/splash.gif
-      - assets/launch_logo.png
-      - assets/landing.png
-      - assets/qr.png
-      - assets/avatar.png
-      - assets/add_admin.png
-      - assets/mark_attendance.png
-      - assets/reqtimeoff.png
-      - assets/att_log.png
-      - assets/visitlog.png
-      - assets/changepwd.png
-      - assets/editprofile.png
-      - assets/attreport.png
-      - assets/config.png
-      - assets/addemp.png
-      - assets/timeofflog.png
-      - assets/empvisit.png
-      - assets/imgloader.gif
-      - assets/icons8-offline-100.png
-      - assets/Beep_Short.mp3
-      - assets/facerecog.png
-      - assets/icons8-camera-50.png
-      - assets/face-recognition-gif.gif
-      - assets/needle.jpg
-      - assets/current_loc.png
-      - assets/TimeInMapIcon.png
-      - assets/currentLocationPinMapIcon.jpg
-      - assets/mapPinPoint.jpg
-      - assets/mapPinPointMarker.png
-      - assets/leave-icon.png
-      - assets/leave_icon.png
-      - assets/AbsentIcon.png
-      - assets/weekofficon.png
-      - assets/ShiftIcon.png
-      - assets/weekoff1.png
-      - assets/fakeLocation.png
-      - assets/pin.png
+    - assets/diamond.png
+    - assets/logo.png
+    - assets/spinner.gif
+    - assets/splash.gif
+    - assets/launch_logo.png
+    - assets/landing.png
+    - assets/qr.png
+    - assets/avatar.png
+    - assets/add_admin.png
+    - assets/mark_attendance.png
+    - assets/reqtimeoff.png
+    - assets/att_log.png
+    - assets/visitlog.png
+    - assets/changepwd.png
+    - assets/editprofile.png
+    - assets/attreport.png
+    - assets/config.png
+    - assets/addemp.png
+    - assets/timeofflog.png
+    - assets/empvisit.png
+    - assets/imgloader.gif
+    - assets/icons8-offline-100.png
+    - assets/Beep_Short.mp3
+    - assets/facerecog.png
+    - assets/icons8-camera-50.png
+    - assets/face-recognition-gif.gif
+    - assets/needle.jpg
+    - assets/current_loc.png
+    - assets/TimeInMapIcon.png
+    - assets/currentLocationPinMapIcon.jpg
+    - assets/mapPinPoint.jpg
+    - assets/mapPinPointMarker.png
+    - assets/leave-icon.png
+    - assets/leave_icon.png
+    - assets/AbsentIcon.png
+    - assets/weekofficon.png
+    - assets/ShiftIcon.png
+    - assets/weekoff1.png
+    - assets/fakeLocation.png
+    - assets/pin.png
 
 
 

@@ -5822,7 +5822,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
                   bearing: 0,
                   target: LatLng(double.parse(currentLoc.latitude),
                       double.parse(currentLoc.longitude)),
-                  zoom: 26.0,
+                  zoom: 16.0,
                 ),
               ));
 
@@ -6118,7 +6118,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             CameraPosition(
               bearing: 0,
               target: LatLng(double.parse(currentLoc.latitude),double.parse(currentLoc.longitude)),
-              zoom: 26,
+              zoom: 16,
             ),
           ));
 
@@ -6205,7 +6205,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
             CameraPosition(
               bearing: 0,
               target: LatLng(double.parse(globals.assign_lat.toString()), double.parse(globals.assign_long.toString())),
-              zoom: 26,
+              zoom: 16,
             ),
           ));
 

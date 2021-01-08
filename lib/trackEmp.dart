@@ -2799,6 +2799,8 @@ print("marker added............");
       });
   }
 
+
+
   getMarker(markerPoint,latitude,longitude,infoWindow) async {
 
     final Uint8List markerIcon = await getBytesFromCanvasForCircleMarker(50, 50, markerPoint);
