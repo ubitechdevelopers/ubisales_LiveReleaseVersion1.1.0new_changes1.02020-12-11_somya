@@ -2536,7 +2536,7 @@ print("marker added............");
               icon: BitmapDescriptor.fromBytes(currentLocationPinMapIcon),
 
               infoWindow: InfoWindow(
-                title: "Last known location: ",
+                title: "Last known location: "+currentLoc.time.toString(),
               ),
             );
             Future.delayed(Duration(seconds: 1), () {

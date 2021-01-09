@@ -118,6 +118,69 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 
+  getGpsPermissionQR(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool getpermission=prefs.getBool("gpspermission") ?? prefix0.gpspermission;
+    print("before permission: "+getpermission.toString());
+
+    if(getpermission==true)
+    {
+      print("condition is working");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text('Permit location tracking?\n'),
+            content: Text('UbiSales app collects location data of employees whose location information is required during work hours.\n'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Don\'t Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", true);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  //sendmailondenylocationpermission(_usernameController,_passwordController);
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text('Allow'),
+                onPressed: () {
+                  try{
+                    setState(() {
+                      prefs.setBool("gpspermission", false);
+                    });
+                  } on Exception catch (exception) {
+                    print("exception");
+                    print(exception);
+                    // only executed if error is of type Exception
+                  } catch (error) {
+                    print("error");
+                    print(error);
+                    // executed for errors of all types other than Exception
+                  }
+                  //login(_usernameController,_passwordController,context);
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
+                },
+              ),
+            ],
+          );
+        },
+      );
+      print("after permission: "+getpermission.toString());
+    }
+  }
+
 
   getGpsPermission(_usernameController,_passwordController,BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -151,12 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                     print(error);
                     // executed for errors of all types other than Exception
                   }
-                  //sendmailondenylocationpermission(_usernameController,_passwordController,context).then((response) {
-
-                    /*setState(() {
-                      result = response;
-                    });*/
-                  //});
+                  sendmailondenylocationpermission(_usernameController,_passwordController);
                   Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
                 },
               ),
@@ -176,7 +234,8 @@ class _LoginPageState extends State<LoginPage> {
                     print(error);
                     // executed for errors of all types other than Exception
                   }
-                  login(_usernameController,_passwordController,context);
+                  //login(_usernameController,_passwordController,context);
+                  Navigator.of(context).pop();
                   //Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false,);
                 },
               ),
@@ -246,7 +305,11 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            bool getpermissiongps=prefs.getBool("gpspermission") ?? prefix0.gpspermission;
+                            print("getpermissiongps");
+                            print(getpermissiongps);
 
                             if(globalstreamlocationaddr == "Location not fetched."){
                               showDialog(
@@ -282,20 +345,35 @@ class _LoginPageState extends State<LoginPage> {
                                  markAttByQROffline(context);
                                }
                                else{
-                              */   scan().then((onValue){
-                              print("******************** QR value **************************");
-                              print(onValue);
-                              print("******************** QR value **************************");
-                              //return false;
-                              if(onValue!='error') {
-
-                                markAttByQR(onValue, context);
-                              }else {
+                              */
+                              if(getpermissiongps==false)
+                              {
+                                scan().then((onValue) {
+                                  print(
+                                      "******************** QR value **************************");
+                                  print(onValue);
+                                  print(
+                                      "******************** QR value **************************");
+                                  //return false;
+                                  if (onValue != 'error') {
+                                    markAttByQR(onValue, context);
+                                  }
+                                  else {
+                                    setState(() {
+                                      loader = false;
+                                    });
+                                  }
+                                });
+                              }
+                              else
+                              {
                                 setState(() {
                                   loader = false;
                                 });
+                                getGpsPermissionQR(context);
                               }
-                            });
+
+
                             /*    }
                           });*/
 
@@ -822,9 +900,6 @@ class _LoginPageState extends State<LoginPage> {
         loader = true;
       });
 
-
-
-
       var islogin = await dologin.checkLogin(user);
       print("ISLOGIN STATUS IS HERE"+islogin);
       print(mailstatus);   //when new organization registered
@@ -852,16 +927,30 @@ class _LoginPageState extends State<LoginPage> {
                 Route<dynamic> route) => false,);
           }
           else {
+
             setState(() {
               loader = false;
             });
-            Scaffold.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        "DeviceId not registered. Request your admin to de-register old device and login again."
-                    )
-                )
-            );
+            try {
+              final snackBar = SnackBar(content: Text("DeviceId not registered. Request your admin to de-register old device and login again."));
+              _scaffoldKey.currentState.showSnackBar(snackBar);
+              //
+/*              Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          "DeviceId not registered. Request your admin to de-register old device and login again."
+                      )
+                  )
+              );*/
+            }  on Exception catch (exception) {
+               print("exception");
+               print(exception);
+              // only executed if error is of type Exception
+            } catch (error) {
+              print("error");
+              print(error);
+              // executed for errors of all types other than Exception
+            }
           }
         }
         else

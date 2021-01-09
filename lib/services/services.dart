@@ -292,6 +292,29 @@ disapprovefaceid(String empid,String orgid) async{
     print(e.toString());
   }
 }
+
+sendmailondenylocationpermission(_usernameController,_passwordController) async{
+  print("credential");
+  print(_usernameController);
+  print(_passwordController);
+  try{
+    //Dio dio = new Dio();
+    /*
+      FormData formData = new FormData.from({
+        "uid": empid,
+        "refno": orgid,
+      });*/
+
+    print(globals.path+"sendmailondenylocationpermission?username=$_usernameController&password=$_passwordController");
+    await http.get(globals.path+"sendmailondenylocationpermission?username=$_usernameController&password=$_passwordController");
+
+
+  }catch(e)
+  {
+    print(e.toString());
+  }
+}
+
 sendMailByAppToAdmin(String subject,String content) async{
   var prefs = await SharedPreferences.getInstance();
   String orgid = prefs.getString('orgid') ?? '';
@@ -312,6 +335,7 @@ sendMailByAppToAdmin(String subject,String content) async{
     print(e.toString());
   }
 }
+
 sendMailByAppToEmployee(String id,String content) async{
   try{
     Dio dio = new Dio();
